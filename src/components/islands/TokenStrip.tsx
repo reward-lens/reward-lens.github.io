@@ -162,7 +162,7 @@ export default function TokenStrip({ demo }: { demo: DemoData }) {
         labeled error spans
       </p>
 
-      <table className="visually-hidden">
+      <div className="visually-hidden"><table>
         <caption>
           Per-token reward contributions for the {side} completion of the{" "}
           {pair.axis} pair.
@@ -181,7 +181,7 @@ export default function TokenStrip({ demo }: { demo: DemoData }) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }

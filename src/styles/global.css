@@ -151,6 +151,11 @@ video {
 
 .visually-hidden {
   position: absolute;
+  /* Pin to the containing block's origin: an absolutely positioned box left
+     at its natural offset inside a horizontally scrolled table stretches the
+     page's scroll width on narrow viewports. */
+  left: 0;
+  top: 0;
   width: 1px;
   height: 1px;
   padding: 0;

@@ -207,6 +207,7 @@ const ariaLabel = `${displayValue} ${trust}, trust ${trustWord}${heading ? ", " 
     white-space: normal;
     opacity: 0;
     visibility: hidden;
+    display: none;
     transform: translateY(-2px);
     transition:
       opacity 150ms ease,
@@ -228,6 +229,7 @@ const ariaLabel = `${displayValue} ${trust}, trust ${trustWord}${heading ? ", " 
   .ev:focus-within .ev-pop {
     opacity: 1;
     visibility: visible;
+    display: block;
     transform: translateY(0);
     pointer-events: auto;
   }

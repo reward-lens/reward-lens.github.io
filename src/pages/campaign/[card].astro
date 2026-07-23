@@ -396,12 +396,15 @@ const description = `${card.card}: ${card.hypotheses[0].statement}. Verdict: ${c
   }
   .companion-list li {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--sp-2);
     align-items: center;
     font-size: var(--text-sm);
+    min-width: 0;
   }
   .companion-name {
     color: var(--ink-2);
+    overflow-wrap: anywhere;
   }
 
   .meta-list {

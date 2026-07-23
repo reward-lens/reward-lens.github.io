@@ -167,7 +167,7 @@ export default function LedgerStrip({
         </div>
       )}
 
-      <table className="visually-hidden">
+      <div className="visually-hidden"><table>
         <caption>
           The 53 adjudicated hypotheses: card, hypothesis, registered
           prediction, observed value, outcome.
@@ -199,7 +199,7 @@ export default function LedgerStrip({
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }

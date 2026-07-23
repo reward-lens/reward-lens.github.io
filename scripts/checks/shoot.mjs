@@ -59,7 +59,15 @@ for (const theme of ["dark", "light"]) {
       await page.goto(`http://localhost:${port}${path}`, {
         waitUntil: "networkidle",
       });
-      await page.waitForTimeout(400);
+      // Trigger lazy-loaded figures before the capture.
+      await page.evaluate(async () => {
+        for (let y = 0; y < document.body.scrollHeight; y += 600) {
+          window.scrollTo(0, y);
+          await new Promise((r) => setTimeout(r, 40));
+        }
+        window.scrollTo(0, 0);
+      });
+      await page.waitForTimeout(500);
       await page.screenshot({
         path: `${outdir}/${slug}.${theme}.${width}.png`,
         fullPage: true,
