@@ -1,0 +1,161 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Map tokens into Tailwind v4 theme as live var references.
+   Rule for all components: only these token-backed utilities or direct
+   var(--token) usage. No Tailwind default palette classes, no raw hex. */
+@theme inline {
+  --color-*: initial;
+  --color-page: var(--bg-page);
+  --color-raised: var(--bg-raised);
+  --color-inset: var(--bg-inset);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-info: var(--info);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --color-mix: var(--mix);
+  --color-none: var(--none);
+  --color-ok-ink: var(--ok-ink);
+  --color-bad-ink: var(--bad-ink);
+  --color-mix-ink: var(--mix-ink);
+  --color-none-ink: var(--none-ink);
+
+  --font-*: initial;
+  --font-display: var(--font-display);
+  --font-ui: var(--font-ui);
+  --font-prose: var(--font-prose);
+  --font-mono: var(--font-mono);
+
+  --radius-*: initial;
+  --radius-chip: var(--r-chip);
+  --radius-card: var(--r-card);
+  --radius-pill: var(--r-pill);
+}
+
+/* base */
+html {
+  background: var(--bg-page);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.55;
+}
+
+main {
+  flex: 1;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+a {
+  color: var(--info);
+  text-decoration-color: color-mix(in oklab, var(--info) 45%, transparent);
+  text-underline-offset: 2px;
+}
+a:hover {
+  text-decoration-color: var(--info);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--sp-4);
+  top: -100px;
+  z-index: 100;
+  background: var(--bg-raised);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-card);
+  padding: var(--sp-2) var(--sp-4);
+}
+.skip-link:focus {
+  top: var(--sp-4);
+}
+
+/* display face: never synthesize bold (Instrument Serif has no bold cut) */
+.font-display,
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -0.01em;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+}
+
+/* dual-theme Shiki blocks */
+:root[data-theme="dark"] .astro-code,
+:root[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+}
+.astro-code {
+  background: var(--code-bg) !important;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  padding: var(--sp-4);
+  font-size: var(--text-sm);
+  overflow-x: auto;
+}
+
+/* wide content scrolls inside its container, never the page */
+.scroll-x {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

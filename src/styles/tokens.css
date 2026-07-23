@@ -1,0 +1,112 @@
+/* Design tokens: the single source of every color, font, space, and radius.
+   Status colors validated with the dataviz palette validator on both surfaces
+   (all-pairs CVD mode); see SITE_REPORT.md for the validation record. */
+
+:root {
+  /* type */
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --font-prose: "IBM Plex Serif", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.2rem;
+  --text-xl: 1.44rem;
+  --text-2xl: 1.73rem;
+  --text-3xl: 2.07rem;
+  --text-4xl: 2.49rem;
+  --text-display: 3rem;
+
+  /* space: 4px grid */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  /* shape */
+  --r-chip: 2px;
+  --r-card: 6px;
+  --r-pill: 999px;
+  --border-w: 1px;
+
+  /* measures */
+  --measure-prose: 68ch;
+  --measure-wide: 84ch;
+
+  /* content width */
+  --page-max: 72rem;
+  --page-pad: clamp(1rem, 4vw, 2rem);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-page: #0c1017;
+  --bg-raised: #131926;
+  --bg-inset: #0f141f;
+  --line: #232b3a;
+  --line-strong: #33405a;
+  --ink: #e6e9f0;
+  --ink-2: #9aa3b5;
+  --ink-3: #6b7488;
+
+  --accent: #e8a33d;
+  --accent-ink: #14100a;
+  --info: #7fb4c9;
+
+  /* status: validated on #0C1017, all-pairs */
+  --ok: #009a75;
+  --bad: #ab4238;
+  --mix: #bb8805;
+  --none: #4675af;
+  --ok-ink: #67d9b4;
+  --bad-ink: #ef9285;
+  --mix-ink: #e0b153;
+  --none-ink: #8fb4e3;
+
+  /* diverging ramp for signed token attribution (docs palette lineage) */
+  --pos: #5598e7;
+  --neg: #f0716f;
+  --div-mid: #2a2b31;
+
+  --code-bg: #10151f;
+  --shadow-menu: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-page: #fafaf7;
+  --bg-raised: #ffffff;
+  --bg-inset: #f2f2ee;
+  --line: #d9dce3;
+  --line-strong: #b9bfcc;
+  --ink: #161a22;
+  --ink-2: #4c5568;
+  --ink-3: #7a8296;
+
+  --accent: #b4761a;
+  --accent-ink: #ffffff;
+  --info: #2e6e85;
+
+  /* status: validated on #FAFAF7, all-pairs */
+  --ok: #007a55;
+  --bad: #92261f;
+  --mix: #ae7900;
+  --none: #3c6aa4;
+  --ok-ink: #007a55;
+  --bad-ink: #92261f;
+  --mix-ink: #8a6210;
+  --none-ink: #3c6aa4;
+
+  --pos: #2a78d6;
+  --neg: #e34948;
+  --div-mid: #f0efec;
+
+  --code-bg: #f4f4f0;
+  --shadow-menu: 0 4px 16px rgba(22, 26, 34, 0.12);
+}

@@ -1,0 +1,70 @@
+---
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-install">
+      <code>pip install reward-lens</code>
+    </div>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="https://github.com/reward-lens/reward-lens">GitHub</a>
+      <a href="https://pypi.org/project/reward-lens/">PyPI</a>
+      <a
+        href="https://colab.research.google.com/drive/1x5zG07HdsWlNsJmkl2ddJ1yalmwwujfY?usp=sharing"
+        >Colab tour</a
+      >
+      <a href="/log/">Log</a>
+      <a href="/about/">About</a>
+      <a href="/about/#cite">Cite</a>
+      <a href="https://github.com/reward-lens/reward-lens/blob/main/LICENSE"
+        >MIT license</a
+      >
+    </nav>
+    <p class="footer-claims">
+      Every number on this site traces to an evidence record.
+      <a href="/campaign/method/">How that is enforced.</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    margin-top: var(--sp-16);
+    padding: var(--sp-8) 0 var(--sp-12);
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+  }
+  .footer-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  .footer-install code {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: var(--sp-1) var(--sp-2);
+    font-size: var(--text-sm);
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-6);
+  }
+  .footer-links a {
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .footer-links a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .footer-claims {
+    margin: 0;
+    color: var(--ink-3);
+  }
+</style>
