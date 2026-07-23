@@ -1,0 +1,76 @@
+{
+ "hypotheses": {
+  "total": 53,
+  "confirmed": 16,
+  "refuted": 21,
+  "inconclusive": 16
+ },
+ "cards": {
+  "total": 27,
+  "confirmed": 4,
+  "refuted": 8,
+  "mixed": 7,
+  "inconclusive": 8
+ },
+ "kills_fired": [
+  "K-avp",
+  "K-err",
+  "K-forensic",
+  "K-kui",
+  "K-meta",
+  "K-transfer",
+  "K-vce",
+  "K-verif"
+ ],
+ "spend_usd": 17.725824562737877,
+ "gpu_seconds": 16074.1,
+ "gpu_seconds_by_arc": [
+  {
+   "arc": "model:skywork-v2-llama31-8b",
+   "gpu_seconds": 3862.4
+  },
+  {
+   "arc": "model:skywork-v2-qwen3-8b",
+   "gpu_seconds": 2910.1
+  },
+  {
+   "arc": "train:emb-lora",
+   "gpu_seconds": 1691.8
+  },
+  {
+   "arc": "model:tulu-rm",
+   "gpu_seconds": 956.5
+  },
+  {
+   "arc": "model:skywork-v02",
+   "gpu_seconds": 850.1
+  }
+ ],
+ "works_ledger": {
+  "pass": 45,
+  "fail": 4,
+  "excused": 7,
+  "not_run": 9
+ },
+ "merge_report": {
+  "merged": 1315,
+  "skipped_existing": 0,
+  "missing_shards": [],
+  "failed_shards": []
+ },
+ "claims": {
+  "checked": 119,
+  "failures": 0,
+  "ok": true
+ },
+ "scorecards_installed": 4,
+ "freeze": {
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862",
+  "tag": "campaign-freeze-v1",
+  "code_tree_hash": "code:45d164ec7f6effe9c615daa87c0b13bd",
+  "n_specs": 27
+ },
+ "adjudicated_cards": 19,
+ "store_records": 1363
+}

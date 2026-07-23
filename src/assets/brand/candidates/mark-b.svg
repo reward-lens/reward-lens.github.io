@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="reward-lens lens-trace mark">
+  <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- the lens -->
+    <circle cx="16" cy="16" r="11"/>
+    <!-- scan line stepping up into a reward peak at center -->
+    <path d="M6 18.5 L12.4 18.5 L16 10.5 L19.6 18.5 L26 18.5"/>
+  </g>
+</svg>

@@ -1,0 +1,62 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.chidrift.analyze",
+  "hypotheses": [
+   {
+    "id": "H-chi-bon",
+    "prediction": {
+     "ci_excludes": 0.0,
+     "comparator": ">",
+     "effect": null,
+     "metric": "chi_bon_spearman",
+     "threshold": 0.3
+    },
+    "scoreboard_row": "T9",
+    "statement": "chi predicts realized best-of-n feature-drift ordering on a real bank"
+   },
+   {
+    "id": "H-chi-beats-var",
+    "prediction": {
+     "ci_excludes": 0.0,
+     "comparator": ">",
+     "effect": null,
+     "metric": "chi_minus_variance_baseline_spearman",
+     "threshold": 0.0
+    },
+    "scoreboard_row": null,
+    "statement": "chi beats a base-variance-only baseline"
+   }
+  ],
+  "id": "campaign-chi-drift",
+  "kill_criteria": [
+   {
+    "comparator": "<",
+    "id": "K-chi",
+    "metric": "chi_bon_spearman",
+    "threshold": 0.3
+   }
+  ],
+  "science": "S03-thermo",
+  "subjects": {
+   "datasets": [
+    "ultrafeedback-bank"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "ultrafeedback-bank": "ds:1cb97d4beca432de1793f56a4183a4aa"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "skywork-v2-qwen3-8b",
+    "skywork-v2-llama31-8b"
+   ]
+  },
+  "title": "Susceptibility chi predicts best-of-n feature drift on a real bank",
+  "version": 1
+ },
+ "spec_hash": "spec:1c12042d2eeb93b23ff9cf27b6433125",
+ "study_id": "study:campaign-chi-drift@v1#1c12042d"
+}

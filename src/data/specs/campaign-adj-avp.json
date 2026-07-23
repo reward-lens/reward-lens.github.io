@@ -1,0 +1,51 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.adjavp.analyze",
+  "hypotheses": [
+   {
+    "id": "H-avp",
+    "prediction": {
+     "ci_excludes": 0.0,
+     "comparator": ">",
+     "effect": null,
+     "metric": "recovery_gap",
+     "threshold": 0.0
+    },
+    "scoreboard_row": null,
+    "statement": "patching's ranking matches the organism's marker-responsive components (the twin-activation-delta answer key) better than attribution's"
+   }
+  ],
+  "id": "campaign-adj-avp",
+  "kill_criteria": [
+   {
+    "comparator": "<=",
+    "id": "K-avp",
+    "metric": "recovery_gap_ci_low",
+    "threshold": 0.0
+   }
+  ],
+  "science": "S01-calibration",
+  "subjects": {
+   "datasets": [
+    "adjavp-organism",
+    "rb2-patch-40"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "rb2-patch-40": "ds:a5f037d275d9ab400dc6325a63b7e4cb"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "skywork-v2-qwen3-0.6b",
+    "skywork-v02"
+   ]
+  },
+  "title": "Attribution versus patching, adjudicated against planted ground truth",
+  "version": 1
+ },
+ "spec_hash": "spec:8a5635a89a8d5730a7f4d11300db9cd9",
+ "study_id": "study:campaign-adj-avp@v1#8a5635a8"
+}

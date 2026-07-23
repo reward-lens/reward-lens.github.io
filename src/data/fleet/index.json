@@ -1,0 +1,72 @@
+[
+ {
+  "slug": "skywork-v2-qwen3-0.6b",
+  "hf_id": "Skywork/Skywork-Reward-V2-Qwen3-0.6B",
+  "n_entries": 290,
+  "total_gpu_seconds": 2745.899021172001,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "skywork-v2-qwen3-1.7b",
+  "hf_id": "Skywork/Skywork-Reward-V2-Qwen3-1.7B",
+  "n_entries": 55,
+  "total_gpu_seconds": 172.602378508,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "skywork-v2-qwen3-4b",
+  "hf_id": "Skywork/Skywork-Reward-V2-Qwen3-4B",
+  "n_entries": 55,
+  "total_gpu_seconds": 370.40321819499974,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "skywork-v2-qwen3-8b",
+  "hf_id": "Skywork/Skywork-Reward-V2-Qwen3-8B",
+  "n_entries": 186,
+  "total_gpu_seconds": 2859.7653329220025,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "skywork-v2-llama31-8b",
+  "hf_id": "Skywork/Skywork-Reward-V2-Llama-3.1-8B",
+  "n_entries": 299,
+  "total_gpu_seconds": 4088.6615852090004,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "skywork-v01",
+  "hf_id": "Skywork/Skywork-Reward-Llama-3.1-8B",
+  "n_entries": 56,
+  "total_gpu_seconds": 453.79532754999985,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "skywork-v02",
+  "hf_id": "Skywork/Skywork-Reward-Llama-3.1-8B-v0.2",
+  "n_entries": 77,
+  "total_gpu_seconds": 868.002640982,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "armorm",
+  "hf_id": "RLHFlow/ArmoRM-Llama3-8B-v0.1",
+  "n_entries": 68,
+  "total_gpu_seconds": 566.8115479729997,
+  "n_headline_slices": 2
+ },
+ {
+  "slug": "tulu-rm",
+  "hf_id": "allenai/Llama-3.1-Tulu-3-8B-RM",
+  "n_entries": 90,
+  "total_gpu_seconds": 891.5647103090002,
+  "n_headline_slices": 3
+ },
+ {
+  "slug": "grm-gemma2-2b",
+  "hf_id": "Ray2333/GRM-gemma2-2B-rewardmodel-ft",
+  "n_entries": 55,
+  "total_gpu_seconds": 205.288796816,
+  "n_headline_slices": 3
+ }
+]

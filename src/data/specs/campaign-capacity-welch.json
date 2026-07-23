@@ -1,0 +1,74 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.capacity.analyze",
+  "hypotheses": [
+   {
+    "id": "H-dark-kdeff",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": ">",
+     "effect": null,
+     "metric": "dark_reward_kdeff_spearman",
+     "threshold": 0.6
+    },
+    "scoreboard_row": null,
+    "statement": "dark reward grows with the criteria-to-effective-dimension ratio"
+   },
+   {
+    "id": "H-capacity-perm",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": "<",
+     "effect": null,
+     "metric": "capacity_perm_p",
+     "threshold": 0.05
+    },
+    "scoreboard_row": null,
+    "statement": "the fleet correlation clears its permutation null"
+   },
+   {
+    "id": "H-welch",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": ">=",
+     "effect": null,
+     "metric": "welch_floor_min_slack",
+     "threshold": 0.0
+    },
+    "scoreboard_row": null,
+    "statement": "the ArmoRM 19-head coherence matrix respects the Welch floor"
+   }
+  ],
+  "id": "campaign-capacity-welch",
+  "kill_criteria": [
+   {
+    "comparator": "<",
+    "id": "K-welch",
+    "metric": "welch_floor_min_slack",
+    "threshold": 0.0
+   }
+  ],
+  "science": "S05-capacity",
+  "subjects": {
+   "datasets": [
+    "rb2-full"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "rb2-full": "ds:92765fc94e2b8231914d5119670e53bc"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "fleet",
+    "armorm"
+   ]
+  },
+  "title": "Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor",
+  "version": 1
+ },
+ "spec_hash": "spec:9fc6a4346dcd4ba18e2d12391971c413",
+ "study_id": "study:campaign-capacity-welch@v1#9fc6a434"
+}

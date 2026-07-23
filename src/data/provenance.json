@@ -1,0 +1,1252 @@
+{
+ "files": [
+  {
+   "output": "public/figures/campaign/cal-transfer.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/cal-transfer.dark.png",
+   "sha256": "151fffdc61d7b88352ae6264ca744c40d66c83a3071d9ec4a09e042b226f13d8",
+   "bytes": 73816,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/cal-transfer.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/cal-transfer.light.png",
+   "sha256": "5a8bb2249ab58ddeaaa2c443508cf15d929b595db3b13f2485edede2c3bb7ccd",
+   "bytes": 74455,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-adj-avp.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-adj-avp.dark.png",
+   "sha256": "13c2fa1d369d0d353cc199fab33e88bba4712389954c40c7ca627ee6fe1525ca",
+   "bytes": 38151,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-adj-avp.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-adj-avp.light.png",
+   "sha256": "cf459ece9c68158e85b28d1d2f90cc37b54c58a0434cb2bb9366ba547143fd75",
+   "bytes": 38854,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-atlas-vce.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-atlas-vce.dark.png",
+   "sha256": "e610144cb240ab6fc883dd9ff39833091479a8830248bf95a21ef913accb6ded",
+   "bytes": 52297,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-atlas-vce.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-atlas-vce.light.png",
+   "sha256": "1516d75a1f80386b66f5a9ca9aaebfc1cffc0e6e727f1229d70610469ee21c34",
+   "bytes": 52452,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-cal-transfer.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-cal-transfer.dark.png",
+   "sha256": "48f5ba39af93d78bb7b3ae92e9b76a09f706a8a75fb7f231ebb8dd1968fcf381",
+   "bytes": 42623,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-cal-transfer.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-cal-transfer.light.png",
+   "sha256": "6d03c79888a450d4968108cb06af0dccb9a1126340839274bb9a24af19bebb23",
+   "bytes": 43233,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-capacity-welch.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-capacity-welch.dark.png",
+   "sha256": "b5050ec07fb965898e90c68c7334a14c57ae675a8d316282e0ab47eb8c196855",
+   "bytes": 60303,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-capacity-welch.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-capacity-welch.light.png",
+   "sha256": "704164a0537581616e67b5d0986da613120965546d4ce3f5b6cccc1a6e249be9",
+   "bytes": 61072,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-chi-drift.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-chi-drift.dark.png",
+   "sha256": "f5120f73d51802de63dacbce47c5b297c356e23e66b5b37623de01733bcb61ea",
+   "bytes": 45332,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-chi-drift.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-chi-drift.light.png",
+   "sha256": "cccf79bfde6a021962f06c6a805991064521ed7060dda211a64d98238f94c9a7",
+   "bytes": 46261,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-conf-partial.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-conf-partial.dark.png",
+   "sha256": "74ba754078718060fbe0cc8ac5607d4eeb5bae15d402a4615508c466c92be575",
+   "bytes": 51548,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-conf-partial.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-conf-partial.light.png",
+   "sha256": "4bfffcfd5b89caef481608ab2e9c67a5f87d872a036ff42d639dfecc15480a5f",
+   "bytes": 52288,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-emb-lora.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-emb-lora.dark.png",
+   "sha256": "e5599592f39752a4da43d33ce9632c3463a2329aaa689053ef08326325cf9437",
+   "bytes": 46657,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-emb-lora.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-emb-lora.light.png",
+   "sha256": "885bb03a3935bad37a3789480965d564bc0814321cacbe4870568ec3129044af",
+   "bytes": 46828,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-err-rb2.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-err-rb2.dark.png",
+   "sha256": "5126339e5a2cf44e178fde4ebf63079d7763fbc57bd1d57fe522955a797871b2",
+   "bytes": 46306,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-err-rb2.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-err-rb2.light.png",
+   "sha256": "193df9dc394607255720620ebc0bdf8a3609927bb1090766c05e1f470d0fbf2c",
+   "bytes": 46836,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-eval-aware.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-eval-aware.dark.png",
+   "sha256": "bda78da7fcd6a0def4a5d534f6119e96e5829a90b9b55346df58cbd21fdd7297",
+   "bytes": 57120,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-eval-aware.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-eval-aware.light.png",
+   "sha256": "fd957406583b785266e7fd28e391bac2c3bd9ac8b0411fd34ac24f9688dba11f",
+   "bytes": 57766,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-fact-kui.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-fact-kui.dark.png",
+   "sha256": "b27110166ed8a160ae079cdab1cc25db7c7cc5c76e88f72e1f27f08e1b150025",
+   "bytes": 50488,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-fact-kui.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-fact-kui.light.png",
+   "sha256": "8222774b57fe9bf40d8aae6470ebd13e09b459f11e4eaebe80c2ca6475d9ada6",
+   "bytes": 50935,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-forecast-cat.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-forecast-cat.dark.png",
+   "sha256": "b269da9dde93061686343077bcb672d9e41a6f0b4e26e3e3cf21f1be13aa1755",
+   "bytes": 49074,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-forecast-cat.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-forecast-cat.light.png",
+   "sha256": "c473d75537f51ea3afeb90b17b2125dce6438faf31d68ee79e1d7f05738c2a73",
+   "bytes": 49484,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-forensic-receipt.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-forensic-receipt.dark.png",
+   "sha256": "5bcbccedba345fc7fec75a485b4fac8701859234e34e306fb2131607d7a0f894",
+   "bytes": 49387,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-forensic-receipt.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-forensic-receipt.light.png",
+   "sha256": "6f43a0157682acfbe66a4cb2f98320fcbb3fdd90b1503ac49eedbe18de9077eb",
+   "bytes": 49529,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-gauge-e19.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-gauge-e19.dark.png",
+   "sha256": "74e3dbbdd783ee8784ac64de90f1a19df358968272ffdfdbd209cd6bf01ab08f",
+   "bytes": 66025,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-gauge-e19.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-gauge-e19.light.png",
+   "sha256": "ab1c9ed096fb77d1a4823311d015bb6c01c635009a40bfc83453f6478ccf1fef",
+   "bytes": 67074,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-gauge-xfam.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-gauge-xfam.dark.png",
+   "sha256": "e3995e0ef95535f9a7d0c764a74a5a1b68420c1d375d557defe22d7a89f34922",
+   "bytes": 62491,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-gauge-xfam.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-gauge-xfam.light.png",
+   "sha256": "9a5ff21b3d9e4bf44c42590869ac0e18825d455458c0f9925089c62841997ed8",
+   "bytes": 62923,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-hack-fore.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-hack-fore.dark.png",
+   "sha256": "6b92877f44685c07ce7890a568be869ecd050a078812b0e32a0c7b4bd75b5897",
+   "bytes": 61152,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-hack-fore.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-hack-fore.light.png",
+   "sha256": "b7e3918a7a3654fea8fc82b6f0777c4771fc515a6eb31cd7dce280bed093fbaa",
+   "bytes": 62361,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-hump.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-hump.dark.png",
+   "sha256": "f07fd8c21bb0d3f7589b12709255316694991dd6e00b232410dabff494e9a39f",
+   "bytes": 68428,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-hump.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-hump.light.png",
+   "sha256": "09fae929a4e82335aff1c359b7f0900d3e71950cc209a7ad1dbde5f7c5f192f7",
+   "bytes": 69232,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-judge-vbc.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-judge-vbc.dark.png",
+   "sha256": "0ab9710c6a230bc3e368aaf91e6b1a9104563649e7781a75fe9396456f9b5d69",
+   "bytes": 37649,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-judge-vbc.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-judge-vbc.light.png",
+   "sha256": "b58ce223a2188177df7902831dcec45bdb3f6dc9c5fef806ff58e1813487ac16",
+   "bytes": 38205,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-ladder.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-ladder.dark.png",
+   "sha256": "aed85e0aa8899df920fca7eb0923719791d65c8b4352fc47b65b1baf51bfc357",
+   "bytes": 47294,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-ladder.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-ladder.light.png",
+   "sha256": "f3e47780fbdc078224995b213b8a28147a68237b025e06198dbd7202ba5f161e",
+   "bytes": 47627,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-meta-ledger.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-meta-ledger.dark.png",
+   "sha256": "94a04ea0f0f7cb82d32cddeda79a9f7597ad90ef7103ff637c2cedb7fd09c974",
+   "bytes": 44376,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-meta-ledger.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-meta-ledger.light.png",
+   "sha256": "1a6de19c94fb755e65047475032a3197bfe391dd392272483a27e917f467ac32",
+   "bytes": 44707,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-ppe-bon.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-ppe-bon.dark.png",
+   "sha256": "96a199c2616c38a66ce17dd5def50b9a186fb492fb9134f18f937c70fba7968f",
+   "bytes": 71417,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-ppe-bon.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-ppe-bon.light.png",
+   "sha256": "73ab6ff00d9ee448f6cef629d406dadcd07ecb87c3ecc58eced3b2b38aeaf23d",
+   "bytes": 72263,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-style-rmb.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-style-rmb.dark.png",
+   "sha256": "810b256e1a25953df68d415c84fcd2204f92e6bcc1aa68b3d9a6521d43d62808",
+   "bytes": 87252,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-style-rmb.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-style-rmb.light.png",
+   "sha256": "ade99e11e89ceeb52e403cbc0fddb53470e678e58a1d430ac645ffa16117016c",
+   "bytes": 88576,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-surgery.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-surgery.dark.png",
+   "sha256": "ab0149f119a408f57fc5357375963bf7256fa5792f5d7364d821403816288beb",
+   "bytes": 46407,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-surgery.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-surgery.light.png",
+   "sha256": "f117a973e45699f77646e882178523854aeb7f0f6d5dee89598dd1c357fa9757",
+   "bytes": 46505,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-t3-decomp.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-t3-decomp.dark.png",
+   "sha256": "968cea54736fe72fc10b5fd2a9051f45e72027315a510acc0c9786bb89da01a4",
+   "bytes": 33042,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-t3-decomp.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-t3-decomp.light.png",
+   "sha256": "f57187700516de70a528f9660141948d8dd8f56217a7260fa362e351283282e1",
+   "bytes": 33361,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-t3-field.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-t3-field.dark.png",
+   "sha256": "71a51fe0df590384da4b628ac2b4e46bc01a3f4699272f06688f449ae594912f",
+   "bytes": 58026,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-t3-field.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-t3-field.light.png",
+   "sha256": "2e0a23aa2f6792b3b99f880d81769cc1e63dc9176f9190a9bb29ef2cfdc3a885",
+   "bytes": 58649,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-topo-hodge.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-topo-hodge.dark.png",
+   "sha256": "4809c3332e9cdc53c4be7452587ffc617a88d813d33957e0b9da139cdd603a1d",
+   "bytes": 39408,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-topo-hodge.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-topo-hodge.light.png",
+   "sha256": "9f99e8f9b4d8a79400251e2c61a56d7f662fc0b5573cdb185ed9037acb06bc88",
+   "bytes": 39747,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-values-contest.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-values-contest.dark.png",
+   "sha256": "d1cdf5d5bfc2f92ed41b3d0adb966551125598724e3538aedf352c949fbca0f8",
+   "bytes": 76018,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-values-contest.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-values-contest.light.png",
+   "sha256": "e1d1f31d2e19121ead8e9c0eb0c55fba034d72d75f5cf9220427fbb5adecef84",
+   "bytes": 76867,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-verif-prm.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-verif-prm.dark.png",
+   "sha256": "36419fe1337091adcd735be53998c9c6175a67bec57fb68598e0086a55eeb758",
+   "bytes": 45389,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/card-verif-prm.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/card-verif-prm.light.png",
+   "sha256": "634a0f945f88f23426c1c598d19caad881ae81a94d33e830b13dde77ce750e1f",
+   "bytes": 45581,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/chidrift-rank.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/chidrift-rank.dark.png",
+   "sha256": "f350a27cfa11d6e18016c9a635d434a258a8c3da83ce0c44e76aa4a8f98b2d51",
+   "bytes": 87085,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/chidrift-rank.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/chidrift-rank.light.png",
+   "sha256": "6acfb3dc6a78226f3d3d6ed21651558e8663709d1b25be735e840b270ea42349",
+   "bytes": 88218,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/hero1-ledger.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/hero1-ledger.dark.png",
+   "sha256": "d4e5afab400c78424feb58c3a3bb98ef3fc76cd18b94d67a3d62f8ee7a4abf24",
+   "bytes": 132076,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/hero1-ledger.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/hero1-ledger.light.png",
+   "sha256": "1e5751eb0b8696983e840c51a59e7672a5e0141aa8f2d1dc4ee3e97e613ea260",
+   "bytes": 134038,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/ladder-extrapolation.dark.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/ladder-extrapolation.dark.png",
+   "sha256": "6f2f2a2c94d3f974a2d2604d3634fd101a39fbc2b1db933131f2906881b047c9",
+   "bytes": 97168,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/campaign/ladder-extrapolation.light.png",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/ladder-extrapolation.light.png",
+   "sha256": "9b1e78c9a378fb92d104add8d7ab36f4c145b3c1a2bcbf82739b9f56a4a102b4",
+   "bytes": 98499,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/anatomy-of-evidence-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/anatomy-of-evidence-dark.svg",
+   "sha256": "8abfdf3508fe9e1f876d991b60cc60b03bd6db47016de98cce55fe1378ce8b7d",
+   "bytes": 89985,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/anatomy-of-evidence-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/anatomy-of-evidence-light.svg",
+   "sha256": "c0e96ae7fcbe438265c337f8339bb3cc5609f5c87123ef29f8b8b6f73c76c285",
+   "bytes": 89689,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/armo-objective-cosine-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/armo-objective-cosine-dark.svg",
+   "sha256": "5beb7ee075a8928ce403ddf2353d3520acf90d2ceb4b3309003635fc514f80a9",
+   "bytes": 44595,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/armo-objective-cosine-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/armo-objective-cosine-light.svg",
+   "sha256": "db55c907dd49d91589072bd1209169bf95fef3b007916dfb19f35fc159818853",
+   "bytes": 44471,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/artifacts-as-views-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/artifacts-as-views-dark.svg",
+   "sha256": "c3b762e2d37128fe80d95e399ec4ab376efc9f5a9e844566460a5ea4dc155233",
+   "bytes": 124029,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/artifacts-as-views-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/artifacts-as-views-light.svg",
+   "sha256": "992f67f11ea5b386d2ba7f63a9ac79eaab752f5c9f94fcbccb3520e9dd685079",
+   "bytes": 123641,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/attribution-bars-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/attribution-bars-dark.svg",
+   "sha256": "7fbd8259e71ad81a32599bc71e22f83e534e9db79cec51881f57cf519c9fa63b",
+   "bytes": 51919,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/attribution-bars-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/attribution-bars-light.svg",
+   "sha256": "3c8394dc4ef1e9795ff525be4d98f2c7e44fb692cd48cec3cfec19f23eac6899",
+   "bytes": 51919,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/attribution-vs-patching-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/attribution-vs-patching-dark.svg",
+   "sha256": "74cef7a58d83bca0c952e73401b366a056586bec465c17e1b1345f03d6c0b03b",
+   "bytes": 122485,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/attribution-vs-patching-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/attribution-vs-patching-light.svg",
+   "sha256": "eb51f10d2f1597717ad292889a628cb43c818ac31a383645d9058930356649f0",
+   "bytes": 122481,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/best-of-n-ladder-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/best-of-n-ladder-dark.svg",
+   "sha256": "150db9a27d233d34e07792cd35db075f44805eee4b254ce4a686f07ee6cdc3db",
+   "bytes": 121331,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/best-of-n-ladder-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/best-of-n-ladder-light.svg",
+   "sha256": "0deef598c5b5af8110a780683f8c6f93e4128a1d0378bb49d76351af35814e1c",
+   "bytes": 121331,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/calibration-loop-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/calibration-loop-dark.svg",
+   "sha256": "ca574de7c387378cceab03480d0ab7b008dd94e3fc01735ba6e92aa41ac1e26a",
+   "bytes": 120312,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/calibration-loop-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/calibration-loop-light.svg",
+   "sha256": "f3707bd6eff05484b2ea25aa764ed73d3abcba09ff3456f5edb748d5d7da252d",
+   "bytes": 119491,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/clone-collapse-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/clone-collapse-dark.svg",
+   "sha256": "395d5b80ddf8e07c6a9d93cdaa73da25c01470ec1fddb8c35ccdaeb96145972d",
+   "bytes": 113840,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/clone-collapse-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/clone-collapse-light.svg",
+   "sha256": "f3ddf5d351e54102787e6402b3f6bbcc53c91a0d7b04a0d9001173561bb0a34b",
+   "bytes": 113722,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/concept-dose-response-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/concept-dose-response-dark.svg",
+   "sha256": "a8ff5e62a262cc48d09ff8e3f9896125e163aafdbd51596bd73dc36db4ec40fe",
+   "bytes": 52575,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/concept-dose-response-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/concept-dose-response-light.svg",
+   "sha256": "9bfc3ba9c69dfa5bfa4d662c5a95c0c4fb78d8740e6b3210a1e20c0324d1849b",
+   "bytes": 52575,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/concept-vector-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/concept-vector-dark.svg",
+   "sha256": "643f6b0d13fc26a23479be81da0c586effaf352599a014dcdf4fc2e080865338",
+   "bytes": 63156,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/concept-vector-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/concept-vector-light.svg",
+   "sha256": "5131eef62f0890361d9bde916491cf1b2b4019943d8fedb167887567b3025cdb",
+   "bytes": 63019,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/crystallization-by-dim-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/crystallization-by-dim-dark.svg",
+   "sha256": "25040fbe123b4bc39fec79c165aa7454593d51002eee57e6e4455dca770d315b",
+   "bytes": 39872,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/crystallization-by-dim-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/crystallization-by-dim-light.svg",
+   "sha256": "69090e49a3118fae0643a0f6866f4d6dfa0faa71d41a4e12e7f82093f121102b",
+   "bytes": 39872,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/crystallization-schematic-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/crystallization-schematic-dark.svg",
+   "sha256": "906089ca09030ef323ac77db75d1d693ebc9f7cf35ab5f547ed29c69677211c1",
+   "bytes": 66285,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/crystallization-schematic-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/crystallization-schematic-light.svg",
+   "sha256": "1d77478ddf9fccc02fd07cd13f411b26a6c79997a335f49c5bffc147b2db6a3e",
+   "bytes": 66193,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/eight-graders-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/eight-graders-dark.svg",
+   "sha256": "27fc5d6e6894401b2e11de4a2a01b63cbac1fa7d69abc6429e40167d4c6d7ee0",
+   "bytes": 135111,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/eight-graders-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/eight-graders-light.svg",
+   "sha256": "c52b3b7b092ae5475a8c46308f08737375e443af31f19f4a815a12e07601638e",
+   "bytes": 134471,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/gauge-picture-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/gauge-picture-dark.svg",
+   "sha256": "75b7e4427836852d3b388c9865232fcfed8680f115b2c15c70c114214d1bb1e2",
+   "bytes": 87827,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/gauge-picture-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/gauge-picture-light.svg",
+   "sha256": "173e7459193ad9a025023418a1bceb3cfbf74bfba8d59ed5dcb10142e19a724a",
+   "bytes": 87577,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/hacking-effects-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/hacking-effects-dark.svg",
+   "sha256": "c7fc7ed58562988a0773052be6eba370770bf1e9d995b538f6e9c54563c0fee4",
+   "bytes": 43514,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/hacking-effects-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/hacking-effects-light.svg",
+   "sha256": "c9b5fd5d141535c231e4479963c065b15c1894e729cbbb42cd7ba763408c2441",
+   "bytes": 43514,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/intervention-algebra-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/intervention-algebra-dark.svg",
+   "sha256": "929d3cbf7490dd3987285663d013b8b6e744b106b7fc48b7d7641ca4d634533a",
+   "bytes": 115757,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/intervention-algebra-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/intervention-algebra-light.svg",
+   "sha256": "bce21df74ee2c30b83d60fb14fc3efd279fd356e87215633a0f91f129a6117d7",
+   "bytes": 115204,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/kernel-map-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/kernel-map-dark.svg",
+   "sha256": "d3db9ae4bb705c467ba17c3c3c1055c614bfbb6d4673ee56995e9acb50517f6f",
+   "bytes": 87672,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/kernel-map-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/kernel-map-light.svg",
+   "sha256": "fbafe2561066327eb3d4484b7e9c2a9fd40e1cc03dcf44a042069192564688b0",
+   "bytes": 87270,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/lens-curve-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/lens-curve-dark.svg",
+   "sha256": "0f3f593623793d2f378039c7a8b8b1bf78591709105b40977df8e953f96bf419",
+   "bytes": 47027,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/lens-curve-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/lens-curve-light.svg",
+   "sha256": "7d3b13bd66754a196c192576f3282546f0812efe87b35522a59f782f71b0b796",
+   "bytes": 47027,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/patching-bars-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/patching-bars-dark.svg",
+   "sha256": "f092129e54d8d21b6db4a9d7900e1dd14e539613c7d65eadd220613a29fee8fd",
+   "bytes": 47381,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/patching-bars-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/patching-bars-light.svg",
+   "sha256": "567b060cb96f861bfdbbcb2d112a0871a2b762ac4c9f33f1dcb19c752d971f87",
+   "bytes": 47381,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/preference-geometry-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/preference-geometry-dark.svg",
+   "sha256": "5825c7dbc9ab2f96117a9bf6f901e8f026413e3804b3311ded47d8b3858579d2",
+   "bytes": 44958,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/preference-geometry-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/preference-geometry-light.svg",
+   "sha256": "5825c7dbc9ab2f96117a9bf6f901e8f026413e3804b3311ded47d8b3858579d2",
+   "bytes": 44958,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/reward-projection-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/reward-projection-dark.svg",
+   "sha256": "3596615e8b4373fa7fa8a69091ebd99e91fef4b7bdabff3e3aa941baa7f9df66",
+   "bytes": 49374,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/reward-projection-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/reward-projection-light.svg",
+   "sha256": "46db0c3e226bfbe9df03754b94406c0ab30f447a34d209b3a2995d19fd6983f2",
+   "bytes": 49252,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/rlhf-attachment-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/rlhf-attachment-dark.svg",
+   "sha256": "cc2a9028bf0bacce6991b29afa1f0457d53983abe6cd5af870fd815518ffdd3a",
+   "bytes": 124571,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/rlhf-attachment-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/rlhf-attachment-light.svg",
+   "sha256": "76fc11194768cfd28a42c8b0b61a5cdd5c53ce2226710b1ff01d5a1eaea5db4c",
+   "bytes": 124106,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/study-lifecycle-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/study-lifecycle-dark.svg",
+   "sha256": "8383bfff6a20235b31c95283b32640b9acaddb946ab55edaa3749e3b1ccdaba7",
+   "bytes": 106175,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/study-lifecycle-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/study-lifecycle-light.svg",
+   "sha256": "2a63149cb82f83d192d61d2badb22f7ede770e8531bf8faca621b293dfae3d41",
+   "bytes": 105561,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/trust-ladder-dark.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/trust-ladder-dark.svg",
+   "sha256": "2f8bd420d28d69648cce4bb2c7383fc2686fb5c2d28f0bf187d5e9aa5488c55a",
+   "bytes": 84127,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "public/figures/docs/trust-ladder-light.svg",
+   "source": "/home/suhail-nadaf/final-reward/reward-lens--github/reward-lens-clean/docs/content/assets/figures/trust-ladder-light.svg",
+   "sha256": "87f345b76048ff7f64fb381ac904a39259cc4843d508a2d327ccaf8206380cd0",
+   "bytes": 82064,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/campaign.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/close_summary.json",
+   "sha256": "3ee662a13c519e0715b91ae5e20c0f46536be7bf0765f5b1917e794c75d7ac68",
+   "bytes": 7315,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/captions.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/figures/captions.json",
+   "sha256": "d49e4bab0d4b18668f8786fba6daadfa66129a6da49fe2c7b4d3ac7c9cca5b88",
+   "bytes": 4410,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/cards.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/claims-store/evidence.jsonl",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/armorm.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/grm-gemma2-2b.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/index.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v01.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v02.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v2-llama31-8b.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v2-qwen3-0.6b.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v2-qwen3-1.7b.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v2-qwen3-4b.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/skywork-v2-qwen3-8b.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/fleet/tulu-rm.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/ledger.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/evidence.jsonl",
+   "sha256": "eb8f0bde31210cb7aa43a1fbc2ae091a8d23c083d44d84909f383f26ee467125",
+   "bytes": 38417845,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-adj-avp.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-adj-avp.json",
+   "sha256": "1f27a727fd3604bad5a5fe857aa437a3d514897e76dec0e1ff8b8328e406663e",
+   "bytes": 1389,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-atlas-vce.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-atlas-vce.json",
+   "sha256": "c75fb8ef84c10c5a6053d013dee6858915f2dc1bc14dc5923fe83243a8680afb",
+   "bytes": 1745,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-cal-transfer.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-cal-transfer.json",
+   "sha256": "25ca7ca197138bbc38e87bfcfb626552ea067bf4d2037d2ac3c63f24f4a0c248",
+   "bytes": 1237,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-capacity-welch.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-capacity-welch.json",
+   "sha256": "30f3e6bd18c3a48139a8d780bc8591449cfb3898d40910b4c0c22a22aebcbc85",
+   "bytes": 2009,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-chi-drift.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-chi-drift.json",
+   "sha256": "1c63ccb7639472589627024f1661a06f2bd89b987207eb3c54e38195b37a5716",
+   "bytes": 1670,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-conf-partial.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-conf-partial.json",
+   "sha256": "3a96ed26cda75d5142fbca289a978f69e805c8e22f1dbdd66e64c861e0fc8fd7",
+   "bytes": 2017,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-decomp.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-decomp.json",
+   "sha256": "ffcef1abf8147d09b05fb813bda1378cb46f2dc6b0504b9e30f250d604835f64",
+   "bytes": 1077,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-emb-lora.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-emb-lora.json",
+   "sha256": "c1507dec869869f19a0ce16bbe1256648484d625c66187605771487ef8dc17b6",
+   "bytes": 1664,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-err-rb2.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-err-rb2.json",
+   "sha256": "7f03d1493fed513bb7735432fce02d8dd0a4d4f676af1f923ad7e838de648810",
+   "bytes": 1658,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-eval-aware.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-eval-aware.json",
+   "sha256": "b8f4b71ecf88ec5199042f1d631bd6cb3125f49d3f552e93faf84ceb1036b7e6",
+   "bytes": 2213,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-fact-kui.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-fact-kui.json",
+   "sha256": "c23a0148fb7699b6ef2f364e827c387f99f961ea5e029a1145fe15812da36aaf",
+   "bytes": 1909,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-field-flat.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-field-flat.json",
+   "sha256": "6c25857ac70712453594a1fdc97066b2d140032bf2b4a47d70addc832ce669bc",
+   "bytes": 1197,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-forecast-cat.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-forecast-cat.json",
+   "sha256": "9a07fcc21771f4f26cdf4dce49acd1fae1b0d2c36d2b0d10118ef43814072a20",
+   "bytes": 1745,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-forensic-receipt.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-forensic-receipt.json",
+   "sha256": "9c8481c3a50a11c5857b681d474fb9250c0417e96e51569ce6b1f6b8d54e8198",
+   "bytes": 1667,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-gauge-e19.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-gauge-e19.json",
+   "sha256": "d7a9cd3dfec78376eddd95c146e6aadd98d43f665fc1c03e7c27cb2b61505efa",
+   "bytes": 2032,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-gauge-xfam.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-gauge-xfam.json",
+   "sha256": "ff99978b86078faf00f5e33b828f27204364d042dd648f240b5d504d1bf81263",
+   "bytes": 1739,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-hack-fore.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-hack-fore.json",
+   "sha256": "334a5216335205e2e902bf50042056bb8d7ed8de5f078cb52aeae153a0fe8e17",
+   "bytes": 1421,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-hump.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-hump.json",
+   "sha256": "5be74d0db0104f16b2ae1679a3707b3c484328c47635c9f7266f28b10c171b44",
+   "bytes": 1770,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-judge-vbc.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-judge-vbc.json",
+   "sha256": "7419e7a5e5a94613e5061d8e60aa8dee41be04df956d2950a4d5841964008777",
+   "bytes": 1279,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-ladder.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-ladder.json",
+   "sha256": "097cc9d70b83a74846644c5fa9abeb7e2629a5b347330927dbdf537b144649f6",
+   "bytes": 1766,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-meta-ledger.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-meta-ledger.json",
+   "sha256": "a760b9cb2f04e585947c815f06ce8aa7e0ac1585691c6927660cdbeab1767023",
+   "bytes": 1480,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-ppe-bon.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-ppe-bon.json",
+   "sha256": "c3b2f68db52bbc603474dd4f70e74e95488facd072d5a0efa610a529aef0d2c3",
+   "bytes": 1863,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-style-rmb.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-style-rmb.json",
+   "sha256": "4a230bac44aac7b60dfc8dfa3cf40adf4ec926b10db75f54380514cc19987655",
+   "bytes": 2117,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-surgery.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-surgery.json",
+   "sha256": "8a0e5656f05ec34213aeea062043bdbd00ad591f6d3ea319e646ee2eb798cc41",
+   "bytes": 1704,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-topo-hodge.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-topo-hodge.json",
+   "sha256": "b3fce26d9f92db53febb5cb08fcffd0325e2b683e5b72eda23ab2fd9ecee8bf5",
+   "bytes": 1368,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-values-contest.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-values-contest.json",
+   "sha256": "bc2a8297d047de055a6fead121486ee842088f6f62eaa3de2dcfbff6a6952961",
+   "bytes": 1750,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/campaign-verif-prm.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/campaign-verif-prm.json",
+   "sha256": "a914e6282b745d2b63abd32889f517e1c8ed8b4de48759bfc76724cb41a8555a",
+   "bytes": 1594,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/manifest.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/manifest.json",
+   "sha256": "5d2aa1808fbf6a7258979e1f58af10ff18b0d73d5dba9be88d3f9bff9c632d18",
+   "bytes": 5758,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/specs/probabilities.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/specs/frozen/probabilities.json",
+   "sha256": "50f8daa060d27e3f66fb28e95ef35bb45335d093ed59e514f8194663c6b7ab28",
+   "bytes": 5676,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  },
+  {
+   "output": "src/data/theorems.json",
+   "source": "/home/suhail-nadaf/final-reward/campaign-results/runs/campaign/scoreboard.json",
+   "sha256": "8c408660f7a4973fb5a795f546c20e61756cd22d4ea2a3609223da0a7e9b8d4b",
+   "bytes": 3237,
+   "extracted": "2026-07-23",
+   "pipeline_commit": "ba545804b2a0970d0c57d7482558dc506cde8f25"
+  }
+ ]
+}

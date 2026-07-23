@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="reward-lens r-hat mark">
+  <g stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- estimator hat / circumflex, widened for 16px legibility -->
+    <path d="M8.2 10.2 L16 5 L23.8 10.2"/>
+    <!-- math-italic r: straight italic stem into a shouldered arm -->
+    <path d="M12.2 25.4 L13.9 13.8 C14.6 12.4 16.4 11.7 19.4 12.9"/>
+  </g>
+</svg>

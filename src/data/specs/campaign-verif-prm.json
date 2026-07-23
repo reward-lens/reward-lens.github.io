@@ -1,0 +1,61 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.verif.analyze",
+  "hypotheses": [
+   {
+    "id": "H-verif-loc",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": ">",
+     "effect": null,
+     "metric": "dense_localization_auc",
+     "threshold": 0.7
+    },
+    "scoreboard_row": null,
+    "statement": "the PRM localizes ProcessBench error steps"
+   },
+   {
+    "id": "H-verif-style",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": "<",
+     "effect": null,
+     "metric": "style_share",
+     "threshold": 0.5
+    },
+    "scoreboard_row": null,
+    "statement": "the correctness preference is anchored, not style-carried"
+   }
+  ],
+  "id": "campaign-verif-prm",
+  "kill_criteria": [
+   {
+    "comparator": "<",
+    "id": "K-verif",
+    "metric": "dense_localization_auc",
+    "threshold": 0.55
+   }
+  ],
+  "science": "S09-verification",
+  "subjects": {
+   "datasets": [
+    "processbench-full"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "processbench-full": "ds:ee07fc60b26eb141e09fff7458a9ce55"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "qwen-prm"
+   ]
+  },
+  "title": "Does the process reward model verify or style-read",
+  "version": 1
+ },
+ "spec_hash": "spec:616bec72ae5ab5714b01adaef378aba9",
+ "study_id": "study:campaign-verif-prm@v1#616bec72"
+}

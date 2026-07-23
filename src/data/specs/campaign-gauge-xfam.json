@@ -1,0 +1,63 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.gaugexfam.analyze",
+  "hypotheses": [
+   {
+    "id": "H-xfam",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": ">",
+     "effect": null,
+     "metric": "spearman_canonical_angle_vs_disagreement",
+     "threshold": 0.6
+    },
+    "scoreboard_row": null,
+    "statement": "the canonical angle between two RMs' reward directions predicts their held-out disagreement rate"
+   },
+   {
+    "id": "H-xfam-perm",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": "<",
+     "effect": null,
+     "metric": "xfam_perm_p",
+     "threshold": 0.05
+    },
+    "scoreboard_row": null,
+    "statement": "the correlation clears a model-clustered permutation null"
+   }
+  ],
+  "id": "campaign-gauge-xfam",
+  "kill_criteria": [
+   {
+    "comparator": ">=",
+    "id": "K-xfam",
+    "metric": "xfam_perm_p",
+    "threshold": 0.05
+   }
+  ],
+  "science": "S02-gauge",
+  "subjects": {
+   "datasets": [
+    "rb2-helpfulness-512",
+    "rb2-full"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "rb2-full": "ds:92765fc94e2b8231914d5119670e53bc",
+     "rb2-helpfulness-512": "ds:fa7d96898bcfa0a4eea6770c05eee473"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "fleet"
+   ]
+  },
+  "title": "Canonical cross-family angles predict pairwise disagreement",
+  "version": 1
+ },
+ "spec_hash": "spec:092fef0fc58c288b71ea361dce7b5738",
+ "study_id": "study:campaign-gauge-xfam@v1#092fef0f"
+}

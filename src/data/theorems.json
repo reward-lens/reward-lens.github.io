@@ -1,0 +1,152 @@
+[
+ {
+  "id": "T1",
+  "title": "Constructive unhackable-subspace finder",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S4",
+  "card": null
+ },
+ {
+  "id": "T2",
+  "title": "Distortion equilibrium",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S8/S12",
+  "card": null
+ },
+ {
+  "id": "T3",
+  "title": "RLHF speed proportional to teacher variance",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S12/S3",
+  "card": null
+ },
+ {
+  "id": "T4",
+  "title": "Proxy-true reward angle",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S2/S12",
+  "card": null
+ },
+ {
+  "id": "T5",
+  "title": "Heavy tail defeats KL control",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S3/S4",
+  "card": null
+ },
+ {
+  "id": "T6",
+  "title": "Identifiability up to shift and scale",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S2",
+  "card": null
+ },
+ {
+  "id": "T7",
+  "title": "No single scalar for a population",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S11",
+  "card": null
+ },
+ {
+  "id": "T8",
+  "title": "Scalar head cannot express intransitivity",
+  "kind": "standing_theorem",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S2",
+  "card": null
+ },
+ {
+  "id": "T9",
+  "title": "Fluctuation-dissipation for reward hacking",
+  "kind": "candidate_law",
+  "status": "confirmed",
+  "adjudicating_evidence": [
+   "ev:f313550e40f25be72074f943bec3d933",
+   "ev:e3d3bf0e26730e18be2f10445c5126ec",
+   "ev:f0436051154b9635b33b4286d25ca559"
+  ],
+  "studies": [
+   "study:campaign-chi-drift@v1#1c12042d"
+  ],
+  "science": "S3",
+  "card": "chi-drift"
+ },
+ {
+  "id": "T10",
+  "title": "Belief factorization and gauge=channel-kernel",
+  "kind": "candidate_law",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S8/S2",
+  "card": null
+ },
+ {
+  "id": "T11",
+  "title": "Evaluator-model divergence precedes hacking",
+  "kind": "candidate_law",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S13/AT",
+  "card": null
+ },
+ {
+  "id": "T12",
+  "title": "Coherence/Welch law and Hodge obstruction",
+  "kind": "candidate_law",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S5/S6",
+  "card": null
+ },
+ {
+  "id": "T13",
+  "title": "Value convergence excess",
+  "kind": "candidate_law",
+  "status": "refuted",
+  "adjudicating_evidence": [
+   "ev:351f6b157984c7356c91731ded2358ff"
+  ],
+  "studies": [
+   "study:campaign-atlas-vce@v1#2008bee7"
+  ],
+  "science": "AT",
+  "card": "atlas-vce"
+ },
+ {
+  "id": "T14",
+  "title": "Honesty unraveling law",
+  "kind": "candidate_law",
+  "status": "open",
+  "adjudicating_evidence": [],
+  "studies": [],
+  "science": "S15",
+  "card": null
+ }
+]

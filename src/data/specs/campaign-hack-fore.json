@@ -1,0 +1,51 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.hackfore.analyze",
+  "hypotheses": [
+   {
+    "id": "H-flag",
+    "prediction": {
+     "ci_excludes": 0.0,
+     "comparator": ">",
+     "effect": null,
+     "metric": "flag_hit_rate_minus_behavioral",
+     "threshold": 0.0
+    },
+    "scoreboard_row": "T2",
+    "statement": "weights-derived indices flag the realized-most-exploitable hack family above a behavioral baseline"
+   }
+  ],
+  "id": "campaign-hack-fore",
+  "kill_criteria": [
+   {
+    "comparator": "<=",
+    "id": "K-hackfore",
+    "metric": "flag_hit_rate_minus_behavioral",
+    "threshold": 0.0
+   }
+  ],
+  "science": "S12-hackability",
+  "subjects": {
+   "datasets": [
+    "diagnostic-v3",
+    "hack-probes"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "diagnostic-v3": "ds:0554ebf282abe40a94b742e754838ab6",
+     "hack-probes": "ds:ca165410bd0e2764592669180b29d698"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "fleet"
+   ]
+  },
+  "title": "Weights-derived indices flag the exploitable hack family before any attack",
+  "version": 1
+ },
+ "spec_hash": "spec:ced8526cafe47e6f1efe7c6a7ed9d04a",
+ "study_id": "study:campaign-hack-fore@v1#ced8526c"
+}

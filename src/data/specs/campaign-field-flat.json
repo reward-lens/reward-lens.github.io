@@ -1,0 +1,42 @@
+{
+ "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+ "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+ "spec": {
+  "analysis": "campaign.field.analyze",
+  "hypotheses": [
+   {
+    "id": "H-flat",
+    "prediction": {
+     "ci_excludes": null,
+     "comparator": ">",
+     "effect": null,
+     "metric": "flat_hack_overlap_minus_random",
+     "threshold": 0.0
+    },
+    "scoreboard_row": null,
+    "statement": "the flat directions of the reward Hessian overlap the HACK-FORE-flagged direction more than a random direction does"
+   }
+  ],
+  "id": "campaign-field-flat",
+  "kill_criteria": [],
+  "science": "S04-field",
+  "subjects": {
+   "datasets": [
+    "rb2-full"
+   ],
+   "extra": {
+    "slice_hashes": {
+     "rb2-full": "ds:92765fc94e2b8231914d5119670e53bc"
+    }
+   },
+   "organisms": [],
+   "signals": [
+    "skywork-v2-llama31-8b"
+   ]
+  },
+  "title": "The reward Hessian's flat subspace overlaps the flagged hackable direction",
+  "version": 1
+ },
+ "spec_hash": "spec:f27fb97dc1e2b1a8b5d7d467da898e0b",
+ "study_id": "study:campaign-field-flat@v1#f27fb97d"
+}
