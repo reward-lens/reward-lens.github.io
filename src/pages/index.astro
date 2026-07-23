@@ -1,6 +1,7 @@
 ---
 import Base from "@layouts/Base.astro";
 import InstallStrip from "@components/InstallStrip.astro";
+import CliExcerpt from "@components/CliExcerpt.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
 import EvidenceChip from "@components/EvidenceChip.astro";
 import LedgerStrip from "@components/islands/LedgerStrip.tsx";
@@ -228,6 +229,9 @@ const frontier = [
         <a class="btn" href="/docs/">Open the docs</a>
       </div>
     </div>
+    <div class="hero-cli">
+      <CliExcerpt />
+    </div>
     <div class="hero-strip">
       <LedgerStrip client:load rows={stripRows} />
       <p class="hero-strip-caption">
@@ -435,6 +439,10 @@ const frontier = [
   .btn-primary:hover {
     border-color: var(--accent);
     filter: brightness(1.06);
+  }
+  .hero-cli {
+    max-width: 46rem;
+    margin-bottom: var(--sp-12);
   }
   .hero-strip-caption {
     margin: var(--sp-3) 0 0;

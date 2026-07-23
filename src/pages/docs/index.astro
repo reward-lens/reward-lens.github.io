@@ -2,6 +2,7 @@
 import Base from "@layouts/Base.astro";
 import PageHeader from "@components/PageHeader.astro";
 import InstallStrip from "@components/InstallStrip.astro";
+import CliExcerpt from "@components/CliExcerpt.astro";
 
 // One card per major section; each pitch is the opening line of that
 // section's own index page, trimmed, never rewritten.
@@ -89,6 +90,10 @@ const sections = [
       }
     </div>
 
+    <div class="portal-cli">
+      <CliExcerpt />
+    </div>
+
     <p class="portal-campaign">
       The measurement discipline these pages document was put through a
       pre-registered audit in July 2026: 27 cards, 53 frozen hypotheses,
@@ -142,6 +147,10 @@ const sections = [
     font-size: var(--text-sm);
     color: var(--ink-2);
     line-height: 1.6;
+  }
+  .portal-cli {
+    max-width: 46rem;
+    margin-top: var(--sp-8);
   }
   .portal-campaign {
     margin-top: var(--sp-8);

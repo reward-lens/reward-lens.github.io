@@ -1,0 +1,41 @@
+---
+// Verbatim excerpt of `reward-lens --help`, captured from the installed CLI
+// on 2026-07-23 and trimmed (never edited). The command list is the honest
+// tour of the operator surface.
+import TerminalExcerpt from "./TerminalExcerpt.astro";
+---
+
+<TerminalExcerpt title="reward-lens --help">
+  <pre
+    class="cli-pre">{`
+ Usage: reward-lens [OPTIONS] COMMAND [ARGS]...
+
+ Operator surface for the reward-lens kernel: cards, scoreboard, claims, and
+ the Atlas.
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ card        Build an RM Card for a signal: a view over every stored Evidence │
+│             about it (section 2.15).                                         │
+│ scoreboard  Print the theorem scoreboard: standing theorems and candidate    │
+│             laws (section 2.14).                                             │
+│ claims      Check documents against the store; exit nonzero if any number is │
+│             unbound (section 2.15.5).                                        │
+│ score       Score inputs with a reward model (GPU-gated).                    │
+│ serve       Serve a reward model as an RL-loop-compatible endpoint           │
+│             (GPU-gated).                                                     │
+│ audit       Run the blind auditing game against a signal or organism         │
+│             (GPU-gated).                                                     │
+│ study       Freeze, run, and report frozen studies (gate 3).                 │
+│ atlas       The reward-model population Atlas.                               │
+│ organism    The ground-truth organism foundry.                               │
+╰──────────────────────────────────────────────────────────────────────────────╯`}</pre>
+</TerminalExcerpt>
+
+<style>
+  .cli-pre {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.45;
+    color: var(--ink-2);
+    overflow-x: auto;
+  }
+</style>

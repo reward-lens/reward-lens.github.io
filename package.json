@@ -6,7 +6,8 @@
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "build:data": "python scripts/build_data.py",
-    "check": "node scripts/checks/data_assertions.mjs && astro check && node scripts/checks/links.mjs && node scripts/checks/copy_grep.mjs && node scripts/checks/redirects.mjs && node scripts/checks/meta_audit.mjs"
+    "check": "node scripts/checks/data_assertions.mjs && astro check && node scripts/checks/links.mjs && node scripts/checks/copy_grep.mjs && node scripts/checks/redirects.mjs && node scripts/checks/meta_audit.mjs && bash scripts/checks/claims_gate.sh",
+    "check:claims": "bash scripts/checks/claims_gate.sh"
   },
   "description": "The reward-lens website: campaign ledger, atlas, docs, science.",
   "dependencies": {

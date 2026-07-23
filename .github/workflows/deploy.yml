@@ -1,0 +1,85 @@
+name: Build and deploy the site
+
+# Publishes via the official GitHub Pages Actions pipeline
+# (upload-pages-artifact + deploy-pages). Pages source must be set to
+# "GitHub Actions" in the repository settings, the same one manual click the
+# library docs repo needed.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install reward-lens for the claims gate
+        run: pip install "reward-lens==2.0.1"
+
+      - name: Install site dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Data assertions
+        run: node scripts/checks/data_assertions.mjs
+
+      - name: Claims gate
+        run: bash scripts/checks/claims_gate.sh
+        env:
+          REWARD_LENS_PYTHON: python
+
+      - name: Link check
+        run: node scripts/checks/links.mjs
+
+      - name: Copy gate
+        run: node scripts/checks/copy_grep.mjs
+
+      - name: Redirect map check
+        run: node scripts/checks/redirects.mjs
+
+      - name: Meta and OG audit
+        run: node scripts/checks/meta_audit.mjs
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

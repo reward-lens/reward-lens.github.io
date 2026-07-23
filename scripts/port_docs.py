@@ -485,6 +485,46 @@ def flat_hrefs(nodes, acc):
 def katex_postfix(lines, rel):
     return lines
 
+
+# ---------------------------------------------------------------------------
+# The two sanctioned editorial additions (site brief section 12): a few
+# sentences each, in the existing voice, linking pages that now exist. They
+# live here so re-running the port preserves them.
+# ---------------------------------------------------------------------------
+EDITORIAL = {
+    "sciences.md": [
+        "",
+        "## What the campaign touched",
+        "",
+        "The July 2026 campaign put several of these sciences in contact with"
+        " real models; the scored ledger is at [/campaign/](/campaign/), and"
+        " the standing board with the open problems is at"
+        " [/science/](/science/). S3's fluctuation-dissipation prediction has"
+        " its first real-model confirmation in"
+        " [CHI-DRIFT](/campaign/chi-drift/). S6's intransitivity bound has its"
+        " first measurement in [TOPO-HODGE](/campaign/topo-hodge/). S9's"
+        " verifier question came back as an instrument-level refutation in"
+        " [VERIF-PRM](/campaign/verif-prm/).",
+    ],
+    "caveats.md": [
+        "",
+        "## Two of these caveats now carry evidence",
+        "",
+        "The attribution-versus-patching caveat has teeth: on a planted-truth"
+        " organism the two instruments disagreed about ground truth and the"
+        " card fired its kill criterion ([ADJ-AVP](/campaign/adj-avp/)). The"
+        " toy-to-real transfer caveat does too: instrument calibration missed"
+        " its frozen equivalence bound moving from the CPU organism to a real"
+        " 0.6B trunk ([CAL-TRANSFER](/campaign/cal-transfer/)).",
+    ],
+}
+
+
+def editorial_postfix(lines, rel):
+    if rel in EDITORIAL:
+        return lines + EDITORIAL[rel]
+    return lines
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -521,6 +561,7 @@ def main():
         filedir = os.path.dirname(rel)
         body_lines = inline_pass(body_lines, filedir, rel, is_mdx)
         body_lines = katex_postfix(body_lines, rel)
+        body_lines = editorial_postfix(body_lines, rel)
 
         # MDX stray-brace guard: escape any '{' in prose (outside code/math) that
         # would otherwise start a JSX expression.
