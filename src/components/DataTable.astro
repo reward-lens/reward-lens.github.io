@@ -1,0 +1,99 @@
+---
+// DataTable: a dense data surface. Wraps a slotted <table> in a horizontal
+// scroll container, gives it a sticky header, compact cells and row hover.
+// stickyFirst pins the first column so it stays readable during horizontal
+// scroll on narrow screens. Sorting lives in islands, not here.
+
+interface Props {
+  compact?: boolean;
+  stickyFirst?: boolean;
+}
+
+const { compact = false, stickyFirst = false } = Astro.props;
+const cls = [
+  "data-table",
+  compact ? "is-compact" : "",
+  stickyFirst ? "is-sticky-first" : "",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<div class="scroll-x data-table-scroll">
+  <div class={cls}>
+    <slot />
+  </div>
+</div>
+
+<style>
+  .data-table-scroll {
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+  }
+  .data-table :global(table) {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .data-table :global(th),
+  .data-table :global(td) {
+    text-align: left;
+    padding: var(--sp-2) var(--sp-3);
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+    vertical-align: baseline;
+  }
+  .data-table.is-compact :global(th),
+  .data-table.is-compact :global(td) {
+    padding: var(--sp-1) var(--sp-2);
+  }
+  .data-table :global(tbody tr:last-child th),
+  .data-table :global(tbody tr:last-child td) {
+    border-bottom: 0;
+  }
+  .data-table :global(thead th) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-inset);
+    color: var(--ink-2);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  /* Numeric cells read better with tabular figures and mono numerals. */
+  .data-table :global(td.num),
+  .data-table :global(th.num) {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .data-table :global(tbody tr) {
+    transition: background-color 150ms ease;
+  }
+  .data-table :global(tbody tr:hover) {
+    background: var(--bg-inset);
+  }
+
+  .data-table.is-sticky-first :global(th:first-child),
+  .data-table.is-sticky-first :global(td:first-child) {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--bg-raised);
+    border-right: 1px solid var(--line);
+  }
+  .data-table.is-sticky-first :global(thead th:first-child) {
+    z-index: 3;
+    background: var(--bg-inset);
+  }
+  .data-table.is-sticky-first :global(tbody tr:hover td:first-child) {
+    background: var(--bg-inset);
+  }
+</style>

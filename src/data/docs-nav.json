@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Getting started",
+    "children": [
+      { "title": "Overview", "href": "/docs/" },
+      { "title": "Install", "href": "/docs/install/" },
+      { "title": "Quickstart", "href": "/docs/quickstart/" }
+    ]
+  },
+  {
+    "title": "Guides",
+    "children": [
+      { "title": "Reading a card", "href": "/docs/reading-a-card/" },
+      { "title": "Evidence and trust", "href": "/docs/evidence-trust/" },
+      { "title": "Kill criteria", "href": "/docs/kill-criteria/" }
+    ]
+  },
+  {
+    "title": "Reference",
+    "children": [
+      { "title": "CLI", "href": "/docs/cli/" },
+      { "title": "Python API", "href": "/docs/api/" },
+      { "title": "Source on GitHub", "href": "https://github.com/reward-lens/reward-lens" }
+    ]
+  }
+]

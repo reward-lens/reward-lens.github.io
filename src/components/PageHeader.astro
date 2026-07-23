@@ -1,0 +1,57 @@
+---
+// PageHeader: a section opener. An optional mono eyebrow, the title, an
+// optional lede. With display set, the title takes the Instrument Serif face at
+// a fluid large size, weight 400 only (the face has no bold cut).
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  lede?: string;
+  display?: boolean;
+}
+
+const { title, eyebrow, lede, display = false } = Astro.props;
+---
+
+<header class="page-header">
+  {eyebrow && <p class="ph-eyebrow">{eyebrow}</p>}
+  <h1 class={`ph-title${display ? " ph-display" : ""}`}>{title}</h1>
+  {lede && <p class="ph-lede">{lede}</p>}
+</header>
+
+<style>
+  .page-header {
+    margin-bottom: var(--sp-8);
+  }
+  .ph-eyebrow {
+    margin: 0 0 var(--sp-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+  }
+  .ph-title {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-3xl);
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .ph-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-synthesis: none;
+    letter-spacing: -0.01em;
+    font-size: clamp(2.5rem, 5vw, 3.4rem);
+    line-height: 1.1;
+  }
+  .ph-lede {
+    margin: var(--sp-4) 0 0;
+    max-width: var(--measure-prose);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+</style>

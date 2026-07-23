@@ -1,0 +1,94 @@
+.ledger-strip {
+  position: relative;
+  padding-top: var(--sp-2);
+}
+
+.ledger-marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  align-items: flex-end;
+}
+
+.ledger-mark {
+  display: block;
+  flex: 1 1 0;
+  min-width: 6px;
+  max-width: 16px;
+  height: 30px;
+  border-radius: var(--r-chip);
+  transform-origin: bottom;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.ledger-mark:hover,
+.ledger-mark:focus-visible {
+  transform: scaleY(1.15);
+}
+
+.ledger-kill {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 32%,
+    35% 32%,
+    35% 52%,
+    100% 52%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.ledger-dim {
+  opacity: 0.25;
+}
+
+.ledger-animate .ledger-mark {
+  animation: ledger-draw 220ms ease-out backwards;
+}
+
+@keyframes ledger-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ledger-animate .ledger-mark {
+    animation: none;
+  }
+}
+
+.ledger-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-menu);
+  padding: var(--sp-2) var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.ledger-tip-head {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .ledger-mark {
+    height: 22px;
+  }
+}

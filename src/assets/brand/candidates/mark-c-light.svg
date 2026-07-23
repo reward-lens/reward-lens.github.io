@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="reward-lens split-beam mark">
+  <g stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- square-bracket aperture -->
+    <path d="M7 8.5 L4 8.5 L4 23.5 L7 23.5" stroke="#161A22"/>
+    <!-- upper beam: the learned proxy -->
+    <path d="M8.8 16 L27 10.5" stroke="#B4761A"/>
+    <!-- lower beam: the true reward -->
+    <path d="M8.8 16 L27 21.5" stroke="#161A22"/>
+  </g>
+  <!-- origin -->
+  <circle cx="8.8" cy="16" r="1.6" fill="#161A22"/>
+</svg>

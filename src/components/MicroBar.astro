@@ -1,0 +1,58 @@
+---
+// MicroBar: a 2px inline magnitude bar. Recessive by design; it sits beside a
+// number, never replaces it. Accent is the default because magnitude is not a
+// status; the status families are available for rows already carrying a verdict.
+
+interface Props {
+  value: number;
+  max: number;
+  color?: "ok" | "bad" | "mix" | "none" | "accent" | "info";
+}
+
+const { value, max, color = "accent" } = Astro.props;
+const ratio = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0;
+const pct = (ratio * 100).toFixed(2);
+---
+
+<span
+  class={`microbar microbar-${color}`}
+  role="img"
+  aria-label={`${value} of ${max}`}
+>
+  <span class="microbar-fill" style={`width:${pct}%`}></span>
+</span>
+
+<style>
+  .microbar {
+    display: inline-block;
+    width: var(--microbar-w, 56px);
+    height: 2px;
+    background: var(--line);
+    border-radius: var(--r-pill);
+    vertical-align: middle;
+    overflow: hidden;
+  }
+  .microbar-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+  }
+  .microbar-accent .microbar-fill {
+    background: var(--accent);
+  }
+  .microbar-info .microbar-fill {
+    background: var(--info);
+  }
+  .microbar-ok .microbar-fill {
+    background: var(--ok);
+  }
+  .microbar-bad .microbar-fill {
+    background: var(--bad);
+  }
+  .microbar-mix .microbar-fill {
+    background: var(--mix);
+  }
+  .microbar-none .microbar-fill {
+    background: var(--none);
+  }
+</style>

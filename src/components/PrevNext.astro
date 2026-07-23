@@ -1,0 +1,87 @@
+---
+// PrevNext: two quiet cards at the foot of an article for moving between pages.
+
+interface Link {
+  title: string;
+  href: string;
+}
+interface Props {
+  prev?: Link;
+  next?: Link;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+  (prev || next) && (
+    <nav class="prevnext" aria-label="Pagination">
+      {prev ? (
+        <a class="pn-card pn-prev" href={prev.href} rel="prev">
+          <span class="pn-dir">Previous</span>
+          <span class="pn-title">{prev.title}</span>
+        </a>
+      ) : (
+        <span class="pn-spacer" />
+      )}
+      {next ? (
+        <a class="pn-card pn-next" href={next.href} rel="next">
+          <span class="pn-dir">Next</span>
+          <span class="pn-title">{next.title}</span>
+        </a>
+      ) : (
+        <span class="pn-spacer" />
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .prevnext {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--line);
+  }
+  .pn-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+  .pn-card:hover {
+    border-color: var(--line-strong);
+  }
+  .pn-next {
+    text-align: right;
+  }
+  .pn-dir {
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pn-title {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: var(--text-sm);
+  }
+  .pn-spacer {
+    display: block;
+  }
+  @media (max-width: 600px) {
+    .prevnext {
+      grid-template-columns: 1fr;
+    }
+    .pn-next {
+      text-align: left;
+    }
+  }
+</style>

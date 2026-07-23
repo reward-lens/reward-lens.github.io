@@ -1,0 +1,81 @@
+---
+---
+
+<div class="prose">
+  <slot />
+</div>
+
+<style is:global>
+  .prose {
+    font-family: var(--font-prose);
+    max-width: var(--measure-prose);
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--ink);
+    margin: var(--sp-8) 0 var(--sp-3);
+  }
+  .prose h1 {
+    font-size: var(--text-3xl);
+    margin-top: 0;
+  }
+  .prose h2 {
+    font-size: var(--text-xl);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: var(--sp-2);
+  }
+  .prose h3 {
+    font-size: var(--text-lg);
+  }
+  .prose p {
+    margin: var(--sp-4) 0;
+  }
+  .prose code:not(pre code) {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 1px 5px;
+    font-size: 0.85em;
+  }
+  .prose table {
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .prose th,
+  .prose td {
+    border: 1px solid var(--line);
+    padding: var(--sp-2) var(--sp-3);
+    text-align: left;
+  }
+  .prose th {
+    background: var(--bg-inset);
+    font-weight: 600;
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 1.4em;
+  }
+  .prose li {
+    margin: var(--sp-1) 0;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--line-strong);
+    margin: var(--sp-6) 0;
+    padding-left: var(--sp-4);
+    color: var(--ink-2);
+  }
+  .prose hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: var(--sp-8) 0;
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+// LogEntry: one row of the works log. Date, a neutral type chip, the title
+// (linked when links are present) and a links row. The reverse-chronological
+// container is the page's responsibility.
+
+interface LinkItem {
+  label: string;
+  href: string;
+}
+interface Props {
+  date: Date;
+  type: string;
+  title: string;
+  links?: LinkItem[];
+}
+
+const { date, type, title, links = [] } = Astro.props;
+const d = date instanceof Date ? date : new Date(date);
+const iso = isNaN(d.getTime()) ? String(date) : d.toISOString().slice(0, 10);
+const primary = links.length ? links[0].href : undefined;
+---
+
+<div class="log-entry">
+  <time class="log-date" datetime={iso}>{iso}</time>
+  <span class="log-type">{type}</span>
+  <div class="log-main">
+    {
+      primary ? (
+        <a class="log-title" href={primary}>{title}</a>
+      ) : (
+        <span class="log-title">{title}</span>
+      )
+    }
+    {
+      links.length > 0 && (
+        <span class="log-links">
+          {links.map((l) => (
+            <a class="log-link" href={l.href}>{l.label}</a>
+          ))}
+        </span>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .log-entry {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: var(--sp-2) var(--sp-3);
+    padding: var(--sp-3) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .log-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .log-type {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-2);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 1px var(--sp-2);
+    white-space: nowrap;
+    text-transform: lowercase;
+  }
+  .log-main {
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-1) var(--sp-3);
+  }
+  .log-title {
+    color: var(--ink);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  a.log-title:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+  }
+  .log-links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+  .log-link {
+    font-size: var(--text-xs);
+    color: var(--info);
+  }
+  @media (max-width: 520px) {
+    .log-entry {
+      grid-template-columns: auto 1fr;
+    }
+    .log-date {
+      grid-column: 1 / 2;
+    }
+    .log-type {
+      grid-column: 2 / 3;
+      justify-self: start;
+    }
+    .log-main {
+      grid-column: 1 / 3;
+    }
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+// Campaign.astro: Base plus a breadcrumb strip above a page-max content area.
+// The breadcrumb items go in the named "breadcrumb" slot; page content is the
+// default slot.
+
+import Base from "./Base.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+}
+
+const { title, description, ogImage } = Astro.props;
+---
+
+<Base title={title} description={description} ogImage={ogImage}>
+  <div class="campaign-crumbs">
+    <nav class="crumbs-inner" aria-label="Breadcrumb">
+      <slot name="breadcrumb" />
+    </nav>
+  </div>
+  <div class="campaign-main">
+    <slot />
+  </div>
+</Base>
+
+<style>
+  .campaign-crumbs {
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-inset);
+  }
+  .crumbs-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--sp-2) var(--page-pad);
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-1);
+    min-height: 40px;
+  }
+  .campaign-main {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--sp-8) var(--page-pad) var(--sp-12);
+  }
+</style>
+
+<style is:global>
+  /* Breadcrumb items are supplied by the page; give them a consistent quiet
+     look and a separator between links. */
+  .crumbs-inner a {
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .crumbs-inner a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+  }
+  .crumbs-inner a + a::before,
+  .crumbs-inner a + span::before,
+  .crumbs-inner span + a::before,
+  .crumbs-inner span + span::before {
+    content: "/";
+    margin: 0 var(--sp-2) 0 0;
+    color: var(--ink-3);
+  }
+  .crumbs-inner [aria-current="page"] {
+    color: var(--ink);
+  }
+</style>

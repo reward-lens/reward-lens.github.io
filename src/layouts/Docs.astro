@@ -1,0 +1,97 @@
+---
+import Base from "./Base.astro";
+import SectionNav from "@components/SectionNav.astro";
+import PrevNext from "@components/PrevNext.astro";
+
+interface NavItem {
+  title: string;
+  href?: string;
+  children?: NavItem[];
+}
+interface Props {
+  title: string;
+  description: string;
+  nav: NavItem[];
+  current: string;
+  prev?: { title: string; href: string };
+  next?: { title: string; href: string };
+}
+const { title, description, nav, current, prev, next } = Astro.props;
+---
+
+<Base title={`${title} · reward-lens docs`} description={description}>
+  <div class="docs-shell">
+    <aside class="docs-sidebar">
+      <SectionNav items={nav} current={current} />
+    </aside>
+    <article class="docs-main">
+      <slot />
+      <PrevNext prev={prev} next={next} />
+    </article>
+  </div>
+  <script>
+    // Copy buttons for every rendered code block in docs pages.
+    document.querySelectorAll("pre.astro-code").forEach((pre) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "code-copy";
+      btn.textContent = "Copy";
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(pre.textContent ?? "");
+          btn.textContent = "Copied";
+          setTimeout(() => (btn.textContent = "Copy"), 1600);
+        } catch {
+          btn.textContent = "Copy failed";
+        }
+      });
+      const wrap = document.createElement("div");
+      wrap.className = "code-wrap";
+      pre.replaceWith(wrap);
+      wrap.append(pre, btn);
+    });
+  </script>
+</Base>
+
+<style>
+  .docs-shell {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--sp-8) var(--page-pad);
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: var(--sp-12);
+  }
+  .docs-main {
+    min-width: 0;
+  }
+  @media (max-width: 900px) {
+    .docs-shell {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+  }
+</style>
+
+<style is:global>
+  .code-wrap {
+    position: relative;
+  }
+  .code-copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-2);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+  .code-copy:hover {
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+// TerminalExcerpt: a titled monospace block for verbatim captured CLI output.
+// Content comes from the slot only; the component never invents output.
+
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<figure class="terminal">
+  <figcaption class="term-bar">
+    <span class="term-dot" aria-hidden="true"></span>
+    <span class="term-title">{title ?? "Output"}</span>
+  </figcaption>
+  <div class="term-body scroll-x"><pre><slot /></pre></div>
+</figure>
+
+<style>
+  .terminal {
+    margin: var(--sp-6) 0;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--code-bg);
+    overflow: hidden;
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-inset);
+  }
+  .term-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--r-pill);
+    background: var(--line-strong);
+    flex: none;
+  }
+  .term-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    letter-spacing: 0.02em;
+  }
+  .term-body {
+    padding: var(--sp-3) var(--sp-4);
+  }
+  .term-body pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ink-2);
+    white-space: pre;
+    tab-size: 2;
+  }
+</style>

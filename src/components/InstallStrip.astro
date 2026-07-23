@@ -1,0 +1,166 @@
+---
+// InstallStrip: pick your installer, copy the line. The tabs are radio inputs
+// with labels, so switching works with no JavaScript; only the per-tab copy
+// button needs a script. Styled like a quiet bench instrument, not a banner.
+
+interface Props {
+  center?: boolean;
+}
+
+const { center = false } = Astro.props;
+const uid = "inst-" + Math.random().toString(36).slice(2, 8);
+const commands = [
+  { key: "pip", label: "pip", cmd: "pip install reward-lens" },
+  { key: "uv", label: "uv", cmd: "uv add reward-lens" },
+];
+---
+
+<div class={`install${center ? " is-center" : ""}`} role="group" aria-label="Install reward-lens">
+  <input
+    class="install-radio r-pip"
+    type="radio"
+    name={uid}
+    id={`${uid}-pip`}
+    checked
+  />
+  <input
+    class="install-radio r-uv"
+    type="radio"
+    name={uid}
+    id={`${uid}-uv`}
+  />
+
+  <div class="install-tabs" role="presentation">
+    <label class="install-tab tab-pip" for={`${uid}-pip`}>pip</label>
+    <label class="install-tab tab-uv" for={`${uid}-uv`}>uv</label>
+  </div>
+
+  <div class="install-panels">
+    {
+      commands.map((c) => (
+        <div class={`install-panel panel-${c.key}`}>
+          <span class="install-prompt" aria-hidden="true">$</span>
+          <code class="install-cmd">{c.cmd}</code>
+          <button
+            type="button"
+            class="install-copy"
+            data-copy={c.cmd}
+            aria-label={`Copy ${c.label} command`}
+          >
+            Copy
+          </button>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .install {
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--code-bg);
+    overflow: hidden;
+    max-width: 30rem;
+  }
+  .install.is-center {
+    margin-inline: auto;
+  }
+  .install-radio {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .install-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-inset);
+  }
+  .install-tab {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    padding: var(--sp-2) var(--sp-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+  .install-tab:hover {
+    color: var(--ink-2);
+  }
+  .install:has(.r-pip:checked) .tab-pip,
+  .install:has(.r-uv:checked) .tab-uv {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .install:has(.r-pip:focus-visible) .tab-pip,
+  .install:has(.r-uv:focus-visible) .tab-uv {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    border-radius: 2px;
+  }
+
+  .install-panel {
+    display: none;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .install:has(.r-pip:checked) .panel-pip,
+  .install:has(.r-uv:checked) .panel-uv {
+    display: flex;
+  }
+  .install-prompt {
+    color: var(--ink-3);
+    user-select: none;
+  }
+  .install-cmd {
+    flex: 1;
+    color: var(--ink);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .install-copy {
+    flex: none;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-2);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 2px var(--sp-2);
+    cursor: pointer;
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+  .install-copy:hover {
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+</style>
+
+<script>
+  document.addEventListener("click", async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
+      ".install-copy[data-copy]",
+    );
+    if (!btn) return;
+    try {
+      await navigator.clipboard.writeText(btn.getAttribute("data-copy") ?? "");
+      const prev = btn.textContent;
+      btn.textContent = "Copied";
+      window.setTimeout(() => {
+        btn.textContent = prev;
+      }, 1600);
+    } catch {
+      btn.textContent = "Copy failed";
+    }
+  });
+</script>

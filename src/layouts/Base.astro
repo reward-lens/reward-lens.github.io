@@ -65,5 +65,29 @@ const ogUrl = new URL(ogImage, Astro.site);
       <slot />
     </main>
     <SiteFooter />
+    <script>
+      // Keep themed figures in sync with the manual theme toggle. The
+      // <picture> prefers-color-scheme source handles the no-JS case; once JS
+      // runs, the data-theme attribute is authoritative.
+      const syncFigures = () => {
+        const theme = document.documentElement.dataset.theme ?? "dark";
+        document
+          .querySelectorAll<HTMLImageElement>("img.themed-img")
+          .forEach((img) => {
+            const want = img.dataset[theme];
+            if (!want) return;
+            img
+              .closest("picture")
+              ?.querySelectorAll("source")
+              .forEach((s) => s.remove());
+            if (img.getAttribute("src") !== want) img.src = want;
+          });
+      };
+      new MutationObserver(syncFigures).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+      syncFigures();
+    </script>
   </body>
 </html>

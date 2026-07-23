@@ -1,0 +1,71 @@
+---
+// VerdictChip: a status verdict rendered as a pill carrying a status color, a
+// glyph and the word together. Status color never appears without the word.
+
+interface Props {
+  verdict: "confirmed" | "refuted" | "mixed" | "inconclusive";
+  compact?: boolean;
+}
+
+const { verdict, compact = false } = Astro.props;
+
+const MAP: Record<string, { glyph: string; word: string }> = {
+  confirmed: { glyph: "✓", word: "Confirmed" },
+  refuted: { glyph: "✕", word: "Refuted" },
+  mixed: { glyph: "◐", word: "Mixed" },
+  inconclusive: { glyph: "○", word: "Inconclusive" },
+};
+
+const { glyph, word } = MAP[verdict] ?? MAP.inconclusive;
+---
+
+<span class={`verdict verdict-${verdict}${compact ? " is-compact" : ""}`}>
+  <span class="verdict-glyph" aria-hidden="true">{glyph}</span>
+  <span class="verdict-word">{word}</span>
+</span>
+
+<style>
+  .verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 2px var(--sp-2);
+    border: 1px solid;
+    border-radius: var(--r-pill);
+    white-space: nowrap;
+    vertical-align: baseline;
+  }
+  .verdict.is-compact {
+    font-size: var(--text-xs);
+    padding: 1px var(--sp-2);
+  }
+  .verdict-glyph {
+    font-size: 0.95em;
+    line-height: 1;
+  }
+
+  .verdict-confirmed {
+    color: var(--ok-ink);
+    border-color: color-mix(in oklab, var(--ok) 55%, transparent);
+    background: color-mix(in oklab, var(--ok) 12%, transparent);
+  }
+  .verdict-refuted {
+    color: var(--bad-ink);
+    border-color: color-mix(in oklab, var(--bad) 55%, transparent);
+    background: color-mix(in oklab, var(--bad) 12%, transparent);
+  }
+  .verdict-mixed {
+    color: var(--mix-ink);
+    border-color: color-mix(in oklab, var(--mix) 55%, transparent);
+    background: color-mix(in oklab, var(--mix) 12%, transparent);
+  }
+  .verdict-inconclusive {
+    color: var(--none-ink);
+    border-color: color-mix(in oklab, var(--none) 55%, transparent);
+    background: color-mix(in oklab, var(--none) 12%, transparent);
+  }
+</style>

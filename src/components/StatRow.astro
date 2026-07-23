@@ -1,0 +1,68 @@
+---
+// StatRow: a row of headline numbers. Each stat is a mono value in a bordered
+// chip with a label beneath, and an optional trust letter. Wraps on mobile.
+
+import TrustBadge from "./TrustBadge.astro";
+
+interface Stat {
+  value: string;
+  label: string;
+  evidenceId?: string;
+  trust?: "E" | "C" | "R" | "A";
+}
+interface Props {
+  stats: Stat[];
+}
+
+const { stats } = Astro.props;
+---
+
+<dl class="stat-row">
+  {
+    stats.map((s) => (
+      <div class="stat">
+        <dd class="stat-value-row">
+          <span class="stat-value" title={s.evidenceId}>{s.value}</span>
+          {s.trust && <TrustBadge trust={s.trust} />}
+        </dd>
+        <dt class="stat-label">{s.label}</dt>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-6);
+    margin: 0;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .stat-value-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin: 0;
+  }
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 2px var(--sp-2);
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    letter-spacing: 0.01em;
+  }
+</style>

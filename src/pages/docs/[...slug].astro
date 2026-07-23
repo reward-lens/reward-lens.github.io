@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from "astro:content";
+import Docs from "@layouts/Docs.astro";
+import Prose from "@components/Prose.astro";
+import docsNav from "@data/docs-nav.json";
+
+export async function getStaticPaths() {
+  // The docs landing (/docs/) is the portal page (src/pages/docs/index.astro),
+  // not a collection entry; everything else renders from the ported corpus.
+  const entries = await getCollection("docs");
+  return entries
+    .filter((entry) => entry.id !== "index")
+    .map((entry) => ({
+      params: { slug: entry.id },
+      props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const flat: { title: string; href: string }[] = [];
+const walk = (items: any[]) => {
+  for (const item of items) {
+    if (item.href) flat.push({ title: item.title, href: item.href });
+    if (item.children) walk(item.children);
+  }
+};
+walk(docsNav as any[]);
+const current = `/docs/${entry.id === "index" ? "" : entry.id + "/"}`;
+const idx = flat.findIndex((f) => f.href === current);
+const prev = idx > 0 ? flat[idx - 1] : undefined;
+const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : undefined;
+---
+
+<Docs
+  title={entry.data.title}
+  description={entry.data.description}
+  nav={docsNav as any[]}
+  current={current}
+  prev={prev}
+  next={next}
+>
+  <Prose>
+    <Content />
+  </Prose>
+</Docs>

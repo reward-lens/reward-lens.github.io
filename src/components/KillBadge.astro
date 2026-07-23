@@ -1,0 +1,53 @@
+---
+// KillBadge: a registered kill criterion firing. Reads "K-<name> fired" in the
+// refuted color family, stamped in mono with a square treatment so it never
+// reads as a VerdictChip.
+
+interface Props {
+  kill: string;
+}
+
+const { kill } = Astro.props;
+const name = kill.startsWith("K-") ? kill : `K-${kill}`;
+---
+
+<span class="kill" title={`${name} fired`}>
+  <span class="kill-dot" aria-hidden="true"></span>
+  <span class="kill-id">{name}</span>
+  <span class="kill-state">fired</span>
+</span>
+
+<style>
+  .kill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.2;
+    padding: 2px var(--sp-2);
+    border: 1px solid color-mix(in oklab, var(--bad) 60%, transparent);
+    border-radius: var(--r-chip);
+    background: color-mix(in oklab, var(--bad) 12%, transparent);
+    color: var(--bad-ink);
+    white-space: nowrap;
+    vertical-align: baseline;
+    letter-spacing: 0.01em;
+  }
+  .kill-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--r-pill);
+    background: var(--bad);
+    flex: none;
+  }
+  .kill-id {
+    font-weight: 500;
+  }
+  .kill-state {
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    color: color-mix(in oklab, var(--bad-ink) 80%, var(--ink-3));
+  }
+</style>

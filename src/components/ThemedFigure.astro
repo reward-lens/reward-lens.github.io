@@ -1,0 +1,72 @@
+---
+interface Props {
+  light: string;
+  dark: string;
+  alt: string;
+  caption?: string;
+  source?: { href: string; label: string };
+  width?: number;
+  height?: number;
+  loading?: "eager" | "lazy";
+}
+const {
+  light,
+  dark,
+  alt,
+  caption,
+  source,
+  width,
+  height,
+  loading = "lazy",
+} = Astro.props;
+---
+
+<figure class="themed-figure">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset={dark} />
+    <img
+      src={light}
+      data-light={light}
+      data-dark={dark}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={loading}
+      decoding="async"
+      class="themed-img"
+    />
+  </picture>
+  {
+    (caption || source) && (
+      <figcaption>
+        {caption}
+        {source && (
+          <>
+            {" "}
+            <a href={source.href}>{source.label}</a>
+          </>
+        )}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .themed-figure {
+    margin: var(--sp-8) 0;
+  }
+  .themed-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+  }
+  figcaption {
+    margin-top: var(--sp-2);
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    max-width: var(--measure-prose);
+  }
+</style>

@@ -507,7 +507,7 @@ def main() -> None:
     from reward_lens.core.store import EvidenceStore  # noqa: E402
     from reward_lens.artifacts.card import build_card  # noqa: E402
 
-    store = EvidenceStore(CAMPAIGN / "runs" / "campaign")
+    store = EvidenceStore(CAMPAIGN / "runs" / "campaign", readonly=True)
     hf_ids = {}
     config_text = CAMPAIGN_CONFIG.read_text(encoding="utf-8")
     for m in re.finditer(

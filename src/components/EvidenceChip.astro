@@ -1,0 +1,295 @@
+---
+// EvidenceChip: the signature atom. An inline mono chip carrying a formatted
+// value and a single-letter trust badge. The chip is a button; hovering or
+// focusing it reveals a provenance popover (CSS-only reveal, content always in
+// the DOM) that names the observable, subject, CI, n_effective, the evidence
+// id in a copyable code element, and the registered threshold when supplied.
+// Works inline in a prose sentence and inside a table cell.
+
+interface Props {
+  value: string | number;
+  trust: "E" | "C" | "R" | "A";
+  evidenceId?: string;
+  observable?: string;
+  subject?: string;
+  ci?: [number | null, number | null] | null;
+  nEffective?: number | null;
+  threshold?: string;
+  label?: string;
+}
+
+const {
+  value,
+  trust,
+  evidenceId,
+  observable,
+  subject,
+  ci,
+  nEffective,
+  threshold,
+  label,
+} = Astro.props;
+
+const TRUST_WORD: Record<string, string> = {
+  E: "Exploratory",
+  C: "Calibrated",
+  R: "Registered",
+  A: "Adjudicated",
+};
+
+function sig4(v: number): string {
+  if (!isFinite(v)) return String(v);
+  if (v === 0) return "0";
+  return String(Number(v.toPrecision(4)));
+}
+
+function fmtCi(n: number | null): string {
+  return n === null || n === undefined ? "—" : sig4(n);
+}
+
+const isNum = typeof value === "number";
+const displayValue = isNum ? sig4(value as number) : String(value);
+const fullValue = isNum ? String(value) : String(value);
+const showFull = isNum && fullValue !== displayValue;
+
+const heading = label ?? observable ?? undefined;
+const trustWord = TRUST_WORD[trust] ?? trust;
+
+const hasCi =
+  ci != null && (ci[0] !== null && ci[0] !== undefined || (ci[1] !== null && ci[1] !== undefined));
+
+// A stable-enough id for aria-describedby wiring within the page.
+const popId = "ev-" + Math.random().toString(36).slice(2, 10);
+
+const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trustWord}`;
+---
+
+<span class="ev">
+  <button
+    type="button"
+    class="ev-chip"
+    aria-describedby={popId}
+    aria-label={ariaLabel}
+  >
+    <span class="ev-val">{displayValue}</span>
+    <span class="ev-trust" title={trustWord} aria-hidden="true">{trust}</span>
+  </button>
+  <span role="tooltip" id={popId} class="ev-pop">
+    {heading && <span class="ev-pop-head">{heading}</span>}
+    <dl class="ev-rows">
+      {
+        showFull && (
+          <>
+            <dt>Value</dt>
+            <dd class="mono">{fullValue}</dd>
+          </>
+        )
+      }
+      {
+        subject && (
+          <>
+            <dt>Subject</dt>
+            <dd>{subject}</dd>
+          </>
+        )
+      }
+      {
+        hasCi && ci && (
+          <>
+            <dt>CI</dt>
+            <dd class="mono">[{fmtCi(ci[0])}, {fmtCi(ci[1])}]</dd>
+          </>
+        )
+      }
+      {
+        nEffective !== null && nEffective !== undefined && (
+          <>
+            <dt>n effective</dt>
+            <dd class="mono">
+              {Number.isInteger(nEffective) ? nEffective : sig4(nEffective)}
+            </dd>
+          </>
+        )
+      }
+      {
+        threshold && (
+          <>
+            <dt>Threshold</dt>
+            <dd class="mono">{threshold}</dd>
+          </>
+        )
+      }
+      <dt>Trust</dt>
+      <dd>{trustWord}</dd>
+      {
+        evidenceId && (
+          <>
+            <dt>Evidence</dt>
+            <dd class="ev-id-row">
+              <code class="ev-id">{evidenceId}</code>
+              <button
+                type="button"
+                class="ev-copy"
+                data-ev-copy={evidenceId}
+                aria-label="Copy evidence id"
+              >
+                Copy
+              </button>
+            </dd>
+          </>
+        )
+      }
+    </dl>
+  </span>
+</span>
+
+<style>
+  .ev {
+    position: relative;
+    display: inline-block;
+    vertical-align: baseline;
+  }
+  .ev-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    line-height: 1.2;
+    color: var(--ink);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 0 var(--sp-1);
+    cursor: help;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+  .ev-chip:hover,
+  .ev:focus-within .ev-chip {
+    border-color: var(--line-strong);
+    background: var(--bg-raised);
+  }
+  .ev-val {
+    font-variant-numeric: tabular-nums;
+  }
+  .ev-trust {
+    font-size: 0.85em;
+    color: var(--ink-3);
+    border-left: 1px solid var(--line);
+    padding-left: var(--sp-1);
+    margin-left: 1px;
+  }
+
+  .ev-pop {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 40;
+    display: block;
+    width: max-content;
+    max-width: 18rem;
+    padding: var(--sp-3);
+    background: var(--bg-raised);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-menu);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--ink);
+    text-align: left;
+    white-space: normal;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-2px);
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease,
+      visibility 150ms ease;
+    pointer-events: none;
+  }
+  .ev:hover .ev-pop,
+  .ev:focus-within .ev-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .ev-pop-head {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: var(--sp-2);
+    font-size: var(--text-xs);
+  }
+  .ev-rows {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-1);
+    margin: 0;
+  }
+  .ev-rows dt {
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .ev-rows dd {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .ev-rows .mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .ev-id-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .ev-id {
+    font-family: var(--font-mono);
+    font-size: 0.95em;
+    color: var(--ink-2);
+    user-select: all;
+    overflow-wrap: anywhere;
+  }
+  .ev-copy {
+    flex: none;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-2);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 1px var(--sp-2);
+    cursor: pointer;
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+  .ev-copy:hover {
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+</style>
+
+<script>
+  // Copy the evidence id from any evidence chip popover. One delegated
+  // listener covers every chip on the page.
+  document.addEventListener("click", async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
+      "[data-ev-copy]",
+    );
+    if (!btn) return;
+    const id = btn.getAttribute("data-ev-copy") ?? "";
+    try {
+      await navigator.clipboard.writeText(id);
+      const prev = btn.textContent;
+      btn.textContent = "Copied";
+      window.setTimeout(() => {
+        btn.textContent = prev;
+      }, 1600);
+    } catch {
+      btn.textContent = "Copy failed";
+    }
+  });
+</script>
