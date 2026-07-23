@@ -76,7 +76,7 @@ export default function AuditWalkthrough({ steps }: { steps: WalkStep[] }) {
           </div>
           <div className="walk-artifact">
             <p className="walk-artifact-label">{step.artifactLabel}</p>
-            <pre className="walk-json">
+            <pre className="walk-json" tabIndex={0} aria-label={step.artifactLabel}>
               <code>{JSON.stringify(step.artifact, null, 1)}</code>
             </pre>
           </div>

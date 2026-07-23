@@ -22,7 +22,7 @@ export default defineConfig({
     // the built HTML for it and fails the build (scripts/checks/copy_grep.sh).
     rehypePlugins: [[rehypeKatex, { strict: false }]],
     shikiConfig: {
-      themes: { light: "vitesse-light", dark: "vitesse-dark" },
+      themes: { light: "github-light-high-contrast", dark: "github-dark-high-contrast" },
       defaultColor: "light",
     },
   },

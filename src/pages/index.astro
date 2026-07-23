@@ -280,7 +280,7 @@ const frontier = [
           capabilities.map((c) => (
             <div class="cap-tile">
               <h3>{c.title}</h3>
-              <code class="cap-code">{c.code}</code>
+              <code class="cap-code" tabindex="0">{c.code}</code>
             </div>
           ))
         }
@@ -506,7 +506,7 @@ const frontier = [
   .cap-code {
     display: block;
     font-size: var(--text-xs);
-    color: var(--ink-3);
+    color: var(--ink-2);
     background: var(--bg-inset);
     border: 1px solid var(--line);
     border-radius: var(--r-chip);

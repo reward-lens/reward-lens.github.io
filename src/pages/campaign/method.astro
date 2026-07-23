@@ -80,7 +80,7 @@ const fmtP = (n: number) => Number(n.toPrecision(3));
         sha in the frozen specs is disclosed in the sha string itself rather
         than cleaned away.
       </p>
-      <pre class="method-json"><code>{JSON.stringify({
+      <pre class="method-json" tabindex="0"><code>{JSON.stringify({
         created_at: manifest.created_at,
         git_sha: manifest.git_sha,
         tag: manifest.tag,
@@ -89,7 +89,7 @@ const fmtP = (n: number) => Number(n.toPrecision(3));
       }, null, 1)}</code></pre>
       <details class="method-details">
         <summary>One frozen spec, shown whole: campaign-chi-drift.json</summary>
-        <pre class="method-json"><code>{JSON.stringify(specWithoutFile, null, 1)}</code></pre>
+        <pre class="method-json" tabindex="0"><code>{JSON.stringify(specWithoutFile, null, 1)}</code></pre>
       </details>
     </section>
 
@@ -106,7 +106,7 @@ const fmtP = (n: number) => Number(n.toPrecision(3));
         <summary>
           One adjudication record, shown whole: {adjRecord.id}
         </summary>
-        <pre class="method-json"><code>{JSON.stringify(adjRecord, null, 1)}</code></pre>
+        <pre class="method-json" tabindex="0"><code>{JSON.stringify(adjRecord, null, 1)}</code></pre>
       </details>
     </section>
 
