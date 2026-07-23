@@ -105,3 +105,21 @@ Findings:
 Round 1 closed with all launch-blocking and credibility-damaging findings
 fixed or diagnosed as tooling artifacts. Round 2 convened on the rebuilt
 site to confirm.
+
+## Round 2: convened 2026-07-24, closed early at the owner's direction
+
+Two consolidated fresh-context reviewers (truth and copy; design,
+interaction, and accessibility) were convened on the rebuilt site to
+confirm the round-1 fixes. The owner called the audit sufficient mid-round
+and the reviewers were stopped. Standing in for their confirmation, each
+round-1 fix was verified directly during the fix round: no-JS theming
+checked programmatically under both OS schemes with manual-override
+precedence; the /evidence/ resolver spot-checked against the store line for
+CHI-DRIFT; the trust-ladder chips confirmed visually; T9 wording, walkthrough
+attribution, atlas tables, and log entries re-read in the built HTML; and
+the full gate suite (data assertions, types, links, copy, redirects, meta,
+claims, axe both themes) green at head. The truth reviewer's partial
+transcript before the stop had already passed the homepage demo labeling.
+
+Gauntlet state at close: zero known launch-blocking or credibility-damaging
+findings open.
