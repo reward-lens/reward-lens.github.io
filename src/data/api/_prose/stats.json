@@ -1,0 +1,62 @@
+{
+  "group": "stats",
+  "title": "Stats",
+  "segments": [
+    {
+      "type": "prose",
+      "markdown": "**How many independent data points do you actually have?** That question runs through this whole subsystem. `reward_lens.stats` is pure numpy and scipy, no torch, and it is where the library keeps its honesty about sample size, effect size, and what a correlation is worth.\n\n## Effective sample size and clones\n\nThirty rollouts drawn from six seeds are not thirty data points. `effective_sample_size` computes the Kish effective size from seed labels, `detect_clones` finds the duplication by content hash, and the cluster routines resample at the seed level so a confidence interval widens to match the independence you really have. The worked example is [effective sample size of an eval set](/docs/how-to/effective-sample-size/)."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.ess.effective_sample_size"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.ess.detect_clones"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.ess.cluster_bootstrap"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.ess.cluster_permutation"
+    },
+    {
+      "type": "prose",
+      "markdown": "## Effect sizes and correlation\n\nStandardized effect sizes with bias-corrected bootstrap intervals, and a Spearman correlation that reports its own confidence interval rather than a bare number. These are the primitives the bias battery and the faithfulness measurements are built from."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.effects.cohens_d"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.effects.bca_bootstrap"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.effects.spearman_with_ci"
+    },
+    {
+      "type": "prose",
+      "markdown": "## ROC and calibration\n\nA detector is only as good as its operating curve. `roc_pr` scores a detector against a known answer key; `calibration_curve` checks whether a probability means what it says. Both feed the [scorecards](/docs/discipline/calibration-and-organisms/) that turn an instrument into a calibrated one."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.roc.roc_pr"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.roc.calibration_curve"
+    },
+    {
+      "type": "prose",
+      "markdown": "## Mutual information\n\nA nonparametric mutual-information estimate, in bits, for the couplings the reward science measures between a feature and the reward it drives."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.stats.mi.mi_ksg"
+    }
+  ]
+}

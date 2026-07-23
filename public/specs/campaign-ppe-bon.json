@@ -1,0 +1,65 @@
+{
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "spec": {
+    "analysis": "campaign.ppe.analyze",
+    "hypotheses": [
+      {
+        "id": "H-tail-plateau",
+        "prediction": {
+          "ci_excludes": 0.0,
+          "comparator": ">",
+          "effect": null,
+          "metric": "spearman_tail_vs_bon_plateau",
+          "threshold": 0.3
+        },
+        "scoreboard_row": null,
+        "statement": "the tail index predicts where best-of-k stops helping on the five PPE verifiable sets"
+      },
+      {
+        "id": "H-lowerquantile",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": "==",
+          "effect": null,
+          "metric": "bon_lowerquantile_beats_mean",
+          "threshold": 1.0
+        },
+        "scoreboard_row": null,
+        "statement": "the lower-quantile best-of-n aggregation beats the mean against human labels, reproducing the PPE finding"
+      }
+    ],
+    "id": "campaign-ppe-bon",
+    "kill_criteria": [
+      {
+        "comparator": "<=",
+        "id": "K-ppe",
+        "metric": "spearman_tail_vs_bon_plateau_ci_low",
+        "threshold": 0.0
+      }
+    ],
+    "science": "S03-thermo",
+    "subjects": {
+      "datasets": [
+        "ppe-best-of-k",
+        "ppe-human"
+      ],
+      "extra": {
+        "slice_hashes": {
+          "ppe-best-of-k": "ds:43a17b70ed1c3ee83423bb4df2cce4ac",
+          "ppe-human": "ds:f9fa29ebabe6994fded4e9057ec07c10"
+        }
+      },
+      "organisms": [],
+      "signals": [
+        "skywork-v2-qwen3-8b",
+        "skywork-v2-llama31-8b",
+        "skywork-v2-qwen3-0.6b"
+      ]
+    },
+    "title": "Tail index forecasts the best-of-k plateau on PPE",
+    "version": 1
+  },
+  "spec_hash": "spec:7077cf849ed8492fc327d970aa2ede55",
+  "study_id": "study:campaign-ppe-bon@v1#7077cf84"
+}

@@ -1,0 +1,80 @@
+{
+  "group": "index",
+  "title": "API reference",
+  "segments": [
+    {
+      "type": "prose",
+      "markdown": "**Which import surface owns a name, and will reaching for it pull in torch?** Those two questions cause most import errors, and this section answers them one page per kernel subsystem.\n\nThe pages are generated. mkdocstrings reads the source in `src/` through griffe, which parses the code statically instead of importing it, so the reference builds with no torch, no model, and no GPU, and it cannot drift from the signatures it documents. What you read here is what the source says.\n\nThe layout follows the kernel. `import reward_lens` and the two pure-Python subsystems under it, `reward_lens.core` and `reward_lens.stats`, pull only numpy and scipy. Everything that touches a model lives one level down in its own subsystem and is imported from there: `from reward_lens.signals import load_signal`, `from reward_lens.measure.battery import DirectLinearAttribution`. The top level stays deliberately thin. The 1.0 names it still exposes are lazy, resolved on first access, so importing the package costs nothing you did not ask for."
+    },
+    {
+      "type": "cards",
+      "cards": [
+        {
+          "title": "Core and evidence",
+          "href": "/docs/reference/core/",
+          "description": "The `Evidence` object, the trust and gauge enums, the three gates, and the append-only store. Torch-free."
+        },
+        {
+          "title": "Stats",
+          "href": "/docs/reference/stats/",
+          "description": "Effective sample size, clone detection, cluster bootstrap, effect sizes, ROC, and mutual information. Pure numpy and scipy."
+        },
+        {
+          "title": "Signals",
+          "href": "/docs/reference/signals/",
+          "description": "The `RewardSignal` protocol, the loaders, and the eight grader adapters behind one interface."
+        },
+        {
+          "title": "Data",
+          "href": "/docs/reference/data/",
+          "description": "The preference schema, the built-in diagnostic set, lineage for honest sample sizes, and span maps."
+        },
+        {
+          "title": "Measure and indices",
+          "href": "/docs/reference/measure/",
+          "description": "The runner, the eleven battery observables, and the eighteen scalar indices."
+        },
+        {
+          "title": "Interventions",
+          "href": "/docs/reference/interventions/",
+          "description": "Patch, steer, ablate, edit, erase, and the erasure certificate that grades its own success."
+        },
+        {
+          "title": "Geometry",
+          "href": "/docs/reference/geometry/",
+          "description": "Frames, canonicalization, the cross-model angle that arrives with a receipt, and the Hessian spectrum."
+        },
+        {
+          "title": "Concepts",
+          "href": "/docs/reference/concepts/",
+          "description": "Concept directions, reward alignment, dose-response slopes, and calibrated probes."
+        },
+        {
+          "title": "Organisms",
+          "href": "/docs/reference/organisms/",
+          "description": "The twelve planted-rule generators and the scorecard that grades an instrument against a known answer."
+        },
+        {
+          "title": "Dynamics and loops",
+          "href": "/docs/reference/dynamics-loops/",
+          "description": "Checkpoint chains, best-of-N accounting, susceptibility, and the rollout recorder."
+        },
+        {
+          "title": "Studies",
+          "href": "/docs/reference/studies/",
+          "description": "The spec, freeze, run, and the theorem scoreboard."
+        },
+        {
+          "title": "Artifacts and operate",
+          "href": "/docs/reference/artifacts-operate/",
+          "description": "Cards, the population Atlas, the manuscript claims checker, the CLI, and the in-process MCP surface."
+        },
+        {
+          "title": "Legacy (1.0 API)",
+          "href": "/docs/reference/legacy/",
+          "description": "The preserved 1.0 compatibility layer and the submodule-only tools it did not fold in."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+.tokenstrip {
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--bg-raised);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.ts-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.ts-chip {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+  cursor: pointer;
+  min-height: 28px;
+}
+
+.ts-chip:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.ts-chip-active {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.ts-prompt {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.ts-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: var(--sp-2);
+}
+
+.ts-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  padding: var(--sp-3);
+  line-height: 1.9;
+}
+
+.ts-tok {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--r-chip);
+  padding: 1px 2px;
+  cursor: default;
+  white-space: pre;
+}
+
+.ts-tok-prompt {
+  opacity: 0.45;
+}
+
+.ts-readout {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  min-height: 1.4em;
+}
+
+.ts-provenance {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.ts-trust {
+  font-family: var(--font-mono);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-chip);
+  padding: 0 4px;
+}

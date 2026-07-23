@@ -1,0 +1,63 @@
+{
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "spec": {
+    "analysis": "campaign.vce.analyze",
+    "hypotheses": [
+      {
+        "id": "H-vce",
+        "prediction": {
+          "ci_excludes": 0.0,
+          "comparator": ">",
+          "effect": null,
+          "metric": "real_vce",
+          "threshold": 0.0
+        },
+        "scoreboard_row": "T13",
+        "statement": "value-convergence excess on real reward-model pairs beats the capability-matched random-utility null"
+      },
+      {
+        "id": "H-vce-p",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": "<",
+          "effect": null,
+          "metric": "reward_convergent_p_value",
+          "threshold": 0.05
+        },
+        "scoreboard_row": null,
+        "statement": "the convergent-pair alignment exceeds the random-utility null at p < 0.05"
+      }
+    ],
+    "id": "campaign-atlas-vce",
+    "kill_criteria": [
+      {
+        "comparator": "<=",
+        "id": "K-vce",
+        "metric": "real_vce",
+        "threshold": 0.0
+      }
+    ],
+    "science": "AT-universality",
+    "subjects": {
+      "datasets": [
+        "rb2-full",
+        "rb2-helpfulness-512"
+      ],
+      "extra": {
+        "slice_hashes": {
+          "rb2-full": "ds:92765fc94e2b8231914d5119670e53bc",
+          "rb2-helpfulness-512": "ds:fa7d96898bcfa0a4eea6770c05eee473"
+        }
+      },
+      "organisms": [],
+      "signals": [
+        "fleet"
+      ]
+    },
+    "title": "Value-convergence excess across the fleet beats the capability-matched null",
+    "version": 1
+  },
+  "spec_hash": "spec:2008bee7d02b9461abfd6f12ff7b0ffe",
+  "study_id": "study:campaign-atlas-vce@v1#2008bee7"
+}

@@ -1,0 +1,1366 @@
+{
+  "group": "signals",
+  "title": "Signals",
+  "order": [
+    "reward_lens.signals.base.RewardSignal",
+    "reward_lens.signals.base.Readout",
+    "reward_lens.signals.base.PositionSpec",
+    "reward_lens.signals.loaders.wrap_hf_model",
+    "reward_lens.signals.loaders.from_tiny",
+    "reward_lens.signals.loaders.load_signal",
+    "reward_lens.signals.classifier.ClassifierRM",
+    "reward_lens.signals.judge.GenerativeJudge",
+    "reward_lens.signals.process.ProcessRM",
+    "reward_lens.signals.implicit.ImplicitRM",
+    "reward_lens.signals.rubric.RubricRM",
+    "reward_lens.signals.trajectory.TrajectoryRM",
+    "reward_lens.signals.dense.DenseRewardExtractor",
+    "reward_lens.signals.ensemble.SignalEnsemble",
+    "reward_lens.signals.ensemble.DistributionalSignal",
+    "reward_lens.signals.conformance.run_conformance",
+    "reward_lens.signals.conformance_adapters.run_adapter_conformance"
+  ],
+  "symbols": {
+    "reward_lens.signals.base.RewardSignal": {
+      "path": "reward_lens.signals.base.RewardSignal",
+      "name": "RewardSignal",
+      "kind": "class",
+      "text": "The substrate abstraction: any reward signal with white-box access (section 2.3.2).\n\nEight adapters implement this (classifier, judge, process, implicit, rubric, trajectory,\ndense, ensemble). An Observable written against this protocol runs on all of them; a new\ngrader paradigm the field invents becomes a new adapter passing the conformance suite, and\nthe whole battery, every index, and every science become available to it for free (the\nextensibility contract, section 5.3).\n\n``caps`` declares capabilities (R3); ``readouts`` lists the readouts the signal exposes;\n``score`` and ``score_prefixes`` return Evidence; ``capture`` returns a handle to activations\n(possibly cached); ``with_interventions`` returns a wrapped signal any Observable accepts\nunchanged; ``tokenize`` owns span carry-through.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/base.py",
+        "start": 215,
+        "end": 245,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L215-L245"
+      },
+      "signature": null,
+      "bases": [
+        "Protocol"
+      ],
+      "decorators": [
+        "runtime_checkable"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "meta",
+            "annotation": "SignalMeta",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "caps",
+            "annotation": "Capability",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "runtime",
+            "annotation": "Runtime",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "readouts",
+            "kind": "function",
+            "signature": "readouts() -> list[Readout]",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 235,
+              "end": 235,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L235"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: DataView, readout: str = 'reward') -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 237,
+              "end": 237,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L237"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: DataView, readout: str = 'reward') -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 239,
+              "end": 239,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L239"
+            }
+          },
+          {
+            "name": "capture",
+            "kind": "function",
+            "signature": "capture(view: DataView, spec: CaptureSpec) -> CaptureHandle",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 241,
+              "end": 241,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L241"
+            }
+          },
+          {
+            "name": "with_interventions",
+            "kind": "function",
+            "signature": "with_interventions(*ivs: Intervention = ()) -> RewardSignal",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 243,
+              "end": 243,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L243"
+            }
+          },
+          {
+            "name": "tokenize",
+            "kind": "function",
+            "signature": "tokenize(item: Any) -> TokenizedInput",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 245,
+              "end": 245,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L245"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.base.Readout": {
+      "path": "reward_lens.signals.base.Readout",
+      "name": "Readout",
+      "kind": "class",
+      "text": "A first-class readout: what to read, where, and how (section 2.3.1).\n\n``name`` is the human key (\"reward\", \"verdict\", \"criterion:coherence\", \"quantile:0.9\"). For\n``linear`` and ``logit_diff`` readouts, ``vector`` is the direction ``w`` (fp32) the scalar is\nprojected onto; for ``simplex`` (Likert over score tokens) and ``token_value`` (per-token\nvalue) the meaning is carried in ``meta``. ``site`` is where the readout reads, usually the\nfinal residual stream; ``position`` says at which token(s). This object is the pivot of R4:\nit is architecturally resolved by adapters at load time (w_r is read off the checkpoint, not\nprobe-extracted), so there is no \"is this feature real\" regress at the readout (I1, property 2\nin section 1.1).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/base.py",
+        "start": 128,
+        "end": 147,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L128-L147"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "name",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "kind",
+            "annotation": "ReadoutKind",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "position",
+            "annotation": "PositionSpec",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "vector",
+            "annotation": "Any",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "meta",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.base.PositionSpec": {
+      "path": "reward_lens.signals.base.PositionSpec",
+      "name": "PositionSpec",
+      "kind": "class",
+      "text": "A resolvable specification of which token positions a readout reads (section 2.3.1).\n\nNothing in the kernel hardcodes \"final token\" (R4). A classifier head reads at ``final``; a\nprocess reward model reads at ``step_ends``; a generative judge reads at ``judgment`` (the\nverdict token, whose location the signal detects and validates); a dense reward reads at\n``all``. ``detail`` carries the kind-specific configuration (the span kind for ``span_ends``,\nthe explicit indices for ``explicit``, the delimiter config or detected index for\n``judgment``).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/base.py",
+        "start": 72,
+        "end": 118,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L72-L118"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "kind",
+            "annotation": "PositionKind",
+            "value": "'final'",
+            "description": ""
+          },
+          {
+            "name": "detail",
+            "annotation": "Any",
+            "value": "None",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "resolve",
+            "kind": "function",
+            "signature": "resolve(tokens: TokenizedInput) -> list[int]",
+            "text": "Resolve to concrete token indices for a given tokenized input.\n\nThe position-only kinds (``final``, ``all``, ``explicit``, and span-derived kinds when\nthe spans are present) resolve here with no model knowledge. ``judgment`` is resolved by\nthe signal, which detects the verdict position from the chat template and validates it;\nwhen a signal has done that detection it passes the resolved index through ``detail``, so\nthis method honours an explicit ``detail`` index list for ``judgment`` as well.",
+            "source": {
+              "file": "src/reward_lens/signals/base.py",
+              "start": 87,
+              "end": 118,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/base.py#L87-L118"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.loaders.wrap_hf_model": {
+      "path": "reward_lens.signals.loaders.wrap_hf_model",
+      "name": "wrap_hf_model",
+      "kind": "function",
+      "text": "Build a ``ClassifierRM`` from an already-loaded model + tokenizer (no download).\n\nResolves the adapter (v1 dispatch) if not given, builds the ``SiteMap`` and numerics policy,\nfingerprints the model, reads the reward head into readouts, and runs a fast conformance\nquick-check (determinism plus readout-matches-head on two trivial inputs) unless disabled. This\nis the constructor the tests and the tiny-model path use, and the one the hub loader ends at once\nit has a model in hand.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/loaders.py",
+        "start": 64,
+        "end": 148,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/loaders.py#L64-L148"
+      },
+      "signature": "wrap_hf_model(\n    model: torch.nn.Module,\n    tokenizer: Any,\n    adapter: Any = None,\n    *,\n    device: str = 'cpu',\n    numerics: Any = None,\n    adapter_id: str | None = None,\n    architecture: str | None = None,\n    max_length: int = 2048,\n    lineage: dict[str, Any] | None = None,\n    conformance_quickcheck: bool = True\n) -> ClassifierRM",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.signals.loaders.from_tiny": {
+      "path": "reward_lens.signals.loaders.from_tiny",
+      "name": "from_tiny",
+      "kind": "function",
+      "text": "Construct the tiny synthetic ``ClassifierRM`` the tests run on, entirely offline.\n\nA real ``LlamaForSequenceClassification`` (hidden 32, 2 layers, 4 heads, ``num_labels=1``) so the\nadapter, hooks, readout, grad, and hvp see the same module tree they will see on an 8B Skywork\nmodel; only the magnitudes differ. The tokenizer defaults to gpt2 (cached, fast, offset-capable);\nif gpt2 cannot be loaded offline, a minimal byte-level tokenizer is used so the tests still run\nwith no network (section: hardware reality).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/loaders.py",
+        "start": 151,
+        "end": 197,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/loaders.py#L151-L197"
+      },
+      "signature": "from_tiny(\n    *,\n    d_model: int = 32,\n    n_layers: int = 2,\n    n_heads: int = 4,\n    seed: int = 0,\n    vocab_size: int | None = None,\n    seq_max: int = 256,\n    tokenizer_name: str = 'gpt2',\n    conformance_quickcheck: bool = False\n) -> ClassifierRM",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.signals.loaders.load_signal": {
+      "path": "reward_lens.signals.loaders.load_signal",
+      "name": "load_signal",
+      "kind": "function",
+      "text": "Load a signal from an HF id, a local path, or a ``SignalSpec`` (section 2.3.4).\n\nSniffs the loading convention from the config architecture and head names, chooses the adapter\nand numerics policy, then loads the weights and delegates to ``wrap_hf_model``. The weight load\nfor the 8B/27B campaign models is GPU/download-gated: unless ``allow_download=True`` is set (and\nthe machine can hold the model), this raises a clear, marked error rather than attempting a\nmulti-gigabyte download on hardware that cannot run it. Ambiguous conventions raise with the\ncandidate list, never a silent guess.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/loaders.py",
+        "start": 205,
+        "end": 241,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/loaders.py#L205-L241"
+      },
+      "signature": "load_signal(spec: str | SignalSpec, **overrides: Any = {}) -> ClassifierRM",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.signals.classifier.ClassifierRM": {
+      "path": "reward_lens.signals.classifier.ClassifierRM",
+      "name": "ClassifierRM",
+      "kind": "class",
+      "text": "A sequence-classification reward model as a ``RewardSignal`` (section 2.3.3).\n\nBuild it through ``signals.loaders.wrap_hf_model`` / ``from_tiny`` (which resolve the adapter,\nsite map, head, policy, and fingerprint); direct construction is for the loader and tests. The\nsignal holds a ``HFRuntime``, the numerics policy, the readouts read off the head, and the\ntokenizer. ``caps`` declares its capabilities (R3); ``meta`` carries the fingerprint, lineage,\ntemplate, and numerics policy.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/classifier.py",
+        "start": 90,
+        "end": 405,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L90-L405"
+      },
+      "signature": "ClassifierRM(\n    *,\n    runtime: HFRuntime,\n    meta: SignalMeta,\n    readouts: list[Readout],\n    tokenizer: Any,\n    policy: NumericsPolicy,\n    max_length: int = 2048,\n    default_batch_size: int = 16,\n    interventions: tuple[Any, ...] = (),\n    legacy_row_mean: Readout | None = None\n)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "readouts",
+            "kind": "function",
+            "signature": "readouts() -> list[Readout]",
+            "text": "The readouts this signal exposes (section 2.3.1).\n\nA single-row head exposes one ``reward`` readout. A multi-row head exposes one\n``criterion:k`` readout per row plus a ``reward`` composite; the row-mean aggregate is\navailable separately as a documented legacy readout, never the default.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 127,
+              "end": 134,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L127-L134"
+            }
+          },
+          {
+            "name": "readout",
+            "kind": "function",
+            "signature": "readout(name: str = 'reward') -> Readout",
+            "text": "Look up a readout by name, with a helpful error listing the candidates.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 136,
+              "end": 149,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L136-L149"
+            }
+          },
+          {
+            "name": "reward_scalar_fn",
+            "kind": "function",
+            "signature": "reward_scalar_fn(readout: str = 'reward')",
+            "text": "Return a ``ScalarFn`` computing the readout scalar from a ``RawOutput`` (for grad/hvp).\n\nThe closure reads the grad-attached head input from ``RawOutput.extra`` and projects it onto\nthe readout vector in fp32, pooling at the resolved final positions. Passed straight into\n``runtime.grad``/``runtime.hvp``; that is how the M1 Hessian test differentiates the reward.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 151,
+              "end": 171,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L151-L171"
+            }
+          },
+          {
+            "name": "tokenize",
+            "kind": "function",
+            "signature": "tokenize(item: Any) -> TokenizedInput",
+            "text": "Tokenize a data item, carrying character-to-token offsets and typed spans (section 2.3.2).\n\nApplies the model's chat template when it has one (else a plain ``User:``/``Assistant:``\nfallback, which is what the gpt2-tokenizer tiny model uses), and requests offset mapping from\nthe fast tokenizer so span-level patching and attribution stay exact. Explicit character\nspans on the item (over the templated text) are mapped into token coordinates and carried on\nthe ``TokenizedInput``; this is the load-bearing, unglamorous part of the protocol.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 175,
+              "end": 203,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L175-L203"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str = 'reward') -> Evidence[Scores]",
+            "text": "Score every item under a readout, returning ``Evidence[Scores]`` (section 2.3.2).\n\nEach score is the fp32 projection of the item's final head-input hidden state onto the\nreadout vector (R11). Gauge is INVARIANT (a raw score is gauge-free); trust is EXPLORATORY\n(no scorecard entry yet, gate 1). Provenance records the token cost and the wall time.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 253,
+              "end": 280,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L253-L280"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str = 'reward') -> Evidence[TokenCurves]",
+            "text": "Per-token reward curves ``r(y_{1:t})`` for every item (section 2.3.2).\n\nOne forward per batch: the head input at every valid position is projected onto the readout\nvector, and because the classifier pools the last token under causal attention, the value at\nposition ``t`` is exactly the reward the model assigns the prefix ending at ``t``. The final\nentry of each curve therefore equals ``score(...)`` for that item, which the conformance\nsuite asserts.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 282,
+              "end": 321,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L282-L321"
+            }
+          },
+          {
+            "name": "capture",
+            "kind": "function",
+            "signature": "capture(view: Any, spec: CaptureSpec) -> CaptureHandle",
+            "text": "Capture activations at the spec's sites, returning a ``CaptureHandle`` (section 2.3.2).\n\nCollates the whole view into one left-padded batch and runs ``forward_with_capture`` under\nany mounted interventions, returning an in-memory handle. Population-scale, store-backed\nstreaming is ``runtime.store.ActivationStore.get_or_compute``; this method is the direct,\nsingle-batch path the store calls on a miss.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 325,
+              "end": 340,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L325-L340"
+            }
+          },
+          {
+            "name": "with_interventions",
+            "kind": "function",
+            "signature": "with_interventions(*ivs: Any = ()) -> ClassifierRM",
+            "text": "Return a signal wrapped in interventions; any Observable accepts it unchanged (section 2.6.1).\n\nEach intervention is compiled against this signal (if it exposes ``compile``) and mounted on\nthe runtime's shared hook path during scoring and capture. The intervention fingerprints\nbecome part of the wrapped signal's subject, so an intervened Evidence can never masquerade\nas a clean one. Interventions land as a full subsystem in M6; this is the signal-side wiring.",
+            "source": {
+              "file": "src/reward_lens/signals/classifier.py",
+              "start": 344,
+              "end": 364,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/classifier.py#L344-L364"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.judge.GenerativeJudge": {
+      "path": "reward_lens.signals.judge.GenerativeJudge",
+      "name": "GenerativeJudge",
+      "kind": "class",
+      "text": "An LLM-as-judge as a ``RewardSignal`` (section 2.3.3, adapter 2).\n\nBuild it through ``from_tiny`` (the offline test vehicle) or ``from_causal_lm`` (an\nalready-loaded instruct model). The verdict readouts are ``logit_diff`` directions read off the\nLM head; the Likert readout is a ``simplex`` over score tokens. ``score`` dispatches on the\nreadout kind: a projection for the logit-diff verdicts, an expected value under the score-token\nsoftmax for the Likert.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/judge.py",
+        "start": 61,
+        "end": 347,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/judge.py#L61-L347"
+      },
+      "signature": "GenerativeJudge(\n    *,\n    runtime: HFRuntime,\n    meta: Any,\n    policy: Any,\n    tokenizer: Any,\n    readouts: Sequence[Readout],\n    max_length: int = 2048,\n    default_batch_size: int = 16,\n    interventions: tuple[Any, ...] = ()\n) -> None",
+      "bases": [
+        "SignalImplBase"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "Score every item under a readout, returning ``Evidence[Scores]`` (section 2.3.2).\n\n``logit_diff`` readouts (``verdict``, ``verdict_ab``) project the final hidden state onto the\nreadout direction in fp32: ``h . (W_U[a] - W_U[b])`` is exactly ``logit(a) - logit(b)`` for\nthe token the model is about to emit. The ``simplex`` readout (``likert``) returns the\nexpected score under the softmax over the score tokens. Gauge INVARIANT, trust EXPLORATORY.",
+            "source": {
+              "file": "src/reward_lens/signals/judge.py",
+              "start": 130,
+              "end": 150,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/judge.py#L130-L150"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": "Per-token verdict curves ``verdict(y_{1:t})`` for every item (section 2.3.2).\n\nFor a ``logit_diff`` readout the curve at position ``t`` is the verdict the model would emit\nif the sequence ended at ``t``; its final entry equals ``score``. Only defined for the\nlogit-diff verdicts (a simplex has no single direction to trace); raises otherwise.",
+            "source": {
+              "file": "src/reward_lens/signals/judge.py",
+              "start": 152,
+              "end": 172,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/judge.py#L152-L172"
+            }
+          },
+          {
+            "name": "validate_judgment_position",
+            "kind": "function",
+            "signature": "validate_judgment_position(\n    calibration_items: Sequence[Any],\n    k: int = 4\n) -> dict[str, Any]",
+            "text": "Validate that the verdict token lands at the detected judgment position (section 2.3.3).\n\nDetection is structural: templating with the generation prompt makes the final valid token\nthe judgment position. Validation runs a forward over up to ``k`` calibration prompts and\nchecks how often the model's greedy next token there is one of the verdict tokens; the\nfraction is the detection confidence. On the random tiny model this is near chance and is\nrecorded honestly. The production path samples a real instruct model, which this structure is\nready for but does not stand in for. Returns the detection record stored in ``meta.lineage``.",
+            "source": {
+              "file": "src/reward_lens/signals/judge.py",
+              "start": 191,
+              "end": 239,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/judge.py#L191-L239"
+            }
+          },
+          {
+            "name": "from_causal_lm",
+            "kind": "function",
+            "signature": "from_causal_lm(\n    model: torch.nn.Module,\n    tokenizer: Any,\n    *,\n    yes: str = 'Yes',\n    no: str = 'No',\n    option_a: str = 'A',\n    option_b: str = 'B',\n    likert: Sequence[str] = ('1', '2', '3', '4', '5'),\n    device: str = 'cpu',\n    architecture: str | None = None,\n    lineage: dict[str, Any] | None = None,\n    validate_with: Sequence[Any] | None = None\n) -> GenerativeJudge",
+            "text": "Wrap an already-loaded ``CausalLM`` + tokenizer as a judge (no download).\n\nReads the verdict directions off the LM head: ``W_U[yes] - W_U[no]`` for the pointwise\nverdict, ``W_U[A] - W_U[B]`` for the pairwise, and the score-token ids for the Likert\nsimplex. Runs the judgment-position validation on ``validate_with`` if given (else a small\nbuilt-in calibration set). This is the entry point a real instruct judge uses on adequate\nhardware; ``from_tiny`` calls it on the synthetic model.",
+            "source": {
+              "file": "src/reward_lens/signals/judge.py",
+              "start": 243,
+              "end": 314,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/judge.py#L243-L314"
+            }
+          },
+          {
+            "name": "from_tiny",
+            "kind": "function",
+            "signature": "from_tiny(\n    *,\n    d_model: int = 32,\n    n_layers: int = 2,\n    n_heads: int = 4,\n    seed: int = 0,\n    seq_max: int = 256,\n    tokenizer_name: str = 'gpt2'\n) -> GenerativeJudge",
+            "text": "Construct the tiny offline judge the tests run on (section 2.3.3, tiny vehicles).\n\nA real ``LlamaForCausalLM`` (hidden 32, 2 layers) with a real tokenizer, so the adapter,\nhooks, LM-head capture, and logit-diff readout see the same module tree a production judge\nwould; only the magnitudes differ, and the weights are random so no verdict is meaningful.\nThe verdict *mechanism* (reading ``W_U[Yes] - W_U[No]`` off the head) is exact and real.",
+            "source": {
+              "file": "src/reward_lens/signals/judge.py",
+              "start": 316,
+              "end": 347,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/judge.py#L316-L347"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.process.ProcessRM": {
+      "path": "reward_lens.signals.process.ProcessRM",
+      "name": "ProcessRM",
+      "kind": "class",
+      "text": "A step-level reward model as a ``RewardSignal`` (section 2.3.3, adapter 3).\n\nBuild it through ``from_tiny`` or ``from_sequence_classifier``. ``score`` returns the outcome\nscalar (the final-token reward of the whole solution, identical to a classifier); ``step_scores``\nreturns the per-step reward vector read at the detected step boundaries. The step delimiter is\nconfigurable; the default is a newline.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/process.py",
+        "start": 66,
+        "end": 248,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/process.py#L66-L248"
+      },
+      "signature": "ProcessRM(\n    *,\n    runtime: HFRuntime,\n    meta: Any,\n    policy: Any,\n    tokenizer: Any,\n    readouts: Sequence[Readout],\n    delimiter: str = '\\n',\n    max_length: int = 2048,\n    default_batch_size: int = 16,\n    interventions: tuple[Any, ...] = ()\n) -> None",
+      "bases": [
+        "SignalImplBase"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "The outcome scalar per item: the final-token reward of the whole solution (section 2.3.2).",
+            "source": {
+              "file": "src/reward_lens/signals/process.py",
+              "start": 123,
+              "end": 133,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/process.py#L123-L133"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": "Per-token reward curve for each item (the classifier prefix curve; section 2.3.2).",
+            "source": {
+              "file": "src/reward_lens/signals/process.py",
+              "start": 135,
+              "end": 146,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/process.py#L135-L146"
+            }
+          },
+          {
+            "name": "step_scores",
+            "kind": "function",
+            "signature": "step_scores(view: Any, readout: str | None = None) -> Any",
+            "text": "Per-step reward scores read at the detected step boundaries (section 2.3.3, STEP_SCORES).\n\nFor each item the head input at each step-end token is projected onto the reward direction in\nfp32, giving one score per reasoning step. Returns ``Evidence[StepScores]``; the last step's\nscore equals the outcome ``score`` because the final step ends at the final token.",
+            "source": {
+              "file": "src/reward_lens/signals/process.py",
+              "start": 148,
+              "end": 184,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/process.py#L148-L184"
+            }
+          },
+          {
+            "name": "from_sequence_classifier",
+            "kind": "function",
+            "signature": "from_sequence_classifier(\n    model: torch.nn.Module,\n    tokenizer: Any,\n    *,\n    delimiter: str = '\\n',\n    device: str = 'cpu',\n    architecture: str | None = None,\n    lineage: dict[str, Any] | None = None\n) -> ProcessRM",
+            "text": "Wrap an already-loaded sequence-classifier reward model as a process RM (no download).\n\nReads the scalar reward head (``score``) direction into a single ``reward`` readout whose\nposition is ``step_ends`` rather than ``final`` (R4). A production PRM would be a checkpoint\ntrained with a step-level objective; the adapter's mechanics are identical either way.",
+            "source": {
+              "file": "src/reward_lens/signals/process.py",
+              "start": 188,
+              "end": 236,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/process.py#L188-L236"
+            }
+          },
+          {
+            "name": "from_tiny",
+            "kind": "function",
+            "signature": "from_tiny(*, seed: int = 0, delimiter: str = '\\n', **kw: Any = {}) -> ProcessRM",
+            "text": "Construct the tiny offline process RM the tests run on (a tiny sequence classifier).",
+            "source": {
+              "file": "src/reward_lens/signals/process.py",
+              "start": 238,
+              "end": 248,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/process.py#L238-L248"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.implicit.ImplicitRM": {
+      "path": "reward_lens.signals.implicit.ImplicitRM",
+      "name": "ImplicitRM",
+      "kind": "class",
+      "text": "The DPO implicit reward r-hat = beta * sum log-ratio as a ``RewardSignal`` (adapter 4).\n\nConstructed from a policy model and a reference model (``from_models`` / ``from_tiny``), both\n``CausalLM`` with a shared tokenizer. ``score`` returns r-hat; ``score_prefixes`` returns the\ncumulative per-token reward whose last entry equals r-hat; ``per_token_rewards`` returns the raw\nper-token decomposition (the increments). ``self.runtime`` is the policy runtime; the reference\nruntime is ``self.reference_runtime`` and ``capture(..., namespace=\"ref\")`` routes to it.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/implicit.py",
+        "start": 40,
+        "end": 293,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L40-L293"
+      },
+      "signature": "ImplicitRM(\n    *,\n    policy_runtime: HFRuntime,\n    reference_runtime: HFRuntime,\n    meta: Any,\n    reference_meta: Any,\n    policy: Any,\n    tokenizer: Any,\n    beta: float = 0.1,\n    max_length: int = 2048,\n    default_batch_size: int = 16,\n    interventions: tuple[Any, ...] = ()\n) -> None",
+      "bases": [
+        "SignalImplBase"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "r-hat per item: beta * sum over response tokens of the policy/reference log-ratio.",
+            "source": {
+              "file": "src/reward_lens/signals/implicit.py",
+              "start": 110,
+              "end": 121,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L110-L121"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": "Cumulative per-token reward curves; the last entry of each equals ``score`` (section 2.3.2).\n\nThe curve is the running sum of the per-token log-ratio rewards over the response, so\n``curve[-1] == r-hat``, which is the prefix-consistency invariant conformance checks. The raw\nincrements (the native per-token decomposition) are ``per_token_rewards``.",
+            "source": {
+              "file": "src/reward_lens/signals/implicit.py",
+              "start": 123,
+              "end": 139,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L123-L139"
+            }
+          },
+          {
+            "name": "per_token_rewards",
+            "kind": "function",
+            "signature": "per_token_rewards(view: Any, readout: str | None = None) -> Any",
+            "text": "The native per-token reward decomposition r_t (increments; section 2.3.3).\n\nEach item's curve is ``beta * (log pi_policy(y_t) - log pi_ref(y_t))`` over the response\ntokens; the increments sum to the sequence score. This is the decomposition the verification\nand dense-reward sciences consume directly rather than reconstructing by attribution.",
+            "source": {
+              "file": "src/reward_lens/signals/implicit.py",
+              "start": 141,
+              "end": 162,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L141-L162"
+            }
+          },
+          {
+            "name": "capture",
+            "kind": "function",
+            "signature": "capture(view: Any, spec: Any, namespace: Literal['policy', 'ref'] = 'policy') -> Any",
+            "text": "Capture activations, routing to the policy model by default (section 2.3.3, PAIRED_MODELS).\n\n``namespace=\"ref\"`` captures from the reference model instead. The two runtimes are distinct\nmodels, so a caller must say which one it means; there is no shared \"layer L\". Interventions\nmount on the chosen runtime.",
+            "source": {
+              "file": "src/reward_lens/signals/implicit.py",
+              "start": 220,
+              "end": 234,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L220-L234"
+            }
+          },
+          {
+            "name": "from_models",
+            "kind": "function",
+            "signature": "from_models(\n    policy: torch.nn.Module,\n    reference: torch.nn.Module,\n    tokenizer: Any,\n    *,\n    beta: float = 0.1,\n    device: str = 'cpu',\n    architecture: str | None = None\n) -> ImplicitRM",
+            "text": "Wrap a policy + reference ``CausalLM`` (shared tokenizer) as an implicit RM (no download).",
+            "source": {
+              "file": "src/reward_lens/signals/implicit.py",
+              "start": 238,
+              "end": 276,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L238-L276"
+            }
+          },
+          {
+            "name": "from_tiny",
+            "kind": "function",
+            "signature": "from_tiny(\n    *,\n    policy_seed: int = 1,\n    reference_seed: int = 2,\n    beta: float = 0.1,\n    **kw: Any = {}\n) -> ImplicitRM",
+            "text": "Two tiny offline ``LlamaForCausalLM`` (distinct seeds) sharing a tokenizer (adapter 4).",
+            "source": {
+              "file": "src/reward_lens/signals/implicit.py",
+              "start": 278,
+              "end": 293,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/implicit.py#L278-L293"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.rubric.RubricRM": {
+      "path": "reward_lens.signals.rubric.RubricRM",
+      "name": "RubricRM",
+      "kind": "class",
+      "text": "A rubric grader as a ``RewardSignal`` (section 2.3.3, adapter 5).\n\nBuild it through ``from_tiny`` (a tiny multi-label classifier) or ``from_sequence_classifier``\n(a real multi-objective head). ``readouts`` exposes one ``criterion:<name>`` per criterion plus a\nweighted ``reward`` aggregate; ``score`` projects the final hidden state onto whichever direction\nthe readout names. The rubric spec is on ``self.spec``.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/rubric.py",
+        "start": 65,
+        "end": 235,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L65-L235"
+      },
+      "signature": "RubricRM(\n    *,\n    runtime: HFRuntime,\n    meta: Any,\n    policy: Any,\n    tokenizer: Any,\n    readouts: Sequence[Readout],\n    spec: RubricSpec,\n    max_length: int = 2048,\n    default_batch_size: int = 16,\n    interventions: tuple[Any, ...] = ()\n) -> None",
+      "bases": [
+        "SignalImplBase"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "default_readout_name",
+            "kind": "function",
+            "signature": "default_readout_name() -> str",
+            "text": "A bare ``score`` resolves to the aggregate ``reward`` readout.",
+            "source": {
+              "file": "src/reward_lens/signals/rubric.py",
+              "start": 102,
+              "end": 104,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L102-L104"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "Score every item under a criterion or the aggregate readout (section 2.3.2).",
+            "source": {
+              "file": "src/reward_lens/signals/rubric.py",
+              "start": 108,
+              "end": 118,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L108-L118"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": "Per-token reward curve under a criterion or aggregate readout (section 2.3.2).",
+            "source": {
+              "file": "src/reward_lens/signals/rubric.py",
+              "start": 120,
+              "end": 131,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L120-L131"
+            }
+          },
+          {
+            "name": "criterion_scores",
+            "kind": "function",
+            "signature": "criterion_scores(view: Any) -> dict[str, Any]",
+            "text": "Convenience: a mapping ``criterion name -> Evidence[Scores]`` for the whole rubric.",
+            "source": {
+              "file": "src/reward_lens/signals/rubric.py",
+              "start": 133,
+              "end": 135,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L133-L135"
+            }
+          },
+          {
+            "name": "from_sequence_classifier",
+            "kind": "function",
+            "signature": "from_sequence_classifier(\n    model: torch.nn.Module,\n    tokenizer: Any,\n    spec: RubricSpec,\n    *,\n    device: str = 'cpu',\n    architecture: str | None = None,\n    lineage: dict[str, Any] | None = None\n) -> RubricRM",
+            "text": "Wrap a multi-row sequence-classifier head as a rubric grader (no download).\n\nRequires the head to have one row per criterion. Reads each row into a ``criterion:<name>``\nreadout and builds the weighted-sum ``reward`` aggregate whose vector is\n``sum_k weight_k * row_k`` (so the aggregate is itself a single fp32 projection).",
+            "source": {
+              "file": "src/reward_lens/signals/rubric.py",
+              "start": 139,
+              "end": 213,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L139-L213"
+            }
+          },
+          {
+            "name": "from_tiny",
+            "kind": "function",
+            "signature": "from_tiny(\n    *,\n    criteria: Sequence[str] = ('coherence', 'correctness', 'safety'),\n    weights: Sequence[float] = (),\n    seed: int = 0,\n    **kw: Any = {}\n) -> RubricRM",
+            "text": "Construct the tiny offline rubric grader the tests run on (a k-label tiny classifier).",
+            "source": {
+              "file": "src/reward_lens/signals/rubric.py",
+              "start": 215,
+              "end": 235,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/rubric.py#L215-L235"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.trajectory.TrajectoryRM": {
+      "path": "reward_lens.signals.trajectory.TrajectoryRM",
+      "name": "TrajectoryRM",
+      "kind": "class",
+      "text": "A trajectory-level reward model as a ``RewardSignal`` (section 2.3.3, adapter 6).\n\nBuild it through ``from_tiny`` or ``from_sequence_classifier``. ``tokenize`` accepts a\n``Trajectory`` (rendering its steps with receipt/narrative/action span typing) or a plain\n``(prompt, response)`` item (the classifier rendering, so the conformance suite's generic checks\napply). ``score`` reads the reward at the trajectory scoring position (the final token).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/trajectory.py",
+        "start": 41,
+        "end": 199,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/trajectory.py#L41-L199"
+      },
+      "signature": "TrajectoryRM(\n    *,\n    runtime: HFRuntime,\n    meta: Any,\n    policy: Any,\n    tokenizer: Any,\n    readouts: Sequence[Readout],\n    max_length: int = 2048,\n    default_batch_size: int = 16,\n    interventions: tuple[Any, ...] = ()\n) -> None",
+      "bases": [
+        "SignalImplBase"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "Score each trajectory at its scoring position (the final token; section 2.3.2).",
+            "source": {
+              "file": "src/reward_lens/signals/trajectory.py",
+              "start": 125,
+              "end": 135,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/trajectory.py#L125-L135"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": "Per-token reward curve over the rendered trajectory (section 2.3.2).",
+            "source": {
+              "file": "src/reward_lens/signals/trajectory.py",
+              "start": 137,
+              "end": 148,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/trajectory.py#L137-L148"
+            }
+          },
+          {
+            "name": "from_sequence_classifier",
+            "kind": "function",
+            "signature": "from_sequence_classifier(\n    model: torch.nn.Module,\n    tokenizer: Any,\n    *,\n    device: str = 'cpu',\n    architecture: str | None = None,\n    lineage: dict[str, Any] | None = None\n) -> TrajectoryRM",
+            "text": "Wrap an already-loaded sequence-classifier reward model as a trajectory RM (no download).",
+            "source": {
+              "file": "src/reward_lens/signals/trajectory.py",
+              "start": 152,
+              "end": 186,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/trajectory.py#L152-L186"
+            }
+          },
+          {
+            "name": "from_tiny",
+            "kind": "function",
+            "signature": "from_tiny(*, seed: int = 0, **kw: Any = {}) -> TrajectoryRM",
+            "text": "Construct the tiny offline trajectory RM the tests run on (a tiny sequence classifier).",
+            "source": {
+              "file": "src/reward_lens/signals/trajectory.py",
+              "start": 188,
+              "end": 199,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/trajectory.py#L188-L199"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.dense.DenseRewardExtractor": {
+      "path": "reward_lens.signals.dense.DenseRewardExtractor",
+      "name": "DenseRewardExtractor",
+      "kind": "class",
+      "text": "Per-token reward maps from any outcome signal, shipped GATED (section 2.3.3, adapter 7).\n\nWraps an outcome ``RewardSignal`` and adds ``dense_rewards``: the first difference of the wrapped\nsignal's prefix-score curve, a per-token attribution that sums to the outcome score. Every other\nprotocol method delegates to the wrapped signal, so the same battery reaches the dense extractor\nunchanged. ``dense_rewards`` Evidence is always EXPLORATORY (no calibration is ever attached),\nwhich is how the design enforces \"certify before you trust\" for dense credit assignment.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/dense.py",
+        "start": 35,
+        "end": 136,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L35-L136"
+      },
+      "signature": "DenseRewardExtractor(signal: Any, *, readout: str | None = None) -> None",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "readouts",
+            "kind": "function",
+            "signature": "readouts() -> Any",
+            "text": "The wrapped signal's readouts (the dense map is computed per outcome readout).",
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 73,
+              "end": 75,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L73-L75"
+            }
+          },
+          {
+            "name": "tokenize",
+            "kind": "function",
+            "signature": "tokenize(item: Any) -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 77,
+              "end": 78,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L77-L78"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "The wrapped outcome score (delegated); the dense map is ``dense_rewards``.",
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 80,
+              "end": 82,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L80-L82"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 84,
+              "end": 85,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L84-L85"
+            }
+          },
+          {
+            "name": "capture",
+            "kind": "function",
+            "signature": "capture(view: Any, spec: Any) -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 87,
+              "end": 88,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L87-L88"
+            }
+          },
+          {
+            "name": "with_interventions",
+            "kind": "function",
+            "signature": "with_interventions(*ivs: Any = ()) -> DenseRewardExtractor",
+            "text": "Wrap the intervened outcome signal; the dense map inherits the intervention subject.",
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 90,
+              "end": 94,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L90-L94"
+            }
+          },
+          {
+            "name": "dense_rewards",
+            "kind": "function",
+            "signature": "dense_rewards(view: Any, readout: str | None = None) -> Evidence[TokenCurves]",
+            "text": "Per-token reward maps by differential attribution along the prefix curve (section 2.3.3).\n\nEach item's map is the first difference of the wrapped signal's prefix-score curve, so token\nt carries r(y_{1:t}) - r(y_{1:t-1}) and the map sums to the outcome score. The Evidence is\ntyped INVARIANT (differences of raw scores are gauge-free) but pinned EXPLORATORY: no\ncalibration reference is attached, by construction, until the verification science certifies\nthe map against labeled error spans. The prefix Evidence is recorded as a provenance parent.",
+            "source": {
+              "file": "src/reward_lens/signals/dense.py",
+              "start": 98,
+              "end": 136,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/dense.py#L98-L136"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.ensemble.SignalEnsemble": {
+      "path": "reward_lens.signals.ensemble.SignalEnsemble",
+      "name": "SignalEnsemble",
+      "kind": "class",
+      "text": "A composite of several member signals (section 2.3.3, adapter 8).\n\n``score`` scores every member under the requested readout, stacks the results, and reduces them by\n``mode`` (mean, min, max, or a quantile at ``q``). The Evidence subject names every member by\nfingerprint (member provenance), and the ensemble's own fingerprint is derived from the members'\nso two ensembles over the same members are the same subject. ``caps`` is the intersection of the\nmembers' capabilities, plus ``DISTRIBUTIONAL`` for a quantile composite.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/ensemble.py",
+        "start": 37,
+        "end": 211,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L37-L211"
+      },
+      "signature": "SignalEnsemble(\n    members: Sequence[Any],\n    *,\n    mode: EnsembleMode = 'mean',\n    q: float = 0.5,\n    name: str | None = None\n) -> None",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "readouts",
+            "kind": "function",
+            "signature": "readouts() -> list[Any]",
+            "text": "The readouts every member exposes (the composite can only score a shared readout).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 93,
+              "end": 96,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L93-L96"
+            }
+          },
+          {
+            "name": "tokenize",
+            "kind": "function",
+            "signature": "tokenize(item: Any) -> Any",
+            "text": "Tokenize via the first member (members share the readout; tokenization is member 0's).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 98,
+              "end": 100,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L98-L100"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Evidence[Scores]",
+            "text": "Composite score under ``mode`` over the members' scores (section 2.3.3).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 104,
+              "end": 136,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L104-L136"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Evidence[TokenCurves]",
+            "text": "Composite per-token curves: the members' prefix curves reduced token by token (section 2.3.2).\n\nRequires the members to tokenize identically (the common case: a shared tokenizer), so the\nper-item curves align in length and reduce position-wise. Prefix consistency is preserved\nbecause ``mean``/``min``/``max``/``quantile`` of the members' final entries equals the composite\nscore. Misaligned curve lengths raise rather than silently truncate.",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 138,
+              "end": 176,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L138-L176"
+            }
+          },
+          {
+            "name": "member_scores",
+            "kind": "function",
+            "signature": "member_scores(view: Any, readout: str | None = None) -> dict[ModelFP, np.ndarray]",
+            "text": "The per-member score arrays keyed by member fingerprint (for provenance and diagnostics).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 178,
+              "end": 181,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L178-L181"
+            }
+          },
+          {
+            "name": "capture",
+            "kind": "function",
+            "signature": "capture(view: Any, spec: Any, member: int = 0) -> Any",
+            "text": "Capture from a named member (default the first); an ensemble has no shared activation.",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 183,
+              "end": 185,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L183-L185"
+            }
+          },
+          {
+            "name": "with_interventions",
+            "kind": "function",
+            "signature": "with_interventions(*ivs: Any = ()) -> SignalEnsemble",
+            "text": "Wrap every member in the interventions; the composite subject carries them per member.",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 187,
+              "end": 194,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L187-L194"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.ensemble.DistributionalSignal": {
+      "path": "reward_lens.signals.ensemble.DistributionalSignal",
+      "name": "DistributionalSignal",
+      "kind": "class",
+      "text": "A distributional wrapper exposing a multi-row head's rows as quantile readouts (adapter 8).\n\nWraps a signal whose head rows are quantile levels (a QRM) and presents them as ``quantile:tau``\nreadouts, declaring ``DISTRIBUTIONAL``. ``score(view, \"quantile:0.9\")`` returns the 0.9-quantile\nrow; ``median``, ``quantile``, and ``mean`` are convenience reductions over the levels. The wrapped\nsignal does the forward work; this class only relabels and reduces.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/ensemble.py",
+        "start": 214,
+        "end": 346,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L214-L346"
+      },
+      "signature": "DistributionalSignal(\n    signal: Any,\n    taus: Sequence[float],\n    row_readouts: Sequence[str]\n) -> None",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "readouts",
+            "kind": "function",
+            "signature": "readouts() -> list[Any]",
+            "text": "One ``quantile:tau`` readout per level, reusing the wrapped row vectors (section 2.3.1).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 247,
+              "end": 257,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L247-L257"
+            }
+          },
+          {
+            "name": "tokenize",
+            "kind": "function",
+            "signature": "tokenize(item: Any) -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 259,
+              "end": 260,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L259-L260"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(view: Any, readout: str | None = None) -> Any",
+            "text": "Score at a quantile level: ``quantile:tau`` maps to the wrapped row for that level.",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 262,
+              "end": 268,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L262-L268"
+            }
+          },
+          {
+            "name": "score_prefixes",
+            "kind": "function",
+            "signature": "score_prefixes(view: Any, readout: str | None = None) -> Any",
+            "text": "Per-token curve at a quantile level (delegates to the wrapped row's prefix curve).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 270,
+              "end": 276,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L270-L276"
+            }
+          },
+          {
+            "name": "quantile",
+            "kind": "function",
+            "signature": "quantile(view: Any, tau: float) -> Any",
+            "text": "The reward at quantile level ``tau`` (an exact head row, not an interpolation).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 278,
+              "end": 280,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L278-L280"
+            }
+          },
+          {
+            "name": "median",
+            "kind": "function",
+            "signature": "median(view: Any) -> Any",
+            "text": "The median-level reward (the row closest to tau=0.5).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 282,
+              "end": 284,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L282-L284"
+            }
+          },
+          {
+            "name": "mean",
+            "kind": "function",
+            "signature": "mean(view: Any) -> Evidence[Scores]",
+            "text": "The mean reward across the quantile levels (a point estimate of the distribution).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 286,
+              "end": 315,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L286-L315"
+            }
+          },
+          {
+            "name": "capture",
+            "kind": "function",
+            "signature": "capture(view: Any, spec: Any) -> Any",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 317,
+              "end": 318,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L317-L318"
+            }
+          },
+          {
+            "name": "with_interventions",
+            "kind": "function",
+            "signature": "with_interventions(*ivs: Any = ()) -> DistributionalSignal",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 320,
+              "end": 325,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L320-L325"
+            }
+          },
+          {
+            "name": "from_tiny",
+            "kind": "function",
+            "signature": "from_tiny(\n    *,\n    taus: Sequence[float] = (0.1, 0.5, 0.9),\n    seed: int = 0,\n    **kw: Any = {}\n) -> DistributionalSignal",
+            "text": "A tiny QRM: a multi-row classifier wrapped and relabeled with quantile levels (adapter 8).",
+            "source": {
+              "file": "src/reward_lens/signals/ensemble.py",
+              "start": 330,
+              "end": 346,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/ensemble.py#L330-L346"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.signals.conformance.run_conformance": {
+      "path": "reward_lens.signals.conformance.run_conformance",
+      "name": "run_conformance",
+      "kind": "function",
+      "text": "Run the full conformance suite against a signal (section 2.3.6).\n\n``tol`` defaults to the signal's numerics-policy tolerance (1e-4). Each check is wrapped so an\nexception becomes a failed (or, for the dtype matrix, a skipped) check rather than aborting the\nsuite, so the report always enumerates every invariant. Returns a ``ConformanceReport`` whose\n``passed`` property is the M1 acceptance gate.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/conformance.py",
+        "start": 88,
+        "end": 121,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/conformance.py#L88-L121"
+      },
+      "signature": "run_conformance(\n    signal: ClassifierRM,\n    tol: float | None = None,\n    items: list[Any] | None = None\n) -> ConformanceReport",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.signals.conformance_adapters.run_adapter_conformance": {
+      "path": "reward_lens.signals.conformance_adapters.run_adapter_conformance",
+      "name": "run_adapter_conformance",
+      "kind": "function",
+      "text": "Run the applicable conformance checks against one adapter (section 2.3.6).\n\n``items`` is the stimulus set (varied in length so batching forces left-padding). ``readout`` names\nthe readout to score under (the adapter's default when None). ``check_head`` runs the\nreadout-vs-head check for adapters with a linear/logit_diff readout; pass False for composites.\n``probe`` is ``(item, needle, kind)`` for the template round-trip: the ``item`` must tokenize with a\nspan of ``kind`` covering ``needle`` in the rendered text. ``probe_inject`` handles adapters that\ncarry explicit item spans rather than auto-typing them (a rubric grader): the check renders the\nitem, locates ``needle``, injects an explicit char span over the rendered text, and re-tokenizes.\nEach check is wrapped so a raised exception becomes a recorded failure rather than aborting the\nsuite.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/signals/conformance_adapters.py",
+        "start": 31,
+        "end": 79,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/signals/conformance_adapters.py#L31-L79"
+      },
+      "signature": "run_adapter_conformance(\n    signal: Any,\n    *,\n    items: Sequence[Any],\n    readout: str | None = None,\n    tol: float | None = None,\n    check_head: bool = True,\n    check_prefix: bool = True,\n    probe: tuple[Any, str, str] | None = None,\n    probe_inject: bool = False\n) -> ConformanceReport",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    }
+  }
+}

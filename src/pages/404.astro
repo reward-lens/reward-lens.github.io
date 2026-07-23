@@ -1,0 +1,69 @@
+---
+import Base from "@layouts/Base.astro";
+---
+
+<Base
+  title="Not found · reward-lens"
+  description="No evidence at this address."
+>
+  <div class="nf-wrap">
+    <h1 class="nf-title">No evidence at this address.</h1>
+    <p class="nf-sub">
+      The page you asked for is not in the store. Search the site, or start
+      from a section.
+    </p>
+    <div id="nf-search"></div>
+    <nav class="nf-links" aria-label="Main sections">
+      <a href="/campaign/">Campaign</a>
+      <a href="/atlas/">Atlas</a>
+      <a href="/docs/">Docs</a>
+      <a href="/science/">Science</a>
+    </nav>
+  </div>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.PagefindUI) {
+        new window.PagefindUI({
+          element: "#nf-search",
+          showSubResults: true,
+          showImages: false,
+        });
+      }
+    });
+  </script>
+</Base>
+
+<style>
+  .nf-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--sp-16) var(--page-pad);
+    min-height: 50vh;
+  }
+  .nf-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 var(--sp-3);
+  }
+  .nf-sub {
+    color: var(--ink-2);
+    margin: 0 0 var(--sp-6);
+    max-width: 48ch;
+  }
+  #nf-search {
+    max-width: 36rem;
+    margin-bottom: var(--sp-8);
+  }
+  .nf-links {
+    display: flex;
+    gap: var(--sp-6);
+    flex-wrap: wrap;
+  }
+  .nf-links a {
+    font-weight: 600;
+  }
+</style>

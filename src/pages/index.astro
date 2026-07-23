@@ -1,13 +1,380 @@
 ---
 import Base from "@layouts/Base.astro";
+import InstallStrip from "@components/InstallStrip.astro";
+import ThemedFigure from "@components/ThemedFigure.astro";
+import EvidenceChip from "@components/EvidenceChip.astro";
+import LedgerStrip from "@components/islands/LedgerStrip.tsx";
+import TokenStrip from "@components/islands/TokenStrip.tsx";
+import ledger from "@data/ledger.json";
+import cards from "@data/cards.json";
+import demo from "@data/demos/lens-demo.json";
+import captions from "@data/captions.json";
+
+const stripRows = ledger.map((r) => ({
+  card: r.card,
+  slug: r.slug,
+  h: r.hypothesis_id,
+  statement: r.statement,
+  metric: r.metric,
+  comparator: r.comparator,
+  threshold: r.threshold,
+  prob: r.registered_prob,
+  observed: r.observed,
+  outcome: r.outcome as "confirmed" | "refuted" | "inconclusive",
+  kill: r.kill_id,
+}));
+
+const ev = (id: string) => cards.find((c) => c.id === id)!.adjudication_ev;
+
+const receipts = [
+  {
+    claim: "Run a rigorous white-box audit of reward models, end to end.",
+    chips: [
+      { value: "27 cards", plain: true },
+      { value: "53 frozen hypotheses", plain: true },
+      { value: "$17.73 metered", plain: true },
+    ],
+    href: "/campaign/",
+  },
+  {
+    claim: "Attribute a reward score, and know when attribution lies.",
+    chips: [
+      {
+        value: 1.0,
+        label: "attribution AUC",
+        evidenceId: ev("adj-avp"),
+        observable: "attribution_recovery_auc",
+        subject: "ADJ-AVP",
+      },
+      {
+        value: 0.433962,
+        label: "patching AUC",
+        evidenceId: ev("adj-avp"),
+        observable: "patching_recovery_auc",
+        subject: "ADJ-AVP",
+      },
+    ],
+    href: "/campaign/adj-avp/",
+  },
+  {
+    claim: "Intervene with certificates and honest costs.",
+    chips: [
+      {
+        value: 0.885616,
+        label: "exploit drift cut",
+        evidenceId: ev("surgery"),
+        observable: "exploit_drift_reduction",
+        subject: "SURGERY",
+      },
+      {
+        value: -0.398752,
+        label: "benchmark cost, published",
+        evidenceId: ev("surgery"),
+        observable: "rb2_accuracy_delta_after_erasure",
+        subject: "SURGERY",
+      },
+    ],
+    href: "/campaign/surgery/",
+  },
+  {
+    claim: "Track a reward direction forming over training.",
+    chips: [
+      {
+        value: "monotone",
+        label: "w_r stabilization, confirmed",
+        evidenceId: ev("emb-lora"),
+        observable: "w_r_stabilization_monotone",
+        subject: "EMB-LORA",
+      },
+    ],
+    href: "/campaign/emb-lora/",
+  },
+  {
+    claim:
+      "Forecast drift under optimization pressure from base-policy statistics.",
+    chips: [
+      {
+        value: 0.964286,
+        label: "rho, standing theorem T9",
+        evidenceId: ev("chi-drift"),
+        observable: "chi_bon_spearman",
+        subject: "CHI-DRIFT",
+      },
+    ],
+    href: "/campaign/chi-drift/",
+  },
+  {
+    claim: "Measure what no scalar reward can represent.",
+    chips: [
+      {
+        value: 0.213976,
+        label: "cyclic preference mass",
+        evidenceId: ev("topo-hodge"),
+        observable: "intransitive_mass",
+        subject: "TOPO-HODGE",
+      },
+    ],
+    href: "/campaign/topo-hodge/",
+  },
+  {
+    claim: "Catch a judge deciding before it writes its reasoning.",
+    chips: [
+      {
+        value: 1.0,
+        label: "verdict prefix match",
+        evidenceId: ev("judge-vbc"),
+        observable: "verdict_prefix_match_rate",
+        subject: "JUDGE-VBC",
+      },
+    ],
+    href: "/campaign/judge-vbc/",
+  },
+  {
+    claim: "And the discipline audits itself in public.",
+    chips: [
+      {
+        value: 0.26,
+        label: "Brier, against the coin's 0.25; K-meta fired",
+        evidenceId: ev("meta-ledger"),
+        observable: "brier_directional",
+        subject: "META-LEDGER",
+      },
+    ],
+    href: "/campaign/meta-ledger/",
+  },
+];
+
+const capabilities = [
+  {
+    title: "Attribute a score to heads and layers",
+    code: "mb.run(DirectLinearAttribution(), mb.Context(signal=signal, view=view))",
+  },
+  {
+    title: "Patch and verify causally",
+    code: "mb.run(PatchGrid(), mb.Context(signal=signal, view=view))",
+  },
+  {
+    title: "Run the bias battery",
+    code: "mb.run(BiasBattery(), mb.Context(signal=signal, view=view))",
+  },
+  {
+    title: "Track w_r formation over checkpoints",
+    code: "from reward_lens.dynamics import CheckpointSequence",
+  },
+  {
+    title: "Forecast drift under best-of-n",
+    code: "from reward_lens.loops import SusceptibilitySpectrum, BoNLadder",
+  },
+  {
+    title: "Freeze a study and adjudicate it",
+    code: "reward-lens study freeze spec.json",
+  },
+];
+
+const rungs = [
+  {
+    letter: "E",
+    word: "exploratory",
+    line: "A bare measurement. Nothing has earned it more than that.",
+  },
+  {
+    letter: "C",
+    word: "calibrated",
+    line: "The instrument holds a scorecard from runs against planted ground truth.",
+  },
+  {
+    letter: "R",
+    word: "registered",
+    line: "The prediction predated the data, frozen and hashed.",
+  },
+  {
+    letter: "A",
+    word: "adjudicated",
+    line: "Machinery compared it to its frozen threshold and wrote the verdict.",
+  },
+];
+
+const frontier = [
+  {
+    q: "Forecast the hack before any RL",
+    line: "Can the KL location of the Goodhart hump be predicted from internals alone? The drift ordering held; the hump location is unrun.",
+  },
+  {
+    q: "Calibration that transfers across scales",
+    line: "The 0.419 gap against a frozen 0.15 bound is now the problem statement.",
+  },
+  {
+    q: "Localize process errors in verifiers",
+    line: "The dense extractor failed its answer-key validation on a real PRM, so the instrument itself is open.",
+  },
+];
 ---
 
 <Base
-  title="reward-lens"
+  title="reward-lens: see what the reward model actually learned"
   description="White-box tools and built-in epistemic discipline for reward models, the objects that define what RLHF optimizes."
+  ogImage="/og/default.png"
 >
   <section class="hero">
-    <h1 class="display">Skeleton build placeholder</h1>
+    <h1 class="hero-title">See what the reward model actually learned.</h1>
+    <p class="hero-sub">
+      White-box tools and built-in epistemic discipline for reward models, the
+      objects that define what RLHF optimizes.
+    </p>
+    <div class="hero-actions">
+      <InstallStrip />
+      <div class="hero-buttons">
+        <a class="btn btn-primary" href="/campaign/">Read the audit</a>
+        <a class="btn" href="/docs/">Open the docs</a>
+      </div>
+    </div>
+    <div class="hero-strip">
+      <LedgerStrip client:load rows={stripRows} />
+      <p class="hero-strip-caption">
+        53 pre-registered hypotheses about ten reward models, adjudicated
+        July 2026: <span class="cap-ok">16 confirmed</span>,
+        <span class="cap-bad">21 refuted</span>,
+        <span class="cap-none">16 inconclusive</span>, 8 kills fired. Hover
+        any mark.
+      </p>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="lens-h">
+    <div class="band-inner band-split">
+      <div class="band-copy">
+        <h2 id="lens-h">One output direction</h2>
+        <p>
+          A reward model reads text, forms a hidden state <code>h</code>, and
+          one learned direction turns it into the score:
+          <code>r(x) = w_r · h + b</code>. Everything on this site is about
+          that projection and what feeds it.
+        </p>
+        <p>
+          The strip here is live data: per-token contributions to the score of
+          the smallest fleet model, computed with the library's dense
+          instrument on its built-in diagnostic pairs. On the formatting pair
+          the model prefers the rejected completion; that miss ships as is.
+        </p>
+        <ThemedFigure
+          light="/figures/docs/reward-projection-light.svg"
+          dark="/figures/docs/reward-projection-dark.svg"
+          alt="The reward projection: a hidden state read out along one learned direction"
+        />
+      </div>
+      <div class="band-demo">
+        <TokenStrip client:visible demo={demo} />
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="cap-h">
+    <div class="band-inner">
+      <h2 id="cap-h">The instruments</h2>
+      <div class="cap-grid">
+        {
+          capabilities.map((c) => (
+            <div class="cap-tile">
+              <h3>{c.title}</h3>
+              <code class="cap-code">{c.code}</code>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-campaign" aria-labelledby="camp-h">
+    <div class="band-inner">
+      <h2 id="camp-h">The first pre-registered audit of reward models</h2>
+      <p class="band-lede">
+        In July 2026 the discipline was put through a live fire exercise: 27
+        study cards, 53 hypotheses with frozen thresholds and kill criteria,
+        predictions hashed before the run, then adjudicated by machinery
+        against a merged evidence store. 16 confirmed, 21 refuted, 16
+        inconclusive; 8 kill criteria fired, including the campaign's kill on
+        its own calibration.
+      </p>
+      <ThemedFigure
+        light="/figures/campaign/hero1-ledger.light.png"
+        dark="/figures/campaign/hero1-ledger.dark.png"
+        alt="One row per headline call: position shows the margin by which the frozen call held or failed, color the adjudication"
+        caption={captions["hero1-ledger"]}
+      />
+      <ul class="receipts">
+        {
+          receipts.map((r) => (
+            <li class="receipt-row">
+              <a class="receipt-claim" href={r.href}>
+                {r.claim}
+              </a>
+              <span class="receipt-chips">
+                {r.chips.map((chip: any) =>
+                  chip.plain ? (
+                    <span class="receipt-plain">{chip.value}</span>
+                  ) : (
+                    <span class="receipt-chip">
+                      <EvidenceChip
+                        value={chip.value}
+                        trust="A"
+                        evidenceId={chip.evidenceId}
+                        observable={chip.observable}
+                        subject={chip.subject}
+                      />
+                      <span class="receipt-label">{chip.label}</span>
+                    </span>
+                  ),
+                )}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="receipts-note">
+        Refutations and missing evidence are published with the same
+        machinery.
+      </p>
+      <a class="btn btn-primary" href="/campaign/">Read the scored ledger</a>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="trust-h">
+    <div class="band-inner">
+      <h2 id="trust-h">Every number wears its trust level</h2>
+      <div class="rungs">
+        {
+          rungs.map((r) => (
+            <div class="rung">
+              <span class="rung-letter">{r.letter}</span>
+              <div>
+                <p class="rung-word">{r.word}</p>
+                <p class="rung-line">{r.line}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <p class="band-close">
+        The gates compute these levels; no caller can override them.
+      </p>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="frontier-h">
+    <div class="band-inner">
+      <h2 id="frontier-h">Open problems, stated as measurable questions</h2>
+      <div class="frontier-grid">
+        {
+          frontier.map((f) => (
+            <div class="frontier-tile">
+              <h3>{f.q}</h3>
+              <p>{f.line}</p>
+            </div>
+          ))
+        }
+      </div>
+      <a class="quiet-link" href="/science/">The science page carries the rest.</a>
+    </div>
   </section>
 </Base>
 
@@ -15,6 +382,266 @@ import Base from "@layouts/Base.astro";
   .hero {
     max-width: var(--page-max);
     margin: 0 auto;
-    padding: var(--sp-16) var(--page-pad);
+    padding: var(--sp-16) var(--page-pad) var(--sp-12);
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--sp-4);
+    max-width: 18ch;
+  }
+  .hero-sub {
+    font-size: var(--text-lg);
+    color: var(--ink-2);
+    max-width: 52ch;
+    line-height: 1.6;
+    margin: 0 0 var(--sp-8);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-8);
+    align-items: center;
+    margin-bottom: var(--sp-12);
+  }
+  .hero-buttons {
+    display: flex;
+    gap: var(--sp-3);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-card);
+    padding: var(--sp-2) var(--sp-4);
+    min-height: 40px;
+    text-decoration: none;
+  }
+  .btn:hover {
+    border-color: var(--ink-3);
+  }
+  .btn-primary {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover {
+    border-color: var(--accent);
+    filter: brightness(1.06);
+  }
+  .hero-strip-caption {
+    margin: var(--sp-3) 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-3);
+    max-width: var(--measure-wide);
+  }
+  .cap-ok {
+    color: var(--ok-ink);
+  }
+  .cap-bad {
+    color: var(--bad-ink);
+  }
+  .cap-none {
+    color: var(--none-ink);
+  }
+
+  .band {
+    border-top: 1px solid var(--line);
+    padding: var(--sp-16) 0;
+  }
+  .band-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad);
+  }
+  .band h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    margin: 0 0 var(--sp-6);
+  }
+  .band-split {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--sp-12);
+    align-items: start;
+  }
+  .band-copy p {
+    color: var(--ink-2);
+    line-height: 1.7;
+    max-width: 46ch;
+  }
+
+  .cap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-4);
+  }
+  .cap-tile {
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+    padding: var(--sp-4);
+  }
+  .cap-tile h3 {
+    margin: 0 0 var(--sp-2);
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+  .cap-code {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: var(--sp-2);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .band-lede {
+    color: var(--ink-2);
+    line-height: 1.7;
+    max-width: var(--measure-wide);
+    margin: 0 0 var(--sp-6);
+  }
+  .receipts {
+    list-style: none;
+    margin: var(--sp-8) 0 var(--sp-4);
+    padding: 0;
+  }
+  .receipt-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding: var(--sp-3) 0;
+  }
+  .receipt-row:first-child {
+    border-top: 1px solid var(--line);
+  }
+  .receipt-claim {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: var(--text-base);
+    flex: 1;
+    min-width: 18rem;
+  }
+  .receipt-claim:hover {
+    color: var(--info);
+  }
+  .receipt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+    align-items: center;
+  }
+  .receipt-chip {
+    display: inline-flex;
+    gap: var(--sp-2);
+    align-items: center;
+  }
+  .receipt-label {
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+  }
+  .receipt-plain {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 1px 6px;
+  }
+  .receipts-note {
+    color: var(--ink-3);
+    font-size: var(--text-sm);
+    margin: 0 0 var(--sp-6);
+  }
+
+  .rungs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: var(--sp-4);
+  }
+  .rung {
+    display: flex;
+    gap: var(--sp-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+    padding: var(--sp-4);
+  }
+  .rung-letter {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--accent);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-chip);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+  .rung-word {
+    margin: 0 0 var(--sp-1);
+    font-weight: 600;
+  }
+  .rung-line {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .band-close {
+    margin: var(--sp-6) 0 0;
+    font-weight: 600;
+  }
+
+  .frontier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-6);
+  }
+  .frontier-tile {
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: var(--sp-4);
+  }
+  .frontier-tile h3 {
+    margin: 0 0 var(--sp-2);
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+  .frontier-tile p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .quiet-link {
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 900px) {
+    .band-split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .band-demo {
+      order: -1;
+    }
   }
 </style>

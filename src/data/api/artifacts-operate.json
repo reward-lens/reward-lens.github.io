@@ -1,0 +1,226 @@
+{
+  "group": "artifacts-operate",
+  "title": "Artifacts and operate",
+  "order": [
+    "reward_lens.artifacts.card.build_card",
+    "reward_lens.artifacts.atlas.Atlas",
+    "reward_lens.artifacts.claims.check_text",
+    "reward_lens.artifacts.claims.check_files",
+    "reward_lens.artifacts.safety_case.assemble_safety_case"
+  ],
+  "symbols": {
+    "reward_lens.artifacts.card.build_card": {
+      "path": "reward_lens.artifacts.card.build_card",
+      "name": "build_card",
+      "kind": "function",
+      "text": "Assemble a Card from every latest Evidence about a signal (section 2.15).\n\nQueries the store for the most recent Evidence per observable about this signal fingerprint,\nreads each one's value, uncertainty, trust, gauge, and calibration status, and returns a Card.\nUncalibrated entries are not filtered out; they are carried and flagged, because a card that\nhid its gaps would be a marketing document.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/artifacts/card.py",
+        "start": 83,
+        "end": 112,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/card.py#L83-L112"
+      },
+      "signature": "build_card(signal_fp: str, store: EvidenceStore | None = None) -> Card",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.artifacts.atlas.Atlas": {
+      "path": "reward_lens.artifacts.atlas.Atlas",
+      "name": "Atlas",
+      "kind": "class",
+      "text": "The population registry and its leaderboard view (section 2.15, Atlas-v0).\n\nConstruct with ``Atlas.standard()`` for the ten-model population, or empty and register entries.\nThe registry is keyed by fingerprint; a second registration of the same fingerprint replaces the\nentry (the sweep uses this to upgrade a card-claimed entry to a weights-verified one).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/artifacts/atlas.py",
+        "start": 474,
+        "end": 661,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L474-L661"
+      },
+      "signature": "Atlas(entries: Iterable[AtlasEntry] = ()) -> None",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [
+          {
+            "name": "entries",
+            "annotation": "list[AtlasEntry]",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "standard",
+            "kind": "function",
+            "signature": "standard() -> Atlas",
+            "text": "The standard ten-model population with declared, card-claimed lineage (section 2.15).",
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 487,
+              "end": 507,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L487-L507"
+            }
+          },
+          {
+            "name": "register",
+            "kind": "function",
+            "signature": "register(entry: AtlasEntry) -> None",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 511,
+              "end": 512,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L511-L512"
+            }
+          },
+          {
+            "name": "by_fingerprint",
+            "kind": "function",
+            "signature": "by_fingerprint(fingerprint: str) -> AtlasEntry | None",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 527,
+              "end": 528,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L527-L528"
+            }
+          },
+          {
+            "name": "by_name",
+            "kind": "function",
+            "signature": "by_name(name: str) -> AtlasEntry | None",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 530,
+              "end": 534,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L530-L534"
+            }
+          },
+          {
+            "name": "leaderboard",
+            "kind": "function",
+            "signature": "leaderboard(\n    store: EvidenceStore | None = None,\n    observables: Iterable[str] | None = None\n) -> Leaderboard",
+            "text": "Assemble the population leaderboard as a view over the store (section 2.15).\n\nFor every registered model and every requested observable, query the store for the most\nrecent Evidence about that (observable, model) pair and record its value, trust, calibration,\nand metered cost. If ``observables`` is not given, the columns are the distinct observable\nnames the store holds for this population, so a bare call tabulates whatever has been measured.\nNothing is computed: an absent pair is an absent cell, and an uncalibrated cell is flagged.",
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 538,
+              "end": 581,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L538-L581"
+            }
+          },
+          {
+            "name": "export_leaderboard",
+            "kind": "function",
+            "signature": "export_leaderboard(\n    store: EvidenceStore | None = None,\n    observables: Iterable[str] | None = None,\n    out_dir: str | Path | None = None\n) -> dict[str, Any]",
+            "text": "Export the leaderboard to JSON and HTML (section 2.15).\n\nReturns a dict with the rendered ``json`` and ``html`` strings and the ``Leaderboard`` itself.\nWhen ``out_dir`` is given, writes ``leaderboard.json`` and ``leaderboard.html`` under it and\nadds their paths to the returned dict. The strings are the single source; the files are a\nconvenience for the site export, which is the intended publishing vehicle.",
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 592,
+              "end": 618,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L592-L618"
+            }
+          },
+          {
+            "name": "sweep",
+            "kind": "function",
+            "signature": "sweep(\n    signals: Iterable[str],\n    battery: Iterable[str],\n    budget: Cost,\n    store: EvidenceStore | None = None,\n    execute: bool = False\n) -> SweepPlan",
+            "text": "Plan and price the population sweep; do not run it (R13, GPU-gated).\n\nBuilds the cartesian product of ``signals`` (model fingerprints) and ``battery`` (observable\nnames) into a ``SweepPlan``. Each cell's estimated cost is read from the store when a prior\nEvidence for that pair carries metered GPU-seconds, so the estimate is itself a view over\nrecorded cost rather than a guess. ``execute=True`` raises ``SweepGatedError``: loading and\nscoring the real population is GPU work this layer refuses to fake. The returned plan reports\nwhether it fits the budget so an operator can size the run before dispatching it on hardware.",
+            "source": {
+              "file": "src/reward_lens/artifacts/atlas.py",
+              "start": 622,
+              "end": 661,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/atlas.py#L622-L661"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.artifacts.claims.check_text": {
+      "path": "reward_lens.artifacts.claims.check_text",
+      "name": "check_text",
+      "kind": "function",
+      "text": "Check every tagged claim in ``text`` against the store, returning a ClaimReport.\n\nA claim fails if its Evidence id is not in the store, if the named field cannot be extracted, or\nif the claimed value differs from the stored value by more than the tolerance. Bare ``ev:...``\nreferences that do not resolve are collected separately so a dangling citation is also caught.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/artifacts/claims.py",
+        "start": 87,
+        "end": 147,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/claims.py#L87-L147"
+      },
+      "signature": "check_text(\n    text: str,\n    store: EvidenceStore | None = None,\n    default_tol: float = 1e-06\n) -> ClaimReport",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.artifacts.claims.check_files": {
+      "path": "reward_lens.artifacts.claims.check_files",
+      "name": "check_files",
+      "kind": "function",
+      "text": "Check a set of documents, aggregating into one report (the CI entry point).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/artifacts/claims.py",
+        "start": 150,
+        "end": 158,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/claims.py#L150-L158"
+      },
+      "signature": "check_files(paths: list[str | Path], store: EvidenceStore | None = None) -> ClaimReport",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.artifacts.safety_case.assemble_safety_case": {
+      "path": "reward_lens.artifacts.safety_case.assemble_safety_case",
+      "name": "assemble_safety_case",
+      "kind": "function",
+      "text": "Assemble a safety case from four component Evidence ids, refusing unless all are ADJUDICATED.\n\nLoads the K-nats budget (S3), the monitor (S13/S14), the erasure certificate (S6/S12), and the\nhonesty certificate (S16) by id, requires each to carry calibration (gate 1) and registration\n(gate 3), and extracts the claim parameters from the Evidence values. ``bias_set`` names the set B\nthe case claims erased; if omitted, it is read from the erasure Evidence's ``bias_set`` field. Any\nmissing id raises ``KeyError`` from the store; any un-calibrated or un-registered component raises\n``SafetyCaseRefusal``. Nothing is recomputed: K, the monitor grade, and the certificate are read\nstraight from their Evidence.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/artifacts/safety_case.py",
+        "start": 277,
+        "end": 325,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/artifacts/safety_case.py#L277-L325"
+      },
+      "signature": "assemble_safety_case(\n    signal: str,\n    *,\n    k_nats_evidence: str,\n    monitor_evidence: str,\n    erasure_evidence: str,\n    honesty_evidence: str,\n    store: EvidenceStore | None = None,\n    bias_set: list[str] | None = None\n) -> SafetyCase",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    }
+  }
+}

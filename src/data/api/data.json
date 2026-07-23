@@ -1,0 +1,647 @@
+{
+  "group": "data",
+  "title": "Data",
+  "order": [
+    "reward_lens.data.schema.DataView",
+    "reward_lens.data.schema.Pair",
+    "reward_lens.data.schema.make_pair",
+    "reward_lens.data.schema.Quadruple",
+    "reward_lens.data.schema.Tournament",
+    "reward_lens.data.schema.Trajectory",
+    "reward_lens.data.builtin.diagnostic_v3.load_diagnostic_v3",
+    "reward_lens.data.lineage.Lineage",
+    "reward_lens.data.align.SpanMap"
+  ],
+  "symbols": {
+    "reward_lens.data.schema.DataView": {
+      "path": "reward_lens.data.schema.DataView",
+      "name": "DataView",
+      "kind": "class",
+      "text": "The uniform, filterable, sliceable, hash-stable iterable the kernel consumes (section 2.4.1).\n\nA view wraps an ordered collection of items (Pairs, or any schema type; a view is homogeneous by\nconvention but does not enforce it, so mixed diagnostic sets are expressible). It never loads or\nmutates data; `filter` and `slice` return new views over the same underlying items, so a view is\neffectively immutable and safe to share across instruments.\n\nThe two methods that carry the data plane's discipline:\n\n- `effective_n` computes the lineage-aware effective sample size (section 2.4.2) by handing the\n  items' seed ids to the stats engine. A view of forty clones of one seed reports about one.\n- `checksum` is a content-derived `DatasetID` that goes into every measurement's subject\n  reference. It is stable (deterministic given the items and their order) and content-based, so\n  a loader that silently returned the wrong rows produces a different checksum and the dataset\n  registry catches it (section 2.4.5).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/schema.py",
+        "start": 379,
+        "end": 474,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L379-L474"
+      },
+      "signature": "DataView(items: Sequence[Any], *, name: str | None = None) -> None",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [
+          {
+            "name": "items",
+            "annotation": "tuple[Any, ...]",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "filter",
+            "kind": "function",
+            "signature": "filter(predicate: Callable[[Any], bool]) -> DataView",
+            "text": "A new view over the items satisfying ``predicate`` (order preserved).",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 426,
+              "end": 428,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L426-L428"
+            }
+          },
+          {
+            "name": "slice",
+            "kind": "function",
+            "signature": "slice(start: int, stop: int | None = None, step: int | None = None) -> DataView",
+            "text": "A new view over ``items[start:stop:step]``.\n\nProvided as an explicit method (in addition to ``view[start:stop]``) because a study spec\nnames its slice as data, and a method call is what a serialized plan records.",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 430,
+              "end": 436,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L430-L436"
+            }
+          },
+          {
+            "name": "concat",
+            "kind": "function",
+            "signature": "concat(other: DataView, *, name: str | None = None) -> DataView",
+            "text": "A new view over this view's items followed by ``other``'s.",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 438,
+              "end": 440,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L438-L440"
+            }
+          },
+          {
+            "name": "seed_ids",
+            "kind": "function",
+            "signature": "seed_ids() -> list[str]",
+            "text": "The seed id of every item, in order (the input to effective sample size).",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 444,
+              "end": 446,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L444-L446"
+            }
+          },
+          {
+            "name": "effective_n",
+            "kind": "function",
+            "signature": "effective_n() -> float",
+            "text": "Lineage-aware effective sample size over the items' seed ids (section 2.4.2).\n\nDelegates to `reward_lens.stats.ess` through `data.lineage.effective_sample_size`, which is\nthe canonical implementation when the stats engine is present and an identical local fallback\notherwise. A view of clones reports about one; a view of distinct seeds reports about its\nlength.",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 448,
+              "end": 456,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L448-L456"
+            }
+          },
+          {
+            "name": "checksum",
+            "kind": "function",
+            "signature": "checksum() -> DatasetID",
+            "text": "A stable, content-derived `DatasetID` (``ds:...``) for this view (section 2.4.1).\n\nHashes the ordered list of item content. It is content-based and order-sensitive: the same\nitems in the same order always produce the same id, and any change of rows or order changes\nit. This is the id the dataset registry verifies against a card's declared checksum, which is\nwhere the limit/subset loader bug dies (section 2.4.5).",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 458,
+              "end": 467,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L458-L467"
+            }
+          },
+          {
+            "name": "collapse_duplicates",
+            "kind": "function",
+            "signature": "collapse_duplicates(*, warn: bool = True) -> tuple['DataView', list[int]]",
+            "text": "Collapse exact-duplicate-content items, returning ``(view, weights)`` (section 2.4.2).",
+            "source": {
+              "file": "src/reward_lens/data/schema.py",
+              "start": 469,
+              "end": 474,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L469-L474"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.data.schema.Pair": {
+      "path": "reward_lens.data.schema.Pair",
+      "name": "Pair",
+      "kind": "class",
+      "text": "A chosen/rejected preference pair, the native reward-model object (section 2.4.1).\n\n``axis`` names what differs between chosen and rejected *by construction*: \"verbosity\",\n\"correctness\", \"receipt-grounding\". This is the field that makes a pair a controlled stimulus\nrather than an arbitrary comparison, and it is what a cross-axis analysis reads. ``lineage``\ncarries the seed provenance (R7); ``meta`` carries difficulty, domain, source, annotator stats.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/schema.py",
+        "start": 92,
+        "end": 115,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L92-L115"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "prompt",
+            "annotation": "str | Prompt",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "chosen",
+            "annotation": "Response",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "rejected",
+            "annotation": "Response",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "axis",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "lineage",
+            "annotation": "Lineage",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "meta",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "prompt_text",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "seed_id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.data.schema.make_pair": {
+      "path": "reward_lens.data.schema.make_pair",
+      "name": "make_pair",
+      "kind": "function",
+      "text": "Construct a `Pair` with a correctly stamped lineage in one call.\n\nAccepts plain strings for the responses (wrapped in `Response`) or `Response` objects when the\ncaller has typed spans to attach. The lineage content hash is computed from the same canonical\ncontent `content_of` produces, so ``pair.lineage.content_hash`` equals\n``content_hash(content_of(pair), \"ch\")`` and clone detection, the checksum, and the lineage all\nagree. This is the builder every dataset constructor should use rather than assembling a `Pair`\nand a `Lineage` separately, which is how the two could drift.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/schema.py",
+        "start": 334,
+        "end": 371,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L334-L371"
+      },
+      "signature": "make_pair(\n    prompt: str | Prompt,\n    chosen: str | Response,\n    rejected: str | Response,\n    axis: str,\n    *,\n    seed_id: str,\n    builder_id: str,\n    ops: Sequence[str] = (),\n    meta: dict[str, Any] | None = None\n) -> Pair",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.data.schema.Quadruple": {
+      "path": "reward_lens.data.schema.Quadruple",
+      "name": "Quadruple",
+      "kind": "class",
+      "text": "A controlled 2x2 design (section 2.4.1).\n\n``cells`` maps a ``(factor_a_level, factor_b_level)`` key to the response for that cell; the\ncanonical example is L2's sycophancy design, agree/disagree crossed with right/wrong. ``factors``\nnames the two crossed factors. A quadruple lets a study read an interaction (does the grader\nreward agreement *more* when the user is wrong?) that no single pair can express.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/schema.py",
+        "start": 118,
+        "end": 140,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L118-L140"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "prompt",
+            "annotation": "str | Prompt",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "cells",
+            "annotation": "dict[tuple[str, str], Response]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "factors",
+            "annotation": "tuple[str, str]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "lineage",
+            "annotation": "Lineage",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "meta",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "prompt_text",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "seed_id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.data.schema.Tournament": {
+      "path": "reward_lens.data.schema.Tournament",
+      "name": "Tournament",
+      "kind": "class",
+      "text": "A k-wise comparison collection over one prompt (section 2.4.1).\n\n``responses`` are the competitors; ``edges`` are the observed pairwise outcomes. This is the\nHodge-ready object: a preference operator over the responses whose curl (intransitive mass) is\nexactly what the topology science measures, and whose edges carry their annotator or judge id so\nthat measurement can be sliced by source.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/schema.py",
+        "start": 171,
+        "end": 193,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L171-L193"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "prompt",
+            "annotation": "str | Prompt",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "responses",
+            "annotation": "tuple[Response, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "edges",
+            "annotation": "tuple[EdgeObs, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "lineage",
+            "annotation": "Lineage",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "meta",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "prompt_text",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "seed_id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.data.schema.Trajectory": {
+      "path": "reward_lens.data.schema.Trajectory",
+      "name": "Trajectory",
+      "kind": "class",
+      "text": "An agent episode: a sequence of steps and its outcome (section 2.4.1).\n\n``outcome`` records how the episode ended (success flag, final reward, task metadata). The\ntrajectory is the substrate for the receipt/narrative sciences and for trajectory-level reward\nsignals; its steps carry the typed spans those sciences read.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/schema.py",
+        "start": 215,
+        "end": 236,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/schema.py#L215-L236"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "steps",
+            "annotation": "tuple[TrajStep, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "outcome",
+            "annotation": "dict[str, Any]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "lineage",
+            "annotation": "Lineage",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "prompt",
+            "annotation": "str | Prompt",
+            "value": "''",
+            "description": ""
+          },
+          {
+            "name": "meta",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "prompt_text",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "seed_id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.data.builtin.diagnostic_v3.load_diagnostic_v3": {
+      "path": "reward_lens.data.builtin.diagnostic_v3.load_diagnostic_v3",
+      "name": "load_diagnostic_v3",
+      "kind": "function",
+      "text": "Return the diagnostic_v3 set as a `DataView` per dimension (section 2.4.2).\n\nKeys are the 14 dimension names (the 12 imported plus ``receipts`` and ``contested``). Each view\nis lineage-honest: its `effective_n` equals its seed count because every item is an unmutated\nseed. The result is cached; the views are immutable, so sharing the cache is safe.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/builtin/diagnostic_v3.py",
+        "start": 238,
+        "end": 251,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/builtin/diagnostic_v3.py#L238-L251"
+      },
+      "signature": "load_diagnostic_v3() -> dict[str, DataView]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.data.lineage.Lineage": {
+      "path": "reward_lens.data.lineage.Lineage",
+      "name": "Lineage",
+      "kind": "class",
+      "text": "The provenance of a single stimulus (section 2.4.2).\n\n``seed_id`` names the hand-authored (or externally sourced) seed this item descends from;\nresampling happens at this level by default, so clones of one seed count as one. ``builder_id``\nnames the builder that produced the item. ``ops`` is the explicit, ordered list of mutation\noperations applied to the seed to reach this item (empty for an unmutated seed). ``content_hash``\nis the content-derived id of the item's payload, which is what clone detection groups on.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/lineage.py",
+        "start": 35,
+        "end": 66,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/lineage.py#L35-L66"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "seed_id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "builder_id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "ops",
+            "annotation": "tuple[str, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "content_hash",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "with_op",
+            "kind": "function",
+            "signature": "with_op(op: str, content: Any) -> Lineage",
+            "text": "Return a new lineage with ``op`` appended and the content hash recomputed.\n\nA builder that mutates an item calls this: the seed id is preserved (so effective n is\nunchanged by the mutation), the op is recorded, and the content hash is refreshed to the\nmutated payload so clone detection and the dataset checksum see the new content.",
+            "source": {
+              "file": "src/reward_lens/data/lineage.py",
+              "start": 51,
+              "end": 58,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/lineage.py#L51-L58"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.data.align.SpanMap": {
+      "path": "reward_lens.data.align.SpanMap",
+      "name": "SpanMap",
+      "kind": "class",
+      "text": "A token-level alignment from sequence ``a`` to sequence ``b`` (section 2.4.3).\n\nBuilt by `align`. Carries the opcodes and both tokenized inputs. The two things instruments read:\n`map_span`, which carries a token span from ``a`` into ``b``, and `aligned_pairs`, the list of\nexactly-corresponding token indices. `inserts` and `deletes` report the tokens that exist on only\none side, which the receipt sciences need (a deleted receipt has no image in ``b``).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/data/align.py",
+        "start": 187,
+        "end": 280,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/align.py#L187-L280"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "a",
+            "annotation": "TokenizedInput",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "b",
+            "annotation": "TokenizedInput",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "opcodes",
+            "annotation": "tuple[Opcode, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "exact",
+            "annotation": "bool",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "aligned_pairs",
+            "annotation": "tuple[tuple[int, int], ...]",
+            "value": null,
+            "description": "Every ``(a_index, b_index)`` token pair that corresponds exactly (from equal blocks)."
+          },
+          {
+            "name": "inserts",
+            "annotation": "tuple[int, ...]",
+            "value": null,
+            "description": "Token indices in ``b`` with no counterpart in ``a`` (insert blocks)."
+          },
+          {
+            "name": "deletes",
+            "annotation": "tuple[int, ...]",
+            "value": null,
+            "description": "Token indices in ``a`` with no counterpart in ``b`` (delete blocks)."
+          }
+        ],
+        "methods": [
+          {
+            "name": "map_span",
+            "kind": "function",
+            "signature": "map_span(span: Span) -> Span | None",
+            "text": "Carry a token span in ``a`` to the corresponding token span in ``b``.\n\nReturns the mapped `Span` (preserving the kind and meta), or None when the span maps to\nnothing because every token it covers was deleted. An empty (zero-width) input span returns\nNone. The mapped span is the tightest ``b`` interval covering the images of all ``a`` tokens\nin the input span.",
+            "source": {
+              "file": "src/reward_lens/data/align.py",
+              "start": 260,
+              "end": 280,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/data/align.py#L260-L280"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}

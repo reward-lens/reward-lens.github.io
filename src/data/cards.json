@@ -8,6 +8,7 @@
   "science_raw": "S16-robustness",
   "verdict": "refuted",
   "kill_fired": "K-err",
+  "kill_note": "internals add nothing over the seen-pair margin the RM already exposes when predicting held-out errors, on at least one family",
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -94,6 +95,7 @@
   "science_raw": "S16-robustness",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": ">=",
@@ -176,6 +178,7 @@
   "science_raw": "S16-robustness",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": ">=",
@@ -262,6 +265,7 @@
   "science_raw": "S03-thermo",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -341,6 +345,7 @@
   "science_raw": "S03-thermo",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -421,6 +426,7 @@
   "science_raw": "S03-thermo",
   "verdict": "confirmed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -503,6 +509,7 @@
   "science_raw": "S03-thermo",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": ">",
@@ -578,6 +585,7 @@
   "science_raw": "S02-gauge",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -663,6 +671,7 @@
   "science_raw": "S02-gauge",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": ">=",
@@ -736,6 +745,7 @@
   "science_raw": "S12-hackability",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -796,6 +806,7 @@
   "science_raw": "S12-hackability",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -872,6 +883,7 @@
   "science_raw": "S09-verification",
   "verdict": "refuted",
   "kill_fired": "K-verif",
+  "kill_note": "methodological kill: the instrument failed on a real PRM, a works-ledger finding, not a scientific negative",
   "kill_criteria": [
    {
     "comparator": "<",
@@ -945,6 +957,7 @@
   "science_raw": "S11-values",
   "verdict": "confirmed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -1005,6 +1018,7 @@
   "science_raw": "S11-values",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -1077,6 +1091,7 @@
   "science_raw": "S15-forensics",
   "verdict": "refuted",
   "kill_fired": "K-forensic",
+  "kill_note": "the disclosure-game framing adds nothing over raw reliance; the shipped S15 kill",
   "kill_criteria": [
    {
     "comparator": "<",
@@ -1154,6 +1169,7 @@
   "science_raw": "AT-universality",
   "verdict": "refuted",
   "kill_fired": "K-vce",
+  "kill_note": "convergence is fully explained by shared capability structure",
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -1234,6 +1250,7 @@
   "science_raw": "S08-factorization",
   "verdict": "refuted",
   "kill_fired": "K-kui",
+  "kill_note": "no reliable decode-not-price gap across the fleet",
   "kill_criteria": [
    {
     "comparator": ">=",
@@ -1324,6 +1341,7 @@
   "science_raw": "S05-capacity",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -1409,6 +1427,7 @@
   "science_raw": "S16-robustness",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -1497,6 +1516,7 @@
   "science_raw": "S06-topology",
   "verdict": "confirmed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -1559,6 +1579,7 @@
   "science_raw": "S07-embryology",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<",
@@ -1636,6 +1657,7 @@
   "science_raw": "S01-calibration",
   "verdict": "refuted",
   "kill_fired": "K-transfer",
+  "kill_note": "calibration does not transfer toy-to-real; RESULTS opens with this and six cards drop a rung",
   "kill_criteria": [
    {
     "comparator": ">=",
@@ -1692,6 +1714,7 @@
   "science_raw": "S01-calibration",
   "verdict": "refuted",
   "kill_fired": "K-avp",
+  "kill_note": "the two instruments are statistically tied against the marker-response key on the organism; neither localization can be preferred, undercutting every attribution-based number (a noisy key, visible in the emitted margin distribution, is the disclosed alternative reading)",
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -1758,6 +1781,7 @@
   "science_raw": "S01-calibration",
   "verdict": "mixed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [
    {
     "comparator": "<=",
@@ -1842,6 +1866,7 @@
   "science_raw": "S00-meta",
   "verdict": "refuted",
   "kill_fired": "K-meta",
+  "kill_note": "the campaign's directional calls do not beat a coin; the discipline does not calibrate itself",
   "kill_criteria": [
    {
     "comparator": ">=",
@@ -1908,6 +1933,7 @@
   "science_raw": "S10-decompiling",
   "verdict": "confirmed",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [],
   "hypotheses": [
    {
@@ -1959,6 +1985,7 @@
   "science_raw": "S04-field",
   "verdict": "inconclusive",
   "kill_fired": null,
+  "kill_note": null,
   "kill_criteria": [],
   "hypotheses": [
    {

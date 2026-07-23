@@ -1,0 +1,797 @@
+{
+  "group": "core",
+  "title": "Core and evidence",
+  "order": [
+    "reward_lens.core.evidence.Evidence",
+    "reward_lens.core.evidence.make_evidence",
+    "reward_lens.core.evidence.Uncertainty",
+    "reward_lens.core.types.TrustLevel",
+    "reward_lens.core.types.GaugeStatus",
+    "reward_lens.core.gates.CalibrationRef",
+    "reward_lens.core.types.SubjectRef",
+    "reward_lens.core.types.ModelFP",
+    "reward_lens.core.provenance.Provenance",
+    "reward_lens.core.provenance.Cost",
+    "reward_lens.core.gates.compute_trust",
+    "reward_lens.core.gates.require_frame_for_comparison",
+    "reward_lens.core.store.EvidenceStore",
+    "reward_lens.core.store.default_store"
+  ],
+  "symbols": {
+    "reward_lens.core.evidence.Evidence": {
+      "path": "reward_lens.core.evidence.Evidence",
+      "name": "Evidence",
+      "kind": "class",
+      "text": "The universal typed measurement return value (section 2.1.2).\n\nConstruct via `make_evidence`, which computes the content-derived id and the gate-computed\ntrust level. The trust level is not a constructor argument on purpose: it is a function of\nthe calibration reference and the registration status, and allowing a caller to set it would\ndefeat the gates.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/evidence.py",
+        "start": 224,
+        "end": 264,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/evidence.py#L224-L264"
+      },
+      "signature": null,
+      "bases": [
+        "Generic[T]"
+      ],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "id",
+            "annotation": "EvidenceID",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "observable",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "observable_version",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "subject",
+            "annotation": "SubjectRef",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "value",
+            "annotation": "T",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "uncertainty",
+            "annotation": "Uncertainty",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "gauge",
+            "annotation": "GaugeStatus",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "calibration",
+            "annotation": "CalibrationRef | None",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "trust",
+            "annotation": "TrustLevel",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "provenance",
+            "annotation": "Provenance",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "created_at",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "is_calibrated",
+            "annotation": "bool",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "envelope",
+            "kind": "function",
+            "signature": "envelope(sidecar_dir: Any = None) -> dict[str, Any]",
+            "text": "The JSON-serializable store envelope for this Evidence.",
+            "source": {
+              "file": "src/reward_lens/core/evidence.py",
+              "start": 250,
+              "end": 264,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/evidence.py#L250-L264"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.evidence.make_evidence": {
+      "path": "reward_lens.core.evidence.make_evidence",
+      "name": "make_evidence",
+      "kind": "function",
+      "text": "Build an Evidence, computing its content id and gate-derived trust level.\n\nThe id hashes the observable, subject, value, gauge, calibration, and provenance (excluding\nthe wall-clock timestamp) so identical measurements from identical inputs share an id, which\nis what makes the store a deduplicating DAG. Trust is computed by `compute_trust`; passing\n``registered=True`` (the study runner does this) yields REGISTERED, a calibration reference\nyields at least CALIBRATED, and the two together with ``adjudicated=True`` yield ADJUDICATED.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/evidence.py",
+        "start": 267,
+        "end": 317,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/evidence.py#L267-L317"
+      },
+      "signature": "make_evidence(\n    *,\n    observable: str,\n    observable_version: str,\n    subject: SubjectRef,\n    value: T,\n    uncertainty: Uncertainty | None = None,\n    gauge: GaugeStatus = GaugeStatus.INVARIANT,\n    calibration: CalibrationRef | None = None,\n    provenance: Provenance | None = None,\n    registered: bool = False,\n    adjudicated: bool = False,\n    created_at: str | None = None\n) -> Evidence[T]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.core.evidence.Uncertainty": {
+      "path": "reward_lens.core.evidence.Uncertainty",
+      "name": "Uncertainty",
+      "kind": "class",
+      "text": "The uncertainty of a measurement (section 2.1.2).\n\n``n`` is the nominal row count; ``n_effective`` is the lineage-aware effective sample size\n(section 2.10.1) which, on a dataset of clones, is far smaller than ``n`` and is the\nstructural death of v1's fake-n failure class. ``seed_spread`` is the cross-seed standard\ndeviation where a quantity is measured over multiple seeds. ``method`` names how the\ninterval was produced (\"bootstrap-bca\", \"analytic\", \"conformal\", and crucially\n\"bootstrap-CLONE-INFLATED\" when a caller opted into resampling across clones).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/evidence.py",
+        "start": 42,
+        "end": 71,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/evidence.py#L42-L71"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "ci_low",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "ci_high",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "ci_level",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "n",
+            "annotation": "int | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "n_effective",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "seed_spread",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "method",
+            "annotation": "str",
+            "value": "'none'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.types.TrustLevel": {
+      "path": "reward_lens.core.types.TrustLevel",
+      "name": "TrustLevel",
+      "kind": "class",
+      "text": "The trust ladder the three gates compute (section 1.3).\n\nOrdered so that comparisons and ``max`` express \"the highest applicable rung\". The level\nis never set by a caller; it is computed from whether the Evidence carries a calibration\nreference, whether it was produced under a frozen study, and whether it survived its kill\ncriteria and review. See `reward_lens.core.gates.compute_trust`.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/types.py",
+        "start": 125,
+        "end": 140,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/types.py#L125-L140"
+      },
+      "signature": null,
+      "bases": [
+        "enum.IntEnum"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [],
+        "enum_members": [
+          {
+            "name": "EXPLORATORY",
+            "annotation": null,
+            "value": "0",
+            "description": ""
+          },
+          {
+            "name": "CALIBRATED",
+            "annotation": null,
+            "value": "1",
+            "description": ""
+          },
+          {
+            "name": "REGISTERED",
+            "annotation": null,
+            "value": "2",
+            "description": ""
+          },
+          {
+            "name": "ADJUDICATED",
+            "annotation": null,
+            "value": "3",
+            "description": ""
+          }
+        ]
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": true
+    },
+    "reward_lens.core.types.GaugeStatus": {
+      "path": "reward_lens.core.types.GaugeStatus",
+      "name": "GaugeStatus",
+      "kind": "class",
+      "text": "How an Observable's value transforms under the reward gauge group (I3, gate 2).\n\nINVARIANT quantities are safe to compare across signals directly. COVARIANT quantities\n(directions, angles, subspace overlaps) require a shared `Frame` to compare and the\ncomparison APIs take a frame argument with no default. RAW_ONLY quantities are computable\nand scientifically interesting (E19 proved this) but are typed as raw coordinates and\nrendered as such, never mistaken for invariant.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/types.py",
+        "start": 143,
+        "end": 158,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/types.py#L143-L158"
+      },
+      "signature": null,
+      "bases": [
+        "enum.Enum"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [],
+        "enum_members": [
+          {
+            "name": "INVARIANT",
+            "annotation": null,
+            "value": "'invariant'",
+            "description": ""
+          },
+          {
+            "name": "COVARIANT",
+            "annotation": null,
+            "value": "'covariant'",
+            "description": ""
+          },
+          {
+            "name": "RAW_ONLY",
+            "annotation": null,
+            "value": "'raw_only'",
+            "description": ""
+          }
+        ]
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": true
+    },
+    "reward_lens.core.gates.CalibrationRef": {
+      "path": "reward_lens.core.gates.CalibrationRef",
+      "name": "CalibrationRef",
+      "kind": "class",
+      "text": "A reference to the scorecard entry that calibrates a measurement (gate 1).\n\n``scorecard_entry`` is the Evidence id of the answer-key ROC that certifies this observable\non this signal family and data regime. ``regime_match`` is a free-text note on how closely\nthe calibrated regime matches the production regime, so a mismatch (calibrated on 0.5B\norganisms, applied to an 8B model) is visible rather than assumed away. ``organism_family``\nnames the planted-structure family the scorecard was built from.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/gates.py",
+        "start": 26,
+        "end": 48,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/gates.py#L26-L48"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "scorecard_entry",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "organism_family",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "regime_match",
+            "annotation": "str",
+            "value": "'exact'",
+            "description": ""
+          },
+          {
+            "name": "operating_point",
+            "annotation": "dict[str, float] | None",
+            "value": "None",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.types.SubjectRef": {
+      "path": "reward_lens.core.types.SubjectRef",
+      "name": "SubjectRef",
+      "kind": "class",
+      "text": "The subject of a measurement (section 2.1.2).\n\nNames the signal(s) by fingerprint, the dataset, the readout, the frame (for covariant\nquantities), and any interventions applied, by fingerprint. Recording intervention\nfingerprints here is what makes an erased-model card structurally unable to masquerade as a\nbase-model card: the interventions are part of the subject's identity.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/types.py",
+        "start": 221,
+        "end": 246,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/types.py#L221-L246"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "signals",
+            "annotation": "tuple[ModelFP, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "dataset",
+            "annotation": "DatasetID | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "readout",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "frame",
+            "annotation": "FrameID | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "interventions",
+            "annotation": "tuple[str, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "extra",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.types.ModelFP": {
+      "path": "reward_lens.core.types.ModelFP",
+      "name": "ModelFP",
+      "kind": "attribute",
+      "text": null,
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/types.py",
+        "start": 83,
+        "end": 83,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/types.py#L83"
+      },
+      "signature": null,
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": {
+        "annotation": null,
+        "value": "NewType('ModelFP', str)"
+      },
+      "poor": true,
+      "poor_reason": "no docstring text"
+    },
+    "reward_lens.core.provenance.Provenance": {
+      "path": "reward_lens.core.provenance.Provenance",
+      "name": "Provenance",
+      "kind": "class",
+      "text": "The full provenance envelope carried by every Evidence.\n\n``config_hash`` is a content hash of whatever configuration object produced the run;\n``seeds`` records every RNG seed used; ``oracle_calls`` lists ``OracleCall`` ids for any\nLLM-derived input (R10); ``parents`` lists the Evidence ids this quantity was derived from\n(I5). ``study`` is the frozen StudyID when the run was registered (gate 3), else None.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/provenance.py",
+        "start": 83,
+        "end": 112,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/provenance.py#L83-L112"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "git_sha",
+            "annotation": "str",
+            "value": "'unknown'",
+            "description": ""
+          },
+          {
+            "name": "config_hash",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "seeds",
+            "annotation": "tuple[int, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "cost",
+            "annotation": "Cost",
+            "value": "field(default_factory=Cost)",
+            "description": ""
+          },
+          {
+            "name": "oracle_calls",
+            "annotation": "tuple[str, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "parents",
+            "annotation": "tuple[EvidenceID, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "study",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "extra",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.provenance.Cost": {
+      "path": "reward_lens.core.provenance.Cost",
+      "name": "Cost",
+      "kind": "class",
+      "text": "The compute a measurement consumed (R13).\n\nMetered on every Evidence so studies and cards can report their total cost, and so the\nAtlas at population scale is budgetable. ``gpu_seconds`` is wall-clock GPU time; ``tokens``\ncounts forward-pass tokens; ``wall_seconds`` is total wall time including CPU work.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/provenance.py",
+        "start": 55,
+        "end": 80,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/provenance.py#L55-L80"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "gpu_seconds",
+            "annotation": "float",
+            "value": "0.0",
+            "description": ""
+          },
+          {
+            "name": "tokens",
+            "annotation": "int",
+            "value": "0",
+            "description": ""
+          },
+          {
+            "name": "wall_seconds",
+            "annotation": "float",
+            "value": "0.0",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.gates.compute_trust": {
+      "path": "reward_lens.core.gates.compute_trust",
+      "name": "compute_trust",
+      "kind": "function",
+      "text": "Compute the trust level of an Evidence from the gate inputs (section 1.3).\n\nThe trust level is never set by a caller. It is derived from three facts the gates\nestablish: whether a calibration reference is present (gate 1), whether the run happened\nunder a frozen study (gate 3), and whether the study runner has determined the result\nsurvived its own kill criteria and review.\n\nThe ladder is EXPLORATORY < CALIBRATED < REGISTERED < ADJUDICATED. REGISTERED ranks above\nCALIBRATED deliberately: a preregistered prediction is a stronger epistemic claim than a\ncalibrated but exploratory measurement. A REGISTERED result that lacks calibration still\ncarries ``calibration: None`` on the Evidence and renders as unvalidated on cards, so the\ntwo axes stay independently visible even though the headline trust level is a single rung.\n\nADJUDICATED requires the full set: registered, calibrated, and adjudicated. A caller that\npasses ``adjudicated=True`` without the other two gets the highest rung the facts actually\nsupport, never ADJUDICATED on the strength of the flag alone.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/gates.py",
+        "start": 51,
+        "end": 80,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/gates.py#L51-L80"
+      },
+      "signature": "compute_trust(\n    *,\n    calibration: CalibrationRef | None,\n    registered: bool,\n    adjudicated: bool = False\n) -> TrustLevel",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.core.gates.require_frame_for_comparison": {
+      "path": "reward_lens.core.gates.require_frame_for_comparison",
+      "name": "require_frame_for_comparison",
+      "kind": "function",
+      "text": "Enforce gate 2 at a cross-signal comparison site.\n\nA COVARIANT quantity (a direction, an angle, a subspace overlap) is only comparable across\nsignals in a shared frame. If the comparison is attempted without one, this raises\n`GaugeError` rather than returning a number that conflates a coordinate change with a\nfunctional change, which is exactly the E19 ``cos = 0.005`` failure. INVARIANT quantities\nneed no frame; RAW_ONLY quantities are allowed through but the caller is responsible for\ntyping the resulting Evidence as raw.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/gates.py",
+        "start": 83,
+        "end": 99,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/gates.py#L83-L99"
+      },
+      "signature": "require_frame_for_comparison(gauge_status: GaugeStatus, frame: FrameID | None) -> None",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.core.store.EvidenceStore": {
+      "path": "reward_lens.core.store.EvidenceStore",
+      "name": "EvidenceStore",
+      "kind": "class",
+      "text": "A directory-backed, append-only store of Evidence.\n\nNot thread-safe across processes (files are the interface; use one writer), but guarded by a\nlock within a process. The in-memory index maps id to envelope for O(1) lookup; it is built\nonce on construction by streaming the JSONL.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/store.py",
+        "start": 28,
+        "end": 193,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L28-L193"
+      },
+      "signature": "EvidenceStore(path: str | Path | None = None)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "append",
+            "kind": "function",
+            "signature": "append(evidence: Evidence[Any]) -> EvidenceID",
+            "text": "Append an Evidence, returning its id. Idempotent on content-derived ids.\n\nEnforces the DAG invariant: if the Evidence declares parents, every parent must already\nbe in the store, else `ProvenanceError`. Re-appending an id that is already present is a\nno-op (the content is identical by construction), so replaying a study is safe.",
+            "source": {
+              "file": "src/reward_lens/core/store.py",
+              "start": 58,
+              "end": 80,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L58-L80"
+            }
+          },
+          {
+            "name": "get",
+            "kind": "function",
+            "signature": "get(ev_id: str) -> Evidence[Any]",
+            "text": "Load an Evidence by id, reconstructing its typed payload.",
+            "source": {
+              "file": "src/reward_lens/core/store.py",
+              "start": 90,
+              "end": 95,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L90-L95"
+            }
+          },
+          {
+            "name": "find",
+            "kind": "function",
+            "signature": "find(\n    observable: str | None = None,\n    signal: str | None = None,\n    dataset: str | None = None,\n    readout: str | None = None,\n    study: str | None = None,\n    min_trust: TrustLevel | None = None,\n    latest: bool = False\n) -> list[Evidence[Any]]",
+            "text": "Query the store with simple structural filters.\n\n``signal`` matches an Evidence whose subject names that model fingerprint. ``latest``\ncollapses to the most recently created Evidence per (observable, subject) key, which is\nthe common \"give me the current value\" query. All filtering is over the in-memory index;\nfor ad hoc analysis use `frame` to get a pandas DataFrame of envelopes.",
+            "source": {
+              "file": "src/reward_lens/core/store.py",
+              "start": 101,
+              "end": 143,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L101-L143"
+            }
+          },
+          {
+            "name": "frame",
+            "kind": "function",
+            "signature": "frame() -> Any",
+            "text": "Return a pandas DataFrame of flattened envelopes for ad hoc queries.",
+            "source": {
+              "file": "src/reward_lens/core/store.py",
+              "start": 145,
+              "end": 167,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L145-L167"
+            }
+          },
+          {
+            "name": "parents",
+            "kind": "function",
+            "signature": "parents(evidence: Evidence[Any]) -> list[Evidence[Any]]",
+            "text": "Return the immediate parent Evidence, raising if any is unresolvable.",
+            "source": {
+              "file": "src/reward_lens/core/store.py",
+              "start": 171,
+              "end": 178,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L171-L178"
+            }
+          },
+          {
+            "name": "ancestors",
+            "kind": "function",
+            "signature": "ancestors(evidence: Evidence[Any]) -> list[Evidence[Any]]",
+            "text": "Return the transitive closure of parents (the full derivation DAG of a quantity).",
+            "source": {
+              "file": "src/reward_lens/core/store.py",
+              "start": 180,
+              "end": 193,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L180-L193"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.core.store.default_store": {
+      "path": "reward_lens.core.store.default_store",
+      "name": "default_store",
+      "kind": "function",
+      "text": "Return the process-wide default store (under the configured store path).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/core/store.py",
+        "start": 199,
+        "end": 204,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/core/store.py#L199-L204"
+      },
+      "signature": "default_store() -> EvidenceStore",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    }
+  }
+}

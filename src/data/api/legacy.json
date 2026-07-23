@@ -1,0 +1,2171 @@
+{
+  "group": "legacy",
+  "title": "Legacy (1.0 API)",
+  "order": [
+    "reward_lens.hacking.HackingDetector",
+    "reward_lens.comparison.ModelComparator",
+    "reward_lens.sae.TopKSAE",
+    "reward_lens.model.RewardModel",
+    "reward_lens.model.ActivationCache",
+    "reward_lens.model.BatchedActivationCache",
+    "reward_lens.lens.RewardLens",
+    "reward_lens.lens.reward_lens_plot",
+    "reward_lens.attribution.ComponentAttribution",
+    "reward_lens.patching.ActivationPatcher",
+    "reward_lens.path_patching.PathPatcher",
+    "reward_lens.path_patching.PathPatchResult",
+    "reward_lens.distortion.DistortionAnalyzer",
+    "reward_lens.distortion.DistortionReport",
+    "reward_lens.divergence_patching.DivergenceAwarePatching",
+    "reward_lens.divergence_patching.DivergenceAwarePatchingResult",
+    "reward_lens.cascade.MisalignmentCascadeDetector",
+    "reward_lens.cascade.CascadeReport",
+    "reward_lens.conflict.RewardConflictAnalyzer",
+    "reward_lens.conflict.ConflictReport",
+    "reward_lens.conflict.quick_conflict_check",
+    "reward_lens.concepts.ConceptExtractor",
+    "reward_lens.concepts.ConceptAlignmentReport",
+    "reward_lens.concepts.quick_concept_analysis",
+    "reward_lens.sae.SAETrainer"
+  ],
+  "symbols": {
+    "reward_lens.hacking.HackingDetector": {
+      "path": "reward_lens.hacking.HackingDetector",
+      "name": "HackingDetector",
+      "kind": "class",
+      "text": "Automated reward hacking vulnerability scanner.\n\nGenerates controlled stimuli and measures whether the reward model\nexhibits biases along known failure dimensions.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/hacking.py",
+        "start": 323,
+        "end": 478,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/hacking.py#L323-L478"
+      },
+      "signature": "HackingDetector(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "scan",
+            "kind": "function",
+            "signature": "scan(\n    tests: Optional[list[str]] = None,\n    prompt: Optional[str] = None,\n    response: Optional[str] = None,\n    max_length: int = 2048\n) -> HackingReport",
+            "text": "Run a full vulnerability scan over the built-in probe suite.\n\nEach requested dimension is evaluated with its own set of built-in\n(neutral, biased) pairs and summarized as an effect size with a\npermutation p-value. To test a bespoke pair, use ``test_custom_pair``.",
+            "source": {
+              "file": "src/reward_lens/hacking.py",
+              "start": 336,
+              "end": 371,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/hacking.py#L336-L371"
+            }
+          },
+          {
+            "name": "test_custom_pair",
+            "kind": "function",
+            "signature": "test_custom_pair(\n    prompt: str,\n    neutral: str,\n    biased: str,\n    dimension: str = 'custom',\n    max_length: int = 2048\n) -> BiasTestResult",
+            "text": "Test a custom pair for bias.",
+            "source": {
+              "file": "src/reward_lens/hacking.py",
+              "start": 454,
+              "end": 478,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/hacking.py#L454-L478"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.comparison.ModelComparator": {
+      "path": "reward_lens.comparison.ModelComparator",
+      "name": "ModelComparator",
+      "kind": "class",
+      "text": "Compare preference computation across multiple reward models.",
+      "params": [
+        {
+          "name": "models",
+          "annotation": "dict[str, RewardModel]",
+          "default": null,
+          "description": "Dict mapping model names to RewardModel instances."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/comparison.py",
+        "start": 115,
+        "end": 209,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/comparison.py#L115-L209"
+      },
+      "signature": "ModelComparator(models: dict[str, RewardModel])",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "compare",
+            "kind": "function",
+            "signature": "compare(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    max_length: int = 2048\n) -> ComparisonResult",
+            "text": "Run reward lens and attribution on all models for the same pair.",
+            "source": {
+              "file": "src/reward_lens/comparison.py",
+              "start": 125,
+              "end": 178,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/comparison.py#L125-L178"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.sae.TopKSAE": {
+      "path": "reward_lens.sae.TopKSAE",
+      "name": "TopKSAE",
+      "kind": "class",
+      "text": "TopK enforces exactly k features active per input, giving clean sparsity\ncontrol without the L1 penalty tuning required by ReLU SAEs.",
+      "params": [
+        {
+          "name": "d_model",
+          "annotation": "int",
+          "default": null,
+          "description": "Input dimension (model hidden size)."
+        },
+        {
+          "name": "n_features",
+          "annotation": "int",
+          "default": null,
+          "description": "Dictionary size (number of SAE features)."
+        },
+        {
+          "name": "k",
+          "annotation": "int",
+          "default": "32",
+          "description": "Number of active features per input."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Architecture",
+          "text": "Encoder: h -> W_enc @ (h - b_dec) + b_enc -> top-k -> f\nDecoder: f -> W_dec @ f + b_dec -> h_reconstructed"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/sae.py",
+        "start": 48,
+        "end": 207,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L48-L207"
+      },
+      "signature": "TopKSAE(d_model: int, n_features: int, k: int = 32)",
+      "bases": [
+        "nn.Module"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "encode",
+            "kind": "function",
+            "signature": "encode(x: torch.Tensor) -> torch.Tensor",
+            "text": "Encode input to sparse feature activations.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 89,
+              "end": 108,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L89-L108"
+            }
+          },
+          {
+            "name": "decode",
+            "kind": "function",
+            "signature": "decode(f: torch.Tensor) -> torch.Tensor",
+            "text": "Decode sparse features back to input space.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 110,
+              "end": 119,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L110-L119"
+            }
+          },
+          {
+            "name": "forward",
+            "kind": "function",
+            "signature": "forward(x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]",
+            "text": "Full forward pass: encode then decode.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 121,
+              "end": 134,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L121-L134"
+            }
+          },
+          {
+            "name": "feature_reward_alignments",
+            "kind": "function",
+            "signature": "feature_reward_alignments(reward_direction: torch.Tensor) -> torch.Tensor",
+            "text": "Compute the reward alignment of each feature.\n\nThis is the quantity (w_r^T @ d_i) for each feature i, where d_i is\nthe i-th decoder column (feature direction in activation space).",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 136,
+              "end": 151,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L136-L151"
+            }
+          },
+          {
+            "name": "decompose_reward",
+            "kind": "function",
+            "signature": "decompose_reward(\n    x: torch.Tensor,\n    reward_direction: torch.Tensor\n) -> tuple[torch.Tensor, torch.Tensor]",
+            "text": "Decompose the reward score into per-feature contributions.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 153,
+              "end": 173,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L153-L173"
+            }
+          },
+          {
+            "name": "save",
+            "kind": "function",
+            "signature": "save(path: str) -> None",
+            "text": "Save the SAE to disk.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 175,
+              "end": 189,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L175-L189"
+            }
+          },
+          {
+            "name": "load",
+            "kind": "function",
+            "signature": "load(path: str, device: str = 'cpu') -> TopKSAE",
+            "text": "Load a saved SAE.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 191,
+              "end": 207,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L191-L207"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.model.RewardModel": {
+      "path": "reward_lens.model.RewardModel",
+      "name": "RewardModel",
+      "kind": "class",
+      "text": "Wrapper around a HuggingFace reward model for mechanistic interpretability.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "nn.Module",
+          "default": null,
+          "description": "The HuggingFace model."
+        },
+        {
+          "name": "tokenizer",
+          "annotation": "AutoTokenizer",
+          "default": null,
+          "description": "The tokenizer."
+        },
+        {
+          "name": "adapter",
+          "annotation": "ModelAdapter",
+          "default": null,
+          "description": "Model-specific adapter for architecture navigation."
+        },
+        {
+          "name": "device",
+          "annotation": "torch.device",
+          "default": null,
+          "description": "Device to run on."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "This class handles",
+          "text": "1. Loading and wrapping the model with activation hooks\n2. Extracting the reward direction (reward head weights)\n3. Tokenizing preference pairs\n4. Running forward passes with activation caching\n5. Computing reward scores"
+        },
+        {
+          "title": "Example",
+          "text": ">>> rm = RewardModel.from_pretrained(\"Skywork/Skywork-Reward-Llama-3.1-8B-v0.2\")\n>>> score = rm.score(\"What is 2+2?\", \"2+2 is 4.\")\n>>> print(f\"Reward: {score:.4f}\")"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/model.py",
+        "start": 430,
+        "end": 1297,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L430-L1297"
+      },
+      "signature": "RewardModel(\n    model: nn.Module,\n    tokenizer: AutoTokenizer,\n    adapter: ModelAdapter,\n    device: torch.device\n)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [
+          {
+            "name": "reward_direction",
+            "annotation": "torch.Tensor",
+            "value": null,
+            "description": "The reward head weight vector \u2014 the direction in activation space that\ndefines the reward. Shape: (d_model,)."
+          },
+          {
+            "name": "reward_bias",
+            "annotation": "float",
+            "value": null,
+            "description": "The reward head bias term."
+          },
+          {
+            "name": "d_model",
+            "annotation": "int",
+            "value": null,
+            "description": "Hidden dimension of the model."
+          },
+          {
+            "name": "n_layers",
+            "annotation": "int",
+            "value": null,
+            "description": "Number of transformer layers."
+          },
+          {
+            "name": "n_heads",
+            "annotation": "int",
+            "value": null,
+            "description": "Number of attention heads per layer."
+          },
+          {
+            "name": "d_head",
+            "annotation": "int",
+            "value": null,
+            "description": "Dimension per attention head."
+          }
+        ],
+        "methods": [
+          {
+            "name": "from_pretrained",
+            "kind": "function",
+            "signature": "from_pretrained(\n    model_name_or_path: str,\n    device: Optional[str] = None,\n    torch_dtype: torch.dtype = torch.bfloat16,\n    trust_remote_code: bool = True,\n    attn_implementation: Optional[str] = None,\n    **kwargs: Any = {}\n) -> RewardModel",
+            "text": "Load a reward model from HuggingFace.\n\nThis is the main entry point. It auto-detects the model architecture and\nselects the appropriate adapter.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 469,
+              "end": 613,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L469-L613"
+            }
+          },
+          {
+            "name": "tokenize_conversation",
+            "kind": "function",
+            "signature": "tokenize_conversation(\n    prompt: str,\n    response: str,\n    max_length: int = 2048\n) -> dict[str, torch.Tensor]",
+            "text": "Tokenize a (prompt, response) pair using the model's chat template.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 646,
+              "end": 682,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L646-L682"
+            }
+          },
+          {
+            "name": "tokenize_raw",
+            "kind": "function",
+            "signature": "tokenize_raw(text: str, max_length: int = 2048) -> dict[str, torch.Tensor]",
+            "text": "Tokenize raw text (already formatted).",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 684,
+              "end": 701,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L684-L701"
+            }
+          },
+          {
+            "name": "score",
+            "kind": "function",
+            "signature": "score(prompt: str, response: str, max_length: int = 2048) -> float",
+            "text": "Compute the scalar reward for a (prompt, response) pair.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 703,
+              "end": 722,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L703-L722"
+            }
+          },
+          {
+            "name": "score_pair",
+            "kind": "function",
+            "signature": "score_pair(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    max_length: int = 2048\n) -> tuple[float, float]",
+            "text": "Score both completions in a preference pair.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 724,
+              "end": 743,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L724-L743"
+            }
+          },
+          {
+            "name": "forward_with_cache",
+            "kind": "function",
+            "signature": "forward_with_cache(\n    prompt: str,\n    response: str,\n    cache_full_sequences: bool = False,\n    max_length: int = 2048\n) -> tuple[float, ActivationCache]",
+            "text": "Run a forward pass and cache all intermediate activations.\n\nThis is the workhorse function for all interpretability analyses.\nIt registers hooks on every transformer layer to capture:\n- Residual stream states after each layer\n- Attention sublayer outputs\n- MLP sublayer outputs",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 745,
+              "end": 773,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L745-L773"
+            }
+          },
+          {
+            "name": "forward_with_cache_from_inputs",
+            "kind": "function",
+            "signature": "forward_with_cache_from_inputs(\n    inputs: dict[str, torch.Tensor],\n    cache_full_sequences: bool = False\n) -> tuple[float, ActivationCache]",
+            "text": "Run forward pass with caching from pre-tokenized inputs.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 775,
+              "end": 791,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L775-L791"
+            }
+          },
+          {
+            "name": "tokenize_conversation_batch",
+            "kind": "function",
+            "signature": "tokenize_conversation_batch(\n    pairs: list[tuple[str, str]],\n    max_length: int = 2048\n) -> dict[str, torch.Tensor]",
+            "text": "Tokenize a batch of (prompt, response) pairs with left-padding.\n\nLeft-padding means the *final* (response-end) token sits at the same\nposition for every sequence in the batch \u2014 namely position T-1 where\nT is the longest sequence. This makes the final-token gather cheap\nand uniform: we pull index T-1 for every batch row.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 915,
+              "end": 967,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L915-L967"
+            }
+          },
+          {
+            "name": "forward_with_cache_batch",
+            "kind": "function",
+            "signature": "forward_with_cache_batch(\n    pairs: list[tuple[str, str]],\n    batch_size: int = 32,\n    max_length: int = 2048,\n    capture_heads: bool = False,\n    progress: bool = False,\n    length_bucket: bool = False\n) -> BatchedActivationCache",
+            "text": "Run a batched forward-with-cache over many (prompt, response) pairs.\n\nThis is the population-scale primitive. The single-pair\n:meth:`forward_with_cache` runs one tokenize + one forward per pair;\nfor the v2 experiments (n>=150 pairs/dim/model) that's an order of\nmagnitude too slow. This batches `batch_size` pairs per forward and\nconcatenates results.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 969,
+              "end": 1127,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L969-L1127"
+            }
+          },
+          {
+            "name": "project_onto_reward",
+            "kind": "function",
+            "signature": "project_onto_reward(hidden_state: torch.Tensor) -> torch.Tensor",
+            "text": "Project a hidden state onto the reward direction.\n\nThis is the core \"reward lens\" operation: given a hidden state h,\ncompute w_r^T @ h + b_r.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 1245,
+              "end": 1257,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L1245-L1257"
+            }
+          },
+          {
+            "name": "hooks",
+            "kind": "function",
+            "signature": "hooks(hook_fns: dict[str, callable])",
+            "text": "Context manager for temporarily registering hooks.\n\nThe hooks are active inside the ``with`` block and removed on exit.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 1259,
+              "end": 1276,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L1259-L1276"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.RewardModel"
+    },
+    "reward_lens.model.ActivationCache": {
+      "path": "reward_lens.model.ActivationCache",
+      "name": "ActivationCache",
+      "kind": "class",
+      "text": "Stores activations captured during a forward pass.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/model.py",
+        "start": 349,
+        "end": 379,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L349-L379"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "residual_streams",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Dict mapping layer index -> residual stream tensor at final token.\nShape of each tensor: (batch, d_model)."
+          },
+          {
+            "name": "attn_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Dict mapping layer index -> attention sublayer output at final token.\nShape: (batch, d_model)."
+          },
+          {
+            "name": "mlp_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Dict mapping layer index -> MLP sublayer output at final token.\nShape: (batch, d_model)."
+          },
+          {
+            "name": "final_token_positions",
+            "annotation": "Optional[torch.Tensor]",
+            "value": "None",
+            "description": "The token positions used for reward computation.\nShape: (batch,)."
+          },
+          {
+            "name": "raw_residual_streams",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Full sequence residual streams (optional, for patching).\nDict mapping layer index -> (batch, seq_len, d_model)."
+          },
+          {
+            "name": "raw_attn_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Full sequence attention outputs (optional)."
+          },
+          {
+            "name": "raw_mlp_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Full sequence MLP outputs (optional)."
+          },
+          {
+            "name": "attn_head_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": "Optional per-head attention outputs at final token.\nDict mapping layer index -> (batch, n_heads, d_head). Populated only\nwhen ``capture_heads=True``. Available for adapters that implement\n``get_attn_o_proj``."
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.ActivationCache"
+    },
+    "reward_lens.model.BatchedActivationCache": {
+      "path": "reward_lens.model.BatchedActivationCache",
+      "name": "BatchedActivationCache",
+      "kind": "class",
+      "text": "Activation cache for a batch of (prompt, response) pairs.\n\nIdentical layout to :class:`ActivationCache` but every tensor carries an\nexplicit batch dimension as its leading axis. The single-pair cache is\nreally a degenerate batched cache with B=1; we keep both classes\ndistinct so downstream code can be explicit about whether it expects a\nbatched tensor (and handle it vectorised) or a single-pair tensor.\n\nUse :meth:`slice` to project to a single-pair :class:`ActivationCache`.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/model.py",
+        "start": 382,
+        "end": 427,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L382-L427"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "residual_streams",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          },
+          {
+            "name": "attn_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          },
+          {
+            "name": "mlp_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          },
+          {
+            "name": "attn_head_outputs",
+            "annotation": "dict[int, torch.Tensor]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          },
+          {
+            "name": "final_token_positions",
+            "annotation": "Optional[torch.Tensor]",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "rewards",
+            "annotation": "Optional[torch.Tensor]",
+            "value": "None",
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "batch_size",
+            "annotation": "int",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "methods": [
+          {
+            "name": "slice",
+            "kind": "function",
+            "signature": "slice(i: int) -> ActivationCache",
+            "text": "Return a single-pair ActivationCache view at batch index i.",
+            "source": {
+              "file": "src/reward_lens/model.py",
+              "start": 405,
+              "end": 418,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/model.py#L405-L418"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.BatchedActivationCache"
+    },
+    "reward_lens.lens.RewardLens": {
+      "path": "reward_lens.lens.RewardLens",
+      "name": "RewardLens",
+      "kind": "class",
+      "text": "Compute reward lens analysis for preference pairs.\n\nThe reward lens projects the residual stream at each layer onto the reward\ndirection to trace how preference forms across the depth of the model.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> lens = RewardLens(model)\n>>> result = lens.trace(\"What is AI?\", \"AI is...\", \"AI is magic...\")\n>>> result.plot()"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/lens.py",
+        "start": 155,
+        "end": 288,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/lens.py#L155-L288"
+      },
+      "signature": "RewardLens(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "trace",
+            "kind": "function",
+            "signature": "trace(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    max_length: int = 2048\n) -> RewardLensResult",
+            "text": "Run reward lens analysis on a preference pair.\n\nRuns forward passes on both completions, caches all intermediate\nresidual stream states, and projects each onto the reward direction.",
+            "source": {
+              "file": "src/reward_lens/lens.py",
+              "start": 173,
+              "end": 261,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/lens.py#L173-L261"
+            }
+          },
+          {
+            "name": "trace_single",
+            "kind": "function",
+            "signature": "trace_single(\n    prompt: str,\n    response: str,\n    max_length: int = 2048\n) -> tuple[np.ndarray, np.ndarray]",
+            "text": "Run reward lens on a single completion (not a pair).",
+            "source": {
+              "file": "src/reward_lens/lens.py",
+              "start": 263,
+              "end": 288,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/lens.py#L263-L288"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.RewardLens"
+    },
+    "reward_lens.lens.reward_lens_plot": {
+      "path": "reward_lens.lens.reward_lens_plot",
+      "name": "reward_lens_plot",
+      "kind": "function",
+      "text": "Convenience function: run reward lens and plot in one call.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        },
+        {
+          "name": "prompt",
+          "annotation": "str",
+          "default": null,
+          "description": "The user prompt."
+        },
+        {
+          "name": "preferred",
+          "annotation": "str",
+          "default": null,
+          "description": "The preferred completion."
+        },
+        {
+          "name": "dispreferred",
+          "annotation": "str",
+          "default": null,
+          "description": "The dispreferred completion."
+        },
+        {
+          "name": "save_path",
+          "annotation": "Optional[str]",
+          "default": "None",
+          "description": "Optional path to save the plot."
+        },
+        {
+          "name": "max_length",
+          "annotation": "int",
+          "default": "2048",
+          "description": "Maximum sequence length."
+        },
+        {
+          "name": "title",
+          "annotation": "Optional[str]",
+          "default": "None",
+          "description": "Optional custom title."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "RewardLensResult",
+          "description": "The RewardLensResult."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/lens.py",
+        "start": 291,
+        "end": 317,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/lens.py#L291-L317"
+      },
+      "signature": "reward_lens_plot(\n    model: RewardModel,\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    save_path: Optional[str] = None,\n    max_length: int = 2048,\n    title: Optional[str] = None\n) -> RewardLensResult",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false,
+      "lazy_via": "reward_lens.reward_lens_plot"
+    },
+    "reward_lens.attribution.ComponentAttribution": {
+      "path": "reward_lens.attribution.ComponentAttribution",
+      "name": "ComponentAttribution",
+      "kind": "class",
+      "text": "Decompose reward scores into per-component signed contributions.\n\nThis is the observational decomposition \u2014 it tells you which components\ncontribute most to the reward, but not whether they are causally necessary.\nFor causal analysis, use ActivationPatcher.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/attribution/component.py",
+        "start": 207,
+        "end": 418,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/attribution/component.py#L207-L418"
+      },
+      "signature": "ComponentAttribution(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "attribute",
+            "kind": "function",
+            "signature": "attribute(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    max_length: int = 2048\n) -> ComponentResult",
+            "text": "Compute per-component reward attribution for a preference pair.\n\nFor each component c (embedding, each attention sublayer, each MLP sublayer),\ncomputes:\n    contribution_c = w_r^T @ output_c\n\nwhere output_c is the component's contribution to the residual stream at\nthe final token position.",
+            "source": {
+              "file": "src/reward_lens/attribution/component.py",
+              "start": 221,
+              "end": 252,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/attribution/component.py#L221-L252"
+            }
+          },
+          {
+            "name": "attribute_single",
+            "kind": "function",
+            "signature": "attribute_single(prompt: str, response: str, max_length: int = 2048) -> ComponentResult",
+            "text": "Compute per-component attribution for a single completion.",
+            "source": {
+              "file": "src/reward_lens/attribution/component.py",
+              "start": 254,
+              "end": 273,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/attribution/component.py#L254-L273"
+            }
+          },
+          {
+            "name": "attribute_heads",
+            "kind": "function",
+            "signature": "attribute_heads(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    max_length: int = 2048\n) -> ComponentResult",
+            "text": "Per-head attention attribution (head granularity).\n\nDecomposes each layer's attention contribution into per-head terms by\ncapturing the input to o_proj and projecting each head's slice\nthrough its own o_proj weight slice. Yields ``n_layers * n_heads``\nhead components plus the per-layer MLPs.",
+            "source": {
+              "file": "src/reward_lens/attribution/component.py",
+              "start": 353,
+              "end": 418,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/attribution/component.py#L353-L418"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.ComponentAttribution"
+    },
+    "reward_lens.patching.ActivationPatcher": {
+      "path": "reward_lens.patching.ActivationPatcher",
+      "name": "ActivationPatcher",
+      "kind": "class",
+      "text": "Causal intervention via activation patching on reward models.\n\nFor a preference pair, this tool identifies which components are *causally\nnecessary* for the reward model's preference, by swapping component activations\nbetween the preferred and dispreferred completions.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/patching.py",
+        "start": 186,
+        "end": 809,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/patching.py#L186-L809"
+      },
+      "signature": "ActivationPatcher(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "patch_all_components",
+            "kind": "function",
+            "signature": "patch_all_components(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    mode: Literal['noising', 'denoising', 'zero', 'mean'] = 'noising',\n    max_length: int = 2048,\n    show_progress: bool = True,\n    mean_corpus: Optional[list[tuple[str, str]]] = None\n) -> PatchingResult",
+            "text": "Patch every attention and MLP component and measure the effect.",
+            "source": {
+              "file": "src/reward_lens/patching.py",
+              "start": 200,
+              "end": 345,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/patching.py#L200-L345"
+            }
+          },
+          {
+            "name": "patch_single_component",
+            "kind": "function",
+            "signature": "patch_single_component(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    layer_idx: int,\n    component_type: Literal['attn', 'mlp'],\n    mode: Literal['noising', 'denoising', 'zero', 'mean'] = 'noising',\n    max_length: int = 2048,\n    mean_corpus: Optional[list[tuple[str, str]]] = None\n) -> float",
+            "text": "Patch a single specific component and return the effect.\n\nUseful for targeted investigation of specific layers.",
+            "source": {
+              "file": "src/reward_lens/patching.py",
+              "start": 411,
+              "end": 502,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/patching.py#L411-L502"
+            }
+          },
+          {
+            "name": "patch_all_heads",
+            "kind": "function",
+            "signature": "patch_all_heads(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    mode: Literal['noising', 'denoising'] = 'noising',\n    max_length: int = 2048,\n    show_progress: bool = True\n) -> PatchingResult",
+            "text": "Patch every attention head individually (head-level granularity).\n\nImplementation: for each layer \u00d7 head, install a forward-pre-hook on\no_proj that replaces the slice corresponding to head h with the\nsource-side per-head input (or zero), leaving every other head\nuntouched. This isolates the causal effect of one head at a time.",
+            "source": {
+              "file": "src/reward_lens/patching.py",
+              "start": 504,
+              "end": 593,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/patching.py#L504-L593"
+            }
+          },
+          {
+            "name": "patch_all_components_mean",
+            "kind": "function",
+            "signature": "patch_all_components_mean(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    corpus_pairs: list[tuple[str, str]],\n    max_length: int = 2048,\n    show_progress: bool = True\n) -> PatchingResult",
+            "text": "Mean-ablation patching.\n\nReplaces each component's output with the mean of its activations\nover a user-supplied corpus. Differs from zero ablation when the\ncomponent has a non-trivial DC offset (which is typical for MLPs\npost-layernorm). When in doubt, prefer mean over zero.",
+            "source": {
+              "file": "src/reward_lens/patching.py",
+              "start": 690,
+              "end": 809,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/patching.py#L690-L809"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.ActivationPatcher"
+    },
+    "reward_lens.path_patching.PathPatcher": {
+      "path": "reward_lens.path_patching.PathPatcher",
+      "name": "PathPatcher",
+      "kind": "class",
+      "text": "Two-hop head-level path patching.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "RewardModel."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> pp = PathPatcher(model)\n>>> result = pp.patch(prompt, preferred, dispreferred,\n...     sender=(\"head\", 12, 7),\n...     receiver=(\"mlp\", 18, None),\n...     mode=\"noising\",\n... )\n>>> result.path_effect"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/path_patching.py",
+        "start": 49,
+        "end": 289,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/path_patching.py#L49-L289"
+      },
+      "signature": "PathPatcher(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "patch",
+            "kind": "function",
+            "signature": "patch(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    sender: ComponentSpec,\n    receiver: ComponentSpec,\n    mode: Literal['noising', 'denoising'] = 'noising',\n    max_length: int = 2048\n) -> PathPatchResult",
+            "text": "Run a 2-hop path patch.\n\nAlgorithm (noising mode):\n  1. Run the source forward (dispreferred) and cache the sender's\n     head output and the receiver's input/output.\n  2. Run the target forward (preferred) twice:\n     a. Clean: get the original differential.\n     b. Patched: install a forward-pre-hook on the receiver that\n        replaces only the contribution flowing from the sender's\n        head with the source-side value, leaving every other path\n        untouched.\n\nFor head-level senders we splice the head's output into the\nreceiver's input via the residual stream: the difference\n(source_head_out - target_head_out) is added/subtracted at the\nreceiver's input position.\n\nReturns a PathPatchResult.",
+            "source": {
+              "file": "src/reward_lens/path_patching.py",
+              "start": 68,
+              "end": 249,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/path_patching.py#L68-L249"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.PathPatcher"
+    },
+    "reward_lens.path_patching.PathPatchResult": {
+      "path": "reward_lens.path_patching.PathPatchResult",
+      "name": "PathPatchResult",
+      "kind": "class",
+      "text": null,
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/path_patching.py",
+        "start": 39,
+        "end": 46,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/path_patching.py#L39-L46"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "sender",
+            "annotation": "ComponentSpec",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "receiver",
+            "annotation": "ComponentSpec",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "mode",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "original_differential",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "patched_differential",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "path_effect",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": true,
+      "is_enum": false,
+      "poor_reason": "no docstring text",
+      "lazy_via": "reward_lens.PathPatchResult"
+    },
+    "reward_lens.distortion.DistortionAnalyzer": {
+      "path": "reward_lens.distortion.DistortionAnalyzer",
+      "name": "DistortionAnalyzer",
+      "kind": "class",
+      "text": "Analyze reward model for predicted hacking vulnerabilities.\n\nThis implements the distortion index framework from \"Reward Hacking as\nEquilibrium under Finite Evaluation.\" It predicts which quality dimensions\nare under-covered by current evaluation and thus likely to be hacked.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> analyzer = DistortionAnalyzer(model)\n>>> report = analyzer.compute_distortion_index(\n...     quality_dimensions=[\"helpfulness\", \"safety\", \"honesty\"],\n...     evaluation_probes={\n...         \"helpfulness\": [pair1, pair2],\n...         \"safety\": [pair3],\n...         \"honesty\": [],  # No probes!\n...     }\n... )\n>>> report.print_summary()\n# Shows \"honesty\" as high distortion (under-covered)"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/distortion.py",
+        "start": 153,
+        "end": 415,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L153-L415"
+      },
+      "signature": "DistortionAnalyzer(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "compute_distortion_index",
+            "kind": "function",
+            "signature": "compute_distortion_index(\n    quality_dimensions: list[str],\n    evaluation_probes: dict[str, list[PreferencePair]],\n    cross_dimension_probes: Optional[list[tuple[PreferencePair, list[str]]]] = None,\n    coverage_threshold: float = 0.3,\n    distortion_threshold: float = 0.5,\n    max_length: int = 2048\n) -> DistortionReport",
+            "text": "Compute distortion index predicting hacking severity per dimension.",
+            "source": {
+              "file": "src/reward_lens/distortion.py",
+              "start": 180,
+              "end": 322,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L180-L322"
+            }
+          },
+          {
+            "name": "analyze_agentic_amplification",
+            "kind": "function",
+            "signature": "analyze_agentic_amplification(\n    base_dimensions: list[str],\n    tool_count: int,\n    base_probes: dict[str, list[PreferencePair]],\n    max_length: int = 2048\n) -> DistortionReport",
+            "text": "Analyze how distortion amplifies in agentic settings.\n\nAs agents gain access to more tools, quality dimensions scale\ncombinatorially while evaluation typically scales linearly. This\nmethod estimates the amplified distortion.",
+            "source": {
+              "file": "src/reward_lens/distortion.py",
+              "start": 324,
+              "end": 388,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L324-L388"
+            }
+          },
+          {
+            "name": "compare_evaluation_strategies",
+            "kind": "function",
+            "signature": "compare_evaluation_strategies(\n    quality_dimensions: list[str],\n    strategies: dict[str, dict[str, list[PreferencePair]]],\n    max_length: int = 2048\n) -> dict[str, DistortionReport]",
+            "text": "Compare distortion across different evaluation strategies.\n\nUseful for deciding which evaluation probes to invest in.",
+            "source": {
+              "file": "src/reward_lens/distortion.py",
+              "start": 390,
+              "end": 415,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L390-L415"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.DistortionAnalyzer"
+    },
+    "reward_lens.distortion.DistortionReport": {
+      "path": "reward_lens.distortion.DistortionReport",
+      "name": "DistortionReport",
+      "kind": "class",
+      "text": "Result of distortion index analysis.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/distortion.py",
+        "start": 36,
+        "end": 150,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L36-L150"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "quality_dimensions",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "Names of the quality dimensions analyzed."
+          },
+          {
+            "name": "per_dimension_distortion",
+            "annotation": "dict[str, float]",
+            "value": null,
+            "description": "Distortion index per dimension (higher = more hackable)."
+          },
+          {
+            "name": "under_covered_dimensions",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "Dimensions with distortion above threshold."
+          },
+          {
+            "name": "predicted_hacking_severity",
+            "annotation": "float",
+            "value": null,
+            "description": "Overall predicted severity (0-1)."
+          },
+          {
+            "name": "coverage_matrix",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": "Matrix showing which probes cover which dimensions."
+          },
+          {
+            "name": "effective_coverage",
+            "annotation": "dict[str, float]",
+            "value": null,
+            "description": "Effective coverage per dimension (0-1)."
+          },
+          {
+            "name": "recommendations",
+            "annotation": "list[str]",
+            "value": "field(default_factory=list)",
+            "description": "Suggested additional probes to reduce distortion."
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "print_summary",
+            "kind": "function",
+            "signature": "print_summary() -> None",
+            "text": "Print a formatted distortion analysis summary.",
+            "source": {
+              "file": "src/reward_lens/distortion.py",
+              "start": 58,
+              "end": 91,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L58-L91"
+            }
+          },
+          {
+            "name": "plot",
+            "kind": "function",
+            "signature": "plot(save_path: Optional[str] = None, figsize: tuple[int, int] = (12, 5)) -> None",
+            "text": "Plot distortion analysis visualization.",
+            "source": {
+              "file": "src/reward_lens/distortion.py",
+              "start": 93,
+              "end": 150,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/distortion.py#L93-L150"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.DistortionReport"
+    },
+    "reward_lens.divergence_patching.DivergenceAwarePatching": {
+      "path": "reward_lens.divergence_patching.DivergenceAwarePatching",
+      "name": "DivergenceAwarePatching",
+      "kind": "class",
+      "text": "Activation patcher with divergence detection and constrained patching.\n\nExtends the base ActivationPatcher to:\n1. Detect when interventions create OOD representations\n2. Classify divergences as harmless vs pernicious\n3. Provide reliability scores for causal claims",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        },
+        {
+          "name": "distribution_estimator",
+          "annotation": "Optional[DistributionEstimator]",
+          "default": "None",
+          "description": "Optional pre-computed distribution estimator."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/divergence_patching.py",
+        "start": 304,
+        "end": 529,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L304-L529"
+      },
+      "signature": "DivergenceAwarePatching(\n    model: RewardModel,\n    distribution_estimator: Optional[DistributionEstimator] = None\n)",
+      "bases": [
+        "ActivationPatcher"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fit_distribution",
+            "kind": "function",
+            "signature": "fit_distribution(\n    prompts: list[str],\n    responses: list[str],\n    max_length: int = 2048,\n    show_progress: bool = True\n) -> None",
+            "text": "Fit the activation distribution from clean data.\n\nCall this before patch_with_divergence_check for best results.",
+            "source": {
+              "file": "src/reward_lens/divergence_patching.py",
+              "start": 325,
+              "end": 344,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L325-L344"
+            }
+          },
+          {
+            "name": "patch_with_divergence_check",
+            "kind": "function",
+            "signature": "patch_with_divergence_check(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    mode: Literal['noising', 'denoising', 'zero', 'mean'] = 'noising',\n    divergence_threshold: float = 2.0,\n    max_length: int = 2048,\n    show_progress: bool = True,\n    mean_corpus: Optional[list[tuple[str, str]]] = None\n) -> DivergenceAwarePatchingResult",
+            "text": "Patch all components and check for divergent representations.",
+            "source": {
+              "file": "src/reward_lens/divergence_patching.py",
+              "start": 346,
+              "end": 478,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L346-L478"
+            }
+          },
+          {
+            "name": "constrained_patch",
+            "kind": "function",
+            "signature": "constrained_patch(\n    prompt: str,\n    preferred: str,\n    dispreferred: str,\n    mode: Literal['noising', 'denoising'] = 'noising',\n    cl_weight: float = 0.1,\n    n_optimization_steps: int = 50,\n    max_length: int = 2048\n) -> torch.Tensor",
+            "text": "Find constrained patch that stays close to training distribution.\n\nUses a Counterfactual Latent (CL) loss to find a patched activation\nthat achieves the intervention goal while minimizing divergence.\n\nThis is more expensive than standard patching but provides more\nreliable causal evidence.",
+            "source": {
+              "file": "src/reward_lens/divergence_patching.py",
+              "start": 480,
+              "end": 529,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L480-L529"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.DivergenceAwarePatching"
+    },
+    "reward_lens.divergence_patching.DivergenceAwarePatchingResult": {
+      "path": "reward_lens.divergence_patching.DivergenceAwarePatchingResult",
+      "name": "DivergenceAwarePatchingResult",
+      "kind": "class",
+      "text": "Extended patching result with divergence analysis.\n\nCarries every field of :class:`PatchingResult` and adds the divergence\nfields below.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/divergence_patching.py",
+        "start": 55,
+        "end": 184,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L55-L184"
+      },
+      "signature": null,
+      "bases": [
+        "PatchingResult"
+      ],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "divergence_info",
+            "annotation": "list[DivergenceInfo]",
+            "value": "field(default_factory=list)",
+            "description": "Per-component divergence analysis."
+          },
+          {
+            "name": "has_pernicious_divergence",
+            "annotation": "bool",
+            "value": "False",
+            "description": "Whether any intervention has pernicious divergence."
+          },
+          {
+            "name": "reliability_score",
+            "annotation": "float",
+            "value": "1.0",
+            "description": "Overall reliability of causal claims (0-1)."
+          },
+          {
+            "name": "divergent_components",
+            "annotation": "list[str]",
+            "value": "field(default_factory=list)",
+            "description": "List of components with significant divergence."
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "print_divergence_summary",
+            "kind": "function",
+            "signature": "print_divergence_summary() -> None",
+            "text": "Print a summary of divergence analysis.",
+            "source": {
+              "file": "src/reward_lens/divergence_patching.py",
+              "start": 74,
+              "end": 98,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L74-L98"
+            }
+          },
+          {
+            "name": "plot_with_divergence",
+            "kind": "function",
+            "signature": "plot_with_divergence(\n    save_path: Optional[str] = None,\n    figsize: tuple[int, int] = (14, 8),\n    title: Optional[str] = None\n) -> None",
+            "text": "Plot patching results with divergence overlay.",
+            "source": {
+              "file": "src/reward_lens/divergence_patching.py",
+              "start": 100,
+              "end": 184,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/divergence_patching.py#L100-L184"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.DivergenceAwarePatchingResult"
+    },
+    "reward_lens.cascade.MisalignmentCascadeDetector": {
+      "path": "reward_lens.cascade.MisalignmentCascadeDetector",
+      "name": "MisalignmentCascadeDetector",
+      "kind": "class",
+      "text": "Detect correlated misalignment patterns across multiple dimensions.\n\nThis goes beyond HackingDetector's individual bias tests to find systemic\nvulnerabilities where failures in one dimension predict failures in others.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> detector = MisalignmentCascadeDetector(model)\n>>> report = detector.detect_cascade()\n>>> report.print_summary()"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/cascade.py",
+        "start": 231,
+        "end": 542,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/cascade.py#L231-L542"
+      },
+      "signature": "MisalignmentCascadeDetector(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "detect_cascade",
+            "kind": "function",
+            "signature": "detect_cascade(\n    dimensions: Optional[list[str]] = None,\n    custom_tests: Optional[dict[str, list[dict]]] = None,\n    correlation_threshold: float = 0.5,\n    n_bootstrap: int = 100,\n    max_length: int = 2048\n) -> CascadeReport",
+            "text": "Run comprehensive cascade detection across misalignment dimensions.",
+            "source": {
+              "file": "src/reward_lens/cascade.py",
+              "start": 249,
+              "end": 361,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/cascade.py#L249-L361"
+            }
+          },
+          {
+            "name": "cross_validate_with_hacking",
+            "kind": "function",
+            "signature": "cross_validate_with_hacking(\n    hacking_report: HackingReport,\n    cascade_report: Optional[CascadeReport] = None,\n    max_length: int = 2048\n) -> dict[str, float]",
+            "text": "Correlate hacking biases with misalignment dimensions.\n\nTests the paper's key finding: reward hacking onset correlates\nwith emergent misalignment.",
+            "source": {
+              "file": "src/reward_lens/cascade.py",
+              "start": 505,
+              "end": 542,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/cascade.py#L505-L542"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.MisalignmentCascadeDetector"
+    },
+    "reward_lens.cascade.CascadeReport": {
+      "path": "reward_lens.cascade.CascadeReport",
+      "name": "CascadeReport",
+      "kind": "class",
+      "text": "Result of misalignment cascade analysis.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/cascade.py",
+        "start": 35,
+        "end": 151,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/cascade.py#L35-L151"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "dimensions_tested",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "List of misalignment dimensions tested."
+          },
+          {
+            "name": "per_dimension_scores",
+            "annotation": "dict[str, float]",
+            "value": null,
+            "description": "Mean reward delta for each dimension."
+          },
+          {
+            "name": "correlation_matrix",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": "Pairwise correlation between dimensions."
+          },
+          {
+            "name": "cascade_risk_score",
+            "annotation": "float",
+            "value": null,
+            "description": "Overall systemic vulnerability (0-1)."
+          },
+          {
+            "name": "correlated_pairs",
+            "annotation": "list[tuple[str, str, float]]",
+            "value": null,
+            "description": "Pairs of dimensions with significant correlation."
+          },
+          {
+            "name": "cascade_clusters",
+            "annotation": "list[list[str]]",
+            "value": null,
+            "description": "Groups of dimensions that fail together."
+          },
+          {
+            "name": "primary_failure_mode",
+            "annotation": "Optional[str]",
+            "value": null,
+            "description": "The dimension most predictive of others."
+          },
+          {
+            "name": "recommendations",
+            "annotation": "list[str]",
+            "value": "field(default_factory=list)",
+            "description": "Suggested mitigations."
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "print_summary",
+            "kind": "function",
+            "signature": "print_summary() -> None",
+            "text": "Print a formatted cascade analysis summary.",
+            "source": {
+              "file": "src/reward_lens/cascade.py",
+              "start": 59,
+              "end": 98,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/cascade.py#L59-L98"
+            }
+          },
+          {
+            "name": "plot",
+            "kind": "function",
+            "signature": "plot(save_path: Optional[str] = None, figsize: tuple[int, int] = (12, 10)) -> None",
+            "text": "Plot correlation heatmap and dimension scores.",
+            "source": {
+              "file": "src/reward_lens/cascade.py",
+              "start": 100,
+              "end": 151,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/cascade.py#L100-L151"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.CascadeReport"
+    },
+    "reward_lens.conflict.RewardConflictAnalyzer": {
+      "path": "reward_lens.conflict.RewardConflictAnalyzer",
+      "name": "RewardConflictAnalyzer",
+      "kind": "class",
+      "text": "Analyze conflicts between reward terms.\n\nThis helps identify when reward structures may cause models to\nhide reasoning (in-conflict terms) vs when optimization is safe\n(aligned or orthogonal terms).",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> analyzer = RewardConflictAnalyzer(model)\n>>>\n>>> # For multi-objective models, extract term directions\n>>> terms = {\n...     \"helpfulness\": model.get_objective_direction(\"helpfulness\"),\n...     \"safety\": model.get_objective_direction(\"safety\"),\n... }\n>>>\n>>> # Or learn directions from contrastive pairs\n>>> terms = analyzer.learn_term_directions({\n...     \"helpfulness\": [(helpful_pair1, helpful_pair2)],\n...     \"safety\": [(safe_pair1, safe_pair2)],\n... })\n>>>\n>>> report = analyzer.analyze_conflicts(terms)\n>>> report.print_summary()"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/conflict.py",
+        "start": 200,
+        "end": 507,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L200-L507"
+      },
+      "signature": "RewardConflictAnalyzer(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "analyze_conflicts",
+            "kind": "function",
+            "signature": "analyze_conflicts(\n    reward_terms: dict[str, torch.Tensor],\n    aligned_threshold: float = 0.5,\n    orthogonal_threshold: float = 0.2,\n    conflict_threshold: float = -0.3\n) -> ConflictReport",
+            "text": "Analyze conflicts between reward term directions.",
+            "source": {
+              "file": "src/reward_lens/conflict.py",
+              "start": 239,
+              "end": 354,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L239-L354"
+            }
+          },
+          {
+            "name": "learn_term_directions",
+            "kind": "function",
+            "signature": "learn_term_directions(\n    term_pairs: dict[str, list[tuple[str, str, str, str]]],\n    max_length: int = 2048\n) -> dict[str, torch.Tensor]",
+            "text": "Learn reward term directions from contrastive pairs.\n\nFor each term, provide pairs where the preferred response is better\non that specific dimension. The direction is learned as the average\ndifference in final-layer activations.",
+            "source": {
+              "file": "src/reward_lens/conflict.py",
+              "start": 356,
+              "end": 408,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L356-L408"
+            }
+          },
+          {
+            "name": "analyze_multi_objective_model",
+            "kind": "function",
+            "signature": "analyze_multi_objective_model(\n    objective_names: Optional[list[str]] = None\n) -> ConflictReport",
+            "text": "Analyze conflicts in a multi-objective reward model.\n\nFor models like ArmoRM that have multiple output dimensions,\nthis extracts the direction for each objective and analyzes conflicts.",
+            "source": {
+              "file": "src/reward_lens/conflict.py",
+              "start": 410,
+              "end": 444,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L410-L444"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.RewardConflictAnalyzer"
+    },
+    "reward_lens.conflict.ConflictReport": {
+      "path": "reward_lens.conflict.ConflictReport",
+      "name": "ConflictReport",
+      "kind": "class",
+      "text": "Complete reward term conflict analysis.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/conflict.py",
+        "start": 67,
+        "end": 197,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L67-L197"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "term_names",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "Names of analyzed reward terms."
+          },
+          {
+            "name": "term_directions",
+            "annotation": "dict[str, torch.Tensor]",
+            "value": null,
+            "description": "The direction vectors for each term."
+          },
+          {
+            "name": "pairwise_analysis",
+            "annotation": "list[TermPairAnalysis]",
+            "value": null,
+            "description": "Analysis for each pair of terms."
+          },
+          {
+            "name": "relationship_matrix",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": "Matrix of relationship classifications."
+          },
+          {
+            "name": "similarity_matrix",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": "Matrix of cosine similarities."
+          },
+          {
+            "name": "in_conflict_pairs",
+            "annotation": "list[tuple[str, str]]",
+            "value": null,
+            "description": "List of term pairs that are in conflict."
+          },
+          {
+            "name": "overall_conflict_score",
+            "annotation": "float",
+            "value": null,
+            "description": "0-1 score of overall conflict severity."
+          },
+          {
+            "name": "monitorability_risk",
+            "annotation": "float",
+            "value": null,
+            "description": "Risk that models will hide reasoning."
+          },
+          {
+            "name": "recommendations",
+            "annotation": "list[str]",
+            "value": "field(default_factory=list)",
+            "description": "Overall recommendations."
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "print_summary",
+            "kind": "function",
+            "signature": "print_summary() -> None",
+            "text": "Print a formatted conflict analysis summary.",
+            "source": {
+              "file": "src/reward_lens/conflict.py",
+              "start": 95,
+              "end": 138,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L95-L138"
+            }
+          },
+          {
+            "name": "plot",
+            "kind": "function",
+            "signature": "plot(save_path: Optional[str] = None, figsize: tuple[int, int] = (12, 5)) -> None",
+            "text": "Plot similarity matrix and relationship diagram.",
+            "source": {
+              "file": "src/reward_lens/conflict.py",
+              "start": 140,
+              "end": 197,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L140-L197"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.ConflictReport"
+    },
+    "reward_lens.conflict.quick_conflict_check": {
+      "path": "reward_lens.conflict.quick_conflict_check",
+      "name": "quick_conflict_check",
+      "kind": "function",
+      "text": "Convenience function for quick conflict analysis.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "RewardModel instance."
+        },
+        {
+          "name": "term_pairs",
+          "annotation": "dict[str, list[tuple[str, str, str]]]",
+          "default": null,
+          "description": "Dict mapping term name to list of (prompt, preferred, dispreferred)."
+        },
+        {
+          "name": "max_length",
+          "annotation": "int",
+          "default": "2048",
+          "description": "Maximum sequence length."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "ConflictReport",
+          "description": "ConflictReport."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/conflict.py",
+        "start": 510,
+        "end": 527,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/conflict.py#L510-L527"
+      },
+      "signature": "quick_conflict_check(\n    model: RewardModel,\n    term_pairs: dict[str, list[tuple[str, str, str]]],\n    max_length: int = 2048\n) -> ConflictReport",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false,
+      "lazy_via": "reward_lens.quick_conflict_check"
+    },
+    "reward_lens.concepts.ConceptExtractor": {
+      "path": "reward_lens.concepts.ConceptExtractor",
+      "name": "ConceptExtractor",
+      "kind": "class",
+      "text": "Extract and analyze concept vectors from reward model activations.\n\nThis enables understanding which abstract concepts (confidence, formality,\nagreement, etc.) influence reward scores, and identifying potential\nreward hacking vulnerabilities.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> extractor = ConceptExtractor(model)\n>>> concepts = extractor.extract_concepts(CONCEPT_PAIRS)\n>>> report = extractor.analyze_reward_alignment(concepts)\n>>> report.print_summary()"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/concepts/legacy.py",
+        "start": 255,
+        "end": 528,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L255-L528"
+      },
+      "signature": "ConceptExtractor(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "extract_concepts",
+            "kind": "function",
+            "signature": "extract_concepts(\n    concept_pairs: dict[str, list[tuple[str, str, str]]],\n    layer: Optional[int] = None,\n    max_length: int = 2048,\n    show_progress: bool = True\n) -> dict[str, torch.Tensor]",
+            "text": "Extract concept direction vectors from contrastive pairs.\n\nFor each concept, the direction is computed as the average difference\nbetween positive and negative example activations.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 275,
+              "end": 335,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L275-L335"
+            }
+          },
+          {
+            "name": "analyze_reward_alignment",
+            "kind": "function",
+            "signature": "analyze_reward_alignment(\n    concept_vectors: dict[str, torch.Tensor],\n    alignment_threshold: float = 0.3,\n    hacking_concepts: Optional[list[str]] = None\n) -> ConceptAlignmentReport",
+            "text": "Analyze how concepts align with the reward direction.\n\nConcepts that strongly align with reward but represent surface\nproperties (like confidence or verbosity) may indicate hackable biases.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 337,
+              "end": 429,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L337-L429"
+            }
+          },
+          {
+            "name": "intervene_on_concept",
+            "kind": "function",
+            "signature": "intervene_on_concept(\n    prompt: str,\n    response: str,\n    concept_vector: torch.Tensor,\n    strength: float = 1.0,\n    layer: Optional[int] = None,\n    max_length: int = 2048\n) -> float",
+            "text": "Intervene on a concept and measure reward change.\n\nAdds or subtracts the concept direction from activations\nto see how it affects reward.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 431,
+              "end": 485,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L431-L485"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.ConceptExtractor"
+    },
+    "reward_lens.concepts.ConceptAlignmentReport": {
+      "path": "reward_lens.concepts.ConceptAlignmentReport",
+      "name": "ConceptAlignmentReport",
+      "kind": "class",
+      "text": "Report on concept-reward alignment analysis.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/legacy.py",
+        "start": 62,
+        "end": 185,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L62-L185"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "concepts",
+            "annotation": "list[ConceptInfo]",
+            "value": null,
+            "description": "List of analyzed concepts."
+          },
+          {
+            "name": "reward_aligned_concepts",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "Concepts that significantly align with reward."
+          },
+          {
+            "name": "anti_reward_concepts",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "Concepts that significantly oppose reward."
+          },
+          {
+            "name": "high_risk_concepts",
+            "annotation": "list[str]",
+            "value": null,
+            "description": "Concepts that may enable reward hacking."
+          },
+          {
+            "name": "overall_hacking_risk",
+            "annotation": "float",
+            "value": null,
+            "description": "Combined hacking risk from all concepts."
+          },
+          {
+            "name": "recommendations",
+            "annotation": "list[str]",
+            "value": "field(default_factory=list)",
+            "description": "Suggested actions."
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "print_summary",
+            "kind": "function",
+            "signature": "print_summary() -> None",
+            "text": "Print a formatted summary of concept-reward alignment.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 82,
+              "end": 122,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L82-L122"
+            }
+          },
+          {
+            "name": "plot",
+            "kind": "function",
+            "signature": "plot(save_path: Optional[str] = None, figsize: tuple[int, int] = (12, 6)) -> None",
+            "text": "Plot concept alignment visualization.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 124,
+              "end": 185,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L124-L185"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false,
+      "lazy_via": "reward_lens.ConceptAlignmentReport"
+    },
+    "reward_lens.concepts.quick_concept_analysis": {
+      "path": "reward_lens.concepts.quick_concept_analysis",
+      "name": "quick_concept_analysis",
+      "kind": "function",
+      "text": "Convenience function for quick concept analysis.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "RewardModel instance."
+        },
+        {
+          "name": "concept_pairs",
+          "annotation": "Optional[dict[str, list[tuple[str, str, str]]]]",
+          "default": "None",
+          "description": "Optional custom concept pairs. Uses defaults if None."
+        },
+        {
+          "name": "max_length",
+          "annotation": "int",
+          "default": "2048",
+          "description": "Maximum sequence length."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "ConceptAlignmentReport",
+          "description": "ConceptAlignmentReport."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/legacy.py",
+        "start": 531,
+        "end": 551,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L531-L551"
+      },
+      "signature": "quick_concept_analysis(\n    model: RewardModel,\n    concept_pairs: Optional[dict[str, list[tuple[str, str, str]]]] = None,\n    max_length: int = 2048\n) -> ConceptAlignmentReport",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false,
+      "lazy_via": "reward_lens.quick_concept_analysis"
+    },
+    "reward_lens.sae.SAETrainer": {
+      "path": "reward_lens.sae.SAETrainer",
+      "name": "SAETrainer",
+      "kind": "class",
+      "text": "Train a TopK SAE on collected activations.",
+      "params": [
+        {
+          "name": "d_model",
+          "annotation": "int",
+          "default": null,
+          "description": "Hidden dimension."
+        },
+        {
+          "name": "n_features",
+          "annotation": "Optional[int]",
+          "default": "None",
+          "description": "Dictionary size (typically 4x, 8x, or 16x d_model)."
+        },
+        {
+          "name": "k",
+          "annotation": "int",
+          "default": "32",
+          "description": "Number of active features per input."
+        },
+        {
+          "name": "lr",
+          "annotation": "float",
+          "default": "0.0003",
+          "description": "Learning rate."
+        },
+        {
+          "name": "batch_size",
+          "annotation": "int",
+          "default": "4096",
+          "description": "Training batch size."
+        },
+        {
+          "name": "device",
+          "annotation": "str",
+          "default": "'cuda'",
+          "description": "Device for training."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/sae.py",
+        "start": 303,
+        "end": 396,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L303-L396"
+      },
+      "signature": "SAETrainer(\n    d_model: int,\n    n_features: Optional[int] = None,\n    k: int = 32,\n    lr: float = 0.0003,\n    batch_size: int = 4096,\n    device: str = 'cuda'\n)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "train",
+            "kind": "function",
+            "signature": "train(\n    activations: torch.Tensor,\n    n_epochs: int = 5,\n    log_every: int = 100,\n    show_progress: bool = True\n) -> TopKSAE",
+            "text": "Train the SAE on collected activations.",
+            "source": {
+              "file": "src/reward_lens/sae.py",
+              "start": 331,
+              "end": 396,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/sae.py#L331-L396"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}

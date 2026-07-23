@@ -1,26 +1,388 @@
 [
   {
+    "title": "Home",
+    "href": "/docs/"
+  },
+  {
     "title": "Getting started",
+    "href": "/docs/getting-started/",
     "children": [
-      { "title": "Overview", "href": "/docs/" },
-      { "title": "Install", "href": "/docs/install/" },
-      { "title": "Quickstart", "href": "/docs/quickstart/" }
+      {
+        "title": "Install",
+        "href": "/docs/getting-started/install/"
+      }
     ]
   },
   {
-    "title": "Guides",
+    "title": "Tutorials",
+    "href": "/docs/tutorials/",
     "children": [
-      { "title": "Reading a card", "href": "/docs/reading-a-card/" },
-      { "title": "Evidence and trust", "href": "/docs/evidence-trust/" },
-      { "title": "Kill criteria", "href": "/docs/kill-criteria/" }
+      {
+        "title": "Inside one reward model",
+        "href": "/docs/tutorials/inside-one-reward-model/"
+      },
+      {
+        "title": "Measurements you can trust",
+        "href": "/docs/tutorials/measurements-you-can-trust/"
+      },
+      {
+        "title": "The Colab tour",
+        "href": "https://colab.research.google.com/drive/1x5zG07HdsWlNsJmkl2ddJ1yalmwwujfY?usp=sharing"
+      }
     ]
   },
   {
-    "title": "Reference",
+    "title": "How-to guides",
+    "href": "/docs/how-to/",
     "children": [
-      { "title": "CLI", "href": "/docs/cli/" },
-      { "title": "Python API", "href": "/docs/api/" },
-      { "title": "Source on GitHub", "href": "https://github.com/reward-lens/reward-lens" }
+      {
+        "title": "Load or wrap a reward model",
+        "href": "/docs/how-to/load-a-reward-model/"
+      },
+      {
+        "title": "Use a DPO checkpoint as a signal",
+        "href": "/docs/how-to/dpo-implicit-reward/"
+      },
+      {
+        "title": "Use an LLM judge as a signal",
+        "href": "/docs/how-to/llm-judge-signal/"
+      },
+      {
+        "title": "Score with a process reward model",
+        "href": "/docs/how-to/process-reward-model/"
+      },
+      {
+        "title": "Detect length bias",
+        "href": "/docs/how-to/detect-length-bias/"
+      },
+      {
+        "title": "Attribute a reward score",
+        "href": "/docs/how-to/attribute-a-score/"
+      },
+      {
+        "title": "Patch without running out of memory",
+        "href": "/docs/how-to/patching-memory/"
+      },
+      {
+        "title": "Compare two reward models",
+        "href": "/docs/how-to/compare-two-models/"
+      },
+      {
+        "title": "Effective sample size of an eval set",
+        "href": "/docs/how-to/effective-sample-size/"
+      },
+      {
+        "title": "Calibrate a detector on an organism",
+        "href": "/docs/how-to/calibrate-on-an-organism/"
+      },
+      {
+        "title": "Freeze and run a study",
+        "href": "/docs/how-to/freeze-and-run-a-study/"
+      },
+      {
+        "title": "Build a card, check a manuscript",
+        "href": "/docs/how-to/cards-and-claims/"
+      },
+      {
+        "title": "Hook into a training loop",
+        "href": "/docs/how-to/training-loop-hooks/"
+      },
+      {
+        "title": "Write an adapter",
+        "href": "/docs/how-to/write-an-adapter/"
+      }
     ]
+  },
+  {
+    "title": "Models & signals",
+    "href": "/docs/models-and-signals/",
+    "children": [
+      {
+        "title": "Classifier reward models",
+        "href": "/docs/models-and-signals/classifier-rms/"
+      },
+      {
+        "title": "Generative judges",
+        "href": "/docs/models-and-signals/generative-judges/"
+      },
+      {
+        "title": "Process reward models",
+        "href": "/docs/models-and-signals/process-rms/"
+      },
+      {
+        "title": "Implicit (DPO) rewards",
+        "href": "/docs/models-and-signals/implicit-dpo/"
+      },
+      {
+        "title": "Rubric heads",
+        "href": "/docs/models-and-signals/rubric-heads/"
+      },
+      {
+        "title": "Trajectory graders",
+        "href": "/docs/models-and-signals/trajectory-graders/"
+      },
+      {
+        "title": "Dense per-token rewards",
+        "href": "/docs/models-and-signals/dense-rewards/"
+      },
+      {
+        "title": "Ensembles and distributions",
+        "href": "/docs/models-and-signals/ensembles/"
+      }
+    ]
+  },
+  {
+    "title": "Instruments",
+    "href": "/docs/instruments/",
+    "children": [
+      {
+        "title": "Observational",
+        "children": [
+          {
+            "title": "Reward lens and crystallization",
+            "href": "/docs/instruments/lens-crystallization/"
+          },
+          {
+            "title": "Component attribution",
+            "href": "/docs/instruments/attribution/"
+          },
+          {
+            "title": "Bias battery",
+            "href": "/docs/instruments/bias-battery/"
+          },
+          {
+            "title": "Prompt SNR",
+            "href": "/docs/instruments/prompt-snr/"
+          },
+          {
+            "title": "Conflict matrix",
+            "href": "/docs/instruments/conflict-matrix/"
+          },
+          {
+            "title": "Circuit overlap",
+            "href": "/docs/instruments/circuit-overlap/"
+          },
+          {
+            "title": "Feature-reward alignment",
+            "href": "/docs/instruments/feature-alignment/"
+          },
+          {
+            "title": "Multi-objective geometry",
+            "href": "/docs/instruments/multi-objective-geometry/"
+          }
+        ]
+      },
+      {
+        "title": "Causal",
+        "children": [
+          {
+            "title": "Patch grid",
+            "href": "/docs/instruments/patch-grid/"
+          },
+          {
+            "title": "Path effects",
+            "href": "/docs/instruments/path-effects/"
+          },
+          {
+            "title": "Concept dose-response",
+            "href": "/docs/instruments/concept-dose-response/"
+          },
+          {
+            "title": "The intervention algebra",
+            "href": "/docs/instruments/interventions/"
+          }
+        ]
+      },
+      {
+        "title": "The index library",
+        "href": "/docs/instruments/index-library/"
+      }
+    ]
+  },
+  {
+    "title": "Training loops",
+    "href": "/docs/training-loops/",
+    "children": [
+      {
+        "title": "Best-of-N analysis",
+        "href": "/docs/training-loops/best-of-n/"
+      },
+      {
+        "title": "Tilt and susceptibility",
+        "href": "/docs/training-loops/tilt-susceptibility/"
+      },
+      {
+        "title": "The rollout recorder",
+        "href": "/docs/training-loops/rollout-recorder/"
+      },
+      {
+        "title": "Framework integrations",
+        "href": "/docs/training-loops/integrations/"
+      }
+    ]
+  },
+  {
+    "title": "Concepts",
+    "href": "/docs/concepts/",
+    "children": [
+      {
+        "title": "The reward direction",
+        "href": "/docs/concepts/reward-direction/"
+      },
+      {
+        "title": "Preference geometry",
+        "href": "/docs/concepts/preference-geometry/"
+      },
+      {
+        "title": "Why reward is relative",
+        "href": "/docs/concepts/reward-is-relative/"
+      },
+      {
+        "title": "Crystallization depth",
+        "href": "/docs/concepts/crystallization/"
+      },
+      {
+        "title": "Observational vs causal",
+        "href": "/docs/concepts/observational-vs-causal/"
+      },
+      {
+        "title": "A measurement you can trust",
+        "href": "/docs/concepts/measurement-you-can-trust/"
+      }
+    ]
+  },
+  {
+    "title": "The measurement discipline",
+    "href": "/docs/discipline/",
+    "children": [
+      {
+        "title": "The anatomy of evidence",
+        "href": "/docs/discipline/anatomy-of-evidence/"
+      },
+      {
+        "title": "The trust ladder",
+        "href": "/docs/discipline/trust-ladder/"
+      },
+      {
+        "title": "Calibration and organisms",
+        "href": "/docs/discipline/calibration-and-organisms/"
+      },
+      {
+        "title": "Gauge and frames",
+        "href": "/docs/discipline/gauge-and-frames/"
+      },
+      {
+        "title": "Studies and preregistration",
+        "href": "/docs/discipline/studies-and-preregistration/"
+      },
+      {
+        "title": "The evidence store",
+        "href": "/docs/discipline/evidence-store/"
+      }
+    ]
+  },
+  {
+    "title": "The sciences",
+    "href": "/docs/sciences/"
+  },
+  {
+    "title": "Interpreting results honestly",
+    "href": "/docs/caveats/"
+  },
+  {
+    "title": "Background & theory",
+    "href": "/docs/theory/",
+    "children": [
+      {
+        "title": "Bradley-Terry and preference",
+        "href": "/docs/theory/bradley-terry/"
+      },
+      {
+        "title": "Goodhart and overoptimization",
+        "href": "/docs/theory/goodhart/"
+      },
+      {
+        "title": "The lens lineage",
+        "href": "/docs/theory/lens-lineage/"
+      },
+      {
+        "title": "Identifiability and gauge",
+        "href": "/docs/theory/identifiability/"
+      },
+      {
+        "title": "When preference is not rank-one",
+        "href": "/docs/theory/preference-rank/"
+      }
+    ]
+  },
+  {
+    "title": "Command line",
+    "href": "/docs/cli/"
+  },
+  {
+    "title": "API reference",
+    "href": "/docs/reference/",
+    "children": [
+      {
+        "title": "Core and evidence",
+        "href": "/docs/reference/core/"
+      },
+      {
+        "title": "Stats",
+        "href": "/docs/reference/stats/"
+      },
+      {
+        "title": "Signals",
+        "href": "/docs/reference/signals/"
+      },
+      {
+        "title": "Data",
+        "href": "/docs/reference/data/"
+      },
+      {
+        "title": "Measure and indices",
+        "href": "/docs/reference/measure/"
+      },
+      {
+        "title": "Interventions",
+        "href": "/docs/reference/interventions/"
+      },
+      {
+        "title": "Geometry",
+        "href": "/docs/reference/geometry/"
+      },
+      {
+        "title": "Concepts",
+        "href": "/docs/reference/concepts/"
+      },
+      {
+        "title": "Organisms",
+        "href": "/docs/reference/organisms/"
+      },
+      {
+        "title": "Dynamics and loops",
+        "href": "/docs/reference/dynamics-loops/"
+      },
+      {
+        "title": "Studies",
+        "href": "/docs/reference/studies/"
+      },
+      {
+        "title": "Artifacts and operate",
+        "href": "/docs/reference/artifacts-operate/"
+      },
+      {
+        "title": "Legacy (1.0 API)",
+        "href": "/docs/reference/legacy/"
+      }
+    ]
+  },
+  {
+    "title": "Coming from 1.0",
+    "href": "/docs/migration/"
+  },
+  {
+    "title": "Contributing",
+    "href": "/docs/contributing/"
   }
 ]

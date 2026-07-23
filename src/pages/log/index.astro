@@ -1,0 +1,78 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import LogEntry from "@components/LogEntry.astro";
+
+// Real events only, newest first. Paper entries join this list when a paper
+// exists, in author-year form.
+const entries = [
+  {
+    date: new Date("2026-07-22"),
+    type: "release",
+    title: "reward-lens 2.0.1 on PyPI: the dependency fix reaches the wheel",
+    links: [
+      { label: "PyPI", href: "https://pypi.org/project/reward-lens/2.0.1/" },
+    ],
+  },
+  {
+    date: new Date("2026-07-20"),
+    type: "results",
+    title:
+      "The campaign's scored ledger: 53 frozen hypotheses adjudicated, 8 kills fired",
+    links: [{ label: "the ledger", href: "/campaign/" }],
+  },
+  {
+    date: new Date("2026-07-10"),
+    type: "release",
+    title: "reward-lens 2.0.0: the v2 kernel, eight signal adapters, three gates",
+    links: [
+      { label: "PyPI", href: "https://pypi.org/project/reward-lens/2.0.0/" },
+    ],
+  },
+  {
+    date: new Date("2026-07-08"),
+    type: "site",
+    title: "First public release and documentation site",
+    links: [
+      { label: "GitHub", href: "https://github.com/reward-lens/reward-lens" },
+    ],
+  },
+];
+---
+
+<Base
+  title="Log · reward-lens"
+  description="Dated record of releases and results."
+>
+  <div class="log-wrap">
+    <PageHeader eyebrow="the record" title="Log" lede="Real events only, newest first." />
+    <ol class="log-list">
+      {
+        entries.map((e) => (
+          <li>
+            <LogEntry
+              date={e.date}
+              type={e.type}
+              title={e.title}
+              links={e.links}
+            />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</Base>
+
+<style>
+  .log-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .log-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: var(--measure-wide);
+  }
+</style>

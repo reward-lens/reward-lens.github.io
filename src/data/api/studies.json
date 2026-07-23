@@ -1,0 +1,500 @@
+{
+  "group": "studies",
+  "title": "Studies",
+  "order": [
+    "reward_lens.studies.spec.StudySpec",
+    "reward_lens.studies.spec.Hypothesis",
+    "reward_lens.studies.spec.Prediction",
+    "reward_lens.studies.spec.KillCriterion",
+    "reward_lens.studies.spec.SubjectQuery",
+    "reward_lens.studies.freeze.freeze",
+    "reward_lens.studies.runner.run_study",
+    "reward_lens.studies.scoreboard.Scoreboard"
+  ],
+  "symbols": {
+    "reward_lens.studies.spec.StudySpec": {
+      "path": "reward_lens.studies.spec.StudySpec",
+      "name": "StudySpec",
+      "kind": "class",
+      "text": "The full specification of a confirmatory study (section 2.14).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/spec.py",
+        "start": 100,
+        "end": 152,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L100-L152"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "title",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "science",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "hypotheses",
+            "annotation": "tuple[Hypothesis, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "analysis",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "subjects",
+            "annotation": "SubjectQuery",
+            "value": "field(default_factory=SubjectQuery)",
+            "description": ""
+          },
+          {
+            "name": "kill_criteria",
+            "annotation": "tuple[KillCriterion, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "oracle_budget",
+            "annotation": "Cost | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "version",
+            "annotation": "int",
+            "value": "1",
+            "description": ""
+          },
+          {
+            "name": "notes",
+            "annotation": "str",
+            "value": "''",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.studies.spec.Hypothesis": {
+      "path": "reward_lens.studies.spec.Hypothesis",
+      "name": "Hypothesis",
+      "kind": "class",
+      "text": "A hypothesis with its registered prediction and the scoreboard row it addresses.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/spec.py",
+        "start": 57,
+        "end": 64,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L57-L64"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "statement",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "prediction",
+            "annotation": "Prediction",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "scoreboard_row",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.studies.spec.Prediction": {
+      "path": "reward_lens.studies.spec.Prediction",
+      "name": "Prediction",
+      "kind": "class",
+      "text": "A registered, checkable prediction (R12).\n\n``metric`` names the quantity the analysis will compute; ``comparator`` and ``threshold`` state\nthe predicted relationship (for example ``metric=\"spearman_chi_vs_drift\", comparator=\">\",\nthreshold=0.3``). ``effect`` and ``ci_excludes`` optionally register a point effect size and a\nvalue the CI should exclude. This is what makes a claim uneditable after seeing the data: the\nprediction is hashed into the frozen study.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/spec.py",
+        "start": 24,
+        "end": 54,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L24-L54"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "metric",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "comparator",
+            "annotation": "Comparator",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "threshold",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "effect",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "ci_excludes",
+            "annotation": "float | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "rationale",
+            "annotation": "str",
+            "value": "''",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "check",
+            "kind": "function",
+            "signature": "check(value: float) -> bool",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/studies/spec.py",
+              "start": 42,
+              "end": 54,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L42-L54"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.studies.spec.KillCriterion": {
+      "path": "reward_lens.studies.spec.KillCriterion",
+      "name": "KillCriterion",
+      "kind": "class",
+      "text": "A schema-fielded kill criterion (R12, section 2.14).\n\nIf ``metric`` stands in ``comparator`` relation to ``threshold`` after the run, the criterion\nfires and the study produces a first-class negative-result report rather than a hidden failure.\nThe description states, in one sentence, what a fired criterion means scientifically.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/spec.py",
+        "start": 67,
+        "end": 83,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L67-L83"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "metric",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "comparator",
+            "annotation": "Comparator",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "threshold",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "description",
+            "annotation": "str",
+            "value": "''",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fired",
+            "kind": "function",
+            "signature": "fired(value: float) -> bool",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/studies/spec.py",
+              "start": 82,
+              "end": 83,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L82-L83"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.studies.spec.SubjectQuery": {
+      "path": "reward_lens.studies.spec.SubjectQuery",
+      "name": "SubjectQuery",
+      "kind": "class",
+      "text": "A declarative description of the study's subjects (signals, organisms, datasets).\n\nHeld as ids/specs so the frozen study names exactly what it ran on. The runner resolves these\nto concrete objects at run time; the engine test injects them directly.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/spec.py",
+        "start": 86,
+        "end": 97,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/spec.py#L86-L97"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "signals",
+            "annotation": "tuple[str, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "organisms",
+            "annotation": "tuple[str, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "datasets",
+            "annotation": "tuple[str, ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "extra",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.studies.freeze.freeze": {
+      "path": "reward_lens.studies.freeze.freeze",
+      "name": "freeze",
+      "kind": "function",
+      "text": "Freeze a study spec, computing its StudyID and recording the git sha (gate 3).\n\nThe StudyID is ``study:{spec.id}@v{spec.version}#{hash8}`` where the hash is the first 8 hex\ncharacters of the spec's content hash. Two specs that differ in any registered field (a\nprediction threshold, a kill criterion, the analysis path) get different ids, which is exactly\nthe property that makes post-hoc editing visible as a new version.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/freeze.py",
+        "start": 43,
+        "end": 63,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/freeze.py#L43-L63"
+      },
+      "signature": "freeze(\n    spec: StudySpec,\n    repo_dir: str | None = None,\n    frozen_at: str | None = None\n) -> FrozenStudy",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.studies.runner.run_study": {
+      "path": "reward_lens.studies.runner.run_study",
+      "name": "run_study",
+      "kind": "function",
+      "text": "Run a study end to end: freeze if needed, execute the analysis, adjudicate against the spec.\n\nThe study must be frozen before it runs (a spec is frozen here if a raw spec was passed, so the\nfreeze provably predates the evidence). The analysis function (resolved from the spec's dotted\npath, or supplied directly for tests) computes the metrics its predictions named. The runner\nthen checks each hypothesis's prediction and each kill criterion against those metrics, sets the\noutcomes, and returns the StudyResult with its adjudicating evidence ids attached. Refutations\nand fired kill criteria are recorded as prominently as confirmations (I4).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/runner.py",
+        "start": 90,
+        "end": 136,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/runner.py#L90-L136"
+      },
+      "signature": "run_study(\n    spec_or_frozen: StudySpec | FrozenStudy,\n    *,\n    subjects: dict[str, Any] | None = None,\n    store: EvidenceStore | None = None,\n    analysis_fn: Callable[[StudyRun], StudyResult] | None = None\n) -> tuple[FrozenStudy, StudyResult]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.studies.scoreboard.Scoreboard": {
+      "path": "reward_lens.studies.scoreboard.Scoreboard",
+      "name": "Scoreboard",
+      "kind": "class",
+      "text": "A persisted registry of theorem rows and their status (section 2.14).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/studies/scoreboard.py",
+        "start": 74,
+        "end": 136,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/scoreboard.py#L74-L136"
+      },
+      "signature": "Scoreboard(path: str | Path | None = None)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "save",
+            "kind": "function",
+            "signature": "save() -> None",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/studies/scoreboard.py",
+              "start": 91,
+              "end": 95,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/scoreboard.py#L91-L95"
+            }
+          },
+          {
+            "name": "register_row",
+            "kind": "function",
+            "signature": "register_row(row: ScoreboardRow) -> None",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/studies/scoreboard.py",
+              "start": 97,
+              "end": 98,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/scoreboard.py#L97-L98"
+            }
+          },
+          {
+            "name": "update_from_result",
+            "kind": "function",
+            "signature": "update_from_result(study_id: str, spec_hypotheses, result: StudyResult) -> None",
+            "text": "Fold a study's outcomes into the rows its hypotheses address.\n\nA hypothesis maps to a scoreboard row via ``scoreboard_row``. Confirmed and refuted outcomes\nupdate the row's status; a row that receives both confirming and refuting evidence across\nhypotheses or studies becomes \"mixed\". The adjudicating Evidence ids are recorded so the row\ncan cite exactly what settled it.",
+            "source": {
+              "file": "src/reward_lens/studies/scoreboard.py",
+              "start": 100,
+              "end": 121,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/scoreboard.py#L100-L121"
+            }
+          },
+          {
+            "name": "render_markdown",
+            "kind": "function",
+            "signature": "render_markdown() -> str",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/studies/scoreboard.py",
+              "start": 123,
+              "end": 136,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/studies/scoreboard.py#L123-L136"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}

@@ -1,0 +1,70 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import CodeBlock from "@components/CodeBlock.astro";
+---
+
+<Base
+  title="About · reward-lens"
+  description="What reward-lens is, who builds it, and how to cite it."
+>
+  <div class="about-wrap">
+    <PageHeader eyebrow="about" title="About reward-lens" />
+
+    <div class="about-prose">
+      <p>
+        reward-lens is built by one person and measured by machinery that does
+        not care about that. The library is a mechanistic interpretability
+        toolkit for reward models, the graders that define what RLHF
+        optimizes: eight kinds of reward signal behind one protocol, with
+        attribution, causal intervention, concept probes, geometry,
+        training-dynamics tracking, and optimization-loop recorders over
+        them. Every measurement returns an Evidence object with uncertainty,
+        provenance, and a trust level computed by gates the caller cannot
+        override.
+      </p>
+      <p>
+        The code is MIT-licensed at
+        <a href="https://github.com/reward-lens/reward-lens"
+          >github.com/reward-lens/reward-lens</a
+        >, installable as <code>pip install reward-lens</code>. Questions,
+        bug reports, and collaboration all run through
+        <a href="https://github.com/reward-lens/reward-lens/issues"
+          >GitHub issues</a
+        >.
+      </p>
+
+      <h2 id="cite">How to cite</h2>
+      <CodeBlock filename="bibtex">
+        <pre>{`@misc{nadaf2026rewardlens,
+    title         = {reward-lens: A Mechanistic Interpretability Library for Reward Models},
+    author        = {Nadaf, Mohammed Suhail B},
+    year          = {2026},
+    eprint        = {2604.26130},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/2604.26130},
+}`}</pre>
+      </CodeBlock>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .about-prose {
+    max-width: var(--measure-prose);
+  }
+  .about-prose p {
+    color: var(--ink-2);
+    line-height: 1.75;
+  }
+  .about-prose h2 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin: var(--sp-8) 0 var(--sp-4);
+  }
+</style>

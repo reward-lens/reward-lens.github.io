@@ -76,56 +76,59 @@ const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trus
   </button>
   <span role="tooltip" id={popId} class="ev-pop">
     {heading && <span class="ev-pop-head">{heading}</span>}
-    <dl class="ev-rows">
+    {/* Inline-only markup: a chip may sit inside a <p>, and a block tag such as
+        <dl> here would make the parser close the paragraph and spill the rows
+        into page flow. Spans laid out as a grid avoid that. */}
+    <span class="ev-rows">
       {
         showFull && (
           <>
-            <dt>Value</dt>
-            <dd class="mono">{fullValue}</dd>
+            <span class="ev-k">Value</span>
+            <span class="ev-v mono">{fullValue}</span>
           </>
         )
       }
       {
         subject && (
           <>
-            <dt>Subject</dt>
-            <dd>{subject}</dd>
+            <span class="ev-k">Subject</span>
+            <span class="ev-v">{subject}</span>
           </>
         )
       }
       {
         hasCi && ci && (
           <>
-            <dt>CI</dt>
-            <dd class="mono">[{fmtCi(ci[0])}, {fmtCi(ci[1])}]</dd>
+            <span class="ev-k">CI</span>
+            <span class="ev-v mono">[{fmtCi(ci[0])}, {fmtCi(ci[1])}]</span>
           </>
         )
       }
       {
         nEffective !== null && nEffective !== undefined && (
           <>
-            <dt>n effective</dt>
-            <dd class="mono">
+            <span class="ev-k">n effective</span>
+            <span class="ev-v mono">
               {Number.isInteger(nEffective) ? nEffective : sig4(nEffective)}
-            </dd>
+            </span>
           </>
         )
       }
       {
         threshold && (
           <>
-            <dt>Threshold</dt>
-            <dd class="mono">{threshold}</dd>
+            <span class="ev-k">Threshold</span>
+            <span class="ev-v mono">{threshold}</span>
           </>
         )
       }
-      <dt>Trust</dt>
-      <dd>{trustWord}</dd>
+      <span class="ev-k">Trust</span>
+      <span class="ev-v">{trustWord}</span>
       {
         evidenceId && (
           <>
-            <dt>Evidence</dt>
-            <dd class="ev-id-row">
+            <span class="ev-k">Evidence</span>
+            <span class="ev-v ev-id-row">
               <code class="ev-id">{evidenceId}</code>
               <button
                 type="button"
@@ -135,11 +138,11 @@ const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trus
               >
                 Copy
               </button>
-            </dd>
+            </span>
           </>
         )
       }
-    </dl>
+    </span>
   </span>
 </span>
 
@@ -229,11 +232,11 @@ const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trus
     row-gap: var(--sp-1);
     margin: 0;
   }
-  .ev-rows dt {
+  .ev-k {
     color: var(--ink-3);
     white-space: nowrap;
   }
-  .ev-rows dd {
+  .ev-v {
     margin: 0;
     color: var(--ink);
     overflow-wrap: anywhere;

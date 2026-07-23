@@ -1,0 +1,448 @@
+{
+  "group": "stats",
+  "title": "Stats",
+  "order": [
+    "reward_lens.stats.ess.effective_sample_size",
+    "reward_lens.stats.ess.detect_clones",
+    "reward_lens.stats.ess.cluster_bootstrap",
+    "reward_lens.stats.ess.cluster_permutation",
+    "reward_lens.stats.effects.cohens_d",
+    "reward_lens.stats.effects.bca_bootstrap",
+    "reward_lens.stats.effects.spearman_with_ci",
+    "reward_lens.stats.roc.roc_pr",
+    "reward_lens.stats.roc.calibration_curve",
+    "reward_lens.stats.mi.mi_ksg"
+  ],
+  "symbols": {
+    "reward_lens.stats.ess.effective_sample_size": {
+      "path": "reward_lens.stats.ess.effective_sample_size",
+      "name": "effective_sample_size",
+      "kind": "function",
+      "text": "Lineage-aware effective sample size from seed multiplicities (Kish).\n\nGroup the rows by their seed label and let ``w_s`` be the number of rows\ncarrying seed ``s``. The effective sample size is the Kish formula\n\n    ESS = (sum_s w_s)**2 / sum_s w_s**2\n\nwhich is the inverse-Simpson count of \"how many independent seeds is this\ndataset worth.\" Three anchor cases pin the intuition:\n\n  - N rows that are all clones of ONE seed: one weight ``w = N``, so\n    ESS = N**2 / N**2 = 1.0. Cloning buys nothing.\n  - N rows from N distinct seeds: ESS = N**2 / N = N. Every row is its\n    own lineage, so the effective n is the nominal n.\n  - A balanced design, e.g. 30 seeds each expanded to 5 mutations: weights\n    are all 5, so ESS = 150**2 / (30 * 25) = 30. The effective n is the\n    number of seeds, not the number of expanded rows.\n\nEmpty input returns 0.0.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/ess.py",
+        "start": 33,
+        "end": 61,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/ess.py#L33-L61"
+      },
+      "signature": "effective_sample_size(seed_labels: Sequence) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.ess.detect_clones": {
+      "path": "reward_lens.stats.ess.detect_clones",
+      "name": "detect_clones",
+      "kind": "function",
+      "text": "Detect exact-duplicate content and collapse it to weighted items.\n\nExact-duplicate content hashes are byte-identical stimuli that must not\ncount as independent observations. This is the ingest-time check R7 calls\nfor: it reports how many rows are duplicates and the per-hash multiplicity\nso the data plane can collapse them to weights with a warning.",
+      "params": [
+        {
+          "name": "content_hashes",
+          "annotation": "Sequence[str]",
+          "default": null,
+          "description": "One content hash per row."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "dict",
+          "description": "A dict with:\n- ``n_rows``: total number of rows.\n- ``n_unique``: number of distinct content hashes.\n- ``weights``: mapping from content hash to its row count.\n- ``duplicate_fraction``: fraction of rows that are duplicates of an\n  already-seen hash, ``(n_rows - n_unique) / n_rows``. 0.0 when\n  every row is unique or the input is empty."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/ess.py",
+        "start": 64,
+        "end": 94,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/ess.py#L64-L94"
+      },
+      "signature": "detect_clones(content_hashes: Sequence[str]) -> dict",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.ess.cluster_bootstrap": {
+      "path": "reward_lens.stats.ess.cluster_bootstrap",
+      "name": "cluster_bootstrap",
+      "kind": "function",
+      "text": "Bootstrap CI that resamples at the seed (cluster) level by default.\n\nThe default draws whole seeds with replacement (a cluster/block bootstrap):\non each resample it picks ``K`` seeds from the ``K`` observed seeds with\nreplacement and takes *all* rows belonging to each drawn seed, then computes\nthe statistic on the pooled rows. This is the honest interval, because the\nunit of independence is the seed, not the expanded row. On a dataset of\nclones of a single seed there is only one cluster to draw, so a CI cannot be\nformed and the bounds are ``nan`` (method ``\"bootstrap-cluster\"``): the\nroutine refuses to manufacture precision from clones.\n\nSetting ``allow_clone_resampling=True`` reverts to resampling individual\nrows with replacement, which is exactly the v1 behaviour that inflated n.\nIt is kept because there are legitimate uses (a dataset that genuinely has\none independent row per seed), but it stamps the result with\n``method=\"bootstrap-CLONE-INFLATED\"`` so any Evidence built from it is\nmarked as potentially inflated and no downstream reader is misled.",
+      "params": [
+        {
+          "name": "values",
+          "annotation": "Sequence[float] | np.ndarray",
+          "default": null,
+          "description": "One observation per row."
+        },
+        {
+          "name": "seed_labels",
+          "annotation": "Sequence",
+          "default": null,
+          "description": "One seed/lineage label per row (same length as ``values``)."
+        },
+        {
+          "name": "statistic",
+          "annotation": "Callable[[np.ndarray], float]",
+          "default": "np.mean",
+          "description": "Callable taking a numpy array of pooled rows, returning a scalar."
+        },
+        {
+          "name": "n_resamples",
+          "annotation": "int",
+          "default": "10000",
+          "description": "Number of resamples."
+        },
+        {
+          "name": "ci",
+          "annotation": "float",
+          "default": "0.95",
+          "description": "Confidence level."
+        },
+        {
+          "name": "seed",
+          "annotation": "Optional[int]",
+          "default": "None",
+          "description": "RNG seed."
+        },
+        {
+          "name": "allow_clone_resampling",
+          "annotation": "bool",
+          "default": "False",
+          "description": "Opt into row-level resampling (marks the result)."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "BootstrapResult",
+          "description": "BootstrapResult with the appropriate ``method`` set."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/ess.py",
+        "start": 105,
+        "end": 188,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/ess.py#L105-L188"
+      },
+      "signature": "cluster_bootstrap(\n    values: Sequence[float] | np.ndarray,\n    seed_labels: Sequence,\n    statistic: Callable[[np.ndarray], float] = np.mean,\n    n_resamples: int = 10000,\n    ci: float = 0.95,\n    seed: Optional[int] = None,\n    allow_clone_resampling: bool = False\n) -> BootstrapResult",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.ess.cluster_permutation": {
+      "path": "reward_lens.stats.ess.cluster_permutation",
+      "name": "cluster_permutation",
+      "kind": "function",
+      "text": "Paired permutation test that flips signs at the seed (cluster) level.\n\nThe row-level ``paired_permutation_test`` flips the sign of each row's\ndifference independently, which over-counts evidence when many rows share a\nseed: fifty clones of one stimulus give fifty independent sign flips that\nthe lineage says should move together. Here the sign is drawn once per seed\nand applied to every row of that seed, so the permutation null respects the\nunit of independence. With ``K`` seeds the null explores ``2**K`` sign\nassignments, not ``2**n``.",
+      "params": [
+        {
+          "name": "a",
+          "annotation": "Sequence[float] | np.ndarray",
+          "default": null,
+          "description": "First set of paired observations, one per row."
+        },
+        {
+          "name": "b",
+          "annotation": "Sequence[float] | np.ndarray",
+          "default": null,
+          "description": "Second set of paired observations, one per row (same length as ``a``)."
+        },
+        {
+          "name": "seed_labels",
+          "annotation": "Sequence",
+          "default": null,
+          "description": "One seed label per row (same length as ``a``)."
+        },
+        {
+          "name": "n_permutations",
+          "annotation": "int",
+          "default": "10000",
+          "description": "Number of seed-level sign-flip permutations."
+        },
+        {
+          "name": "statistic",
+          "annotation": "str",
+          "default": "'mean_diff'",
+          "description": "One of {\"mean_diff\", \"median_diff\"} on the row differences."
+        },
+        {
+          "name": "alternative",
+          "annotation": "str",
+          "default": "'two-sided'",
+          "description": "One of {\"two-sided\", \"greater\", \"less\"}."
+        },
+        {
+          "name": "seed",
+          "annotation": "Optional[int]",
+          "default": "None",
+          "description": "RNG seed."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "float",
+          "description": "p-value with the Phipson-Smyth ``(count + 1) / (n + 1)`` correction."
+        },
+        {
+          "name": null,
+          "annotation": "float",
+          "description": "Returns 1.0 when n < 2 (no power)."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/ess.py",
+        "start": 191,
+        "end": 266,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/ess.py#L191-L266"
+      },
+      "signature": "cluster_permutation(\n    a: Sequence[float] | np.ndarray,\n    b: Sequence[float] | np.ndarray,\n    seed_labels: Sequence,\n    n_permutations: int = 10000,\n    statistic: str = 'mean_diff',\n    alternative: str = 'two-sided',\n    seed: Optional[int] = None\n) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.effects.cohens_d": {
+      "path": "reward_lens.stats.effects.cohens_d",
+      "name": "cohens_d",
+      "kind": "function",
+      "text": "Returns ``nan`` (not ``inf``) when n < 2 or the relevant std is zero.\nThe v1 hacking detector returned ``inf`` in those cases \u2014 that's the\nbug this function exists to fix.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Three modes",
+          "text": "- ``b is None``: one-sample d (mean(a) / std(a, ddof=1)). Useful for\n  paired-difference data where you've already taken `a - b` yourself.\n- ``paired=True``: paired-samples d_z = mean(a-b) / std(a-b, ddof=1).\n- ``paired=False, b is not None``: independent-samples d with pooled SD."
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/stats/effects.py",
+        "start": 33,
+        "end": 78,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/effects.py#L33-L78"
+      },
+      "signature": "cohens_d(\n    a: Sequence[float] | np.ndarray,\n    b: Optional[Sequence[float] | np.ndarray] = None,\n    paired: bool = False\n) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.effects.bca_bootstrap": {
+      "path": "reward_lens.stats.effects.bca_bootstrap",
+      "name": "bca_bootstrap",
+      "kind": "function",
+      "text": "Bias-corrected and accelerated (BCa) bootstrap CI.\n\nThe percentile bootstrap is biased when the sampling distribution of the\nstatistic is skewed or when the statistic is a biased estimator (Cohen's d\nand correlations both qualify). BCa corrects for that with two quantities:\n\n  - ``z0`` (bias correction): the normal quantile of the fraction of\n    bootstrap replicates falling below the point estimate. If the\n    replicates straddle the point symmetrically z0 is 0 and no bias\n    correction is applied.\n  - ``a`` (acceleration): a jackknife estimate of how fast the standard\n    error changes with the true value, capturing skew. With\n    ``m_i`` the leave-one-out estimates and ``mbar`` their mean,\n    ``a = sum((mbar - m_i)**3) / (6 * (sum((mbar - m_i)**2))**1.5)``.\n\nThese map the requested central interval onto adjusted percentiles of the\nreplicate distribution. When the acceleration denominator is zero (a\nconstant jackknife, e.g. degenerate input) ``a`` falls back to 0, and when\nthe bias correction is undefined (all replicates on one side of the point)\nthe interval falls back to the plain percentile bounds. Both keep the\nresult finite instead of propagating ``nan`` or ``inf``.\n\nReturns NaN bounds for n < 2, mirroring ``bootstrap_ci``.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/effects.py",
+        "start": 250,
+        "end": 327,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/effects.py#L250-L327"
+      },
+      "signature": "bca_bootstrap(\n    values: Sequence[float] | np.ndarray,\n    statistic: Callable[[np.ndarray], float] = np.mean,\n    n_resamples: int = 10000,\n    ci: float = 0.95,\n    seed: Optional[int] = None\n) -> BootstrapResult",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.effects.spearman_with_ci": {
+      "path": "reward_lens.stats.effects.spearman_with_ci",
+      "name": "spearman_with_ci",
+      "kind": "function",
+      "text": "Spearman rank correlation with bootstrap CI.\n\nPair-bootstrap (resample (x_i, y_i) jointly, preserving pairing).\nThe point estimate uses scipy if available, else a numpy implementation.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/effects.py",
+        "start": 438,
+        "end": 485,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/effects.py#L438-L485"
+      },
+      "signature": "spearman_with_ci(\n    x: Sequence[float] | np.ndarray,\n    y: Sequence[float] | np.ndarray,\n    n_resamples: int = 10000,\n    ci: float = 0.95,\n    seed: Optional[int] = None\n) -> BootstrapResult",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.roc.roc_pr": {
+      "path": "reward_lens.stats.roc.roc_pr",
+      "name": "roc_pr",
+      "kind": "function",
+      "text": "Compute ROC and PR curves from scores and binary labels.",
+      "params": [
+        {
+          "name": "scores",
+          "annotation": "np.ndarray",
+          "default": null,
+          "description": "Real-valued scores, higher meaning \"more positive\"."
+        },
+        {
+          "name": "labels",
+          "annotation": "np.ndarray",
+          "default": null,
+          "description": "Binary labels in {0, 1}; label 1 is the positive class."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "ROCResult",
+          "description": "A ``ROCResult``. Non-finite scores or labels are dropped first. If after"
+        },
+        {
+          "name": null,
+          "annotation": "ROCResult",
+          "description": "that either class is empty, the AUC and average precision are ``nan`` and"
+        },
+        {
+          "name": null,
+          "annotation": "ROCResult",
+          "description": "the curve arrays are a single ``nan`` (the curves are undefined without"
+        },
+        {
+          "name": null,
+          "annotation": "ROCResult",
+          "description": "both classes), so the caller never divides by an empty class."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/roc.py",
+        "start": 116,
+        "end": 169,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/roc.py#L116-L169"
+      },
+      "signature": "roc_pr(scores: np.ndarray, labels: np.ndarray) -> ROCResult",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.roc.calibration_curve": {
+      "path": "reward_lens.stats.roc.calibration_curve",
+      "name": "calibration_curve",
+      "kind": "function",
+      "text": "Reliability-diagram data and the expected calibration error.\n\nBins the predicted probabilities into ``n_bins`` equal-width bins over\n[0, 1] and, per bin, reports the empirical accuracy (mean label) against the\nmean confidence (mean probability). A perfectly calibrated model has\naccuracy equal to confidence in every bin.",
+      "params": [
+        {
+          "name": "probs",
+          "annotation": "np.ndarray",
+          "default": null,
+          "description": "Predicted probabilities in [0, 1]."
+        },
+        {
+          "name": "labels",
+          "annotation": "np.ndarray",
+          "default": null,
+          "description": "Binary outcomes in {0, 1}."
+        },
+        {
+          "name": "n_bins",
+          "annotation": "int",
+          "default": "10",
+          "description": "Number of equal-width probability bins."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "dict",
+          "description": "A dict with ``bin_centers``, ``bin_accuracy``, ``bin_confidence`` (each"
+        },
+        {
+          "name": null,
+          "annotation": "dict",
+          "description": "length ``n_bins``, with ``nan`` for empty bins), ``bin_counts``, and"
+        },
+        {
+          "name": null,
+          "annotation": "dict",
+          "description": "``ece``. The expected calibration error is the count-weighted mean gap"
+        },
+        {
+          "name": null,
+          "annotation": "dict",
+          "description": "``sum_b (n_b / N) * |acc_b - conf_b|`` over non-empty bins, which lies in"
+        },
+        {
+          "name": null,
+          "annotation": "dict",
+          "description": "[0, 1]."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/roc.py",
+        "start": 172,
+        "end": 228,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/roc.py#L172-L228"
+      },
+      "signature": "calibration_curve(probs: np.ndarray, labels: np.ndarray, n_bins: int = 10) -> dict",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.stats.mi.mi_ksg": {
+      "path": "reward_lens.stats.mi.mi_ksg",
+      "name": "mi_ksg",
+      "kind": "function",
+      "text": "KSG estimator 1 of the mutual information between continuous ``x`` and ``y`` (Kraskov 2004).\n\nFor each point the distance ``eps`` to its ``k``-th nearest neighbour is taken in the joint space\nunder the maximum norm; then ``n_x`` and ``n_y`` count the points falling strictly within ``eps`` in\neach marginal. The estimate is\n``I = psi(k) + psi(N) - <psi(n_x + 1) + psi(n_y + 1)>`` in nats, where ``psi`` is the digamma\nfunction and the marginal counts are read self-inclusive (``query_ball_point`` includes the point\nitself, so the returned count is already ``n_x + 1``). A tiny tie-breaking jitter is added first.\nNegative estimates (which the estimator can produce near zero MI) are clamped to zero, and the\nresult is returned in bits by default.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/stats/mi.py",
+        "start": 109,
+        "end": 156,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/stats/mi.py#L109-L156"
+      },
+      "signature": "mi_ksg(\n    x: np.ndarray,\n    y: np.ndarray,\n    k: int = 3,\n    *,\n    base: float = 2.0,\n    jitter: float = 1e-10,\n    seed: int = 0\n) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    }
+  }
+}

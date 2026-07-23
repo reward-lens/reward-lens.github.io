@@ -1,0 +1,796 @@
+{
+  "group": "interventions",
+  "title": "Interventions",
+  "order": [
+    "reward_lens.interventions.patch.ComponentPatch",
+    "reward_lens.interventions.patch.HeadPatch",
+    "reward_lens.interventions.patch.ResidualAddPatch",
+    "reward_lens.interventions.steer.SteeringIntervention",
+    "reward_lens.interventions.ablate.AblationIntervention",
+    "reward_lens.interventions.edit.EditIntervention",
+    "reward_lens.interventions.erase.Eraser",
+    "reward_lens.interventions.erase.fit_leace",
+    "reward_lens.interventions.erase.LeaceErasure",
+    "reward_lens.interventions.certify.certify_erasure",
+    "reward_lens.interventions.base.compose"
+  ],
+  "symbols": {
+    "reward_lens.interventions.patch.ComponentPatch": {
+      "path": "reward_lens.interventions.patch.ComponentPatch",
+      "name": "ComponentPatch",
+      "kind": "class",
+      "text": "Replace a sublayer or residual activation with a source (or zero); an ``Intervention``.\n\n``site`` names where to patch (``attn_out``, ``mlp_out``, or ``resid_post`` at a layer).\n``source`` is the full-sequence source activation ``(1, T_src, d)`` to splice in; when ``mode`` is\n``\"zero\"`` the activation is replaced with zeros and ``source`` is ignored (the crude ablation\nbaseline). ``label`` is a short human tag used in the component name.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/patch.py",
+        "start": 58,
+        "end": 104,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L58-L104"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "source",
+            "annotation": "torch.Tensor | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "mode",
+            "annotation": "str",
+            "value": "'replace'",
+            "description": ""
+          },
+          {
+            "name": "label",
+            "annotation": "str",
+            "value": "''",
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'component_patch'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": "A stable cache/provenance key for this patch (shape and site, not the raw payload).",
+            "source": {
+              "file": "src/reward_lens/interventions/patch.py",
+              "start": 74,
+              "end": 80,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L74-L80"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: ClassifierRM) -> CompiledIntervention",
+            "text": "Resolve into a concrete mount hook at ``site`` (the ``Intervention`` protocol).",
+            "source": {
+              "file": "src/reward_lens/interventions/patch.py",
+              "start": 97,
+              "end": 104,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L97-L104"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.patch.HeadPatch": {
+      "path": "reward_lens.interventions.patch.HeadPatch",
+      "name": "HeadPatch",
+      "kind": "class",
+      "text": "Replace a single attention head's contribution by editing the ``o_proj`` input slice.\n\nThe attention output is ``o_proj(concat_h head_h)``, so patching head ``h`` means overwriting its\n``d_head`` slice of the ``o_proj`` input with the source side's slice while leaving every other\nhead untouched. ``site`` is ``Site(layer, \"head_out\", head)``; ``source_head`` is the source\nper-head input ``(1, T_src, d_head)`` for that head.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/patch.py",
+        "start": 107,
+        "end": 155,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L107-L155"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "source_head",
+            "annotation": "torch.Tensor",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "n_heads",
+            "annotation": "int",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'head_patch'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/interventions/patch.py",
+              "start": 122,
+              "end": 130,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L122-L130"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: ClassifierRM) -> CompiledIntervention",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/interventions/patch.py",
+              "start": 149,
+              "end": 155,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L149-L155"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.patch.ResidualAddPatch": {
+      "path": "reward_lens.interventions.patch.ResidualAddPatch",
+      "name": "ResidualAddPatch",
+      "kind": "class",
+      "text": "Add a precomputed delta to a site's activation; the path-patching primitive.\n\nPath patching perturbs only the sender to receiver path by adding the sender's source-minus-target\nresidual contribution at the receiver's input, holding every other path clean. ``site`` is the\nreceiver read point (typically ``Site(layer, \"resid_pre\")``) and ``delta`` is the\n``(1, T, d_model)`` residual adjustment to add there. This is the exact mechanic v1's\n``PathPatcher`` used, expressed as an Intervention.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/patch.py",
+        "start": 158,
+        "end": 201,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L158-L201"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "delta",
+            "annotation": "torch.Tensor",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'residual_add_patch'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/interventions/patch.py",
+              "start": 173,
+              "end": 181,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L173-L181"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: ClassifierRM) -> CompiledIntervention",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/interventions/patch.py",
+              "start": 195,
+              "end": 201,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/patch.py#L195-L201"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.steer.SteeringIntervention": {
+      "path": "reward_lens.interventions.steer.SteeringIntervention",
+      "name": "SteeringIntervention",
+      "kind": "class",
+      "text": "Add ``strength * unit(direction)`` to a site's activation; an ``Intervention`` (section 2.6.2).\n\n``direction`` is the array-like ``(d_model,)`` steering direction (unit-normalized on use, so its\nmagnitude is irrelevant and only its orientation matters). ``site`` names where to add it, in the\nresidual stream or a sublayer output. ``strength`` is the signed displacement in unit-direction\nunits, the dose. ``positions``, if given, restricts the addition to those (padded) sequence\ncolumns; the default ``None`` steers every position, which is what a final-token readout needs and\nwhat the dose-response Observable uses.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/steer.py",
+        "start": 52,
+        "end": 128,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/steer.py#L52-L128"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "direction",
+            "annotation": "Any",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "strength",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "positions",
+            "annotation": "tuple[int, ...] | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'steer'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": "A stable cache/provenance key derived from site, direction content, and strength.\n\nTwo steers differ in fingerprint whenever they differ in where they push, which way they push\n(the direction content hash, not just its shape), or how hard they push. A strength of zero is\na distinct fingerprint from any nonzero strength even though it is a numerical no-op, because a\nprovenance record should say a steer with strength zero was applied, not that nothing was.",
+            "source": {
+              "file": "src/reward_lens/interventions/steer.py",
+              "start": 74,
+              "end": 91,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/steer.py#L74-L91"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: RewardSignal) -> CompiledIntervention",
+            "text": "Resolve into a concrete mount hook at ``site`` (the ``Intervention`` protocol).\n\nThe site is architecture-resolved by the runner's SiteMap at mount time, exactly as in\n``patch.py``, so compilation only needs to bind the hook and stamp the fingerprint.",
+            "source": {
+              "file": "src/reward_lens/interventions/steer.py",
+              "start": 117,
+              "end": 128,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/steer.py#L117-L128"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.ablate.AblationIntervention": {
+      "path": "reward_lens.interventions.ablate.AblationIntervention",
+      "name": "AblationIntervention",
+      "kind": "class",
+      "text": "Remove a direction (or a head) from an activation; an ``Intervention`` (section 2.6.2).\n\n``site`` names where the ablation acts. ``mode`` selects the removal:\n\n- ``\"directional\"`` projects ``direction`` out of the residual (``h -> h - (h.u) u``);\n  ``direction`` is required and ``mean_projection`` is ignored.\n- ``\"mean\"`` replaces the along-direction coordinate with ``mean_projection`` instead of zeroing\n  it (``h -> h - (h.u) u + mean_projection * u``); ``direction`` is required. The supplied scalar\n  is the direction's average projection over a reference dataset, computed upstream.\n- ``\"head\"`` zeros the attention head named by ``site.head`` at ``Site(layer, \"head_out\", head)``;\n  ``n_heads`` is required so the ``o_proj`` input can be split into per-head slices, and\n  ``direction`` is ignored.\n\nThe direction, where used, is unit-normalized on use, so only its orientation matters.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/ablate.py",
+        "start": 40,
+        "end": 140,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/ablate.py#L40-L140"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "direction",
+            "annotation": "Any",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "mode",
+            "annotation": "str",
+            "value": "'directional'",
+            "description": ""
+          },
+          {
+            "name": "mean_projection",
+            "annotation": "float",
+            "value": "0.0",
+            "description": ""
+          },
+          {
+            "name": "n_heads",
+            "annotation": "int | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'ablate'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": "A stable cache/provenance key over the mode, site, and the mode's payload.\n\nA directional and a mean ablation of the same direction at the same site have different\nfingerprints because the mode and the substituted mean differ; a head ablation keys on the\nhead count as well, so the same ``site.head`` on two different backbones does not collide.",
+            "source": {
+              "file": "src/reward_lens/interventions/ablate.py",
+              "start": 71,
+              "end": 86,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/ablate.py#L71-L86"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: RewardSignal) -> CompiledIntervention",
+            "text": "Resolve into a concrete mount hook at ``site`` (the ``Intervention`` protocol).\n\nDirectional and mean ablation bind a projection hook; head ablation binds a per-head zeroing\nhook that the runner mounts as an ``o_proj`` pre-hook (the ``head_out`` surface). The site is\narchitecture-resolved at mount time, as in ``patch.py``, so compilation only binds the hook\nand stamps the fingerprint.",
+            "source": {
+              "file": "src/reward_lens/interventions/ablate.py",
+              "start": 119,
+              "end": 140,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/ablate.py#L119-L140"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.edit.EditIntervention": {
+      "path": "reward_lens.interventions.edit.EditIntervention",
+      "name": "EditIntervention",
+      "kind": "class",
+      "text": "Project a concept direction out of the reward head weight; an ``Intervention`` (section 2.6.2).\n\n``direction`` is the array-like ``(d_model,)`` concept direction ``u`` to remove, in the space the\nreward head reads (the head-input hidden state), unit-normalized on use. ``readout`` names which\nreadout's vector to edit (``\"reward\"`` by default). ``strength`` is the coefficient ``alpha`` in\n``w_r' = w_r - alpha (w_r . u) u``: ``alpha = 1`` removes the component entirely (the E17 edit),\n``alpha`` between 0 and 1 attenuates it, ``alpha > 1`` over-corrects past orthogonality.\n\nBecause the edit lives on the readout vector rather than on an activation, a compiled edit carries\nno mounts; it carries the edited vector in ``meta`` and is applied by :func:`run_edited_scores`.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/edit.py",
+        "start": 38,
+        "end": 107,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/edit.py#L38-L107"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "direction",
+            "annotation": "Any",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "readout",
+            "annotation": "str",
+            "value": "'reward'",
+            "description": ""
+          },
+          {
+            "name": "strength",
+            "annotation": "float",
+            "value": "1.0",
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'edit'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": "A stable cache/provenance key over the readout, direction content, and strength.\n\nThe fingerprint changes with which readout is edited, which direction is removed (the content\nhash, not just the shape), and how strongly, so an edited-head Evidence carries an identity\ndistinct from the base head and from any other edit.",
+            "source": {
+              "file": "src/reward_lens/interventions/edit.py",
+              "start": 60,
+              "end": 75,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/edit.py#L60-L75"
+            }
+          },
+          {
+            "name": "edited_vector",
+            "kind": "function",
+            "signature": "edited_vector(signal: RewardSignal, dtype: Any = np.float64) -> np.ndarray",
+            "text": "The edited readout vector ``w_r' = w_r - alpha (w_r . u) u`` for ``signal``.\n\nReads the readout's current vector off the signal and removes the ``direction`` component in\n``dtype`` (float64 by default, so the orthogonality is exact to double precision for the\nalgebraic proofs; the runner requests float32 to match the head-projection dtype). Returns a\nnumpy vector ``(d_model,)``.",
+            "source": {
+              "file": "src/reward_lens/interventions/edit.py",
+              "start": 77,
+              "end": 87,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/edit.py#L77-L87"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: RewardSignal) -> CompiledIntervention",
+            "text": "Resolve into a mount-free compiled intervention carrying the edited readout vector.\n\nThe edit is a weight-space operation with no activation mount, so ``mounts`` is empty; the\nrealized ``w_r'`` (float32, ready for the head projection) rides in ``meta`` and is consumed by\n:func:`run_edited_scores`. The fingerprint is stamped exactly as the activation interventions\nstamp theirs, so an edited-head number carries its provenance the same way.",
+            "source": {
+              "file": "src/reward_lens/interventions/edit.py",
+              "start": 89,
+              "end": 107,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/edit.py#L89-L107"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.erase.Eraser": {
+      "path": "reward_lens.interventions.erase.Eraser",
+      "name": "Eraser",
+      "kind": "class",
+      "text": "A fitted LEACE affine eraser, persisted with its fit-data provenance (DESIGN 2.6, R8).\n\n``P`` is the ``d x d`` projection and ``mu`` the ``d`` fit-data mean, so the erasure is the\naffine map ``r(x) = x - P (x - mu)``. ``rank`` is the dimension of the erased concept subspace.\n``fit_data_id`` and ``concept_id`` are the ids of the feature matrix and the concept the eraser\nwas fit on; carrying them on the artifact is design rule R8, and it is what lets a certificate\n(``certify.py``) name the exact data an eraser was trained on. ``sites`` records the residual\nsites the eraser is intended for, informational metadata for the head-only and chosen-layers\nsurfaces.\n\nThe matrices are kept in float64: the eraser's defining properties (idempotence, exact linear\nerasure, minimal edit) are proven to ~1e-6 or tighter, and float32 storage would put that\ntolerance out of reach for no memory saving that matters at a single site.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/erase.py",
+        "start": 129,
+        "end": 202,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L129-L202"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "P",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "mu",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "rank",
+            "annotation": "int",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "dim",
+            "annotation": "int",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "method",
+            "annotation": "str",
+            "value": "'leace'",
+            "description": ""
+          },
+          {
+            "name": "fit_data_id",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "concept_id",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "sites",
+            "annotation": "tuple[Site, ...]",
+            "value": "()",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "apply",
+            "kind": "function",
+            "signature": "apply(x: np.ndarray) -> np.ndarray",
+            "text": "Erase a feature matrix ``X`` (``n x d``, rows are samples): ``r(X) = X - (X - mu) P^T``.\n\nAccepts a single vector ``(d,)`` or a batch ``(n, d)``; returns the same shape in float64.\nThis is the numpy path used to fit certificates and to prove the guarantee on captured\nmatrices; the torch mount hook in :class:`LeaceErasure` applies the identical map on-device.",
+            "source": {
+              "file": "src/reward_lens/interventions/erase.py",
+              "start": 155,
+              "end": 166,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L155-L166"
+            }
+          },
+          {
+            "name": "apply_to_readout",
+            "kind": "function",
+            "signature": "apply_to_readout(w_r: np.ndarray) -> np.ndarray",
+            "text": "Project a reward direction ``w_r`` against the concept subspace (the head-only surface).\n\nThe reward read from erased features, ``w_r . r(x)``, equals ``w_r' . x`` for the projected\nreadout ``w_r' = (I - P)^T w_r = w_r - P^T w_r``, up to a per-sample-constant offset the\nreward gauge already quotients out (per-prompt shifts, DESIGN 2.7.1). So editing the reward\ndirection once reproduces feature erasure everywhere without mounting a hook, which is the\nhead-only erasure of DESIGN line 601. Returns a float64 vector ``(d,)``.",
+            "source": {
+              "file": "src/reward_lens/interventions/erase.py",
+              "start": 168,
+              "end": 178,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L168-L178"
+            }
+          },
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": "A stable content id for the eraser, folding in its fit-data provenance (R8).\n\nDerived from the projection and mean bytes together with the fit-data and concept ids, so\ntwo erasers fit from the same data and concept share an id and an eraser can never be\nconfused with one trained on different data. This is the cache-key and provenance component\nthe Intervention protocol requires.",
+            "source": {
+              "file": "src/reward_lens/interventions/erase.py",
+              "start": 180,
+              "end": 202,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L180-L202"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.erase.fit_leace": {
+      "path": "reward_lens.interventions.erase.fit_leace",
+      "name": "fit_leace",
+      "kind": "function",
+      "text": "Fit the LEACE eraser from captured features ``X`` and a concept ``Z`` (DESIGN 2.6).\n\n``X`` is ``(n, d)`` (features at a site). ``Z`` is the concept: a length-``n`` vector of labels\nfor a single binary or scalar concept, or an ``(n, k)`` matrix whose columns span a\n``k``-dimensional concept subspace (one-hot class indicators, or several concepts at once). The\nreturned :class:`Eraser` removes *all* linear information about every direction in\n``span(Cov(X, Z))``.\n\nOnly second moments enter, so the fit is a closed form with no optimization loop: the feature\ncovariance ``Sigma`` and the cross-covariance ``Sigma_XZ`` are formed, and\n:func:`leace_matrix` returns the projection. The fit-data and concept ids are stored on the\neraser (R8); pass them from the capture provenance so the persisted eraser names its training\ndata.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/erase.py",
+        "start": 205,
+        "end": 251,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L205-L251"
+      },
+      "signature": "fit_leace(\n    X: np.ndarray,\n    Z: np.ndarray,\n    *,\n    fit_data_id: str | None = None,\n    concept_id: str | None = None,\n    sites: tuple[Site, ...] = ()\n) -> Eraser",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.interventions.erase.LeaceErasure": {
+      "path": "reward_lens.interventions.erase.LeaceErasure",
+      "name": "LeaceErasure",
+      "kind": "class",
+      "text": "Mount a fitted :class:`Eraser` at one or more sites as an Intervention (DESIGN 2.6.1).\n\n``sites`` selects the surface: a single residual site for a targeted edit, several named\nresidual sites for the chosen-layers surface, or every residual site the caller enumerates for\nthe all-layers surface. Compilation resolves the eraser into one affine mount hook per site;\nthe hooks install through the runtime's single mounting path, exactly as patches and steers do,\nso an erased forward pass is measured by any Observable unchanged and the erasure fingerprint is\ncarried into the intervened Evidence's SubjectRef. The head-only surface is not a hook; it is\n:meth:`Eraser.apply_to_readout` applied to the reward direction.\n\nThis wraps the frozen :class:`~reward_lens.interventions.base.Intervention` protocol: the map is\nsignal-independent (it is an affine function of the activation), so ``compile`` ignores the\nsignal and the sites are architecture-resolved by the runner's SiteMap at mount time, the same\ncontract ``patch.py`` follows.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/erase.py",
+        "start": 259,
+        "end": 320,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L259-L320"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "eraser",
+            "annotation": "Eraser",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "sites",
+            "annotation": "tuple[Site, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "id",
+            "annotation": "str",
+            "value": "'leace_erasure'",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "fingerprint",
+            "kind": "function",
+            "signature": "fingerprint() -> str",
+            "text": "The cache-key and provenance component: the eraser's id plus the mounted sites.",
+            "source": {
+              "file": "src/reward_lens/interventions/erase.py",
+              "start": 281,
+              "end": 290,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L281-L290"
+            }
+          },
+          {
+            "name": "compile",
+            "kind": "function",
+            "signature": "compile(signal: RewardSignal | None = None) -> CompiledIntervention",
+            "text": "Resolve into one affine mount hook per site (the Intervention protocol).",
+            "source": {
+              "file": "src/reward_lens/interventions/erase.py",
+              "start": 306,
+              "end": 320,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/erase.py#L306-L320"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.interventions.certify.certify_erasure": {
+      "path": "reward_lens.interventions.certify.certify_erasure",
+      "name": "certify_erasure",
+      "kind": "function",
+      "text": "Certify an eraser by held-out probe recovery, as Evidence (DESIGN line 603).\n\nThe held-out features are erased, split into a probe-train and a probe-eval portion, and a fresh\nlinear probe is trained and scored per concept column. The reported ``recovery_auc`` is the\nworst case across columns. If it is at most ``0.5 + eps`` the erasure holds on data the eraser\nnever saw, and the returned Evidence carries a :class:`CalibrationRef`, so gate 1 lifts it to\nCALIBRATED; otherwise the Evidence carries no calibration and stays EXPLORATORY. That is the\nmechanism by which a certificate lifts an eraser above EXPLORATORY, and by which a fake erasure\nis refused: the pass/fail is computed from the same held-out probe either way.\n\n``X_holdout`` must be disjoint from the eraser's fit data for the certificate to mean anything;\nthe caller is responsible for that split, and ``eraser.fit_data_id`` records what to exclude.\nThe certificate is INVARIANT (a scalar recovery statistic, not a cross-signal geometric\nquantity), so no frame is required.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/certify.py",
+        "start": 160,
+        "end": 245,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/certify.py#L160-L245"
+      },
+      "signature": "certify_erasure(\n    eraser: Eraser,\n    X_holdout: np.ndarray,\n    Z_holdout: np.ndarray,\n    *,\n    eps: float = 0.05,\n    probe_train_frac: float = 0.5,\n    l2: float = 0.001,\n    seed: int = 0,\n    concept_id: str | None = None,\n    provenance: Provenance | None = None\n) -> Evidence[ErasureCertificate]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.interventions.base.compose": {
+      "path": "reward_lens.interventions.base.compose",
+      "name": "compose",
+      "kind": "function",
+      "text": "Compose several interventions into one that mounts them together in order.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/interventions/base.py",
+        "start": 67,
+        "end": 69,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/interventions/base.py#L67-L69"
+      },
+      "signature": "compose(interventions: Sequence[Intervention]) -> ComposedIntervention",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    }
+  }
+}

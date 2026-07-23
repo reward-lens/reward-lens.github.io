@@ -328,6 +328,18 @@ def main() -> None:
     write_json(DATA / "ledger.json", ledger)
     prov.record(evidence_path, DATA / "ledger.json")
 
+    # ---- kill explanation sentences, verbatim from RESULTS.md ---------------
+    results_md = (CAMPAIGN / "RESULTS.md").read_text(encoding="utf-8")
+    kill_notes: dict[str, str] = {}
+    for m in re.finditer(
+        r"- Kill (K-[a-z]+) FIRED on `[^`]+`.*?\)\: (.+)$", results_md, re.M
+    ):
+        kill_notes[m.group(1)] = m.group(2).strip()
+    check(
+        set(kill_notes) == EXPECTED_KILLS,
+        f"kill notes parsed for {sorted(kill_notes)}, expected the 8 kills",
+    )
+
     # ---- cards.json (8.2) ---------------------------------------------------
     verdicts = dict(close_summary["cards"])
     verdicts["META-LEDGER"] = close_summary["meta"]
@@ -386,6 +398,7 @@ def main() -> None:
                 "science_raw": science_raw,
                 "verdict": verdicts[card],
                 "kill_fired": (adj.get("killed_by") or [None])[0],
+                "kill_note": kill_notes.get((adj.get("killed_by") or [None])[0] or ""),
                 "kill_criteria": spec.get("kill_criteria", []),
                 "hypotheses": hyps,
                 "adjudication_ev": adjudications[card]["id"],
@@ -494,6 +507,59 @@ def main() -> None:
         shutil.copyfile(src, out)
         prov.record(src, out)
 
+    # The frozen specs also ship as viewable files on the site itself.
+    pub_specs = SITE / "public" / "specs"
+    pub_specs.mkdir(parents=True, exist_ok=True)
+    for card in ordered_cards:
+        src = specs[card]["_file"]
+        dst = pub_specs / src.name
+        shutil.copyfile(src, dst)
+        prov.record(src, dst)
+    for name in ("manifest.json", "probabilities.json"):
+        src = CAMPAIGN / "specs" / "frozen" / name
+        dst = pub_specs / name
+        shutil.copyfile(src, dst)
+        prov.record(src, dst)
+
+    # ---- walkthrough cost excerpt: the priciest single record ---------------
+    best = None
+    with evidence_path.open("r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            env = json.loads(line)
+            gs = float(
+                ((env.get("provenance") or {}).get("cost") or {}).get("gpu_seconds")
+                or 0.0
+            )
+            if best is None or gs > best[0]:
+                best = (gs, env)
+    check(best is not None and best[0] > 0, "no GPU-cost record found for excerpt")
+    env = best[1]
+    value = env.get("value")
+    value_type = (
+        value.get("__type__", "payload") if isinstance(value, dict) else type(value).__name__
+    )
+    write_json(
+        DATA / "walkthrough-cost-record.json",
+        {
+            "id": env["id"],
+            "observable": env["observable"],
+            "subject": env["subject"],
+            "value": f"<{value_type} elided>",
+            "trust": env["trust"],
+            "provenance": {
+                "git_sha": env["provenance"]["git_sha"],
+                "cost": env["provenance"]["cost"],
+                "study": env["provenance"].get("study"),
+                "extra": env["provenance"].get("extra"),
+            },
+            "created_at": env["created_at"],
+        },
+    )
+    prov.record(evidence_path, DATA / "walkthrough-cost-record.json")
+
     # ---- claims mini-store (8.5) -------------------------------------------
     store_dir = DATA / "claims-store"
     store_dir.mkdir(parents=True, exist_ok=True)
@@ -564,6 +630,51 @@ def main() -> None:
     check(len(fleet_index) == 10, "fleet index must have 10 models")
     write_json(DATA / "fleet" / "index.json", fleet_index)
     prov.record(evidence_path, DATA / "fleet" / "index.json")
+
+    # ---- works ledger -------------------------------------------------------
+    wl_path = FINAL / "WORKS_LEDGER.md"
+    wl_rows = []
+    for line in wl_path.read_text(encoding="utf-8").splitlines():
+        if not line.startswith("|") or line.startswith("|---") or line.startswith("| feature"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) != 8:
+            continue
+        wl_rows.append(
+            {
+                "feature": cells[0],
+                "subsystem": cells[1],
+                "exercised_by": cells[2],
+                "substrate": cells[3],
+                "hardware": cells[4],
+                "status": cells[5],
+                "evidence_id": cells[6] if cells[6] != "-" else None,
+                "note": cells[7] or None,
+            }
+        )
+    # The file carries three tables: 65 feature rows, 3 gate firings, and the
+    # 7 v1 failure-class regression rows (the method page's sharpest table).
+    features = [r for r in wl_rows if r["subsystem"] not in ("gate", "v1 regression")]
+    gates = [r for r in wl_rows if r["subsystem"] == "gate"]
+    failure_classes = [r for r in wl_rows if r["subsystem"] == "v1 regression"]
+    check(
+        len(features) == 65,
+        f"works ledger has {len(features)} feature rows, expected 65",
+    )
+    check(len(failure_classes) == 7, "expected 7 v1 failure-class rows")
+    wl_counts: dict[str, int] = {}
+    for r in features:
+        key = "PASS" if r["status"] in ("PASS", "PASS-DEGRADED") else r["status"]
+        wl_counts[key] = wl_counts.get(key, 0) + 1
+    check(
+        wl_counts == {"PASS": 45, "FAIL": 4, "EXCUSED": 7, "NOT-RUN": 9},
+        f"works ledger status counts {wl_counts} do not match 45/4/7/9",
+    )
+    write_json(
+        DATA / "works-ledger.json",
+        {"features": features, "gate_firings": gates, "failure_classes": failure_classes},
+    )
+    prov.record(wl_path, DATA / "works-ledger.json")
 
     # ---- captions -----------------------------------------------------------
     write_json(DATA / "captions.json", captions)

@@ -1,0 +1,33 @@
+{
+ "id": "ev:557a54240e62ac124ab41a1317cf01cb",
+ "observable": "campaign.checkpoints.loadings",
+ "subject": {
+  "signals": [
+   "skywork-v2-qwen3-0.6b"
+  ],
+  "dataset": null,
+  "readout": null,
+  "frame": null,
+  "interventions": [],
+  "extra": {
+   "roster_key": "skywork-v2-qwen3-0.6b",
+   "slice": "ultrafeedback-train-20k"
+  }
+ },
+ "value": "<campaign.payloads.FeatureMatrix elided>",
+ "trust": 0,
+ "provenance": {
+  "git_sha": "unknown",
+  "cost": {
+   "gpu_seconds": 1253.654161738,
+   "tokens": 0,
+   "wall_seconds": 1253.654161738
+  },
+  "study": null,
+  "extra": {
+   "gpu": "H100",
+   "arc": "train:emb-lora"
+  }
+ },
+ "created_at": "2026-07-19T15:21:07.925942+00:00"
+}

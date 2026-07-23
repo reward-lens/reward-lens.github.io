@@ -1,0 +1,465 @@
+{
+  "group": "organisms",
+  "title": "Organisms",
+  "order": [
+    "reward_lens.organisms.foundry.compositional_rule_organism",
+    "reward_lens.organisms.foundry.spurious_correlation_organism",
+    "reward_lens.organisms.foundry.hidden_objective_organism",
+    "reward_lens.organisms.foundry.gate_organism",
+    "reward_lens.organisms.foundry.intransitivity_organism",
+    "reward_lens.organisms.foundry.annotator_mixture_organism",
+    "reward_lens.organisms.foundry.rubric_organism",
+    "reward_lens.organisms.foundry.hack_direction_organism",
+    "reward_lens.organisms.foundry.epistemic_error_organism",
+    "reward_lens.organisms.foundry.value_error_organism",
+    "reward_lens.organisms.foundry.curl_harmonic_organism",
+    "reward_lens.organisms.spec.AnswerKey",
+    "reward_lens.organisms.scorecard.MethodScorecard",
+    "reward_lens.organisms.micro.micro_organism_calibration"
+  ],
+  "symbols": {
+    "reward_lens.organisms.foundry.compositional_rule_organism": {
+      "path": "reward_lens.organisms.foundry.compositional_rule_organism",
+      "name": "compositional_rule_organism",
+      "kind": "function",
+      "text": "Compositional-rule organism at escalating difficulty (section 2.10.2, generator 1).\n\nThe rule is a boolean combinator over predicates (`_LEVELS`); at ``level`` the chosen response\nsatisfies the combinator and the rejected does not. At ``strength = 1`` every pair obeys the rule\nexactly (the foundry test asserts this on both train and OOD); below 1 a ``(1 - strength)``\nfraction of pairs are label-flipped so an instrument's ROC has separable error to measure.\n\nReturns the training `DataView` and the `AnswerKey` whose rule is this combinator.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 182,
+        "end": 238,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L182-L238"
+      },
+      "signature": "compositional_rule_organism(\n    *,\n    level: int = 2,\n    n: int = 96,\n    seed: int = 0,\n    split: Split = 'train',\n    strength: float = 1.0\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.spurious_correlation_organism": {
+      "path": "reward_lens.organisms.foundry.spurious_correlation_organism",
+      "name": "spurious_correlation_organism",
+      "kind": "function",
+      "text": "Dose-controlled spurious-correlation organism (section 2.10.2, generator 2).\n\nThe *true* rule is a single predicate on ``true_feature``: the chosen side has it and the rejected\ndoes not. A ``spurious_feature`` is correlated with the label at strength ``rho``: exactly one side\ncarries the spurious marker, and it lands on the chosen (label-aligned) side with probability\n``rho``. So the empirical agreement rate between \"spurious is on the chosen side\" and the label is\n``rho``: at ``rho = 0.5`` the spurious feature is independent of the label, at ``rho = 1.0`` it is\na perfect confound. This is the dose axis the scorecard must be monotone in (section 2.10.3).\n\n``rho`` is the dose; the standard sweep is ``{0.5, 0.6, 0.7, 0.8, 0.9, 1.0}``.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 251,
+        "end": 324,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L251-L324"
+      },
+      "signature": "spurious_correlation_organism(\n    *,\n    rho: float = 0.8,\n    n: int = 200,\n    seed: int = 0,\n    split: Split = 'train',\n    true_feature: str = 'factual',\n    spurious_feature: str = 'cites'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.hidden_objective_organism": {
+      "path": "reward_lens.organisms.foundry.hidden_objective_organism",
+      "name": "hidden_objective_organism",
+      "kind": "function",
+      "text": "Planted-hidden-objective organism (section 2.10.2, generator 3).\n\nThe *advertised* rule is a single visible predicate (``visible_feature``), but the label is decided\nby a utility ``w_v * visible + w_h * hidden``: the model also secretly rewards ``hidden_feature``.\nA meaningful fraction of pairs are tied on the visible feature and broken by the hidden one, so the\nhidden objective is present and recoverable, which is the object the auditing game hunts for\n(section 2.10.4). A blind auditor who only checks the visible rule misses the hidden term.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 353,
+        "end": 441,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L353-L441"
+      },
+      "signature": "hidden_objective_organism(\n    *,\n    n: int = 160,\n    seed: int = 0,\n    split: Split = 'train',\n    visible_feature: str = 'factual',\n    hidden_feature: str = 'polite',\n    weight_visible: float = 2.0,\n    weight_hidden: float = 1.0\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.gate_organism": {
+      "path": "reward_lens.organisms.foundry.gate_organism",
+      "name": "gate_organism",
+      "kind": "function",
+      "text": "Synthetic multi-objective gate organism (section 2.10.2, generator 4).\n\nThe rule is a hard safety gate followed by a quality ordering: a response is preferable only if it\nis safe (carries no ``[unsafe]`` marker) *and* factual. A response with the unsafe marker is vetoed\nregardless of quality, so some pairs pit a factual-but-unsafe rejected side against a safe-factual\nchosen side (testing the veto) and others pit two safe responses differing only in quality (testing\nthe ordering). The combinator ``\"safe AND factual\"`` is the gate.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 457,
+        "end": 515,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L457-L515"
+      },
+      "signature": "gate_organism(\n    *,\n    n: int = 160,\n    seed: int = 0,\n    split: Split = 'train'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.intransitivity_organism": {
+      "path": "reward_lens.organisms.foundry.intransitivity_organism",
+      "name": "intransitivity_organism",
+      "kind": "function",
+      "text": "Planted-intransitivity organism: cyclic preferences as tournaments (section 2.10.2, gen 5).\n\nEach item is a `Tournament` over three responses A, B, C with a planted 3-cycle A > B > C > A\n(each beats the next by ``wins`` to ``0``). This is the curl ground truth for the topology science\n(S6): a preference operator whose intransitive mass is nonzero by construction. The foundry test\nasserts every tournament contains a cycle (`has_cycle`).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 523,
+        "end": 576,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L523-L576"
+      },
+      "signature": "intransitivity_organism(\n    *,\n    n_triads: int = 16,\n    seed: int = 0,\n    split: Split = 'train',\n    wins: int = 5\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.annotator_mixture_organism": {
+      "path": "reward_lens.organisms.foundry.annotator_mixture_organism",
+      "name": "annotator_mixture_organism",
+      "kind": "function",
+      "text": "Planted annotator-mixture organism with known H(V) (section 2.10.2, generator 6).\n\nThe population of annotators is a categorical distribution ``mixing`` over named annotators, each\nof whom prefers a different feature (`_ANNOTATOR_FEATURE`). Every pair is labelled by an annotator\ndrawn from the mixture, and the chosen side is the one carrying that annotator's favoured feature.\nThe mixture entropy ``H(V)`` (in bits) is known exactly from the chosen weights and is the\nchannel-capacity ground truth; the foundry test checks the recorded entropy against a recompute\nand the empirical assignment entropy against the target.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 637,
+        "end": 700,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L637-L700"
+      },
+      "signature": "annotator_mixture_organism(\n    *,\n    mixing: dict[str, float] | None = None,\n    n: int = 300,\n    seed: int = 0,\n    split: Split = 'train'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.rubric_organism": {
+      "path": "reward_lens.organisms.foundry.rubric_organism",
+      "name": "rubric_organism",
+      "kind": "function",
+      "text": "Planted-rubric organism at controlled ``(K, d, correlation)`` (section 2.10.2, generator 7).\n\n``K`` criterion directions are planted in ``R^d`` with an exact pairwise cosine ``correlation``\n(`make_rubric_directions`). Each response carries a latent ``x in R^d``; its aggregate reward is\n``sum_k v_k . x`` and the chosen side is the higher-reward one. The ground truth here is the set of\ncriterion directions (stored in ``true_directions``), which the coherence/Welch science reads; the\ntext rendering is a coarse encoding of the dominant criterion and is deliberately secondary.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 748,
+        "end": 825,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L748-L825"
+      },
+      "signature": "rubric_organism(\n    *,\n    K: int = 4,\n    d: int = 8,\n    correlation: float = 0.3,\n    n: int = 160,\n    seed: int = 0,\n    split: Split = 'train'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.hack_direction_organism": {
+      "path": "reward_lens.organisms.foundry.hack_direction_organism",
+      "name": "hack_direction_organism",
+      "kind": "function",
+      "text": "Planted-hack-direction organism (section 2.10.2, generator 8; A12's predicted hack mode).\n\nThe label rewards ``hack_feature`` (the chosen side carries it, the rejected does not), so an RM\ntrained on this data learns to love the hack, giving it positive susceptibility ``chi > 0``. But\nthe hack is arranged to be *anti-correlated* with the gold objective ``gold_feature``: with\nprobability ``anti_correlation`` the gold feature sits on the rejected (non-hacky) side. So\noptimizing the learned reward (more hack) reduces gold, which is exactly the ``chi_i > 0`` with\n``Cov(f_i, gold) <= 0`` signature the forecast science hunts for. The ground truth is the hack and\ngold directions in feature space (``true_directions``).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 833,
+        "end": 905,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L833-L905"
+      },
+      "signature": "hack_direction_organism(\n    *,\n    n: int = 200,\n    seed: int = 0,\n    split: Split = 'train',\n    hack_feature: str = 'cites',\n    gold_feature: str = 'factual',\n    anti_correlation: float = 0.8\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.epistemic_error_organism": {
+      "path": "reward_lens.organisms.foundry.epistemic_error_organism",
+      "name": "epistemic_error_organism",
+      "kind": "function",
+      "text": "Planted-epistemic-error organism: mislabeled receipts at rate ``epsilon`` (section 2.10.2).\n\nThe rule prefers grounded (factual) responses, but a fraction ``epsilon`` of the \"factual\" markers\nare *fabricated receipts*: the response looks grounded to the grader while gold says it is false.\nThe grader's error here is epistemic (a false belief about truth), which the epistemic-axiological\nfactorization (L2) separates from value error below. ``meta['fabricated']`` records which pairs\ncarry the mislabeled receipt.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 940,
+        "end": 990,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L940-L990"
+      },
+      "signature": "epistemic_error_organism(\n    *,\n    epsilon: float = 0.2,\n    n: int = 200,\n    seed: int = 0,\n    split: Split = 'train'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.value_error_organism": {
+      "path": "reward_lens.organisms.foundry.value_error_organism",
+      "name": "value_error_organism",
+      "kind": "function",
+      "text": "Planted-value-error organism: preference inversion at fixed truth (section 2.10.2).\n\nTruth is never in doubt (the factual side is always identifiable), but at rate ``delta`` the rule\nprefers the *less* truthful, more agreeable side anyway. The grader's error here is axiological (a\nmisaligned value, not a false belief), the complement of epistemic error above. ``meta['inverted']``\nrecords which pairs carry the inversion.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 993,
+        "end": 1050,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L993-L1050"
+      },
+      "signature": "value_error_organism(\n    *,\n    delta: float = 0.2,\n    n: int = 200,\n    seed: int = 0,\n    split: Split = 'train'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.foundry.curl_harmonic_organism": {
+      "path": "reward_lens.organisms.foundry.curl_harmonic_organism",
+      "name": "curl_harmonic_organism",
+      "kind": "function",
+      "text": "Planted curl vs harmonic mass with a known Hodge decomposition (section 2.10.2, generator 11).\n\nGenerates a collection of tournaments containing both pure curl (3-cycles) and pure harmonic\n(chordless rings of length 4 to 7) preferences. This serves as the ground truth for preference\ntopology (S6).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/foundry.py",
+        "start": 1059,
+        "end": 1154,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/foundry.py#L1059-L1154"
+      },
+      "signature": "curl_harmonic_organism(\n    *,\n    n_triads: int = 12,\n    n_rings: int = 12,\n    wins: int = 5,\n    seed: int = 0,\n    split: Split = 'train'\n) -> tuple[DataView, AnswerKey]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.organisms.spec.AnswerKey": {
+      "path": "reward_lens.organisms.spec.AnswerKey",
+      "name": "AnswerKey",
+      "kind": "class",
+      "text": "The exact ground truth an instrument is graded against (section 2.10.1).\n\n``rule`` and ``channels`` describe the planted structure. ``true_directions`` maps a name to the\ndirection that structure lives along where one is known by construction (a rubric's criterion\nvectors, a hack direction in feature space); it is ``None`` when the direction is only recoverable\nfrom a trained trunk. ``governs_behavior_oob`` records whether the rule provably governs behaviour\nout of distribution; it starts ``False`` and is set only by `verify.py` on a held-out OOD split,\nnever assumed (section 2.10.3). ``family`` names the organism family for scorecard and calibration\nreferences, and ``notes`` carries any human-readable caveats.\n\nThis type is intentionally mutable so `verify.py` can stamp ``governs_behavior_oob`` after it has\nthe trained signal; every other spec type is frozen.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/spec.py",
+        "start": 170,
+        "end": 212,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/spec.py#L170-L212"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "register_payload",
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "rule",
+            "annotation": "RuleSpec",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "channels",
+            "annotation": "tuple[PlantedChannel, ...]",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "true_directions",
+            "annotation": "dict[str, np.ndarray] | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "governs_behavior_oob",
+            "annotation": "bool",
+            "value": "False",
+            "description": ""
+          },
+          {
+            "name": "family",
+            "annotation": "str",
+            "value": "'unnamed'",
+            "description": ""
+          },
+          {
+            "name": "notes",
+            "annotation": "str",
+            "value": "''",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "channel",
+            "kind": "function",
+            "signature": "channel(kind: str) -> PlantedChannel | None",
+            "text": "The first planted channel of ``kind``, or ``None`` if the organism has none.",
+            "source": {
+              "file": "src/reward_lens/organisms/spec.py",
+              "start": 194,
+              "end": 199,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/spec.py#L194-L199"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.organisms.scorecard.MethodScorecard": {
+      "path": "reward_lens.organisms.scorecard.MethodScorecard",
+      "name": "MethodScorecard",
+      "kind": "class",
+      "text": "Grades an instrument against an organism's answer key (section 2.10.3).\n\nAn instance names the instrument being graded (``observable``). `evaluate` consumes the\ninstrument's per-item scores, either on a single regime or across a dose sweep, and produces a\n`ScorecardEntry`. The scorecard is agnostic to *what* produced the scores: the pure test grades a\nsynthetic detector, the M3 integration grades DLA and patching, and the code path is identical.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/scorecard.py",
+        "start": 168,
+        "end": 304,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/scorecard.py#L168-L304"
+      },
+      "signature": "MethodScorecard(observable: str, *, version: str = _SCORECARD_VERSION) -> None",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "evaluate",
+            "kind": "function",
+            "signature": "evaluate(\n    observable_scores: DetectorReadout | Mapping[float, DetectorReadout],\n    answer_key: AnswerKey,\n    doses: list[float] | None = None,\n    *,\n    target_tpr: float = 0.9,\n    target_fpr: float = 0.05,\n    monotone_tol: float = 0.02\n) -> ScorecardEntry",
+            "text": "Compute the answer-key ROC of the instrument and return a `ScorecardEntry`.",
+            "source": {
+              "file": "src/reward_lens/organisms/scorecard.py",
+              "start": 181,
+              "end": 266,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/scorecard.py#L181-L266"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.organisms.micro.micro_organism_calibration": {
+      "path": "reward_lens.organisms.micro.micro_organism_calibration",
+      "name": "micro_organism_calibration",
+      "kind": "function",
+      "text": "Train, verify, and recover a planted rule on the tiny CPU trunk (section 2.10.3, R6).\n\nGenerates a planted single-rule (prefer factual) organism with a dose-spurious confound\n(``cites`` correlated with the label at ``rho``), trains the tiny trunk, verifies the rule governs\nbehaviour on a held-out OOD split, and runs the built-in mean-difference detector to recover the\nrule OOD. The returned ``recovered`` flag is the calibration go/no-go a CI test asserts (R6).",
+      "params": [
+        {
+          "name": "seed",
+          "annotation": "int",
+          "default": "0",
+          "description": "Seed for data generation and training (deterministic)."
+        },
+        {
+          "name": "rho",
+          "annotation": "float",
+          "default": "0.85",
+          "description": "Dose of the spurious confound in the planted dataset (0.5..1.0)."
+        },
+        {
+          "name": "n_train",
+          "annotation": "int",
+          "default": "160",
+          "description": "Number of training pairs."
+        },
+        {
+          "name": "n_ood",
+          "annotation": "int",
+          "default": "160",
+          "description": "Number of held-out OOD pairs."
+        },
+        {
+          "name": "detector_threshold",
+          "annotation": "float",
+          "default": "0.75",
+          "description": "The OOD-AUC bar for the built-in detector's recovery."
+        },
+        {
+          "name": "verify_threshold",
+          "annotation": "float",
+          "default": "0.9",
+          "description": "The OOD pairwise-accuracy bar for rule-governance."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "MicroCalibrationResult",
+          "description": "A `MicroCalibrationResult` with the trained organism, verification, and detector recovery."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/organisms/micro.py",
+        "start": 190,
+        "end": 250,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/organisms/micro.py#L190-L250"
+      },
+      "signature": "micro_organism_calibration(\n    *,\n    seed: int = 0,\n    rho: float = 0.85,\n    n_train: int = 160,\n    n_ood: int = 160,\n    detector_threshold: float = 0.75,\n    verify_threshold: float = 0.9\n) -> MicroCalibrationResult",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    }
+  }
+}

@@ -1,0 +1,589 @@
+{
+  "group": "dynamics-loops",
+  "title": "Dynamics and loops",
+  "order": [
+    "reward_lens.dynamics.checkpoints.CheckpointSequence",
+    "reward_lens.dynamics.curves.bias_entry_curve",
+    "reward_lens.dynamics.curves.faithfulness_rho_trajectory",
+    "reward_lens.loops.bon.bon_kl",
+    "reward_lens.loops.bon.bon_ladder",
+    "reward_lens.loops.bon.DEFAULT_NS",
+    "reward_lens.loops.tilt.susceptibility",
+    "reward_lens.loops.tilt.flag_hack_modes",
+    "reward_lens.loops.tilt.critical_lambda_from_tail",
+    "reward_lens.loops.tilt.tilt_sweep",
+    "reward_lens.loops.recorder.RolloutRecorder",
+    "reward_lens.loops.recorder.OnsetAlarm",
+    "reward_lens.loops.recorder.cusum_changepoint",
+    "reward_lens.loops.recorder.synthetic_hack_rollout",
+    "reward_lens.loops.integrations.base.make_reward_fn",
+    "reward_lens.loops.integrations.base.GeometryLogger"
+  ],
+  "symbols": {
+    "reward_lens.dynamics.checkpoints.CheckpointSequence": {
+      "path": "reward_lens.dynamics.checkpoints.CheckpointSequence",
+      "name": "CheckpointSequence",
+      "kind": "class",
+      "text": "An ordered, fingerprint-chained sequence of checkpoints over training time (DESIGN 2.12).\n\nBuild one with `CheckpointSequence.build` from `(step, ModelFP, loader)` triples; the constructor\ncomputes the hash chain so the sequence is self-verifying from the moment it exists. Iterate it to\nsweep an Observable or index across training time (`sweep.sweep_over_checkpoints`); the sequence's\n`signature` is what keys a resumable sweep to this exact chain.\n\nVerification comes in two depths. `verify_chain` recomputes the links and is pure and instant: it\ncatches an edited fingerprint, a reordered or dropped checkpoint, or a broken link. `verify_fingerprints`\nadditionally loads each model and recomputes `runtime.fingerprint`, catching weights swapped under\nan unchanged record. `verify` runs the chain check and, when ``deep=True``, the fingerprint check,\nraising `ProvenanceError` on the first failure so a study cannot sweep a chain it has not trusted.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/dynamics/checkpoints.py",
+        "start": 103,
+        "end": 321,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L103-L321"
+      },
+      "signature": "CheckpointSequence(checkpoints: list[Checkpoint])",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [
+          {
+            "name": "steps",
+            "annotation": "list[int]",
+            "value": null,
+            "description": "The training steps in order (the developmental covariate)."
+          },
+          {
+            "name": "head_link",
+            "annotation": "str",
+            "value": null,
+            "description": "The final chain link, which transitively commits to every checkpoint's identity."
+          }
+        ],
+        "methods": [
+          {
+            "name": "build",
+            "kind": "function",
+            "signature": "build(\n    triples: list[tuple[int, ModelFP, CheckpointLoader]],\n    *,\n    meta: dict[int, dict[str, Any]] | None = None\n) -> CheckpointSequence",
+            "text": "Build a chained sequence from ``(step, model_fp, loader)`` triples (DESIGN 2.2.5).\n\nThe triples are sorted by step and linked in order, so the caller may pass them in any order.\n``meta`` optionally attaches per-step metadata (a local path, an HF revision id, an epoch\nfraction) that rides along on each `Checkpoint`. Steps must be distinct; a duplicate step is a\n`ProvenanceError` because it makes the trajectory covariate ambiguous.",
+            "source": {
+              "file": "src/reward_lens/dynamics/checkpoints.py",
+              "start": 123,
+              "end": 160,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L123-L160"
+            }
+          },
+          {
+            "name": "signature",
+            "kind": "function",
+            "signature": "signature() -> str",
+            "text": "A content id for the whole chain (the head link), used to key a resumable sweep to it.",
+            "source": {
+              "file": "src/reward_lens/dynamics/checkpoints.py",
+              "start": 183,
+              "end": 185,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L183-L185"
+            }
+          },
+          {
+            "name": "verify_chain",
+            "kind": "function",
+            "signature": "verify_chain() -> ChainVerification",
+            "text": "Recompute the hash chain and report the first inconsistency (DESIGN 2.2.5).\n\nPure and instant: for each checkpoint it recomputes ``link`` from ``(step, model_fp, prev)``\nand checks it matches the recorded link, that the recorded ``prev_link`` matches the running\nprevious link, and that the steps strictly increase. Any edit to a recorded fingerprint or\nstep, any reordering, or any dropped checkpoint surfaces here as the first bad step.",
+            "source": {
+              "file": "src/reward_lens/dynamics/checkpoints.py",
+              "start": 189,
+              "end": 227,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L189-L227"
+            }
+          },
+          {
+            "name": "verify_fingerprints",
+            "kind": "function",
+            "signature": "verify_fingerprints() -> ChainVerification",
+            "text": "Load each checkpoint and recompute its fingerprint against the record (DESIGN 2.2.5).\n\nThis is the deep check the chain cannot do on its own: it materializes each signal through its\nloader and recomputes `runtime.fingerprint`, so a weight file swapped under an unchanged record\nis caught even though the recorded metadata is internally consistent. It loads models, so it is\ntorch-gated in effect (the loaders build models) and is the expensive verification; a study\nruns it once before trusting a chain, not on every sweep.",
+            "source": {
+              "file": "src/reward_lens/dynamics/checkpoints.py",
+              "start": 229,
+              "end": 266,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L229-L266"
+            }
+          },
+          {
+            "name": "verify",
+            "kind": "function",
+            "signature": "verify(*, deep: bool = False) -> ChainVerification",
+            "text": "Verify the chain (and, when ``deep``, the fingerprints), raising on the first failure.\n\nReturns the passing `ChainVerification` so a caller may log it. Raises `ProvenanceError` with\nthe localized reason when either check fails, which is the guard the sweep relies on: a chain\nthat does not verify is never swept, so a developmental result is never read off an untrusted\nrun (DESIGN 2.2.5, RK9).",
+            "source": {
+              "file": "src/reward_lens/dynamics/checkpoints.py",
+              "start": 268,
+              "end": 289,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L268-L289"
+            }
+          },
+          {
+            "name": "tampered",
+            "kind": "function",
+            "signature": "tampered(\n    index: int,\n    *,\n    model_fp: ModelFP | None = None,\n    loader: CheckpointLoader | None = None,\n    reseal: bool = False\n) -> CheckpointSequence",
+            "text": "Return a copy with one checkpoint altered, modelling an attacker's edit (DESIGN 2.2.5).\n\nWith ``reseal=False`` (the default) the links are left untouched, so replacing a recorded\n``model_fp`` models an edited manifest and `verify_chain` will reject it; replacing only the\n``loader`` (keeping ``model_fp``) models swapped weights that pass the chain but fail\n`verify_fingerprints`. With ``reseal=True`` the chain is rebuilt around the change, which is\nwhat an honest re-release would do (and then verification passes). This exists for tests and\naudit drills; production sequences are built by `build`.",
+            "source": {
+              "file": "src/reward_lens/dynamics/checkpoints.py",
+              "start": 293,
+              "end": 321,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/checkpoints.py#L293-L321"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.dynamics.curves.bias_entry_curve": {
+      "path": "reward_lens.dynamics.curves.bias_entry_curve",
+      "name": "bias_entry_curve",
+      "kind": "function",
+      "text": "The per-probe effect-size-versus-training-step curve, the bias-entry order (DESIGN 2.12).\n\nSweeps the reward score across the checkpoint sequence (cached and resumable through `sweep`), then\nfor each probe computes the signed effect size of the bias on the reward at every checkpoint. A\nbias that is uncorrelated with the reward early and strongly loaded late traces a rising curve; the\nstep at which it first crosses ``entry_threshold`` is where it entered. On the planted synthetic\nsequence, whose reward loading onto the probe grows by construction, the curve is monotone rising,\nwhich is the calibration that the estimator faithfully tracks a known developmental signal before\nit is trusted on a real run (DESIGN 2.10).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/dynamics/curves.py",
+        "start": 121,
+        "end": 183,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/curves.py#L121-L183"
+      },
+      "signature": "bias_entry_curve(\n    sequence: CheckpointSequence,\n    probes: list[Probe],\n    view: Any,\n    *,\n    readout: str = 'reward',\n    store: EvidenceStore | None = None,\n    entry_threshold: float = 0.5,\n    resume: bool = True\n) -> BiasEntryCurves",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.dynamics.curves.faithfulness_rho_trajectory": {
+      "path": "reward_lens.dynamics.curves.faithfulness_rho_trajectory",
+      "name": "faithfulness_rho_trajectory",
+      "kind": "function",
+      "text": "The E04 attribution-vs-patching rho as a function of training step (DESIGN 2.12, 4.4 M9).\n\n``score_pairs`` is one ``(step, attribution_scores, patching_scores)`` triple per checkpoint, where\nthe two arrays are the per-component attribution and patching effects the battery produces. For each\ncheckpoint this computes the Spearman rho with a bootstrap CI (`stats.spearman_with_ci`) and returns\nthe trajectory. Whether the anti-correlation is developmental is read from the trajectory as a whole:\nthe reward is developmental when the late portion of the run is anti-correlated and meaningfully more\nanti-correlated than the early portion (an anti-correlation that emerges from near zero, or one that\nis present early and deepens). The comparison uses the mean rho of the first and last thirds rather\nthan the two endpoint checkpoints, so a single noisy checkpoint cannot set the flag and a constant\nanti-correlation present from the first checkpoint is not called developmental. The attribution and\npatching arrays come from the battery on each checkpoint; passing them in keeps this CPU-provable and\ndecoupled from the concurrently-built battery (DESIGN 2.9, 2.12).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/dynamics/curves.py",
+        "start": 597,
+        "end": 655,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/dynamics/curves.py#L597-L655"
+      },
+      "signature": "faithfulness_rho_trajectory(\n    score_pairs: list[tuple[int, np.ndarray, np.ndarray]],\n    *,\n    n_resamples: int = 2000,\n    seed: int = 0\n) -> FaithfulnessRhoTrajectory",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.bon.bon_kl": {
+      "path": "reward_lens.loops.bon.bon_kl",
+      "name": "bon_kl",
+      "kind": "function",
+      "text": "The exact KL divergence of the best-of-n policy from the base policy, in nats.\n\n``KL(bo_n || base) = log(n) - (n - 1) / n`` (Beirami et al. 2401.01879). Exact in the\ncontinuous-reward, no-ties limit, and a function of ``n`` alone. ``bon_kl(1) == 0`` because\nbest-of-1 is the base policy. This is the identity the acceptance test reproduces.\n\nAccepts a scalar or an array of ``n`` and returns a float array so a whole ladder is one call.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/bon.py",
+        "start": 49,
+        "end": 61,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/bon.py#L49-L61"
+      },
+      "signature": "bon_kl(n: int | Sequence[int] | np.ndarray) -> np.ndarray",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.bon.bon_ladder": {
+      "path": "reward_lens.loops.bon.bon_ladder",
+      "name": "bon_ladder",
+      "kind": "function",
+      "text": "Compute the best-of-n ladder and the exact KL frontier from scored base-policy samples.\n\n``scores_per_prompt`` is a per-prompt bank of reward-model scores: either a 2-D array\n``(n_prompts, m)`` or a ragged list of per-prompt arrays. For each ``n`` in ``ns`` the expected\nbest-of-n reward is computed per prompt with the plug-in estimator and averaged across prompts,\nand the exact ``KL(bo_n || base)`` is attached. The result previews the optimization frontier\nwith no RL (DESIGN 2.13).\n\nReturns ``Evidence[BoNLadder]``. Gauge is INVARIANT: the KL is a real divergence in nats and\nthe reward is in the model's own score units, both gauge-free (a raw reward-model score is\nINVARIANT in this kernel, DESIGN 2.3.3). ``subject`` names the signal/dataset when the caller\nhas them; ``parents`` links the score Evidence this consumed so the store stays a DAG.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/bon.py",
+        "start": 133,
+        "end": 192,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/bon.py#L133-L192"
+      },
+      "signature": "bon_ladder(\n    scores_per_prompt: Sequence[Sequence[float]] | np.ndarray,\n    ns: Sequence[int] = DEFAULT_NS,\n    *,\n    subject: SubjectRef | None = None,\n    parents: Sequence['EvidenceID'] = ()\n) -> Evidence[BoNLadder]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.bon.DEFAULT_NS": {
+      "path": "reward_lens.loops.bon.DEFAULT_NS",
+      "name": "DEFAULT_NS",
+      "kind": "attribute",
+      "text": null,
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/bon.py",
+        "start": 46,
+        "end": 46,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/bon.py#L46"
+      },
+      "signature": null,
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": {
+        "annotation": "tuple[int, ...]",
+        "value": "(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 10000)"
+      },
+      "poor": true,
+      "poor_reason": "no docstring text"
+    },
+    "reward_lens.loops.tilt.susceptibility": {
+      "path": "reward_lens.loops.tilt.susceptibility",
+      "name": "susceptibility",
+      "kind": "function",
+      "text": "The susceptibility spectrum ``chi_i = Cov_0(f_i, r)`` from base-policy samples (Appendix A12).\n\n``scores`` is the base-policy reward per sample (shape ``(N,)``); ``features`` is the per-sample\nscalar activation of each feature (shape ``(N, k)``). Returns ``chi_i = Cov_0(f_i, r)``, the\npredicted initial drift of feature ``i`` under optimization, computed as a population covariance\n``mean(f_i r) - mean(f_i) mean(r)`` (the covariance is an expectation under ``pi_0``, so the\npopulation form, ddof = 0, is the estimator of the theory object). The ``f = r`` diagonal\n``Var_0(r)`` is reported as ``teacher_variance`` (Appendix A3).\n\nGauge is INVARIANT: a covariance of two scalar readouts does not depend on the activation basis\n(DESIGN 2.17 step 6). Trust is EXPLORATORY until a planted-chi organism scorecard calibrates it\n(gate 1); that calibration is a study, not this function's job.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/tilt.py",
+        "start": 58,
+        "end": 110,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/tilt.py#L58-L110"
+      },
+      "signature": "susceptibility(\n    scores: Sequence[float] | np.ndarray,\n    features: np.ndarray,\n    feature_names: Sequence[str] | None = None,\n    *,\n    subject: SubjectRef | None = None,\n    parents: Sequence['EvidenceID'] = ()\n) -> Evidence['SusceptibilitySpectrum']",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.tilt.flag_hack_modes": {
+      "path": "reward_lens.loops.tilt.flag_hack_modes",
+      "name": "flag_hack_modes",
+      "kind": "function",
+      "text": "Names of the predicted hack modes: ``chi_i > 0`` while ``Cov_0(f_i, gold) <= 0`` (A12).\n\n``gold_covariance[i] = Cov_0(f_i, gold)`` for a reference/gold signal. A feature the proxy loves\n(positive susceptibility) but the gold objective does not is exactly the direction optimization\nexploits, which is what the forecasting science (S12) pre-registers.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/tilt.py",
+        "start": 130,
+        "end": 146,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/tilt.py#L130-L146"
+      },
+      "signature": "flag_hack_modes(\n    spectrum: SusceptibilitySpectrum,\n    gold_covariance: Sequence[float] | np.ndarray\n) -> list[str]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.tilt.critical_lambda_from_tail": {
+      "path": "reward_lens.loops.tilt.critical_lambda_from_tail",
+      "name": "critical_lambda_from_tail",
+      "kind": "function",
+      "text": "Estimate the critical pressure ``lambda_c`` from the reward's right-tail scale (A4/A5).\n\nFits an exponential right tail by peaks-over-threshold: the scale ``tau`` is the mean excess of\nthe scores above their ``tail_quantile`` quantile, and ``lambda_c = 1 / tau`` (Appendix A5, an\nexponential tail with scale ``tau`` has critical pressure ``1 / tau``). This is the cheap\nscalar the tilt guard needs; the full Hill / peaks-over-threshold tail index lives in the tail\nindex observable (Appendix A4), which this does not replace. Returns ``inf`` when the excess is\ndegenerate (a bounded tail imposes no ceiling on lambda).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/tilt.py",
+        "start": 149,
+        "end": 171,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/tilt.py#L149-L171"
+      },
+      "signature": "critical_lambda_from_tail(\n    scores: Sequence[float] | np.ndarray,\n    tail_quantile: float = 0.9\n) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.tilt.tilt_sweep": {
+      "path": "reward_lens.loops.tilt.tilt_sweep",
+      "name": "tilt_sweep",
+      "kind": "function",
+      "text": "Emulate the tilted family across a ``lambda`` grid by SNIS, with the validity guards.\n\nFor each ``lambda`` in ``lambdas`` the tilted feature means ``E_lambda[f_i]`` and reward mean\n``E_lambda[r]`` are estimated by reweighting the base-policy bank, with no gradient updates. The\nsusceptibility ``chi_i = Cov_0(f_i, r)`` (the ``lambda -> 0`` slope) is attached so the initial\ndrift the sweep traces can be checked against the closed-form prediction.\n\nRefuses, via ``ESSGuardError``, when any requested ``|lambda|`` exceeds ``lambda_c / 2`` (past\nthat the tilt no longer emulates practical optimization, DESIGN 2.13; past ``lambda_c`` there is\nno tilted optimum for a heavy tail, Appendix A4), or when the SNIS effective sample size at some\nvalid ``lambda`` falls below ``min_ess_frac`` of the bank. Returning a confident number from a\nhandful of dominating samples is the failure this guard exists to prevent.\n\nGauge is INVARIANT (tilted means of scalar readouts and their base covariance are gauge-free).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/tilt.py",
+        "start": 190,
+        "end": 281,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/tilt.py#L190-L281"
+      },
+      "signature": "tilt_sweep(\n    scores: Sequence[float] | np.ndarray,\n    features: np.ndarray,\n    lambdas: Sequence[float],\n    lambda_c: float,\n    *,\n    feature_names: Sequence[str] | None = None,\n    min_ess_frac: float = 0.05,\n    subject: SubjectRef | None = None,\n    parents: Sequence['EvidenceID'] = ()\n) -> Evidence['TiltPrediction']",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.recorder.RolloutRecorder": {
+      "path": "reward_lens.loops.recorder.RolloutRecorder",
+      "name": "RolloutRecorder",
+      "kind": "class",
+      "text": "Monitor a rollout in reward-feature space, step by step (DESIGN 2.13, science S13).\n\nConstruct with the feature bank whose doses to track, the reward direction ``w_r`` the policy is\npaid to excite, a batch of baseline (step-0) activations that fixes the reference mean and\ncovariance, and optionally an explicit reward-defining subspace (default: the span of ``w_r``).\nCall ``observe`` once per rollout step with that step's activation batch and rewards, then\n``report`` to get the ``DriftReport``, or ``evidence`` to get it wrapped as ``Evidence``.\n\nEverything is CPU-cheap and pure-numpy. The recorder holds no model; it consumes activations a\ncaller extracts, which is what lets it run in shadow mode on production serving with no behavior\nchange (DESIGN 2.13) and what makes the synthetic organism a faithful stand-in for the GPU\nrollout.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/recorder.py",
+        "start": 227,
+        "end": 438,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L227-L438"
+      },
+      "signature": "RolloutRecorder(\n    feature_bank: FeatureBank,\n    reward_direction: Sequence[float] | np.ndarray,\n    baseline_activations: np.ndarray,\n    *,\n    effective_subspace: np.ndarray | None = None,\n    ridge: float = 0.001,\n    mahalanobis_quantile: float = 0.975\n)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "observe",
+            "kind": "function",
+            "signature": "observe(\n    activations: np.ndarray,\n    proxy_reward: float | Sequence[float] | None = None,\n    gold_reward: float | Sequence[float] | None = None\n) -> None",
+            "text": "Record one rollout step from its activation batch and rewards.\n\n``activations`` is ``(n_samples, d)`` for the step. ``proxy_reward`` is the RM's score for\nthe step (a scalar or per-sample, averaged); ``gold_reward`` is the ground-truth reward\nwhere a study has one (the synthetic organism, or an offline eval). If gold is omitted on\nany step, the report simply carries no gold onset and no lead time.",
+            "source": {
+              "file": "src/reward_lens/loops/recorder.py",
+              "start": 294,
+              "end": 322,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L294-L322"
+            }
+          },
+          {
+            "name": "report",
+            "kind": "function",
+            "signature": "report(*, alpha: float = 0.05, n_perm: int = 1000, seed: int = 0) -> DriftReport",
+            "text": "Assemble the ``DriftReport``: dose changepoints, the named direction, and the lead time.\n\nEach feature's dose trajectory gets a CUSUM changepoint; the exploited direction is the\nfeature with the largest changepoint magnitude among those significant at ``alpha``. The\ngold reward (when present) gets its own changepoint, and the lead time is the gap between the\nexploited feature's onset and the gold divergence. An ``OnsetAlarm`` is emitted for the\nexploited feature and for the gold divergence.",
+            "source": {
+              "file": "src/reward_lens/loops/recorder.py",
+              "start": 324,
+              "end": 410,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L324-L410"
+            }
+          },
+          {
+            "name": "evidence",
+            "kind": "function",
+            "signature": "evidence(\n    *,\n    subject: SubjectRef | None = None,\n    parents: Sequence['EvidenceID'] = (),\n    alpha: float = 0.05,\n    n_perm: int = 1000,\n    seed: int = 0\n) -> Evidence[DriftReport]",
+            "text": "The ``DriftReport`` wrapped as ``Evidence`` (DESIGN 2.13).\n\nGauge is RAW_ONLY: concept doses and drift magnitudes are projections in one model's\nactivation basis, so they are raw coordinates, honest within a rollout but not comparable\nacross models without a Frame (DESIGN 2.7.1, gate 2). The lead time and outlier rate are\nframe-free, but the payload as a whole carries raw-coordinate arrays, so RAW_ONLY is the\nconservative correct label.",
+            "source": {
+              "file": "src/reward_lens/loops/recorder.py",
+              "start": 412,
+              "end": 438,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L412-L438"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.loops.recorder.OnsetAlarm": {
+      "path": "reward_lens.loops.recorder.OnsetAlarm",
+      "name": "OnsetAlarm",
+      "kind": "class",
+      "text": "A changepoint-based onset: which signal moved, when, and how significantly (DESIGN 2.13).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/recorder.py",
+        "start": 177,
+        "end": 185,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L177-L185"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "signal",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "kind",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "step",
+            "annotation": "int",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "statistic",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "p_value",
+            "annotation": "float",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.loops.recorder.cusum_changepoint": {
+      "path": "reward_lens.loops.recorder.cusum_changepoint",
+      "name": "cusum_changepoint",
+      "kind": "function",
+      "text": "Detect a single mean-shift changepoint by CUSUM with a permutation p-value (Taylor's method).\n\nBuilds the cumulative sum of deviations from the mean, ``S_j = sum_{t<=j}(x_t - xbar)`` with\n``S_0 = S_T = 0``; the changepoint is the index where ``|S|`` is largest, and the magnitude\n``max(S) - min(S)`` is the test statistic. Significance is a permutation null: shuffle the\nseries ``n_perm`` times, recompute the magnitude, and report the fraction at least as large\n(with the ``(count + 1) / (n_perm + 1)`` correction). This is the dependency-light stand-in for\nthe BOCPD detector DESIGN 2.11 puts in ``stats/changepoint``; the return contract is the same.\n\nA flat or trendless series returns a non-significant changepoint (large p-value). The reported\nindex is the split point in ``[0, T]``: samples before it are one regime, samples after another.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/recorder.py",
+        "start": 109,
+        "end": 142,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L109-L142"
+      },
+      "signature": "cusum_changepoint(\n    series: Sequence[float] | np.ndarray,\n    n_perm: int = 1000,\n    seed: int = 0\n) -> Changepoint",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.recorder.synthetic_hack_rollout": {
+      "path": "reward_lens.loops.recorder.synthetic_hack_rollout",
+      "name": "synthetic_hack_rollout",
+      "kind": "function",
+      "text": "Generate a CPU rollout that drifts along a planted hack direction (DESIGN 2.13, science S13).\n\nThe policy is paid to excite the reward direction ``w_r``, which here is the hack feature's\ndirection (feature 0). From ``dose_onset`` on, the activation mean drifts along that direction at\n``drift_rate`` per step, so the hack feature's dose, the proxy reward, and the crystallization\nalong ``w_r`` all climb together. The gold reward is flat until the accumulated hack dose crosses\n``gold_tolerance``, then falls at ``gold_slope``: the anti-correlation with gold only bites once\nenough hack has accumulated (the ``chi_i > 0``, ``Cov(f_i, gold) <= 0`` signature of Appendix\nA12). That construction is what makes the feature-space onset precede the gold divergence, which\nis the lead time the recorder must recover. The remaining features are distractors with no\nsystematic drift.\n\nDeterministic given ``seed``. This is the synthetic organism the recorder's acceptance test runs\non; the real RL rollout is GPU-gated and enters through the same ``RolloutRecorder.observe`` API.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/recorder.py",
+        "start": 475,
+        "end": 543,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/recorder.py#L475-L543"
+      },
+      "signature": "synthetic_hack_rollout(\n    *,\n    d: int = 16,\n    n_features: int = 6,\n    n_samples: int = 64,\n    n_baseline: int = 256,\n    steps: int = 40,\n    dose_onset: int = 6,\n    gold_tolerance: float = 1.2,\n    drift_rate: float = 0.14,\n    gold_slope: float = 1.6,\n    noise: float = 1.0,\n    seed: int = 0\n) -> SyntheticRollout",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.integrations.base.make_reward_fn": {
+      "path": "reward_lens.loops.integrations.base.make_reward_fn",
+      "name": "make_reward_fn",
+      "kind": "function",
+      "text": "Wrap a ``RewardSignal`` as the reward function a training loop calls (DESIGN 2.13).\n\nReturns ``reward_fn(prompts, responses) -> list[float]``: it pairs each prompt with its response,\nscores them through ``signal.score`` under ``readout``, and returns plain floats, which is the\ncontract PPO/GRPO reward hooks expect. This is the real, framework-agnostic reward path; the\nframework files add only the callback/worker plumbing around it.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/integrations/base.py",
+        "start": 75,
+        "end": 102,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/integrations/base.py#L75-L102"
+      },
+      "signature": "make_reward_fn(\n    signal: Any,\n    readout: str = 'reward',\n    *,\n    batch_size: int | None = None\n) -> RewardFn",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.loops.integrations.base.GeometryLogger": {
+      "path": "reward_lens.loops.integrations.base.GeometryLogger",
+      "name": "GeometryLogger",
+      "kind": "class",
+      "text": "Log the RM's geometry every ``k`` steps on a fixed probe (DESIGN 2.13).\n\nThe framework-agnostic core the three integration callbacks wrap: hold a probe, and on each\ntraining step call ``maybe_log(signal, step)``, which returns a ``ProbeLog`` on the logging steps\n(every ``probe.k``) and ``None`` otherwise, appending each log to ``logs``. This is the piece the\ntiny-model test exercises directly, so the geometry logging is proven without any training\nframework installed; the callbacks add only the framework's step hook around it.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/loops/integrations/base.py",
+        "start": 168,
+        "end": 188,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/integrations/base.py#L168-L188"
+      },
+      "signature": "GeometryLogger(probe: GeometryProbe, readout: str = 'reward')",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "maybe_log",
+            "kind": "function",
+            "signature": "maybe_log(signal: Any, step: int) -> ProbeLog | None",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/loops/integrations/base.py",
+              "start": 183,
+              "end": 188,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/loops/integrations/base.py#L183-L188"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}

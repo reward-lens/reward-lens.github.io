@@ -1,0 +1,181 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import DataTable from "@components/DataTable.astro";
+import TrustBadge from "@components/TrustBadge.astro";
+import EvidenceChip from "@components/EvidenceChip.astro";
+
+export async function getStaticPaths() {
+  const models = import.meta.glob("../../data/fleet/*.json", { eager: true });
+  return Object.entries(models)
+    .filter(([path]) => !path.endsWith("index.json"))
+    .map(([path, mod]) => ({
+      params: { model: path.split("/").pop()!.replace(".json", "") },
+      props: { model: (mod as any).default ?? mod },
+    }));
+}
+
+const { model } = Astro.props;
+const trustLetter = (t: string) =>
+  (({ EXPLORATORY: "E", CALIBRATED: "C", REGISTERED: "R", ADJUDICATED: "A" })[
+    t
+  ] ?? "E") as "E" | "C" | "R" | "A";
+---
+
+<Base
+  title={`${model.slug} · atlas · reward-lens`}
+  description={`Every stored measurement of ${model.slug}, with trust levels and evidence ids.`}
+>
+  <div class="model-wrap">
+    <PageHeader
+      eyebrow="atlas"
+      title={model.slug}
+      lede={`${model.n_entries} stored measurements, ${Math.round(model.total_gpu_seconds).toLocaleString("en-US")} metered GPU-seconds.`}
+    />
+
+    <p class="model-hf">
+      weights:{" "}
+      <a href={`https://huggingface.co/${model.hf_id}`}
+        ><code>{model.hf_id}</code></a
+      >
+    </p>
+
+    {
+      model.headline.map((h: any) => (
+        <section class="headline-block">
+          <h2>{h.name}</h2>
+          <DataTable compact>
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {h.rows.map((r: any) => (
+                  <tr>
+                    <td>
+                      <code>{r.metric}</code>
+                    </td>
+                    <td>
+                      <EvidenceChip
+                        value={r.value}
+                        trust={trustLetter(h.trust)}
+                        evidenceId={h.evidence_id}
+                        observable={h.name}
+                        subject={model.slug}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </DataTable>
+        </section>
+      ))
+    }
+
+    <section class="entries-block">
+      <h2>Every stored observable</h2>
+      <p class="entries-note">
+        The full card: one row per stored Evidence about this model, built with
+        <code>reward_lens.artifacts.card.build_card</code> against the merged
+        campaign store. Values that are payloads (vectors, tables, captures)
+        show their shape; the evidence id resolves each one.
+      </p>
+      <DataTable compact stickyFirst>
+        <table>
+          <thead>
+            <tr>
+              <th>Observable</th>
+              <th>Value</th>
+              <th>Trust</th>
+              <th>Gauge</th>
+              <th>Calibrated</th>
+              <th>Evidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              model.entries.map((e: any) => (
+                <tr>
+                  <td>
+                    <code>{e.observable}</code>
+                  </td>
+                  <td class="entry-value">
+                    <code>{e.value_repr}</code>
+                  </td>
+                  <td>
+                    <TrustBadge trust={trustLetter(e.trust)} />
+                  </td>
+                  <td>{e.gauge}</td>
+                  <td>{e.calibrated ? "yes" : "no"}</td>
+                  <td>
+                    <code class="entry-ev">{e.evidence_id}</code>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </DataTable>
+    </section>
+
+    <p class="model-provenance">
+      Source: the merged campaign evidence store, opened read-only; card built
+      at site build time. The store itself is not published; its projections
+      and provenance manifest are in the
+      <a href="https://github.com/reward-lens/reward-lens.github.io"
+        >site repository</a
+      >.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .model-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .model-hf {
+    margin: 0 0 var(--sp-8);
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+  }
+  .headline-block {
+    margin-bottom: var(--sp-8);
+    max-width: 40rem;
+  }
+  .headline-block h2 {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin: 0 0 var(--sp-3);
+    font-family: var(--font-mono);
+  }
+  .entries-block h2 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin: var(--sp-12) 0 var(--sp-2);
+  }
+  .entries-note {
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+    max-width: var(--measure-prose);
+    margin: 0 0 var(--sp-4);
+  }
+  .entry-value code {
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+  }
+  .entry-ev {
+    font-size: var(--text-xs);
+  }
+  .model-provenance {
+    margin-top: var(--sp-8);
+    font-size: var(--text-sm);
+    color: var(--ink-3);
+    max-width: var(--measure-prose);
+  }
+</style>

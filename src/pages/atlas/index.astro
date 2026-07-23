@@ -1,0 +1,128 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import DataTable from "@components/DataTable.astro";
+import TrustBadge from "@components/TrustBadge.astro";
+import fleetIndex from "@data/fleet/index.json";
+
+const models = Object.fromEntries(
+  Object.entries(
+    import.meta.glob("../../data/fleet/*.json", { eager: true }),
+  ).map(([path, mod]) => [path.split("/").pop()!.replace(".json", ""), mod]),
+) as Record<string, any>;
+
+const rows = fleetIndex.map((m) => {
+  const detail = models[m.slug];
+  const indexTable = detail?.headline?.find((h: any) =>
+    h.name?.includes("index table"),
+  );
+  const metric = (name: string) =>
+    indexTable?.rows?.find((r: any) => r.metric === name)?.value ?? null;
+  return {
+    ...m,
+    crystallization: metric("crystallization"),
+    snr: metric("snr"),
+    evidenceId: indexTable?.evidence_id,
+  };
+});
+
+const fmt = (n: number | null) =>
+  n === null ? "–" : String(Number(n.toPrecision(3)));
+---
+
+<Base
+  title="Atlas · reward-lens"
+  description="Ten reward models, measured with the same instruments, wearing the same badges."
+>
+  <div class="atlas-wrap">
+    <PageHeader
+      display
+      eyebrow="the atlas"
+      title="The fleet"
+      lede="Ten reward models, measured with the same instruments, wearing the same badges."
+    />
+
+    <p class="atlas-note">
+      Every number below is a view over the campaign's evidence store. The
+      per-model captures are exploratory by construction (the calibration
+      gates were exercised by the campaign cards, not by these fleet sweeps),
+      and the trust badges say so rather than hiding it.
+    </p>
+
+    <DataTable compact stickyFirst>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Weights</th>
+            <th>crystallization</th>
+            <th>snr</th>
+            <th>Records</th>
+            <th>GPU-seconds</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((m) => (
+              <tr>
+                <td>
+                  <a href={`/atlas/${m.slug}/`}>
+                    <code>{m.slug}</code>
+                  </a>
+                </td>
+                <td class="atlas-hf">
+                  <a href={`https://huggingface.co/${m.hf_id}`}>{m.hf_id}</a>
+                </td>
+                <td>
+                  <code>{fmt(m.crystallization)}</code>
+                  {m.crystallization !== null && <TrustBadge trust="E" />}
+                </td>
+                <td>
+                  <code>{fmt(m.snr)}</code>
+                  {m.snr !== null && <TrustBadge trust="E" />}
+                </td>
+                <td>
+                  <code>{m.n_entries}</code>
+                </td>
+                <td>
+                  <code>{Math.round(m.total_gpu_seconds).toLocaleString("en-US")}</code>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </DataTable>
+
+    <p class="atlas-footnote">
+      crystallization and snr come from each model's
+      <code>campaign.index.table</code> on the rb2-full slice; models without
+      a merged index table show a dash. The per-model pages carry the full
+      observable tables with evidence ids.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .atlas-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .atlas-note {
+    max-width: var(--measure-prose);
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin: 0 0 var(--sp-6);
+  }
+  .atlas-hf a {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .atlas-footnote {
+    margin-top: var(--sp-4);
+    font-size: var(--text-sm);
+    color: var(--ink-3);
+    max-width: var(--measure-prose);
+  }
+</style>

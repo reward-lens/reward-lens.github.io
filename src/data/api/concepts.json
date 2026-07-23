@@ -1,0 +1,304 @@
+{
+  "group": "concepts",
+  "title": "Concepts",
+  "order": [
+    "reward_lens.concepts.vectors.concept_direction",
+    "reward_lens.concepts.vectors.reward_alignment",
+    "reward_lens.concepts.vectors.dose_response_slope",
+    "reward_lens.concepts.probes.fit_probe",
+    "reward_lens.concepts.diff_dict.train_diff_dict",
+    "reward_lens.concepts.legacy.ConceptExtractor"
+  ],
+  "symbols": {
+    "reward_lens.concepts.vectors.concept_direction": {
+      "path": "reward_lens.concepts.vectors.concept_direction",
+      "name": "concept_direction",
+      "kind": "function",
+      "text": "Unit-normalized mean-difference concept direction from paired activations.\n\n``pos`` and ``neg`` are ``(n, d_model)`` activations at a site for the positive and negative side\nof ``n`` concept pairs. The direction is ``mean(pos - neg)`` over the pairs, normalized to unit\nlength; a degenerate (near-zero) mean returns the raw mean rather than dividing by a vanishing\nnorm. Returns an fp32 numpy vector ``(d_model,)``.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/vectors.py",
+        "start": 25,
+        "end": 39,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/vectors.py#L25-L39"
+      },
+      "signature": "concept_direction(pos: torch.Tensor, neg: torch.Tensor) -> np.ndarray",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.concepts.vectors.reward_alignment": {
+      "path": "reward_lens.concepts.vectors.reward_alignment",
+      "name": "reward_alignment",
+      "kind": "function",
+      "text": "Cosine between a concept direction and the reward direction (raw coordinates).\n\nBoth vectors are normalized before the dot product, so the result is a cosine in ``[-1, 1]``. A\npositive value means the concept pushes reward up; a negative value means it pushes reward down.\nThis is a RAW_ONLY quantity (it depends on the residual-stream basis) and is only meaningful\nwithin a single signal.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/vectors.py",
+        "start": 42,
+        "end": 58,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/vectors.py#L42-L58"
+      },
+      "signature": "reward_alignment(direction: np.ndarray, w_r: torch.Tensor) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.concepts.vectors.dose_response_slope": {
+      "path": "reward_lens.concepts.vectors.dose_response_slope",
+      "name": "dose_response_slope",
+      "kind": "function",
+      "text": "Ordinary-least-squares slope of reward against concept dose.\n\n``doses`` are the intervention strengths applied along a concept direction and ``rewards`` the\nresulting scalar rewards. The slope is ``d reward / d dose`` from a least-squares line, which is\nthe dose-response summary the E08 study reports. A constant dose vector (no variation) returns\n``0.0`` rather than dividing by a zero variance.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/vectors.py",
+        "start": 61,
+        "end": 75,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/vectors.py#L61-L75"
+      },
+      "signature": "dose_response_slope(doses: np.ndarray, rewards: np.ndarray) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.concepts.probes.fit_probe": {
+      "path": "reward_lens.concepts.probes.fit_probe",
+      "name": "fit_probe",
+      "kind": "function",
+      "text": "Train a linear concept probe with grouped CV and automatic scorecard binding (section 2.5.2).\n\n``signal`` is either a `SiteCaptures` (the substrate-free path the proofs run on: activations,\nlabels, and seed groups already in hand) or a live `RewardSignal`, in which case ``view`` (a\nDataView of pairs) and ``target`` (a ``(item, side) -> label`` callable) are captured into a\n`SiteCaptures` at ``sites`` first. The probe is a logistic readout fit per site with seed-grouped\ncross-validation, so no clone is ever scored by a model that trained on it; the site with the\nhighest out-of-fold AUC becomes the returned `Direction`.\n\nScorecard binding is automatic and honest. If an ``answer_key`` is supplied (or carried on the\ncaptures), the out-of-fold scores are graded against it and the resulting `CalibrationRef` is\nattached (the direction becomes CALIBRATED). If none is available the direction carries\n``calibration: None`` and stays EXPLORATORY: the gap is visible, never papered over.",
+      "params": [
+        {
+          "name": "signal",
+          "annotation": "SiteCaptures | RewardSignal",
+          "default": null,
+          "description": "A `SiteCaptures`, or a `RewardSignal` to capture from (with ``view`` and ``target``)."
+        },
+        {
+          "name": "view",
+          "annotation": "Any",
+          "default": "None",
+          "description": "The DataView of pairs, when capturing from a signal."
+        },
+        {
+          "name": "target",
+          "annotation": "Callable[[Any, str], int | None] | None",
+          "default": "None",
+          "description": "A ``(item, side) -> int | None`` labeler, when capturing from a signal."
+        },
+        {
+          "name": "sites",
+          "annotation": "tuple[Site, ...] | None",
+          "default": "None",
+          "description": "Sites to sweep; defaults to every site in the captures."
+        },
+        {
+          "name": "cv",
+          "annotation": "int",
+          "default": "5",
+          "description": "Number of seed-grouped CV folds."
+        },
+        {
+          "name": "name",
+          "annotation": "str | None",
+          "default": "None",
+          "description": "The concept name; defaults to the target's or captures' name."
+        },
+        {
+          "name": "method",
+          "annotation": "str",
+          "default": "'probe_lr'",
+          "description": "Stored on the direction (``\"probe_lr\"`` by default)."
+        },
+        {
+          "name": "l2",
+          "annotation": "float",
+          "default": "1.0",
+          "description": "Ridge strength on the logistic weight."
+        },
+        {
+          "name": "class_balance",
+          "annotation": "bool",
+          "default": "True",
+          "description": "Weight the minority class up by inverse frequency."
+        },
+        {
+          "name": "solver",
+          "annotation": "str",
+          "default": "'numpy'",
+          "description": "``\"numpy\"`` (deterministic IRLS) or ``\"auto\"`` (sklearn, numpy fallback)."
+        },
+        {
+          "name": "answer_key",
+          "annotation": "AnswerKey | None",
+          "default": "None",
+          "description": "The organism `AnswerKey` to grade against for calibration (gate 1)."
+        },
+        {
+          "name": "store",
+          "annotation": "EvidenceStore | None",
+          "default": "None",
+          "description": "If given, the direction Evidence (and its scorecard parent) are appended."
+        },
+        {
+          "name": "seed",
+          "annotation": "int",
+          "default": "0",
+          "description": "Seed for the CV shuffle."
+        },
+        {
+          "name": "target_tpr",
+          "annotation": "float",
+          "default": "0.9",
+          "description": "The true-positive rate of the operating point the scorecard states its detection at."
+        },
+        {
+          "name": "target_fpr",
+          "annotation": "float",
+          "default": "0.05",
+          "description": "The false-positive rate of that same operating point."
+        }
+      ],
+      "returns": [
+        {
+          "name": null,
+          "annotation": "ProbeFit",
+          "description": "A `ProbeFit` whose ``direction`` is the persisted section 2.5.1 `Direction`."
+        }
+      ],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/probes.py",
+        "start": 550,
+        "end": 679,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/probes.py#L550-L679"
+      },
+      "signature": "fit_probe(\n    signal: SiteCaptures | RewardSignal,\n    view: Any = None,\n    target: Callable[[Any, str], int | None] | None = None,\n    sites: tuple[Site, ...] | None = None,\n    *,\n    cv: int = 5,\n    name: str | None = None,\n    method: str = 'probe_lr',\n    l2: float = 1.0,\n    class_balance: bool = True,\n    solver: str = 'numpy',\n    answer_key: AnswerKey | None = None,\n    store: EvidenceStore | None = None,\n    seed: int = 0,\n    target_tpr: float = 0.9,\n    target_fpr: float = 0.05\n) -> ProbeFit",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.concepts.diff_dict.train_diff_dict": {
+      "path": "reward_lens.concepts.diff_dict.train_diff_dict",
+      "name": "train_diff_dict",
+      "kind": "function",
+      "text": "Fit a preference-difference dictionary of ``n_atoms`` atoms from training delta_h (section 2.5.3).\n\nThe atoms are the top ``n_atoms`` right singular vectors of ``delta_h_train`` (an orthonormal\nbasis for its dominant preference-difference subspace), so the reconstruction of any delta_h is\nits orthogonal projection onto that subspace and is exact whenever delta_h lies in it. Each atom's\nmargin contribution ``w_r . d_i`` is computed once and stored, which is what makes the margin\ndecomposition a lookup rather than a refit. Returns a persisted-ready `DiffDictionary`.\n\nChoosing ``n_atoms`` at least the rank of the training delta_h makes the identity exact on data\ndrawn from the same subspace; choosing fewer truncates the dictionary and the trainer will report\nthe honest residual at verification time.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/concepts/diff_dict.py",
+        "start": 249,
+        "end": 298,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/diff_dict.py#L249-L298"
+      },
+      "signature": "train_diff_dict(\n    delta_h_train: np.ndarray,\n    w_r: np.ndarray,\n    n_atoms: int,\n    *,\n    method: str = 'svd',\n    train_data: DatasetID | None = None,\n    meta: dict[str, Any] | None = None\n) -> DiffDictionary",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.concepts.legacy.ConceptExtractor": {
+      "path": "reward_lens.concepts.legacy.ConceptExtractor",
+      "name": "ConceptExtractor",
+      "kind": "class",
+      "text": "Extract and analyze concept vectors from reward model activations.\n\nThis enables understanding which abstract concepts (confidence, formality,\nagreement, etc.) influence reward scores, and identifying potential\nreward hacking vulnerabilities.",
+      "params": [
+        {
+          "name": "model",
+          "annotation": "RewardModel",
+          "default": null,
+          "description": "A RewardModel instance."
+        }
+      ],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [
+        {
+          "title": "Example",
+          "text": ">>> extractor = ConceptExtractor(model)\n>>> concepts = extractor.extract_concepts(CONCEPT_PAIRS)\n>>> report = extractor.analyze_reward_alignment(concepts)\n>>> report.print_summary()"
+        }
+      ],
+      "source": {
+        "file": "src/reward_lens/concepts/legacy.py",
+        "start": 255,
+        "end": 528,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L255-L528"
+      },
+      "signature": "ConceptExtractor(model: RewardModel)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "extract_concepts",
+            "kind": "function",
+            "signature": "extract_concepts(\n    concept_pairs: dict[str, list[tuple[str, str, str]]],\n    layer: Optional[int] = None,\n    max_length: int = 2048,\n    show_progress: bool = True\n) -> dict[str, torch.Tensor]",
+            "text": "Extract concept direction vectors from contrastive pairs.\n\nFor each concept, the direction is computed as the average difference\nbetween positive and negative example activations.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 275,
+              "end": 335,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L275-L335"
+            }
+          },
+          {
+            "name": "analyze_reward_alignment",
+            "kind": "function",
+            "signature": "analyze_reward_alignment(\n    concept_vectors: dict[str, torch.Tensor],\n    alignment_threshold: float = 0.3,\n    hacking_concepts: Optional[list[str]] = None\n) -> ConceptAlignmentReport",
+            "text": "Analyze how concepts align with the reward direction.\n\nConcepts that strongly align with reward but represent surface\nproperties (like confidence or verbosity) may indicate hackable biases.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 337,
+              "end": 429,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L337-L429"
+            }
+          },
+          {
+            "name": "intervene_on_concept",
+            "kind": "function",
+            "signature": "intervene_on_concept(\n    prompt: str,\n    response: str,\n    concept_vector: torch.Tensor,\n    strength: float = 1.0,\n    layer: Optional[int] = None,\n    max_length: int = 2048\n) -> float",
+            "text": "Intervene on a concept and measure reward change.\n\nAdds or subtracts the concept direction from activations\nto see how it affects reward.",
+            "source": {
+              "file": "src/reward_lens/concepts/legacy.py",
+              "start": 431,
+              "end": 485,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/concepts/legacy.py#L431-L485"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}

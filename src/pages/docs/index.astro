@@ -1,0 +1,152 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import InstallStrip from "@components/InstallStrip.astro";
+
+// One card per major section; each pitch is the opening line of that
+// section's own index page, trimmed, never rewritten.
+const sections = [
+  {
+    title: "Getting started",
+    href: "/docs/getting-started/",
+    pitch: "Three ways in. One is a browser tab and installs nothing.",
+  },
+  {
+    title: "Tutorials",
+    href: "/docs/tutorials/",
+    pitch: "Two ways in, and they answer different questions.",
+  },
+  {
+    title: "How-to guides",
+    href: "/docs/how-to/",
+    pitch: "You know the job and you want the exact calls.",
+  },
+  {
+    title: "Models and signals",
+    href: "/docs/models-and-signals/",
+    pitch: "Will these instruments run on my grader?",
+  },
+  {
+    title: "Instruments",
+    href: "/docs/instruments/",
+    pitch:
+      "You have a reward model and a preference pair. What can you actually measure about the decision?",
+  },
+  {
+    title: "Training loops",
+    href: "/docs/training-loops/",
+    pitch:
+      "Where does the reward model sit in the loop, and where do the instruments clip on?",
+  },
+  {
+    title: "Concepts",
+    href: "/docs/concepts/",
+    pitch: "What do you have to believe before any of the tools make sense?",
+  },
+  {
+    title: "The measurement discipline",
+    href: "/docs/discipline/",
+    pitch: "What does it take to trust a number about a reward model?",
+  },
+  {
+    title: "API reference",
+    href: "/docs/reference/",
+    pitch:
+      "Which import surface owns a name, and will reaching for it pull in torch?",
+  },
+];
+---
+
+<Base
+  title="Docs · reward-lens"
+  description="The reward-lens documentation: tutorials, how-to guides, the instruments, and the measurement discipline."
+>
+  <div class="portal-wrap">
+    <PageHeader
+      display
+      eyebrow="documentation"
+      title="The manual"
+      lede="White-box tools and built-in epistemic discipline for reward models, the objects that define what RLHF optimizes."
+    />
+
+    <div class="portal-top">
+      <InstallStrip />
+      <a
+        class="colab-link"
+        href="https://colab.research.google.com/drive/1x5zG07HdsWlNsJmkl2ddJ1yalmwwujfY?usp=sharing"
+        >Or open the Colab tour: a real 8B reward model, no install.</a
+      >
+    </div>
+
+    <div class="portal-grid">
+      {
+        sections.map((s) => (
+          <a class="portal-card" href={s.href}>
+            <h2>{s.title}</h2>
+            <p>{s.pitch}</p>
+          </a>
+        ))
+      }
+    </div>
+
+    <p class="portal-campaign">
+      The measurement discipline these pages document was put through a
+      pre-registered audit in July 2026: 27 cards, 53 frozen hypotheses,
+      refutations published with the same machinery as confirmations. The
+      scored ledger is at <a href="/campaign/">/campaign/</a>.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .portal-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .portal-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-8);
+    align-items: center;
+    margin-bottom: var(--sp-8);
+  }
+  .colab-link {
+    font-size: var(--text-sm);
+  }
+  .portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-4);
+  }
+  .portal-card {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+    padding: var(--sp-4);
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+  .portal-card:hover {
+    border-color: var(--line-strong);
+  }
+  .portal-card h2 {
+    margin: 0 0 var(--sp-2);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .portal-card p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .portal-campaign {
+    margin-top: var(--sp-8);
+    max-width: var(--measure-wide);
+    color: var(--ink-2);
+    line-height: 1.7;
+  }
+</style>

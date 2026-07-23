@@ -1,0 +1,98 @@
+{
+  "group": "core",
+  "title": "Core and evidence",
+  "segments": [
+    {
+      "type": "prose",
+      "markdown": "**What does a measurement carry besides its value?** In `reward_lens.core` the answer is: an uncertainty with an honest sample size, a gauge status, a calibration reference, a provenance record, and a computed trust level. This subsystem is the epistemics layer, and it pulls only numpy, so `from reward_lens.core import ...` never loads torch.\n\nThe design and the plain-words tour of these objects live in [the anatomy of evidence](/docs/discipline/anatomy-of-evidence/) and [a measurement you can trust](/docs/concepts/measurement-you-can-trust/). This page is the exact surface.\n\n## The evidence object\n\n`Evidence` is a frozen, generic dataclass. You never build one field by field; `make_evidence` computes the trust level for you from the calibration and registration facts, so the value and its credentials cannot drift apart."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.evidence.Evidence"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.evidence.make_evidence"
+    },
+    {
+      "type": "prose",
+      "markdown": "The uncertainty is where the honesty lives. `n_effective` can fall far below `n` when rows are clones of each other, and `method` records how the interval was built, down to the `bootstrap-CLONE-INFLATED` stamp when someone opts into resampling correlated rows."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.evidence.Uncertainty"
+    },
+    {
+      "type": "prose",
+      "markdown": "## Trust and gauge\n\nTrust is an ordered ladder, computed by the gates and never set by the caller. `REGISTERED` outranks `CALIBRATED` outranks `EXPLORATORY`; `ADJUDICATED` is the top rung."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.types.TrustLevel"
+    },
+    {
+      "type": "prose",
+      "markdown": "Gauge status says whether a number is a fact or a coordinate. `INVARIANT` survives a change of basis. `COVARIANT` is the \"needs a frame\" rung: it means nothing across models until a shared [frame](/docs/discipline/gauge-and-frames/) is supplied, and the comparison gate raises without one. `RAW_ONLY` is a bare coordinate."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.types.GaugeStatus"
+    },
+    {
+      "type": "prose",
+      "markdown": "## Provenance and identity\n\nA calibration reference is the token that lifts a measurement off the exploratory floor: it names the scorecard and the regime the instrument was validated on."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.gates.CalibrationRef"
+    },
+    {
+      "type": "prose",
+      "markdown": "`SubjectRef` and `ModelFP` say what was measured; `Provenance` and `Cost` say how, recording the git sha, the seeds, the parent evidence, and the metered compute."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.types.SubjectRef"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.types.ModelFP"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.provenance.Provenance"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.provenance.Cost"
+    },
+    {
+      "type": "prose",
+      "markdown": "## The gates\n\nTwo of the three gates live here as plain functions. `compute_trust` is gate 1: it reads the calibration and registration facts and returns the trust level, downgrading to `EXPLORATORY` when there is no scorecard rather than raising."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.gates.compute_trust"
+    },
+    {
+      "type": "prose",
+      "markdown": "`require_frame_for_comparison` is gate 2: it raises `GaugeError` when a `COVARIANT` quantity is asked to compare across subjects with no frame. This is the check that stops a raw cross-model cosine from being reported as if it meant something. The ladder as a whole is documented on [the trust ladder](/docs/discipline/trust-ladder/)."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.gates.require_frame_for_comparison"
+    },
+    {
+      "type": "prose",
+      "markdown": "## The store\n\nEvery measurement lands in an append-only store: a JSONL file you can append to, read, and search, but never edit or delete. It refuses derived evidence whose parents it cannot resolve, so the provenance graph stays whole. The design is on [the evidence store](/docs/discipline/evidence-store/)."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.store.EvidenceStore"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.core.store.default_store"
+    }
+  ]
+}

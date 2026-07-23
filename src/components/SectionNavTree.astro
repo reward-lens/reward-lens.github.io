@@ -1,0 +1,117 @@
+---
+// SectionNavTree: the recursive list body shared by SectionNav's wide-screen
+// sidebar and its narrow-screen picker. Renders items to any depth: an item
+// with children becomes a group heading (a link when it has an href) followed
+// by its nested list; a leaf becomes a link. Not a public component; used only
+// by SectionNav.
+
+interface NavItem {
+  title: string;
+  href?: string;
+  children?: NavItem[];
+}
+interface Props {
+  items: NavItem[];
+  current: string;
+  depth?: number;
+}
+
+const { items, current, depth = 0 } = Astro.props;
+const isExternal = (href?: string) => !!href && /^https?:\/\//.test(href);
+---
+
+<ul class={depth === 0 ? "nav-list" : "nav-sublist"}>
+  {
+    items.map((item) =>
+      item.children && item.children.length ? (
+        <li class="nav-group">
+          {item.href ? (
+            <a
+              class="nav-group-title nav-group-link"
+              href={item.href}
+              aria-current={item.href === current ? "page" : undefined}
+            >
+              {item.title}
+            </a>
+          ) : (
+            <span class="nav-group-title">{item.title}</span>
+          )}
+          <Astro.self items={item.children} current={current} depth={depth + 1} />
+        </li>
+      ) : (
+        <li>
+          <a
+            class="nav-link"
+            href={item.href}
+            aria-current={item.href === current ? "page" : undefined}
+            target={isExternal(item.href) ? "_blank" : undefined}
+            rel={isExternal(item.href) ? "noreferrer" : undefined}
+          >
+            {item.title}
+            {isExternal(item.href) && (
+              <span class="nav-ext" aria-hidden="true">↗</span>
+            )}
+          </a>
+        </li>
+      ),
+    )
+  }
+</ul>
+
+<style>
+  .nav-list,
+  .nav-sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-sublist {
+    margin-top: var(--sp-1);
+    padding-left: var(--sp-2);
+  }
+  .nav-group {
+    margin-bottom: var(--sp-4);
+  }
+  .nav-group .nav-group {
+    margin-bottom: var(--sp-2);
+  }
+  .nav-group-title {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    padding: var(--sp-1) 0;
+    margin-bottom: var(--sp-1);
+  }
+  .nav-group-link {
+    text-decoration: none;
+  }
+  .nav-group-link:hover {
+    color: var(--ink-2);
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: var(--sp-1) var(--sp-3);
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+  .nav-link:hover {
+    color: var(--ink);
+  }
+  .nav-link[aria-current="page"] {
+    color: var(--ink);
+    font-weight: 600;
+    border-left-color: var(--accent);
+  }
+  .nav-ext {
+    font-size: 0.85em;
+    color: var(--ink-3);
+  }
+</style>

@@ -13,7 +13,20 @@ const path = Astro.url.pathname;
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="wordmark" aria-label="reward-lens home">
-      <img src="/brand/wordmark.svg" alt="" class="wordmark-img" width="148" height="24" />
+      <img
+        src="/brand/wordmark-dark.svg"
+        alt=""
+        class="wordmark-img wm-dark"
+        width="120"
+        height="22"
+      />
+      <img
+        src="/brand/wordmark-light.svg"
+        alt=""
+        class="wordmark-img wm-light"
+        width="120"
+        height="22"
+      />
       <span class="visually-hidden">reward-lens</span>
     </a>
 
@@ -99,6 +112,20 @@ const path = Astro.url.pathname;
   .wordmark-img {
     height: 22px;
     width: auto;
+    display: block;
+  }
+  /* Wordmark is loaded as <img>, so currentColor cannot inherit. Ship both
+     theme variants and toggle by the data-theme attribute the head script
+     always sets, so a manual theme toggle swaps them too. */
+  .wm-dark,
+  .wm-light {
+    display: none;
+  }
+  :global(:root[data-theme="dark"]) .wm-dark {
+    display: block;
+  }
+  :global(:root[data-theme="light"]) .wm-light {
+    display: block;
   }
   .desktop-nav {
     display: flex;

@@ -1,0 +1,50 @@
+{
+  "group": "studies",
+  "title": "Studies",
+  "segments": [
+    {
+      "type": "prose",
+      "markdown": "**Who decides whether a result confirmed the hypothesis, the author or the spec?** In `reward_lens.studies` it is the spec, and it decides before the data exists. You write down the hypothesis, the predictions, and the kill criteria, freeze that into a content-hashed artifact, then run it. The run adjudicates the frozen predictions, not whatever the analysis wishes it had predicted. The discipline is [studies and preregistration](/docs/discipline/studies-and-preregistration/).\n\n## The spec\n\nA `StudySpec` collects a `Hypothesis`, its `Prediction`s, the `KillCriterion`s that would sink it, and a `SubjectQuery` naming what to run it on. A prediction knows how to check a value against itself; a kill criterion knows when it has fired."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.spec.StudySpec"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.spec.Hypothesis"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.spec.Prediction"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.spec.KillCriterion"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.spec.SubjectQuery"
+    },
+    {
+      "type": "prose",
+      "markdown": "## Freeze and run\n\n`freeze` stamps the spec with its content hash and the git sha into a `FrozenStudy`, giving it an identity of the form `study:{id}@v{version}#{hash8}`. `run_study` then executes it and adjudicates the frozen predictions, returning an outcome of `confirmed`, `refuted`, or `inconclusive`. Only a study that predated its data can reach the `REGISTERED` rung of trust. The worked version is [freeze and run a study](/docs/how-to/freeze-and-run-a-study/)."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.freeze.freeze"
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.runner.run_study"
+    },
+    {
+      "type": "prose",
+      "markdown": "## The scoreboard\n\n`Scoreboard` collects the standing claims, the theorems and the candidate laws, and their current status as registered evidence accrues for or against each one."
+    },
+    {
+      "type": "symbol",
+      "path": "reward_lens.studies.scoreboard.Scoreboard"
+    }
+  ]
+}

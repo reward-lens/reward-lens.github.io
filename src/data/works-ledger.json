@@ -1,0 +1,758 @@
+{
+ "features": [
+  {
+   "feature": "ClassifierRM",
+   "subsystem": "signal adapter",
+   "exercised_by": "ERR-RB2, CHI-DRIFT, STYLE-RMB",
+   "substrate": "Skywork-Reward-V2 fleet",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:6441e3e3879df844a8d3778d9192cf5e",
+   "note": null
+  },
+  {
+   "feature": "ClassifierRM (InternLM2 registration path)",
+   "subsystem": "signal adapter",
+   "exercised_by": "(none)",
+   "substrate": "internlm2-1_8b-reward",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:c0a5de1e2e38a61092a840ff5fa1f1de",
+   "note": "substrate intermediate present in the merged store"
+  },
+  {
+   "feature": "GenerativeJudge",
+   "subsystem": "signal adapter",
+   "exercised_by": "JUDGE-VBC",
+   "substrate": "Skywork-Critic-Llama-3.1-8B",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:9ff0e3170257bcc4d169c76e0c4d8f55",
+   "note": null
+  },
+  {
+   "feature": "ProcessRM",
+   "subsystem": "signal adapter",
+   "exercised_by": "VERIF-PRM",
+   "substrate": "Qwen2.5-Math-PRM-7B",
+   "hardware": "H100",
+   "status": "FAIL",
+   "evidence_id": "ev:9e05780931b4ae9d9f18c6d8a0622519",
+   "note": "instrument-class kill K-verif fired on VERIF-PRM: the dense-reward localization instrument failed on a real PRM"
+  },
+  {
+   "feature": "ImplicitRM",
+   "subsystem": "signal adapter",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "Tulu-3-8B DPO/SFT pair",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "RubricRM",
+   "subsystem": "signal adapter",
+   "exercised_by": "CAPACITY-WELCH",
+   "substrate": "ArmoRM 19-head (the closest real rubric substrate)",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:9b8a17572edd4e52c6b6acaca6701835",
+   "note": null
+  },
+  {
+   "feature": "TrajectoryRM",
+   "subsystem": "signal adapter",
+   "exercised_by": "FORENSIC-RECEIPT",
+   "substrate": "receipt-corrupted triples",
+   "hardware": "H100",
+   "status": "PASS-DEGRADED",
+   "evidence_id": "ev:2e4ba3fa8c8ffb1cd7c6a3fc64e0c1cf",
+   "note": "falls back to the classifier adapter if the trajectory adapter proves too thin on real receipts; the fallback is this note, not a hidden swap"
+  },
+  {
+   "feature": "DenseRewardExtractor",
+   "subsystem": "signal adapter",
+   "exercised_by": "VERIF-PRM",
+   "substrate": "ProcessBench step scores",
+   "hardware": "H100",
+   "status": "FAIL",
+   "evidence_id": "ev:9e05780931b4ae9d9f18c6d8a0622519",
+   "note": "instrument-class kill K-verif fired on VERIF-PRM: the dense-reward localization instrument failed on a real PRM"
+  },
+  {
+   "feature": "SignalEnsemble",
+   "subsystem": "signal adapter",
+   "exercised_by": "VALUES-CONTEST",
+   "substrate": "5-RM disagreement ensemble",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "VALUES-CONTEST: missing intermediate: no intermediate 'campaign.scores' for roster_key='armorm' slice='helpsteer3-pref-2000'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "DistributionalSignal",
+   "subsystem": "signal adapter",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "QRM-Llama3.1-8B-v2",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "BiasBattery",
+   "subsystem": "battery instrument",
+   "exercised_by": "STYLE-RMB, HACK-FORE",
+   "substrate": "diagnostic-v3 probes",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "STYLE-RMB: missing intermediate: no intermediate 'campaign.bias.battery' for roster_key='armorm' slice='diagnostic-v3-degradation'; the arc that produces it has not run or its shard was not merged; HACK-FORE: missing intermediate: no intermediate 'campaign.index.table' for roster_key='armorm' slice='diagnostic-v3'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "PromptSNR",
+   "subsystem": "battery instrument",
+   "exercised_by": "ERR-RB2, LADDER",
+   "substrate": "RewardBench 2",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:6441e3e3879df844a8d3778d9192cf5e",
+   "note": null
+  },
+  {
+   "feature": "LensCrystallization",
+   "subsystem": "battery instrument",
+   "exercised_by": "LADDER, ATLAS-VCE",
+   "substrate": "Qwen3 ladder captures",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:d06c2dfdd6b6529515a0cc3f9e37bdaf",
+   "note": null
+  },
+  {
+   "feature": "DirectLinearAttribution",
+   "subsystem": "battery instrument",
+   "exercised_by": "ADJ-AVP, ATLAS-VCE",
+   "substrate": "0.6B organism + real 8B",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:dfd4dae70ca86f9d14d89768fd533bac",
+   "note": null
+  },
+  {
+   "feature": "ConflictMatrix",
+   "subsystem": "battery instrument",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "multi-axis fleet view",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "CircuitJaccard",
+   "subsystem": "battery instrument",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "cross-model overlap",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "ConceptDoseResponse",
+   "subsystem": "battery instrument",
+   "exercised_by": "CHI-DRIFT",
+   "substrate": "UltraFeedback bank concept sub-arm",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f0436051154b9635b33b4286d25ca559",
+   "note": null
+  },
+  {
+   "feature": "FeatureRewardAlignment",
+   "subsystem": "battery instrument",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "fleet captures",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS-DEGRADED",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": "falls back to an untrained SAE unless one is supplied"
+  },
+  {
+   "feature": "MultiObjectiveGeometry",
+   "subsystem": "battery instrument",
+   "exercised_by": "CAPACITY-WELCH",
+   "substrate": "ArmoRM heads",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:9b8a17572edd4e52c6b6acaca6701835",
+   "note": null
+  },
+  {
+   "feature": "PatchGrid",
+   "subsystem": "battery instrument",
+   "exercised_by": "ADJ-AVP, VERIF-PRM",
+   "substrate": "component grids",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:dfd4dae70ca86f9d14d89768fd533bac",
+   "note": null
+  },
+  {
+   "feature": "PathEffect",
+   "subsystem": "battery instrument",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "roughly 5 forwards per pair and no card's frozen prediction needs 2-hop paths; an excused instrument, not a hidden gap"
+  },
+  {
+   "feature": "KUI",
+   "subsystem": "index",
+   "exercised_by": "FACT-KUI",
+   "substrate": "fleet RB2 captures",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:af78e42971e139de8698556cdbca1cf4",
+   "note": null
+  },
+  {
+   "feature": "distortion",
+   "subsystem": "index",
+   "exercised_by": "FACT-KUI",
+   "substrate": "fleet RB2 captures",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:af78e42971e139de8698556cdbca1cf4",
+   "note": null
+  },
+  {
+   "feature": "coverage disparity",
+   "subsystem": "index",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "fleet, descriptive",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "teacher compatibility",
+   "subsystem": "index",
+   "exercised_by": "CHI-DRIFT, LADDER",
+   "substrate": "banks + ladder",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f0436051154b9635b33b4286d25ca559",
+   "note": null
+  },
+  {
+   "feature": "tail/Hill",
+   "subsystem": "index",
+   "exercised_by": "PPE-BON, HUMP",
+   "substrate": "score banks",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "PPE-BON: missing intermediate: no intermediate 'campaign.scores' for roster_key='skywork-v2-qwen3-8b' slice='ppe-best-of-k::gpqa'; the arc that produces it has not run or its shard was not merged; HUMP: missing intermediate: no intermediate 'campaign.recorder.drift' for roster_key='policy-qwen25-1.5b' slice='hump-prompts'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "verification score",
+   "subsystem": "index",
+   "exercised_by": "VERIF-PRM",
+   "substrate": "ProcessBench",
+   "hardware": "H100",
+   "status": "FAIL",
+   "evidence_id": "ev:9e05780931b4ae9d9f18c6d8a0622519",
+   "note": "instrument-class kill K-verif fired on VERIF-PRM: the dense-reward localization instrument failed on a real PRM"
+  },
+  {
+   "feature": "style share",
+   "subsystem": "index",
+   "exercised_by": "VERIF-PRM, STYLE-RMB",
+   "substrate": "PRM + RM-Bench",
+   "hardware": "H100",
+   "status": "FAIL",
+   "evidence_id": "ev:9e05780931b4ae9d9f18c6d8a0622519",
+   "note": "instrument-class kill K-verif fired on VERIF-PRM: the dense-reward localization instrument failed on a real PRM"
+  },
+  {
+   "feature": "receipt reliance",
+   "subsystem": "index",
+   "exercised_by": "FORENSIC-RECEIPT",
+   "substrate": "receipt triples",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:2e4ba3fa8c8ffb1cd7c6a3fc64e0c1cf",
+   "note": null
+  },
+  {
+   "feature": "skepticism",
+   "subsystem": "index",
+   "exercised_by": "FORENSIC-RECEIPT",
+   "substrate": "receipt triples",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:2e4ba3fa8c8ffb1cd7c6a3fc64e0c1cf",
+   "note": null
+  },
+  {
+   "feature": "coherence (Welch bound, effective dimension)",
+   "subsystem": "index",
+   "exercised_by": "CAPACITY-WELCH",
+   "substrate": "ArmoRM",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:9b8a17572edd4e52c6b6acaca6701835",
+   "note": null
+  },
+  {
+   "feature": "dark reward",
+   "subsystem": "index",
+   "exercised_by": "HACK-FORE",
+   "substrate": "fleet",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "HACK-FORE: missing intermediate: no intermediate 'campaign.index.table' for roster_key='armorm' slice='diagnostic-v3'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "interpretability coverage",
+   "subsystem": "index",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "fleet, descriptive",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "susceptibility chi",
+   "subsystem": "index",
+   "exercised_by": "CHI-DRIFT, HACK-FORE",
+   "substrate": "banks",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f0436051154b9635b33b4286d25ca559",
+   "note": null
+  },
+  {
+   "feature": "VCE",
+   "subsystem": "index",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "fleet reward/capability subspaces",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "legibility",
+   "subsystem": "index",
+   "exercised_by": "T3-DECOMP",
+   "substrate": "8B, Tier 3 stretch only",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:09b6ed585ceb3dd999b958e8b5f395a4",
+   "note": null
+  },
+  {
+   "feature": "eval-awareness",
+   "subsystem": "index",
+   "exercised_by": "EVAL-AWARE",
+   "substrate": "paired RB2-shaped/organic",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f332af68208321f4b303b796c842f534",
+   "note": null
+  },
+  {
+   "feature": "SNR",
+   "subsystem": "index",
+   "exercised_by": "ERR-RB2, LADDER",
+   "substrate": "RewardBench 2",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:6441e3e3879df844a8d3778d9192cf5e",
+   "note": null
+  },
+  {
+   "feature": "contested",
+   "subsystem": "index",
+   "exercised_by": "VALUES-CONTEST",
+   "substrate": "HelpSteer3 preference pairs",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "VALUES-CONTEST: missing intermediate: no intermediate 'campaign.scores' for roster_key='armorm' slice='helpsteer3-pref-2000'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "organism foundry (real trunk)",
+   "subsystem": "organisms",
+   "exercised_by": "CAL-TRANSFER, ADJ-AVP",
+   "substrate": "Skywork 0.6B trunk",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:7d2e3131550daaf9f67bd476f4c10acd",
+   "note": null
+  },
+  {
+   "feature": "bon_ladder loop",
+   "subsystem": "loops",
+   "exercised_by": "PPE-BON, HUMP, CHI-DRIFT",
+   "substrate": "score banks",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f0436051154b9635b33b4286d25ca559",
+   "note": null
+  },
+  {
+   "feature": "tilt / susceptibility loop",
+   "subsystem": "loops",
+   "exercised_by": "CHI-DRIFT",
+   "substrate": "UltraFeedback bank",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f0436051154b9635b33b4286d25ca559",
+   "note": null
+  },
+  {
+   "feature": "critical_lambda_from_tail",
+   "subsystem": "loops",
+   "exercised_by": "HUMP",
+   "substrate": "base bank",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "HUMP: missing intermediate: no intermediate 'campaign.recorder.drift' for roster_key='policy-qwen25-1.5b' slice='hump-prompts'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "RolloutRecorder",
+   "subsystem": "loops",
+   "exercised_by": "HUMP",
+   "substrate": "best-of-n frontier replay",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "HUMP: missing intermediate: no intermediate 'campaign.recorder.drift' for roster_key='policy-qwen25-1.5b' slice='hump-prompts'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "anneal loop (real arm)",
+   "subsystem": "loops",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "S14: real hysteresis needs a stateful live-RL anneal; best-of-n is stateless and cannot show path dependence"
+  },
+  {
+   "feature": "sweep_over_checkpoints",
+   "subsystem": "dynamics",
+   "exercised_by": "EMB-LORA",
+   "substrate": "0.6B LoRA checkpoints",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:4fa791dec2961fd04ed807df7234e0e5",
+   "note": null
+  },
+  {
+   "feature": "train_rm_pythia",
+   "subsystem": "dynamics",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "an intent stub; it raises NotImplementedError even on GPU"
+  },
+  {
+   "feature": "fit_frame / effective_angle",
+   "subsystem": "geometry",
+   "exercised_by": "GAUGE-E19, GAUGE-XFAM, ATLAS-VCE",
+   "substrate": "fp32 frame captures",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": null
+  },
+  {
+   "feature": "PreferenceRankTest",
+   "subsystem": "geometry",
+   "exercised_by": "GAUGE-E19",
+   "substrate": "E19 rank arm",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "GAUGE-E19: resolve_subjects failed: PermissionError(13, 'Permission denied')"
+  },
+  {
+   "feature": "Hessian spectrum",
+   "subsystem": "geometry",
+   "exercised_by": "T3-FIELD",
+   "substrate": "8B, Tier 3 stretch only",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "T3-FIELD: missing intermediate: no intermediate 'campaign.subspace.flat' for roster_key='skywork-v2-llama31-8b' slice='rb2-full'; the arc that produces it has not run or its shard was not merged"
+  },
+  {
+   "feature": "gradient_ascent_probe",
+   "subsystem": "geometry",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "dual-use, deliberately unexported, unused"
+  },
+  {
+   "feature": "certify_robustness radii",
+   "subsystem": "geometry",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "dual-use, unexported alongside gradient_ascent_probe"
+  },
+  {
+   "feature": "patch intervention",
+   "subsystem": "interventions",
+   "exercised_by": "ADJ-AVP, VERIF-PRM",
+   "substrate": "component grids",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:dfd4dae70ca86f9d14d89768fd533bac",
+   "note": null
+  },
+  {
+   "feature": "steer intervention",
+   "subsystem": "interventions",
+   "exercised_by": "EVAL-AWARE, CHI-DRIFT",
+   "substrate": "direction steering",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:f332af68208321f4b303b796c842f534",
+   "note": null
+  },
+  {
+   "feature": "LEACE erase + certify",
+   "subsystem": "interventions",
+   "exercised_by": "SURGERY",
+   "substrate": "flagged direction",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:3f7dd28fbf574acdfc8f178c2fbcdce1",
+   "note": null
+  },
+  {
+   "feature": "head edit",
+   "subsystem": "interventions",
+   "exercised_by": "SURGERY",
+   "substrate": "HARVE comparison",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:3f7dd28fbf574acdfc8f178c2fbcdce1",
+   "note": null
+  },
+  {
+   "feature": "StudySpec / freeze / run_study / scoreboard",
+   "subsystem": "studies",
+   "exercised_by": "TOPO-HODGE, ERR-RB2, CAL-TRANSFER",
+   "substrate": "every Tier 2 card runs through the engine",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS",
+   "evidence_id": "ev:fa30cdb6d1f8e6ce6fe521c41a959b64",
+   "note": null
+  },
+  {
+   "feature": "Card artifact",
+   "subsystem": "artifacts",
+   "exercised_by": "(close-out gallery)",
+   "substrate": "per-model gallery",
+   "hardware": "cpu",
+   "status": "PASS",
+   "evidence_id": null,
+   "note": "10 per-model cards rendered under cards/ (armorm, grm-gemma2-2b, skywork-v01, skywork-v02, skywork-v2-llama31-8b, skywork-v2-qwen3-0.6b, skywork-v2-qwen3-1.7b, skywork-v2-qwen3-4b, skywork-v2-qwen3-8b, tulu-rm)"
+  },
+  {
+   "feature": "Atlas sweep planner",
+   "subsystem": "artifacts",
+   "exercised_by": "ATLAS-VCE",
+   "substrate": "fleet planning; execute always refuses, and the refusal is the pass",
+   "hardware": "cpu (no GPU stamp on the exercising evidence)",
+   "status": "PASS-DEGRADED",
+   "evidence_id": "ev:351f6b157984c7356c91731ded2358ff",
+   "note": "planner only: execute is gated by design and the runner dispatches the work itself"
+  },
+  {
+   "feature": "claims checker (check_text)",
+   "subsystem": "artifacts",
+   "exercised_by": "(reporting layer)",
+   "substrate": "RESULTS.md, the step-10 gate",
+   "hardware": "cpu",
+   "status": "PASS",
+   "evidence_id": "ev:6bf316c059230ff4ff99b118b1664631",
+   "note": "live probe: a sound claim on ERR-RB2.err_auroc_delta_llama8b verified and a dangling evidence id failed"
+  },
+  {
+   "feature": "safety-case assembler",
+   "subsystem": "artifacts",
+   "exercised_by": "(close-out probe)",
+   "substrate": "CPU assembly from adjudicated components, Tier 3",
+   "hardware": "cpu",
+   "status": "PASS",
+   "evidence_id": "ev:41058731abf1d0b1590d4f2286e8771c",
+   "note": "exercised: refused with a precise reason, as the design expects when only the erasure component exists (refusing to assemble the safety case: the k_nats_budget component (Evidence ev:41058731abf1d0b1590d4f2286e8771c, observable campaign.adjudication.SURGERY) is not calibrated. A safety case is ADJUDICATED-only; an uncalibrated component has no scorecard behind it (gate 1) and the assembler will not let it stand behind a safety claim.)"
+  },
+  {
+   "feature": "adapter conformance gate (run_adapter_conformance)",
+   "subsystem": "signals",
+   "exercised_by": "(every seat arc)",
+   "substrate": "every classifier/multihead/distributional/implicit seat at load",
+   "hardware": "H100",
+   "status": "PASS-DEGRADED",
+   "evidence_id": "ev:565c16da6804bee4b9e8d3e046e63171",
+   "note": "5 seat(s) passed; recorded degradations: armorm (adapter), internlm2-1.8b (seat-load), qrm (seat-load), skywork-v01 (adapter), skywork-v2-llama31-8b (adapter), skywork-v2-qwen3-0.6b (adapter), skywork-v2-qwen3-1.7b (adapter), skywork-v2-qwen3-4b (adapter)"
+  },
+  {
+   "feature": "CLI pure commands (card, scoreboard, claims, atlas plan, study freeze)",
+   "subsystem": "cli",
+   "exercised_by": "(reporting layer + freeze)",
+   "substrate": "exercised by the reporting layer and the freeze",
+   "hardware": "cpu",
+   "status": "PASS-DEGRADED",
+   "evidence_id": null,
+   "note": "exercised in-process through the functions the commands wrap; the typer entry point itself is covered by the library's CLI tests"
+  },
+  {
+   "feature": "GPU-gated CLI commands",
+   "subsystem": "cli",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "the campaign calls the kernel directly rather than the gated CLI, the library's intended path for a programmatic runner"
+  },
+  {
+   "feature": "kinship_organism + HF zoo tooling",
+   "subsystem": "organisms",
+   "exercised_by": "(none)",
+   "substrate": "",
+   "hardware": "-",
+   "status": "EXCUSED",
+   "evidence_id": null,
+   "note": "stubs that raise; named in Part 6.2's excusal list"
+  }
+ ],
+ "gate_firings": [
+  {
+   "feature": "gauge gate fired (GaugeError on raw cross-model comparison)",
+   "subsystem": "gate",
+   "exercised_by": "GAUGE-E19",
+   "substrate": "Skywork v0.1/v0.2",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "GAUGE-E19 did not adjudicate this run"
+  },
+  {
+   "feature": "calibration gate lift (EXPLORATORY to CALIBRATED via install_default_scorecards)",
+   "subsystem": "gate",
+   "exercised_by": "CAL-TRANSFER",
+   "substrate": "0.6B organisms + real trunk",
+   "hardware": "H100",
+   "status": "PASS",
+   "evidence_id": "ev:7d2e3131550daaf9f67bd476f4c10acd",
+   "note": "install_default_scorecards registered 4 scorecard entries from the merged store; the same number renders unvalidated before the scorecard is wired and calibrated after; both states are evidence rows"
+  },
+  {
+   "feature": "kill criterion fired (clean negative-result report)",
+   "subsystem": "gate",
+   "exercised_by": "ERR-RB2",
+   "substrate": "frozen study runner",
+   "hardware": "cpu",
+   "status": "PASS",
+   "evidence_id": "ev:6bf316c059230ff4ff99b118b1664631",
+   "note": "killed_by=['K-err']; a refutation for the science, a pass for the machinery"
+  }
+ ],
+ "failure_classes": [
+  {
+   "feature": "bootstrap-over-clones",
+   "subsystem": "v1 regression",
+   "exercised_by": "CHI-DRIFT",
+   "substrate": "seed-level resampling and the T0-CLONE gate",
+   "hardware": "-",
+   "status": "PASS",
+   "evidence_id": "ev:f0436051154b9635b33b4286d25ca559",
+   "note": null
+  },
+  {
+   "feature": "stimulus-count misstatements",
+   "subsystem": "v1 regression",
+   "exercised_by": "ERR-RB2",
+   "substrate": "honest n in every Evidence and the claims checker",
+   "hardware": "-",
+   "status": "PASS",
+   "evidence_id": "ev:6441e3e3879df844a8d3778d9192cf5e",
+   "note": null
+  },
+  {
+   "feature": "untraceable values",
+   "subsystem": "v1 regression",
+   "exercised_by": "META-LEDGER",
+   "substrate": "the store as single source; the figure script fails on un-backed numbers",
+   "hardware": "-",
+   "status": "PASS",
+   "evidence_id": "ev:1d4f86e652c5b1c5957613ab3c1c6bf3",
+   "note": null
+  },
+  {
+   "feature": "coordinate artifacts",
+   "subsystem": "v1 regression",
+   "exercised_by": "GAUGE-E19",
+   "substrate": "the gauge gate",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "resolve_subjects failed: PermissionError(13, 'Permission denied')"
+  },
+  {
+   "feature": "operationalization drift",
+   "subsystem": "v1 regression",
+   "exercised_by": "CAL-TRANSFER",
+   "substrate": "the calibration gate and the faithful_to field",
+   "hardware": "-",
+   "status": "PASS",
+   "evidence_id": "ev:7d2e3131550daaf9f67bd476f4c10acd",
+   "note": null
+  },
+  {
+   "feature": "post-hoc verdict redefinition",
+   "subsystem": "v1 regression",
+   "exercised_by": "TOPO-HODGE",
+   "substrate": "the runner adjudicating frozen predictions",
+   "hardware": "-",
+   "status": "PASS",
+   "evidence_id": "ev:fa30cdb6d1f8e6ce6fe521c41a959b64",
+   "note": null
+  },
+  {
+   "feature": "probe description-vs-implementation mismatch",
+   "subsystem": "v1 regression",
+   "exercised_by": "HACK-FORE",
+   "substrate": "the frozen spec pinning the stimuli by slice hash",
+   "hardware": "-",
+   "status": "NOT-RUN",
+   "evidence_id": null,
+   "note": "missing intermediate: no intermediate 'campaign.index.table' for roster_key='armorm' slice='diagnostic-v3'; the arc that produces it has not run or its shard was not merged"
+  }
+ ]
+}

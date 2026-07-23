@@ -1,0 +1,137 @@
+---
+// API reference landing page. Intro prose is ported verbatim from
+// docs/content/reference/index.md; the grid-cards block becomes a styled set of
+// links to each subsystem page. Symbol pages live at ./[group].astro.
+import Docs from "@layouts/Docs.astro";
+import Prose from "@components/Prose.astro";
+import docsNav from "@data/docs-nav.json";
+import proseData from "@data/api/_prose/index.json";
+import indexMeta from "@data/api/index.json";
+import "katex/dist/katex.min.css";
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+const processor = await createMarkdownProcessor({
+  remarkPlugins: [remarkMath],
+  rehypePlugins: [[rehypeKatex, { strict: false }]],
+  gfm: true,
+});
+const md = async (s: string) => (await processor.render(s || "")).code;
+
+const rendered: any[] = [];
+for (const seg of (proseData as any).segments) {
+  if (seg.type === "prose")
+    rendered.push({ type: "prose", html: await md(seg.markdown) });
+  else if (seg.type === "cards")
+    rendered.push({ type: "cards", cards: seg.cards });
+}
+
+const current = "/docs/reference/";
+const next = indexMeta.groups[0]
+  ? { title: indexMeta.groups[0].title, href: indexMeta.groups[0].href }
+  : undefined;
+const desc =
+  "The reward-lens API reference: one page per kernel subsystem, generated statically from the source.";
+---
+
+<Docs
+  title="API reference"
+  description={desc}
+  nav={docsNav as any[]}
+  current={current}
+  next={next}
+>
+  <header class="ref-head">
+    <p class="ref-eyebrow">Reference</p>
+    <h1 class="ref-title">API reference</h1>
+  </header>
+
+  {
+    rendered.map((seg) =>
+      seg.type === "prose" ? (
+        <Prose>
+          <Fragment set:html={seg.html} />
+        </Prose>
+      ) : (
+        <ul class="ref-cards">
+          {seg.cards.map((c: any) => (
+            <li>
+              <a class="ref-card" href={c.href}>
+                <span class="ref-card-title">{c.title}</span>
+                <span class="ref-card-desc" set:html={c.description} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    )
+  }
+</Docs>
+
+<style>
+  .ref-head {
+    margin-bottom: var(--sp-8);
+  }
+  .ref-eyebrow {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    margin: 0 0 var(--sp-2);
+  }
+  .ref-title {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-3xl);
+    color: var(--ink);
+    margin: 0;
+  }
+  .ref-cards {
+    list-style: none;
+    margin: var(--sp-8) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--sp-4);
+  }
+  .ref-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    height: 100%;
+    padding: var(--sp-4);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+  .ref-card:hover {
+    border-color: var(--line-strong);
+  }
+  .ref-card-title {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--ink);
+  }
+  .ref-card-desc {
+    font-family: var(--font-prose);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+</style>
+
+<style is:global>
+  .ref-card-desc code {
+    font-family: var(--font-mono);
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 0 4px;
+    font-size: 0.85em;
+  }
+</style>

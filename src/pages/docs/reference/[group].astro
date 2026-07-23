@@ -1,0 +1,731 @@
+---
+// API reference — one page per kernel subsystem. The authored prose is ported
+// verbatim from docs/content/reference/<group>.md and interleaved with symbol
+// documentation extracted statically by scripts/build_api_ref.py (griffe over
+// the pinned clean source). Nothing here is hand-written about the symbols.
+import Docs from "@layouts/Docs.astro";
+import Prose from "@components/Prose.astro";
+import DataTable from "@components/DataTable.astro";
+import docsNav from "@data/docs-nav.json";
+import indexMeta from "@data/api/index.json";
+import "katex/dist/katex.min.css";
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+const groupFiles = import.meta.glob("../../../data/api/*.json", { eager: true });
+const proseFiles = import.meta.glob("../../../data/api/_prose/*.json", {
+  eager: true,
+});
+
+export function getStaticPaths() {
+  const groups = [
+    "core", "stats", "signals", "data", "measure", "interventions", "geometry",
+    "concepts", "organisms", "dynamics-loops", "studies", "artifacts-operate",
+    "legacy",
+  ];
+  return groups.map((group) => ({ params: { group } }));
+}
+
+const { group } = Astro.params;
+const symData: any = (groupFiles[`../../../data/api/${group}.json`] as any).default;
+const proseData: any = (proseFiles[`../../../data/api/_prose/${group}.json`] as any).default;
+const symbols: Record<string, any> = symData.symbols;
+const order: string[] = symData.order;
+
+// Reference reading order for prev/next: the index, then the 13 groups.
+const seq = [
+  { title: "API reference", href: "/docs/reference/" },
+  ...indexMeta.groups.map((g: any) => ({ title: g.title, href: g.href })),
+];
+const current = `/docs/reference/${group}/`;
+const ci = seq.findIndex((s) => s.href === current);
+const prev = ci > 0 ? seq[ci - 1] : undefined;
+const next = ci >= 0 && ci < seq.length - 1 ? seq[ci + 1] : undefined;
+
+// Same markdown pipeline the site uses (remark-math + rehype-katex).
+const processor = await createMarkdownProcessor({
+  remarkPlugins: [remarkMath],
+  rehypePlugins: [[rehypeKatex, { strict: false }]],
+  gfm: true,
+});
+const md = async (s: string) => (await processor.render(s || "")).code;
+const mdInline = async (s: string) => {
+  const html = (await md(s)).trim();
+  const m = html.match(/^<p>([\s\S]*)<\/p>$/);
+  return m ? m[1] : html;
+};
+
+async function renderSymbol(sym: any) {
+  const r: any = { ...sym };
+  r.textHtml = sym.text ? await md(sym.text) : null;
+  r.paramsR = [];
+  for (const p of sym.params || [])
+    r.paramsR.push({ ...p, descHtml: await mdInline(p.description) });
+  r.returnsR = [];
+  for (const x of sym.returns || [])
+    r.returnsR.push({ ...x, descHtml: await mdInline(x.description) });
+  r.raisesR = [];
+  for (const x of sym.raises || [])
+    r.raisesR.push({ ...x, descHtml: await mdInline(x.description) });
+  r.admR = [];
+  for (const a of sym.admonitions || [])
+    r.admR.push({ title: a.title, textHtml: await md(a.text) });
+  if (sym.members) {
+    r.membersR = {
+      enum_members: sym.members.enum_members || [],
+      fields: [] as any[],
+      properties: [] as any[],
+      methods: [] as any[],
+    };
+    for (const f of sym.members.fields)
+      r.membersR.fields.push({
+        ...f,
+        descHtml: f.description ? await mdInline(f.description) : "",
+      });
+    for (const p of sym.members.properties)
+      r.membersR.properties.push({
+        ...p,
+        descHtml: p.description ? await mdInline(p.description) : "",
+      });
+    for (const m0 of sym.members.methods)
+      r.membersR.methods.push({
+        ...m0,
+        textHtml: m0.text ? await mdInline(m0.text) : "",
+      });
+  }
+  return r;
+}
+
+const segs: any[] = [];
+for (const seg of proseData.segments) {
+  if (seg.type === "prose")
+    segs.push({ type: "prose", html: await md(seg.markdown) });
+  else if (seg.type === "symbol") {
+    const sym = symbols[seg.path];
+    segs.push({
+      type: "symbol",
+      path: seg.path,
+      sym: sym ? await renderSymbol(sym) : null,
+    });
+  }
+}
+
+const kindLabel: Record<string, string> = {
+  class: "class",
+  function: "func",
+  method: "method",
+  attribute: "attr",
+  unresolved: "?",
+};
+const onthis = order.map((p) => ({
+  path: p,
+  name: symbols[p]?.name || p,
+  kind: symbols[p]?.kind || "",
+}));
+
+const desc = `API reference for ${symData.title} — signatures, docstrings and source links, extracted statically from the reward-lens source.`;
+---
+
+<Docs
+  title={`${symData.title} · API reference`}
+  description={desc}
+  nav={docsNav as any[]}
+  current={current}
+  prev={prev}
+  next={next}
+>
+  <header class="ref-head">
+    <p class="ref-eyebrow">API reference</p>
+    <h1 class="ref-title">{symData.title}</h1>
+  </header>
+
+  {
+    onthis.length > 0 && (
+      <nav class="onthis" aria-label="Symbols on this page">
+        <p class="onthis-label">On this page</p>
+        <ul class="onthis-list">
+          {onthis.map((o) => (
+            <li>
+              <a href={`#${o.path}`}>
+                <code>{o.name}</code>
+                <span class="onthis-kind">{kindLabel[o.kind] || o.kind}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+
+  {
+    segs.map((seg) =>
+      seg.type === "prose" ? (
+        <Prose>
+          <Fragment set:html={seg.html} />
+        </Prose>
+      ) : seg.sym ? (
+        <section class="sym" id={seg.sym.path}>
+          <div class="sym-head">
+            <a class="sym-anchor" href={`#${seg.sym.path}`} aria-label="Permalink to this symbol">
+              #
+            </a>
+            <span class={`sym-kind sym-kind-${seg.sym.kind}`}>
+              {kindLabel[seg.sym.kind] || seg.sym.kind}
+            </span>
+            <h2 class="sym-name">{seg.sym.name}</h2>
+            {seg.sym.source && (
+              <a class="sym-src" href={seg.sym.source.url} target="_blank" rel="noreferrer">
+                Source
+              </a>
+            )}
+          </div>
+
+          <p class="sym-path">
+            <code>{seg.sym.path}</code>
+            {seg.sym.lazy_via && (
+              <span class="sym-lazy">
+                {" · also "}
+                <code>{seg.sym.lazy_via}</code>
+              </span>
+            )}
+          </p>
+
+          {seg.sym.decorators && seg.sym.decorators.length > 0 && (
+            <p class="sym-deco">{seg.sym.decorators.map((d: string) => `@${d}`).join("  ")}</p>
+          )}
+          {seg.sym.bases && seg.sym.bases.length > 0 && (
+            <p class="sym-bases">Bases: {seg.sym.bases.join(", ")}</p>
+          )}
+
+          {seg.sym.signature && (
+            <pre class="sym-sig"><code>{seg.sym.signature}</code></pre>
+          )}
+          {seg.sym.kind === "attribute" &&
+            seg.sym.attribute &&
+            (seg.sym.attribute.value || seg.sym.attribute.annotation) && (
+              <pre class="sym-sig"><code>{seg.sym.name}{seg.sym.attribute.annotation ? ": " + seg.sym.attribute.annotation : ""}{seg.sym.attribute.value ? " = " + seg.sym.attribute.value : ""}</code></pre>
+            )}
+
+          {seg.sym.textHtml ? (
+            <div class="sym-doc" set:html={seg.sym.textHtml} />
+          ) : (
+            <p class="sym-nodoc">
+              No docstring. See the <a href={seg.sym.source?.url}>source</a> for detail.
+            </p>
+          )}
+
+          {seg.sym.paramsR && seg.sym.paramsR.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Parameters</p>
+              <DataTable compact>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Default</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.paramsR.map((p: any) => (
+                      <tr>
+                        <td><code>{p.name}</code></td>
+                        <td>{p.annotation ? <code>{p.annotation}</code> : ""}</td>
+                        <td>
+                          {p.default != null ? (
+                            <code>{p.default}</code>
+                          ) : (
+                            <span class="muted">required</span>
+                          )}
+                        </td>
+                        <td class="desc" set:html={p.descHtml} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </DataTable>
+            </div>
+          )}
+
+          {seg.sym.returnsR && seg.sym.returnsR.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Returns</p>
+              <DataTable compact>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.returnsR.map((x: any) => (
+                      <tr>
+                        <td>{x.annotation ? <code>{x.annotation}</code> : ""}</td>
+                        <td class="desc" set:html={x.descHtml} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </DataTable>
+            </div>
+          )}
+
+          {seg.sym.raisesR && seg.sym.raisesR.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Raises</p>
+              <DataTable compact>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Exception</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.raisesR.map((x: any) => (
+                      <tr>
+                        <td>{x.annotation ? <code>{x.annotation}</code> : ""}</td>
+                        <td class="desc" set:html={x.descHtml} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </DataTable>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.enum_members.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Members</p>
+              <DataTable compact>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.membersR.enum_members.map((e: any) => (
+                      <tr>
+                        <td><code>{e.name}</code></td>
+                        <td>{e.value != null ? <code>{e.value}</code> : ""}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </DataTable>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.fields.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Attributes</p>
+              <DataTable compact>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Default</th>
+                      {seg.sym.membersR.fields.some((f: any) => f.descHtml) && <th>Description</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.membersR.fields.map((f: any) => (
+                      <tr>
+                        <td><code>{f.name}</code></td>
+                        <td>{f.annotation ? <code>{f.annotation}</code> : ""}</td>
+                        <td>{f.value != null ? <code>{f.value}</code> : ""}</td>
+                        {seg.sym.membersR.fields.some((g: any) => g.descHtml) && (
+                          <td class="desc" set:html={f.descHtml} />
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </DataTable>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.properties.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Properties</p>
+              <ul class="sym-proplist">
+                {seg.sym.membersR.properties.map((p: any) => (
+                  <li>
+                    <code class="sym-mono">
+                      {p.name}
+                      {p.annotation ? `: ${p.annotation}` : ""}
+                    </code>
+                    {p.descHtml && <span class="sym-propdesc" set:html={" — " + p.descHtml} />}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.methods.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Methods</p>
+              <div class="sym-methods">
+                {seg.sym.membersR.methods.map((m: any) => (
+                  <div class="sym-method">
+                    <div class="sym-method-head">
+                      <pre class="sym-msig"><code>{m.signature}</code></pre>
+                      {m.source && (
+                        <a class="sym-src small" href={m.source.url} target="_blank" rel="noreferrer">
+                          src
+                        </a>
+                      )}
+                    </div>
+                    {m.textHtml && <div class="sym-mdoc" set:html={m.textHtml} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {seg.sym.admR &&
+            seg.sym.admR.map((a: any) => (
+              <aside class="sym-adm">
+                <p class="sym-adm-t">{a.title}</p>
+                <div class="sym-adm-b" set:html={a.textHtml} />
+              </aside>
+            ))}
+
+          {seg.sym.examples &&
+            seg.sym.examples.map((ex: string) => (
+              <div class="sym-sub">
+                <p class="sym-sub-h">Example</p>
+                <pre class="sym-ex"><code>{ex}</code></pre>
+              </div>
+            ))}
+        </section>
+      ) : (
+        <p class="sym-missing">Symbol not found: <code>{seg.path}</code></p>
+      )
+    )
+  }
+</Docs>
+
+<style>
+  .ref-head {
+    margin-bottom: var(--sp-8);
+  }
+  .ref-eyebrow {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    margin: 0 0 var(--sp-2);
+  }
+  .ref-title {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-3xl);
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* On this page */
+  .onthis {
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-inset);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-8);
+  }
+  .onthis-label {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    margin: 0 0 var(--sp-2);
+  }
+  .onthis-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-4);
+  }
+  .onthis-list a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    text-decoration: none;
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+  }
+  .onthis-list a:hover {
+    color: var(--ink);
+  }
+  .onthis-list code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+  .onthis-kind {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+  }
+
+  /* Symbol card */
+  .sym {
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--bg-raised);
+    padding: var(--sp-4) var(--sp-6);
+    margin: var(--sp-6) 0;
+    scroll-margin-top: var(--sp-8);
+  }
+  .sym-head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+  }
+  .sym-anchor {
+    color: var(--ink-3);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    opacity: 0;
+    transition: opacity 120ms ease;
+    margin-left: calc(-1 * var(--sp-4));
+  }
+  .sym:hover .sym-anchor,
+  .sym-anchor:focus-visible {
+    opacity: 1;
+  }
+  .sym-kind {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 1px 6px;
+    background: var(--bg-inset);
+  }
+  .sym-kind-class {
+    color: var(--info);
+    border-color: var(--info);
+  }
+  .sym-name {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: var(--text-lg);
+    color: var(--ink);
+    margin: 0;
+  }
+  .sym-src {
+    margin-left: auto;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-2);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 2px 8px;
+  }
+  .sym-src:hover {
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+  .sym-src.small {
+    padding: 0 6px;
+  }
+  .sym-path {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    margin: var(--sp-2) 0 0;
+    word-break: break-all;
+  }
+  .sym-path code {
+    color: var(--ink-3);
+  }
+  .sym-lazy code {
+    color: var(--ink-2);
+  }
+  .sym-deco,
+  .sym-bases {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    margin: var(--sp-2) 0 0;
+  }
+  .sym-sig {
+    overflow-x: auto;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: var(--sp-3);
+    margin: var(--sp-3) 0;
+  }
+  .sym-sig code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink);
+    white-space: pre;
+  }
+  .sym-nodoc {
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+    margin: var(--sp-3) 0;
+  }
+  .sym-sub {
+    margin-top: var(--sp-4);
+  }
+  .sym-sub-h {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    margin: 0 0 var(--sp-2);
+  }
+  .sym-proplist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sym-proplist li {
+    margin: var(--sp-1) 0;
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+  }
+  .sym-mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+  .sym-methods {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+  .sym-method {
+    border-left: 2px solid var(--line);
+    padding-left: var(--sp-3);
+  }
+  .sym-method-head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .sym-msig {
+    overflow-x: auto;
+    margin: 0;
+    flex: 1;
+  }
+  .sym-msig code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink);
+    white-space: pre;
+  }
+  .sym-adm {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--info);
+    border-radius: var(--r-card);
+    background: var(--bg-inset);
+    padding: var(--sp-2) var(--sp-4);
+    margin: var(--sp-3) 0;
+  }
+  .sym-adm-t {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    margin: 0 0 var(--sp-1);
+    text-transform: capitalize;
+  }
+  .sym-ex {
+    overflow-x: auto;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: var(--sp-3);
+  }
+  .sym-ex code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink);
+    white-space: pre;
+  }
+</style>
+
+<style is:global>
+  /* Rendered-markdown surfaces inside symbol cards. */
+  .sym-doc,
+  .sym-mdoc,
+  .sym-adm-b {
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .sym-doc {
+    font-family: var(--font-prose);
+    max-width: var(--measure-prose);
+    margin-top: var(--sp-3);
+  }
+  .sym-doc p,
+  .sym-mdoc p,
+  .sym-adm-b p {
+    margin: var(--sp-2) 0;
+  }
+  .sym-doc p:first-child,
+  .sym-mdoc p:first-child,
+  .sym-adm-b p:first-child {
+    margin-top: 0;
+  }
+  .sym-doc p:last-child,
+  .sym-mdoc p:last-child,
+  .sym-adm-b p:last-child {
+    margin-bottom: 0;
+  }
+  .sym-mdoc {
+    font-size: var(--text-sm);
+  }
+  .sym-doc code,
+  .sym-mdoc code,
+  .sym-adm-b code,
+  .data-table .desc code {
+    font-family: var(--font-mono);
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-chip);
+    padding: 0 4px;
+    font-size: 0.85em;
+  }
+  .sym-doc a,
+  .sym-mdoc a,
+  .sym-adm-b a,
+  .data-table .desc a {
+    color: var(--info);
+    text-underline-offset: 2px;
+  }
+  .sym-doc ul,
+  .sym-doc ol {
+    padding-left: 1.4em;
+    margin: var(--sp-2) 0;
+  }
+  .data-table td.desc {
+    white-space: normal;
+    min-width: 18ch;
+    color: var(--ink-2);
+  }
+  .data-table td.desc p {
+    margin: 0;
+  }
+</style>

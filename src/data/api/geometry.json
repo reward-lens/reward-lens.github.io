@@ -1,0 +1,265 @@
+{
+  "group": "geometry",
+  "title": "Geometry",
+  "order": [
+    "reward_lens.geometry.frame.Frame",
+    "reward_lens.geometry.frame.fit_frame",
+    "reward_lens.geometry.canonical.canonicalize",
+    "reward_lens.geometry.canonical.effective_angle",
+    "reward_lens.geometry.hessian.hessian_spectrum",
+    "reward_lens.geometry.hessian.participation_ratio",
+    "reward_lens.geometry.skew.PreferenceRankTest"
+  ],
+  "symbols": {
+    "reward_lens.geometry.frame.Frame": {
+      "path": "reward_lens.geometry.frame.Frame",
+      "name": "Frame",
+      "kind": "class",
+      "text": "The gauge-fixing whitening artifact for one (site, corpus) (DESIGN section 2.7.1).\n\n``mean`` is the reference distribution's activation mean; ``sigma_sqrt`` and ``sigma_inv_sqrt``\nare the symmetric square roots of the shrinkage-regularized activation covariance. The canonical\nform of a reward direction is ``Sigma^{1/2} w`` normalized (``canonical.py``), which weights\ndirections by how much the reference distribution varies along them and kills directions it does\nnot vary along at all. ``null_basis`` holds those data-null / gauge directions explicitly (an\northonormal ``d x m`` matrix, or None when none were estimated) so canonicalization can quotient\nthem exactly rather than relying on the shrinkage floor. ``estimator_meta`` records the fit\nprovenance: sample count, shrinkage intensity, eigenspectrum summary, and the fp32 assertion.\n\nAll arrays are fp32. The frame is frozen and carries a content-derived `FrameID` so it is a\nstable, shareable, per-(site, corpus) artifact.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/frame.py",
+        "start": 93,
+        "end": 127,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/frame.py#L93-L127"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass(frozen=True)"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "id",
+            "annotation": "FrameID",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "site",
+            "annotation": "Site",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "corpus",
+            "annotation": "DatasetID | None",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "mean",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "sigma_sqrt",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "sigma_inv_sqrt",
+            "annotation": "np.ndarray",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "null_basis",
+            "annotation": "np.ndarray | None",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "estimator_meta",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [
+          {
+            "name": "d",
+            "annotation": "int",
+            "value": null,
+            "description": "Ambient activation dimension the frame whitens in."
+          },
+          {
+            "name": "null_dim",
+            "annotation": "int",
+            "value": null,
+            "description": "Number of estimated data-null / gauge directions (0 when ``null_basis`` is None)."
+          }
+        ],
+        "methods": [],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.geometry.frame.fit_frame": {
+      "path": "reward_lens.geometry.frame.fit_frame",
+      "name": "fit_frame",
+      "kind": "function",
+      "text": "Fit a `Frame` from a reference activation matrix (DESIGN section 2.7.1).\n\n``activations`` is an ``n x d`` fp32 matrix of reference-distribution activations read at\n``site`` (fp16 is refused). ``margins``, when supplied, are the per-item reward margins used to\nrefine the null-subspace estimate to directions of near-zero margin gradient. ``shrinkage``\nselects the covariance estimator; only Ledoit-Wolf (``\"lw\"``) is implemented, and ``\"none\"`` is\naccepted for the raw sample covariance (which is only well conditioned when ``n`` comfortably\nexceeds ``d``).\n\nThe fit computes the mean, the shrinkage covariance, its symmetric square roots, and the\nnull basis, then derives the content `FrameID` from structural content (site, corpus, counts,\nrounded eigenspectrum summary) so identical fits share an id across platforms.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/frame.py",
+        "start": 262,
+        "end": 354,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/frame.py#L262-L354"
+      },
+      "signature": "fit_frame(\n    activations: Any,\n    margins: Any | None = None,\n    *,\n    site: Site | None = None,\n    corpus: DatasetID | None = None,\n    shrinkage: str = 'lw',\n    null_var_ratio: float = _DEFAULT_NULL_VAR_RATIO,\n    null_grad_ratio: float = _DEFAULT_NULL_GRAD_RATIO\n) -> Frame",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.geometry.canonical.canonicalize": {
+      "path": "reward_lens.geometry.canonical.canonicalize",
+      "name": "canonicalize",
+      "kind": "function",
+      "text": "Canonical form of a reward direction in a frame: ``Sigma^{1/2} w`` normalized.\n\nDESIGN section 2.7.1. Whitening by ``Sigma^{1/2}`` weights each direction by how much the\nreference distribution varies along it, so directions the distribution does not vary along\ncontribute nothing to the canonical direction. When the frame carries an estimated ``null_basis``\nthe gauge components of ``w`` are projected out first, which makes canonicalization exactly\ninvariant to adding data-null directions to ``w`` (rather than leaving the small residual the\nLedoit-Wolf shrinkage floor would otherwise pass through). The result is a unit fp32 vector.\n\nRaises `NumericsError` if ``w`` has no on-distribution component (``Sigma^{1/2} w`` is zero),\nwhich means the reward direction lives entirely in the gauge subspace and has no canonical form.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/canonical.py",
+        "start": 45,
+        "end": 74,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/canonical.py#L45-L74"
+      },
+      "signature": "canonicalize(w: Any, frame: Frame) -> np.ndarray",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.geometry.canonical.effective_angle": {
+      "path": "reward_lens.geometry.canonical.effective_angle",
+      "name": "effective_angle",
+      "kind": "function",
+      "text": "Canonical angle between two reward directions with a CI and a STARC regret bound.\n\nDESIGN section 2.7.1 / Appendix A13. Reports ``cos(w_tilde_a, w_tilde_b)`` in the shared\n``frame`` (the gauge-fixed alignment), the raw cosine for contrast, a bootstrap CI obtained by\nrefitting the frame on corpus resamples (when ``activations_for_bound`` is supplied), and a\nbehavioural regret bound: the empirical worst-case preference disagreement on the frame corpus,\nwhich the canonical (STARC) distance upper-bounds.\n\nThe quantity is COVARIANT and the ``frame`` argument has no default; this calls\n``require_frame_for_comparison`` so a frameless cross-signal comparison raises (gate 2, I3).\n``faithful_to`` is \"STARC 2309.15257 / partial identifiability 2411.15951\".",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/canonical.py",
+        "start": 197,
+        "end": 286,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/canonical.py#L197-L286"
+      },
+      "signature": "effective_angle(\n    w_a: Any,\n    w_b: Any,\n    frame: Frame,\n    *,\n    n_boot: int = 1000,\n    activations_for_bound: Any | None = None,\n    ci_level: float = 0.95,\n    max_pairs_corpus: int = 512,\n    seed: int = 0,\n    subject: SubjectRef | None = None,\n    provenance: Provenance | None = None\n) -> Evidence[AngleResult]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.geometry.hessian.hessian_spectrum": {
+      "path": "reward_lens.geometry.hessian.hessian_spectrum",
+      "name": "hessian_spectrum",
+      "kind": "function",
+      "text": "Top-``k`` reward-Hessian spectrum at a site, materialization-free via HVPs.\n\nDESIGN section 2.7.2. ``source`` is a `RewardSignal`, a `Runtime`, a `SymmetricOperator`, or a\nplain ``matvec`` callable (the synthetic-operator test path); the reward Hessian is the\ndouble-backprop of the readout scalar at ``site``, so nothing larger than ``dim`` probe vectors\nis ever held, which is what keeps the spectrum within the 8B memory budget. Lanczos with full\nreorthogonalization gives the extreme eigenvalues; ``n_starts > 1`` seed-averages the Ritz\nvalues across random starts for robustness; ``density=True`` adds an SLQ spectral-density\nestimate for the tail.\n\nThe spectrum is INVARIANT (a property of one signal at one site, not a cross-signal comparison),\nso no frame is required.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/hessian.py",
+        "start": 366,
+        "end": 445,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/hessian.py#L366-L445"
+      },
+      "signature": "hessian_spectrum(\n    source: Any,\n    view: Any | None = None,\n    site: Site | None = None,\n    *,\n    k: int = 64,\n    method: Literal['lanczos', 'slq'] = 'lanczos',\n    dim: int | None = None,\n    scalar_fn: Any | None = None,\n    batch: Any | None = None,\n    n_starts: int = 1,\n    density: bool = False,\n    seed: int = 0,\n    subject: SubjectRef | None = None,\n    provenance: Provenance | None = None\n) -> Evidence[SpectrumResult]",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.geometry.hessian.participation_ratio": {
+      "path": "reward_lens.geometry.hessian.participation_ratio",
+      "name": "participation_ratio",
+      "kind": "function",
+      "text": "Participation ratio of a curvature spectrum: the effective dimension ``d_eff``.\n\n``PR = (sum |lambda_i|)^2 / sum lambda_i^2`` (Appendix A9 / A16). It counts how many eigenvalues\ncarry the curvature: ``n`` equal eigenvalues give ``PR = n``, a single dominant eigenvalue gives\n``PR = 1``. Magnitudes are used so a mixed-sign (indefinite) Hessian still reports the effective\nnumber of curved directions. Accepts a `SpectrumResult`, a raw array, or any 1-D sequence.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/hessian.py",
+        "start": 299,
+        "end": 314,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/hessian.py#L299-L314"
+      },
+      "signature": "participation_ratio(spectrum: Any) -> float",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.geometry.skew.PreferenceRankTest": {
+      "path": "reward_lens.geometry.skew.PreferenceRankTest",
+      "name": "PreferenceRankTest",
+      "kind": "class",
+      "text": "Fit a rank-``k`` skew preference operator and test cyclic recovery (DESIGN section 2.7.3, T8).\n\n``activations`` is the ``n x d`` matrix of frozen penultimate features (one row per response\nitem); ``pairs`` is a ``(P, 2)`` integer array of ``(winner_index, loser_index)`` preferences;\n``rank_k`` is the skew rank to fit. Optionally project activations to ``proj_dim`` principal\ncomponents first, which keeps the ``d^2`` skew fit tractable at large ``d``.\n\n``run`` splits the pairs into train and held-out, fits the transitive (scalar) baseline and the\nrank-``k`` skew operator on the train pairs, and reports their held-out accuracies. The gap is\nthe cyclic structure the scalar head cannot express (theorem T8). The result is INVARIANT: rank\nand predictive accuracy do not depend on the activation coordinate basis, so this is a\nwithin-model structural claim that needs no frame.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/geometry/skew.py",
+        "start": 115,
+        "end": 208,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/skew.py#L115-L208"
+      },
+      "signature": "PreferenceRankTest(\n    activations: Any,\n    pairs: Any,\n    rank_k: int,\n    *,\n    proj_dim: int | None = None,\n    reg: float = 0.001\n)",
+      "bases": [],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "run",
+            "kind": "function",
+            "signature": "run(\n    *,\n    test_frac: float = 0.3,\n    seed: int = 0,\n    sig_ratio: float = 0.05,\n    subject: SubjectRef | None = None,\n    provenance: Provenance | None = None\n) -> Evidence[PreferenceRankResult]",
+            "text": "Fit both models on a train split and score held-out cyclic prediction.",
+            "source": {
+              "file": "src/reward_lens/geometry/skew.py",
+              "start": 156,
+              "end": 208,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/geometry/skew.py#L156-L208"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "title": "API reference",
+  "groups": [
+    {
+      "group": "core",
+      "title": "Core and evidence",
+      "symbols": 14,
+      "href": "/docs/reference/core/"
+    },
+    {
+      "group": "stats",
+      "title": "Stats",
+      "symbols": 10,
+      "href": "/docs/reference/stats/"
+    },
+    {
+      "group": "signals",
+      "title": "Signals",
+      "symbols": 17,
+      "href": "/docs/reference/signals/"
+    },
+    {
+      "group": "data",
+      "title": "Data",
+      "symbols": 9,
+      "href": "/docs/reference/data/"
+    },
+    {
+      "group": "measure",
+      "title": "Measure and indices",
+      "symbols": 32,
+      "href": "/docs/reference/measure/"
+    },
+    {
+      "group": "interventions",
+      "title": "Interventions",
+      "symbols": 11,
+      "href": "/docs/reference/interventions/"
+    },
+    {
+      "group": "geometry",
+      "title": "Geometry",
+      "symbols": 7,
+      "href": "/docs/reference/geometry/"
+    },
+    {
+      "group": "concepts",
+      "title": "Concepts",
+      "symbols": 6,
+      "href": "/docs/reference/concepts/"
+    },
+    {
+      "group": "organisms",
+      "title": "Organisms",
+      "symbols": 14,
+      "href": "/docs/reference/organisms/"
+    },
+    {
+      "group": "dynamics-loops",
+      "title": "Dynamics and loops",
+      "symbols": 16,
+      "href": "/docs/reference/dynamics-loops/"
+    },
+    {
+      "group": "studies",
+      "title": "Studies",
+      "symbols": 8,
+      "href": "/docs/reference/studies/"
+    },
+    {
+      "group": "artifacts-operate",
+      "title": "Artifacts and operate",
+      "symbols": 5,
+      "href": "/docs/reference/artifacts-operate/"
+    },
+    {
+      "group": "legacy",
+      "title": "Legacy (1.0 API)",
+      "symbols": 25,
+      "href": "/docs/reference/legacy/"
+    }
+  ]
+}

@@ -1,0 +1,1533 @@
+{
+  "group": "measure",
+  "title": "Measure and indices",
+  "order": [
+    "reward_lens.measure.base.run",
+    "reward_lens.measure.base.Context",
+    "reward_lens.measure.base.Observable",
+    "reward_lens.measure.battery.lens.LensCrystallization",
+    "reward_lens.measure.battery.dla.DirectLinearAttribution",
+    "reward_lens.measure.battery.patch.PatchGrid",
+    "reward_lens.measure.battery.path.PathEffect",
+    "reward_lens.measure.battery.concept.ConceptDoseResponse",
+    "reward_lens.measure.battery.bias.BiasBattery",
+    "reward_lens.measure.battery.snr.PromptSNR",
+    "reward_lens.measure.battery.conflict.ConflictMatrix",
+    "reward_lens.measure.battery.circuit.CircuitJaccard",
+    "reward_lens.measure.battery.feature.FeatureRewardAlignment",
+    "reward_lens.measure.battery.geometry.MultiObjectiveGeometry",
+    "reward_lens.measure.indices.kui.KUI",
+    "reward_lens.measure.indices.distortion.Distortion",
+    "reward_lens.measure.indices.coverage_disparity.CoverageDisparity",
+    "reward_lens.measure.indices.teacher_compatibility.TeacherCompatibility",
+    "reward_lens.measure.indices.tail.TailIndex",
+    "reward_lens.measure.indices.verification_score.VerificationScore",
+    "reward_lens.measure.indices.style_share.StyleShare",
+    "reward_lens.measure.indices.receipt_reliance.ReceiptReliance",
+    "reward_lens.measure.indices.skepticism.Skepticism",
+    "reward_lens.measure.indices.coherence.Coherence",
+    "reward_lens.measure.indices.dark_reward.DarkReward",
+    "reward_lens.measure.indices.interp_coverage.InterpCoverage",
+    "reward_lens.measure.indices.chi.Chi",
+    "reward_lens.measure.indices.vce.VCE",
+    "reward_lens.measure.indices.legibility.Legibility",
+    "reward_lens.measure.indices.eval_awareness.EvalAwareness",
+    "reward_lens.measure.indices.snr.RobustnessSNR",
+    "reward_lens.measure.indices.contested.Contested"
+  ],
+  "symbols": {
+    "reward_lens.measure.base.run": {
+      "path": "reward_lens.measure.base.run",
+      "name": "run",
+      "kind": "function",
+      "text": "Run an Observable under the gates (section 2.8.1).\n\nEnforces R3 (the signal must declare the required capability) and gate 2 (a covariant\ncross-signal comparison requires a frame) before delegating to ``measure``. Gates 1 and 3 are\napplied inside ``ctx.emit``. The result is a fully gated Evidence; there is no path that\nreturns an ungated number.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/base.py",
+        "start": 183,
+        "end": 203,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/base.py#L183-L203"
+      },
+      "signature": "run(observable: Observable, ctx: Context) -> Evidence",
+      "bases": null,
+      "decorators": null,
+      "members": null,
+      "attribute": null,
+      "poor": false
+    },
+    "reward_lens.measure.base.Context": {
+      "path": "reward_lens.measure.base.Context",
+      "name": "Context",
+      "kind": "class",
+      "text": "Everything an Observable needs to run, plus the machinery to emit gated Evidence.\n\n``signal`` is the primary subject; ``others`` names additional signals for cross-signal\ncomparisons (an effective-angle Observable puts the second model here). ``view`` is the\nDataView; ``readout`` selects which readout to read; ``frame`` supplies the gauge frame for\ncovariant/invariant observables; ``study`` is the frozen StudyID when the run is registered\n(gate 3). ``regime`` describes the data regime for the calibration lookup (gate 1).\n\nObservables call ``emit`` to build their Evidence; ``emit`` applies gates 1 and 3 centrally so\nan Observable cannot forget them. The runner (`run`) applies the capability check and gate 2.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/base.py",
+        "start": 65,
+        "end": 155,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/base.py#L65-L155"
+      },
+      "signature": null,
+      "bases": [],
+      "decorators": [
+        "dataclass"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "signal",
+            "annotation": "RewardSignal",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "view",
+            "annotation": "Any",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "readout",
+            "annotation": "str",
+            "value": "'reward'",
+            "description": ""
+          },
+          {
+            "name": "others",
+            "annotation": "tuple['RewardSignal', ...]",
+            "value": "()",
+            "description": ""
+          },
+          {
+            "name": "frame",
+            "annotation": "FrameID | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "study",
+            "annotation": "str | None",
+            "value": "None",
+            "description": ""
+          },
+          {
+            "name": "is_comparison",
+            "annotation": "bool",
+            "value": "False",
+            "description": ""
+          },
+          {
+            "name": "regime",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          },
+          {
+            "name": "stats",
+            "annotation": "dict[str, Any]",
+            "value": "field(default_factory=dict)",
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "subject",
+            "kind": "function",
+            "signature": "subject(extra: dict | None = None) -> SubjectRef",
+            "text": "Build the SubjectRef naming the signals, dataset, readout, frame, and interventions.",
+            "source": {
+              "file": "src/reward_lens/measure/base.py",
+              "start": 90,
+              "end": 107,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/base.py#L90-L107"
+            }
+          },
+          {
+            "name": "emit",
+            "kind": "function",
+            "signature": "emit(\n    value: Any,\n    *,\n    uncertainty: Uncertainty | None = None,\n    gauge: GaugeStatus | None = None,\n    parents: tuple[EvidenceID, ...] = (),\n    cost: Cost | None = None,\n    subject_extra: dict | None = None\n) -> Evidence",
+            "text": "Build a gated Evidence for the current Observable's result.\n\nApplies gate 1 (looks up a calibration reference for this observable and subject; absent\nmeans EXPLORATORY) and gate 3 (a frozen study makes it REGISTERED). Gate 2's gauge status\nis taken from the Observable's declaration unless overridden. The trust level falls out of\n`make_evidence`, never set here directly.",
+            "source": {
+              "file": "src/reward_lens/measure/base.py",
+              "start": 109,
+              "end": 155,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/base.py#L109-L155"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.base.Observable": {
+      "path": "reward_lens.measure.base.Observable",
+      "name": "Observable",
+      "kind": "class",
+      "text": "A measurement (section 2.8.1).\n\n``requires`` is the capability the signal must declare; ``gauge_status`` is how the value\ntransforms under the gauge group; ``faithful_to`` names the Appendix A theory object it\ninstantiates (or None), and ``deviations`` lists explicit departures from it. ``measure``\ncomputes the Evidence, calling ``ctx.emit`` to build it so gates 1 and 3 are applied centrally.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/base.py",
+        "start": 163,
+        "end": 180,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/base.py#L163-L180"
+      },
+      "signature": null,
+      "bases": [
+        "Protocol"
+      ],
+      "decorators": [
+        "runtime_checkable"
+      ],
+      "members": {
+        "fields": [
+          {
+            "name": "name",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "version",
+            "annotation": "str",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "requires",
+            "annotation": "Capability",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "gauge_status",
+            "annotation": "GaugeStatus",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "faithful_to",
+            "annotation": "str | None",
+            "value": null,
+            "description": ""
+          },
+          {
+            "name": "deviations",
+            "annotation": "tuple[str, ...]",
+            "value": null,
+            "description": ""
+          }
+        ],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/base.py",
+              "start": 180,
+              "end": 180,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/base.py#L180"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.lens.LensCrystallization": {
+      "path": "reward_lens.measure.battery.lens.LensCrystallization",
+      "name": "LensCrystallization",
+      "kind": "class",
+      "text": "Layer-by-layer preference formation and its crystallization depth (E02).\n\nRequires activation capture and a linear readout. The crystallization fraction is a depth in\n``[~0, 1]`` and is gauge-invariant (comparable across signals), which is why E02 headlines the\nper-model mean fraction directly.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/lens.py",
+        "start": 66,
+        "end": 122,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/lens.py#L66-L122"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/lens.py",
+              "start": 84,
+              "end": 122,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/lens.py#L84-L122"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.dla.DirectLinearAttribution": {
+      "path": "reward_lens.measure.battery.dla.DirectLinearAttribution",
+      "name": "DirectLinearAttribution",
+      "kind": "class",
+      "text": "Signed per-component reward attribution for preference pairs (E03/E04).\n\nRequires activation capture and a linear readout. The contributions are in reward units and sum\nto the reward differential; the invariant scientific summary is their ranking, which E04 compares\nto the patching ranking. Marked INVARIANT because the reward is gauge-fixed by the head and the\nfaithfulness statistic is rank based.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/dla.py",
+        "start": 52,
+        "end": 120,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/dla.py#L52-L120"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/dla.py",
+              "start": 71,
+              "end": 120,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/dla.py#L71-L120"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.patch.PatchGrid": {
+      "path": "reward_lens.measure.battery.patch.PatchGrid",
+      "name": "PatchGrid",
+      "kind": "class",
+      "text": "Causal patch effects for every component (or head) on preference pairs (E15).\n\n``granularity`` is ``\"component\"`` (attention and MLP sublayers, the default) or ``\"head\"`` (every\nattention head). Requires activation capture and a linear readout. Patch effects are in reward\nunits and are gauge-invariant within a signal.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/patch.py",
+        "start": 35,
+        "end": 136,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/patch.py#L35-L136"
+      },
+      "signature": "PatchGrid(granularity: str = 'component') -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/patch.py",
+              "start": 58,
+              "end": 100,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/patch.py#L58-L100"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.path.PathEffect": {
+      "path": "reward_lens.measure.battery.path.PathEffect",
+      "name": "PathEffect",
+      "kind": "class",
+      "text": "Two-hop head-to-receiver path effect on reward for preference pairs (E15).\n\nRequires activation capture and a linear readout. The path effect is in reward units and\ngauge-invariant within a signal.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/path.py",
+        "start": 34,
+        "end": 108,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/path.py#L34-L108"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/path.py",
+              "start": 51,
+              "end": 108,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/path.py#L51-L108"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.concept.ConceptDoseResponse": {
+      "path": "reward_lens.measure.battery.concept.ConceptDoseResponse",
+      "name": "ConceptDoseResponse",
+      "kind": "class",
+      "text": "Concept direction, its reward alignment, and its causal dose response (E08).\n\nRequires activation capture and a linear readout. The concept is read from the pairs in the view\n(chosen positive, rejected negative). Marked RAW_ONLY because the direction, its alignment, and the\ndose are all in raw residual-stream coordinates.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/concept.py",
+        "start": 35,
+        "end": 107,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/concept.py#L35-L107"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/concept.py",
+              "start": 53,
+              "end": 90,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/concept.py#L53-L90"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.bias.BiasBattery": {
+      "path": "reward_lens.measure.battery.bias.BiasBattery",
+      "name": "BiasBattery",
+      "kind": "class",
+      "text": "Per-axis standardized reward bias with lineage-honest effective sample size (E06).\n\nRequires only scores. The view is grouped by each pair's ``axis``; each axis reports its reward\ndelta effect size and the honest ESS of its seeds. INVARIANT (Cohen's d is standardized).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/bias.py",
+        "start": 47,
+        "end": 98,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/bias.py#L47-L98"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/bias.py",
+              "start": 64,
+              "end": 98,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/bias.py#L64-L98"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.snr.PromptSNR": {
+      "path": "reward_lens.measure.battery.snr.PromptSNR",
+      "name": "PromptSNR",
+      "kind": "class",
+      "text": "Per-axis reward signal-to-noise ratio (E16).\n\nRequires only scores. The view is grouped by each pair's ``axis``. INVARIANT (a dimensionless\npower ratio).",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/snr.py",
+        "start": 46,
+        "end": 95,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/snr.py#L46-L95"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/snr.py",
+              "start": 63,
+              "end": 95,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/snr.py#L63-L95"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.conflict.ConflictMatrix": {
+      "path": "reward_lens.measure.battery.conflict.ConflictMatrix",
+      "name": "ConflictMatrix",
+      "kind": "class",
+      "text": "Inter-axis reward-term conflict geometry (E09).\n\nRequires activation capture and a linear readout. The view must span at least two axes. Marked\nRAW_ONLY because the term cosines are in raw residual-stream coordinates.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/conflict.py",
+        "start": 32,
+        "end": 87,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/conflict.py#L32-L87"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/conflict.py",
+              "start": 49,
+              "end": 87,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/conflict.py#L49-L87"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.circuit.CircuitJaccard": {
+      "path": "reward_lens.measure.battery.circuit.CircuitJaccard",
+      "name": "CircuitJaccard",
+      "kind": "class",
+      "text": "Top-component circuit overlap between two reward models (E05).\n\n``ctx.others[0]`` is the second signal to compare against ``ctx.signal``; both are attributed on\nthe same view. ``top_k`` (from ``ctx.regime['top_k']``, default 5) sets the circuit size. Requires\nactivation capture and a linear readout. INVARIANT: the overlap is a set membership over named\ncomponents, not a covariant geometric quantity.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/circuit.py",
+        "start": 39,
+        "end": 87,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/circuit.py#L39-L87"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/circuit.py",
+              "start": 58,
+              "end": 77,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/circuit.py#L58-L77"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.feature.FeatureRewardAlignment": {
+      "path": "reward_lens.measure.battery.feature.FeatureRewardAlignment",
+      "name": "FeatureRewardAlignment",
+      "kind": "class",
+      "text": "Per-feature reward alignment of an SAE over a signal (E12).\n\nThe SAE comes from ``ctx.regime['sae']`` (a ``TopKSAE`` whose ``d_model`` matches the signal). When\nabsent, a small random SAE is built so the mechanics run and the result is flagged untrained.\nRequires a linear readout. RAW_ONLY: alignments depend on the SAE and residual bases.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/feature.py",
+        "start": 32,
+        "end": 80,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/feature.py#L32-L80"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/feature.py",
+              "start": 50,
+              "end": 80,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/feature.py#L50-L80"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.battery.geometry.MultiObjectiveGeometry": {
+      "path": "reward_lens.measure.battery.geometry.MultiObjectiveGeometry",
+      "name": "MultiObjectiveGeometry",
+      "kind": "class",
+      "text": "The cosine geometry of a multi-objective reward head (E18).\n\nRequires a linear readout with more than one objective row. Marked RAW_ONLY because the cosines\nare in raw residual-stream coordinates; they are a single-model internal geometry and are not\ncross-model comparable without a frame.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/battery/geometry.py",
+        "start": 56,
+        "end": 101,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/geometry.py#L56-L101"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/battery/geometry.py",
+              "start": 74,
+              "end": 101,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/battery/geometry.py#L74-L101"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.kui.KUI": {
+      "path": "reward_lens.measure.indices.kui.KUI",
+      "name": "KUI",
+      "kind": "class",
+      "text": "A1 Knowledge-Utilization Index: the ``(decode, mediate)`` plane and the diagonal distance.\n\nRequires activations and a linear readout on the production path (a probe reads decodability from\n``h`` and a direction gives the mediation proxy). The battery of properties is injected (each a\n``Property`` with a decodability and either a measured ``\u0394r`` or a direction ``w_P``); the concept\nlayer supplies probes and directions in production. When the mediation proxy is used, the cosine is\nread against a random-direction null so a \"represented-but-unpriced\" flag beats the high-dimensional\ncosine noise floor. Gauge is INVARIANT: the plane is a within-battery, within-signal object.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/kui.py",
+        "start": 128,
+        "end": 204,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/kui.py#L128-L204"
+      },
+      "signature": "KUI(\n    properties: Sequence[Property] | None = None,\n    *,\n    null_draws: int = 10000,\n    seed: int = 0\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/kui.py",
+              "start": 162,
+              "end": 204,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/kui.py#L162-L204"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.distortion.Distortion": {
+      "path": "reward_lens.measure.indices.distortion.Distortion",
+      "name": "Distortion",
+      "kind": "class",
+      "text": "A2 per-dimension distortion v2, with KUI supplying the coverage term.\n\nRequires activations and a linear readout. Takes a battery of property directions and their KUI\nmediation-percentile coverage (injected; the concept layer and the KUI index supply both in\nproduction), computes the linear sensitivity ``|w_r \u00b7 v_P|`` (or uses an injected Hessian curvature),\nand reports the per-dimension distortion. Gauge is INVARIANT: distortion is a within-signal\nper-direction magnitude.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/distortion.py",
+        "start": 65,
+        "end": 125,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/distortion.py#L65-L125"
+      },
+      "signature": "Distortion(\n    directions: np.ndarray | None = None,\n    *,\n    coverage: Sequence[float] | None = None,\n    curvature: Sequence[float] | None = None,\n    names: Sequence[str] | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/distortion.py",
+              "start": 99,
+              "end": 125,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/distortion.py#L99-L125"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.coverage_disparity.CoverageDisparity": {
+      "path": "reward_lens.measure.indices.coverage_disparity.CoverageDisparity",
+      "name": "CoverageDisparity",
+      "kind": "class",
+      "text": "v1's coverage statistic, kept reproducible under its honest name (not Wang-Huang distortion).\n\nTakes a battery of per-property coverage values (injected; the concept/KUI layer supplies them in\nproduction) and reports their disparity. ``faithful_to`` is None on purpose: this instantiates no\nAppendix A theory object, it preserves a v1 statistic, and the deviation note says so. Gauge is\nINVARIANT.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/coverage_disparity.py",
+        "start": 53,
+        "end": 84,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/coverage_disparity.py#L53-L84"
+      },
+      "signature": "CoverageDisparity(coverage: Sequence[float] | None = None) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/coverage_disparity.py",
+              "start": 76,
+              "end": 84,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/coverage_disparity.py#L76-L84"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.teacher_compatibility.TeacherCompatibility": {
+      "path": "reward_lens.measure.indices.teacher_compatibility.TeacherCompatibility",
+      "name": "TeacherCompatibility",
+      "kind": "class",
+      "text": "A3 induced reward variance ``w_r\u1d40 \u03a3_\u03c0 w_r``, layer- and spectrum-decomposable.\n\nRequires activation capture and a linear readout. Reads ``w_r`` off the readout, captures the\non-policy final-token activations at the readout site (and at every residual layer when the signal\nreports its depth, for the layer decomposition), and reports the total with its spectral split.\nGauge is INVARIANT: it is a single-signal functional, not a cross-signal comparison. It carries\nreward-scale\u00b2 units, so a cross-model magnitude comparison first needs the two rewards on a common\nscale; that caveat is stated as a deviation rather than silently ignored.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/teacher_compatibility.py",
+        "start": 87,
+        "end": 141,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/teacher_compatibility.py#L87-L141"
+      },
+      "signature": null,
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/teacher_compatibility.py",
+              "start": 111,
+              "end": 141,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/teacher_compatibility.py#L111-L141"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.tail.TailIndex": {
+      "path": "reward_lens.measure.indices.tail.TailIndex",
+      "name": "TailIndex",
+      "kind": "class",
+      "text": "A4 right-tail exponent of the reward, aggregate and per-feature.\n\nRequires scores (and activations plus a linear readout for the per-feature tails). Scores the base\npolicy samples, estimates the aggregate tail with a bootstrap CI on the shape, and, when a feature\nbank is available, estimates each feature's tail as the proxy for its contribution to ``r``. Gauge\nis INVARIANT: the tail regime and the dimensionless shape are scale-free properties of one signal,\nthough ``\u03c4`` and ``\u03bb_c`` carry reward-scale units, which is noted as a deviation.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/tail.py",
+        "start": 176,
+        "end": 245,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/tail.py#L176-L245"
+      },
+      "signature": "TailIndex(\n    feature_bank: FeatureBank | None = None,\n    *,\n    quantile: float = 0.9,\n    bootstrap: int = 500,\n    ci: float = 0.95,\n    seed: int = 0\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/tail.py",
+              "start": 211,
+              "end": 245,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/tail.py#L211-L245"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.verification_score.VerificationScore": {
+      "path": "reward_lens.measure.indices.verification_score.VerificationScore",
+      "name": "VerificationScore",
+      "kind": "class",
+      "text": "A6 causal fraction of the correctness reward gap that lives at the labeled error span.\n\nRequires prefix scores (the process/verifier reward) on the production path, plus the interventions\nsubsystem for the clean-twin span patch. Here the measured deltas are injected (``dr_total``,\n``dr_error_span``) so the attribution arithmetic is exercised without waiting for interventions; the\nproduction path substitutes the patched deltas. Gauge is INVARIANT: ``VS`` is a fraction.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/verification_score.py",
+        "start": 43,
+        "end": 78,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/verification_score.py#L43-L78"
+      },
+      "signature": "VerificationScore(\n    dr_total: float | None = None,\n    dr_error_span: float | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/verification_score.py",
+              "start": 66,
+              "end": 78,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/verification_score.py#L66-L78"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.style_share.StyleShare": {
+      "path": "reward_lens.measure.indices.style_share.StyleShare",
+      "name": "StyleShare",
+      "kind": "class",
+      "text": "A6 fraction of the correctness reward gap the reward reads off style directions.\n\nRequires activations and a linear readout on the production path (``\u0394h`` from clean/corrupted twins,\nthe style subspace from the concept layer's style dictionary). Here ``\u0394h`` and the style basis are\ninjected so the projection arithmetic is exercised directly. Gauge is INVARIANT: the style share is a\nreward fraction.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/style_share.py",
+        "start": 61,
+        "end": 99,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/style_share.py#L61-L99"
+      },
+      "signature": "StyleShare(\n    delta_h: np.ndarray | None = None,\n    style_basis: np.ndarray | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/style_share.py",
+              "start": 88,
+              "end": 99,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/style_share.py#L88-L99"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.receipt_reliance.ReceiptReliance": {
+      "path": "reward_lens.measure.indices.receipt_reliance.ReceiptReliance",
+      "name": "ReceiptReliance",
+      "kind": "class",
+      "text": "A7 fraction of the corruption reward effect the reward reads off receipt spans.\n\nRequires span-typed inputs and prefix scores on the production path (the receipt-span patch and the\nfalsify-receipt/falsify-narrative arms). Here the arm deltas are injected so the attribution\narithmetic runs directly. Gauge is INVARIANT: ``RRS`` is a fraction.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/receipt_reliance.py",
+        "start": 41,
+        "end": 77,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/receipt_reliance.py#L41-L77"
+      },
+      "signature": "ReceiptReliance(dr_receipt: float | None = None, dr_total: float | None = None) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/receipt_reliance.py",
+              "start": 63,
+              "end": 77,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/receipt_reliance.py#L63-L77"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.skepticism.Skepticism": {
+      "path": "reward_lens.measure.indices.skepticism.Skepticism",
+      "name": "Skepticism",
+      "kind": "class",
+      "text": "A8 whether the reward treats a missing receipt as failure (skeptical) or reward (credulous).\n\nRequires span-typed inputs on the production path (the receipt-absent and receipt-failure conditions\nof matched narratives). Here the two score vectors are injected so the difference is exercised\ndirectly. Gauge is INVARIANT with respect to representation, though ``S`` carries reward-scale units,\nnoted as a deviation.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/skepticism.py",
+        "start": 61,
+        "end": 101,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/skepticism.py#L61-L101"
+      },
+      "signature": "Skepticism(\n    r_receipt_absent: np.ndarray | None = None,\n    r_receipt_failure: np.ndarray | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/skepticism.py",
+              "start": 88,
+              "end": 101,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/skepticism.py#L88-L101"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.coherence.Coherence": {
+      "path": "reward_lens.measure.indices.coherence.Coherence",
+      "name": "Coherence",
+      "kind": "class",
+      "text": "A9 cross-criterion coherence, contamination, Welch floor, and ``d_eff``.\n\nRequires a multi-readout signal (a reward exposing several criterion directions). The criterion\ndirections are taken from the signal's ``criterion:k`` readouts (ArmoRM's objectives are first-class,\nnever a row mean), or injected directly for the synthetic test. Reports the coherence matrix, the\nWelch bound and whether the criteria are over-packed past ``d_eff``, and the mean contamination, with\nthe mean coherence read against a random-direction null so \"the criteria are more aligned than\nchance\" beats the high-dimensional noise floor. Gauge is INVARIANT: the Gram of one signal's own\ncriteria is invariant under a shared orthogonal transform of the representation; a cross-signal\ncriterion comparison would be COVARIANT and frame-gated, which is noted as a deviation.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/coherence.py",
+        "start": 130,
+        "end": 208,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/coherence.py#L130-L208"
+      },
+      "signature": "Coherence(\n    directions: np.ndarray | None = None,\n    *,\n    spectrum: Any = None,\n    null_draws: int = 5000,\n    seed: int = 0\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/coherence.py",
+              "start": 181,
+              "end": 208,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/coherence.py#L181-L208"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.dark_reward.DarkReward": {
+      "path": "reward_lens.measure.indices.dark_reward.DarkReward",
+      "name": "DarkReward",
+      "kind": "class",
+      "text": "A10 fraction of reward variance mediated by no named channel.\n\nRequires scores. The named-channel contributions are injected (the concept/criterion layer supplies\nthem in production; the causal reading uses steering-measured contributions). Reports the dark\nfraction. Gauge is INVARIANT: a variance fraction is scale-free.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/dark_reward.py",
+        "start": 51,
+        "end": 84,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/dark_reward.py#L51-L84"
+      },
+      "signature": "DarkReward(named_contributions: np.ndarray | None = None) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/dark_reward.py",
+              "start": 72,
+              "end": 84,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/dark_reward.py#L72-L84"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.interp_coverage.InterpCoverage": {
+      "path": "reward_lens.measure.indices.interp_coverage.InterpCoverage",
+      "name": "InterpCoverage",
+      "kind": "class",
+      "text": "A11 fraction of reward routed through interpretable features rather than error nodes.\n\nRequires activations on the production path (the attribution graph is built from them). The feature\nand error-node contributions are injected here; the production path supplies them from an attribution\ngraph with a scalar reward sink. Gauge is INVARIANT: a coverage fraction is scale-free.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/interp_coverage.py",
+        "start": 45,
+        "end": 83,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/interp_coverage.py#L45-L83"
+      },
+      "signature": "InterpCoverage(\n    feature_contributions: np.ndarray | None = None,\n    error_contributions: np.ndarray | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/interp_coverage.py",
+              "start": 71,
+              "end": 83,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/interp_coverage.py#L71-L83"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.chi.Chi": {
+      "path": "reward_lens.measure.indices.chi.Chi",
+      "name": "Chi",
+      "kind": "class",
+      "text": "A12 susceptibility spectrum ``\u03c7_i = Cov_0(f_i, r)`` over a feature bank on base-policy samples.\n\nRequires activation capture, scores, and a linear readout. Captures the base-policy activations,\nturns them into feature values through the feature bank (injected, else the concept layer's default,\nelse a graceful no-bank report), scores the same samples, and reports the \u03c7 spectrum with a\nper-feature shuffle null. When a ``gold`` signal is supplied it also scores the gold objective and\nflags the predicted hack modes (``\u03c7_i > 0`` with ``\u03c7_gold_i \u2264 0``).\n\nGauge is INVARIANT: \u03c7 is a within-signal spectrum relative to a fixed feature bank. Comparing\nindividual ``\u03c7_i`` across signals requires the same bank read in a shared frame; that is a\ncross-signal comparison the caller must set up, and is noted as a deviation.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/chi.py",
+        "start": 106,
+        "end": 182,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/chi.py#L106-L182"
+      },
+      "signature": "Chi(\n    feature_bank: FeatureBank | None = None,\n    *,\n    gold: Any = None,\n    null_draws: int = 2000,\n    seed: int = 0\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/chi.py",
+              "start": 144,
+              "end": 182,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/chi.py#L144-L182"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.vce.VCE": {
+      "path": "reward_lens.measure.indices.vce.VCE",
+      "name": "VCE",
+      "kind": "class",
+      "text": "A14 Value Convergence Excess: reward-subspace agreement beyond capability agreement.\n\nA cross-signal comparison: COVARIANT and frame-gated (the reward and capability alignments must be\ncomputed on frame-canonicalized subspaces of the RM pair). The two same-metric alignment scalars are\ninjected here (with the ambient ``d`` and subspace ``k`` for the null); the production path computes\nthem through ``geometry.subspace`` in a shared frame. Reports VCE against the RUM-identifiability\nnull.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/vce.py",
+        "start": 84,
+        "end": 136,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/vce.py#L84-L136"
+      },
+      "signature": "VCE(\n    reward_alignment: float | None = None,\n    capability_alignment: float | None = None,\n    *,\n    d: int | None = None,\n    k: int | None = None,\n    null_draws: int = 1000,\n    seed: int = 0\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/vce.py",
+              "start": 121,
+              "end": 136,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/vce.py#L121-L136"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.legibility.Legibility": {
+      "path": "reward_lens.measure.indices.legibility.Legibility",
+      "name": "Legibility",
+      "kind": "class",
+      "text": "A15 legibility frontier ``fidelity(K)``, its knee ``K*``, and the tacit residual.\n\nRequires scores. The predicate library and description-length costs are injected (the concept layer's\ndifference dictionary supplies them in production). Reports the fidelity curve over the budget, the\nknee, and the illegible tacit residual. Gauge is INVARIANT: fidelity is a rank agreement, and the\ntacit residual's variance fraction is scale-free.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/legibility.py",
+        "start": 101,
+        "end": 153,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/legibility.py#L101-L153"
+      },
+      "signature": "Legibility(\n    predicates: np.ndarray | None = None,\n    costs: Sequence[float] | None = None,\n    *,\n    budgets: Sequence[float] | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/legibility.py",
+              "start": 133,
+              "end": 153,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/legibility.py#L133-L153"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.eval_awareness.EvalAwareness": {
+      "path": "reward_lens.measure.indices.eval_awareness.EvalAwareness",
+      "name": "EvalAwareness",
+      "kind": "class",
+      "text": "A17 balanced accuracy of a benchmark-vs-organic probe on reward activations, with a null.\n\nRequires activations. Labels marking which inputs are benchmark-style are injected (the data plane\nsupplies them in production); the causal ``\u0394r`` from steering the recognition direction is injected\nand is the production path. Reports the held-out balanced accuracy against a label-permutation null.\nGauge is INVARIANT: balanced accuracy is a within-signal classification quality.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/eval_awareness.py",
+        "start": 79,
+        "end": 136,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/eval_awareness.py#L79-L136"
+      },
+      "signature": "EvalAwareness(\n    is_benchmark: np.ndarray | None = None,\n    *,\n    steering_delta_r: float | None = None,\n    null_draws: int = 2000,\n    seed: int = 0\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/eval_awareness.py",
+              "start": 112,
+              "end": 136,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/eval_awareness.py#L112-L136"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.snr.RobustnessSNR": {
+      "path": "reward_lens.measure.indices.snr.RobustnessSNR",
+      "name": "RobustnessSNR",
+      "kind": "class",
+      "text": "Robustness SNR: between-condition reward signal over within-condition paraphrase noise.\n\nRequires scores. The paraphrase-cluster labels are injected (or read from the view's group ids);\nthe production path scores paraphrase clusters through the signal. Gauge is INVARIANT: a\nvariance ratio is scale-free.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/snr.py",
+        "start": 64,
+        "end": 93,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/snr.py#L64-L93"
+      },
+      "signature": "RobustnessSNR(groups: Any = None) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/snr.py",
+              "start": 85,
+              "end": 93,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/snr.py#L85-L93"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    },
+    "reward_lens.measure.indices.contested.Contested": {
+      "path": "reward_lens.measure.indices.contested.Contested",
+      "name": "Contested",
+      "kind": "class",
+      "text": "Contested direction: the representation axis annotators disagree along.\n\nRequires activations. The per-pair ``\u0394h`` and the disagreement signal are injected (the data plane's\nannotator records supply disagreement in production). The direction is COVARIANT: comparing contested\ndirections across signals requires a shared frame (gate 2). Within one signal the recovered axis and\nits correlation are reported directly.",
+      "params": [],
+      "returns": [],
+      "raises": [],
+      "examples": [],
+      "admonitions": [],
+      "source": {
+        "file": "src/reward_lens/measure/indices/contested.py",
+        "start": 61,
+        "end": 104,
+        "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/contested.py#L61-L104"
+      },
+      "signature": "Contested(\n    delta_h: np.ndarray | None = None,\n    disagreement: np.ndarray | None = None\n) -> None",
+      "bases": [
+        "BaseObservable"
+      ],
+      "decorators": [],
+      "members": {
+        "fields": [],
+        "properties": [],
+        "methods": [
+          {
+            "name": "measure",
+            "kind": "function",
+            "signature": "measure(ctx: Context) -> Evidence",
+            "text": null,
+            "source": {
+              "file": "src/reward_lens/measure/indices/contested.py",
+              "start": 88,
+              "end": 104,
+              "url": "https://github.com/reward-lens/reward-lens/blob/bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6/src/reward_lens/measure/indices/contested.py#L88-L104"
+            }
+          }
+        ],
+        "enum_members": []
+      },
+      "attribute": null,
+      "poor": false,
+      "is_enum": false
+    }
+  }
+}
