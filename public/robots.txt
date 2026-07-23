@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://reward-lens.github.io/sitemap-index.xml

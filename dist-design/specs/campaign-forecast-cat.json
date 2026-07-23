@@ -1,0 +1,63 @@
+{
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "spec": {
+    "analysis": "campaign.forecast.analyze",
+    "hypotheses": [
+      {
+        "id": "H-forecast-mae",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": "<",
+          "effect": null,
+          "metric": "forecast_mae",
+          "threshold": 0.06
+        },
+        "scoreboard_row": null,
+        "statement": "internals plus a 200-pair slice forecast per-category RB2 accuracy within 0.06 MAE"
+      },
+      {
+        "id": "H-forecast-beats-size",
+        "prediction": {
+          "ci_excludes": 0.0,
+          "comparator": "<",
+          "effect": null,
+          "metric": "forecast_mae_minus_size_baseline",
+          "threshold": 0.0
+        },
+        "scoreboard_row": null,
+        "statement": "the forecast beats predict-from-size"
+      }
+    ],
+    "id": "campaign-forecast-cat",
+    "kill_criteria": [
+      {
+        "comparator": ">=",
+        "id": "K-forecast",
+        "metric": "forecast_mae_minus_size_baseline",
+        "threshold": 0.0
+      }
+    ],
+    "science": "S16-robustness",
+    "subjects": {
+      "datasets": [
+        "rb2-full",
+        "rb2-calibration-200"
+      ],
+      "extra": {
+        "slice_hashes": {
+          "rb2-calibration-200": "ds:5d06dd85dff04a8316286b03601a3c98",
+          "rb2-full": "ds:92765fc94e2b8231914d5119670e53bc"
+        }
+      },
+      "organisms": [],
+      "signals": [
+        "fleet"
+      ]
+    },
+    "title": "Benchmark forecasting from internals plus a 200-pair slice",
+    "version": 1
+  },
+  "spec_hash": "spec:39a99a5ab61d6f8e744a40b3804d21ab",
+  "study_id": "study:campaign-forecast-cat@v1#39a99a5a"
+}

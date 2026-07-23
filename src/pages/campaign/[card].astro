@@ -7,6 +7,9 @@ import ThemedFigure from "@components/ThemedFigure.astro";
 import Callout from "@components/Callout.astro";
 import PrevNext from "@components/PrevNext.astro";
 import cards from "@data/cards.json";
+import fleetIndex from "@data/fleet/index.json";
+
+const fleetSlugs = new Set(fleetIndex.map((m) => m.slug));
 
 export function getStaticPaths() {
   return cards.map((card) => ({
@@ -36,7 +39,7 @@ const killObserved =
   firedCriterion &&
   (card.hypotheses.find((h: any) => h.metric === firedCriterion.metric)
     ?.observed ??
-    card.companion_metrics[firedCriterion.metric]);
+    (card.companion_metrics as Record<string, number>)[firedCriterion.metric]);
 
 const lowPowerConfirmed =
   card.power_acceptance &&
@@ -69,7 +72,7 @@ const description = `${card.card}: ${card.hypotheses[0].statement}. Verdict: ${c
     </p>
     <h1>{card.title}</h1>
     <p class="card-verdict-row">
-      <VerdictChip verdict={card.verdict} />
+      <VerdictChip verdict={card.verdict as "confirmed" | "refuted" | "mixed" | "inconclusive"} />
       {card.kill_fired && <KillBadge kill={card.kill_fired} />}
     </p>
     <p class="card-provenance">
@@ -213,9 +216,13 @@ const description = `${card.card}: ${card.hypotheses[0].statement}. Verdict: ${c
             {card.subjects.signals.map((s: string, i: number) => (
               <>
                 {i > 0 && ", "}
-                <a href={`/atlas/${s}/`}>
+                {fleetSlugs.has(s) ? (
+                  <a href={`/atlas/${s}/`}>
+                    <code>{s}</code>
+                  </a>
+                ) : (
                   <code>{s}</code>
-                </a>
+                )}
               </>
             ))}
           </li>

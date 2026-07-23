@@ -124,7 +124,7 @@ const onthis = order.map((p) => ({
   kind: symbols[p]?.kind || "",
 }));
 
-const desc = `API reference for ${symData.title} — signatures, docstrings and source links, extracted statically from the reward-lens source.`;
+const desc = `API reference for ${symData.title}: signatures, docstrings, and source links, extracted statically from the reward-lens source.`;
 ---
 
 <Docs
@@ -361,7 +361,7 @@ const desc = `API reference for ${symData.title} — signatures, docstrings and 
                       {p.name}
                       {p.annotation ? `: ${p.annotation}` : ""}
                     </code>
-                    {p.descHtml && <span class="sym-propdesc" set:html={" — " + p.descHtml} />}
+                    {p.descHtml && <span class="sym-propdesc" set:html={": " + p.descHtml} />}
                   </li>
                 ))}
               </ul>

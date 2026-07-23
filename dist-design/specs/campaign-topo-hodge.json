@@ -1,0 +1,49 @@
+{
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "spec": {
+    "analysis": "campaign.topo.analyze",
+    "hypotheses": [
+      {
+        "id": "H-intransitive",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": ">",
+          "effect": null,
+          "metric": "intransitive_mass",
+          "threshold": 0.03
+        },
+        "scoreboard_row": null,
+        "statement": "real k-wise preference data carries a computable intransitive fraction"
+      }
+    ],
+    "id": "campaign-topo-hodge",
+    "kill_criteria": [
+      {
+        "comparator": "<",
+        "id": "K-topo",
+        "metric": "intransitive_mass",
+        "threshold": 0.03
+      }
+    ],
+    "science": "S06-topology",
+    "subjects": {
+      "datasets": [
+        "nectar-tournaments",
+        "ultrafeedback-tournaments"
+      ],
+      "extra": {
+        "slice_hashes": {
+          "nectar-tournaments": "ds:036d7b1958beb20e0fe7281b218a0cb4",
+          "ultrafeedback-tournaments": "ds:feb3a3e22dc7d7dc96a75843689db37f"
+        }
+      },
+      "organisms": [],
+      "signals": []
+    },
+    "title": "Intransitive preference mass no scalar reward can represent",
+    "version": 1
+  },
+  "spec_hash": "spec:7206aa3a670d99eb3640c3230ce3b7fb",
+  "study_id": "study:campaign-topo-hodge@v1#7206aa3a"
+}

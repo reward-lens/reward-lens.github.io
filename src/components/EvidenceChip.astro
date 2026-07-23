@@ -60,6 +60,8 @@ const hasCi =
 
 // A stable-enough id for aria-describedby wiring within the page.
 const popId = "ev-" + Math.random().toString(36).slice(2, 10);
+// Anchor name for the progressive-enhancement fixed popover (see styles).
+const anchorName = "--" + popId;
 
 const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trustWord}`;
 ---
@@ -70,11 +72,12 @@ const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trus
     class="ev-chip"
     aria-describedby={popId}
     aria-label={ariaLabel}
+    style={`anchor-name:${anchorName}`}
   >
     <span class="ev-val">{displayValue}</span>
     <span class="ev-trust" title={trustWord} aria-hidden="true">{trust}</span>
   </button>
-  <span role="tooltip" id={popId} class="ev-pop">
+  <span role="tooltip" id={popId} class="ev-pop" style={`position-anchor:${anchorName}`}>
     {heading && <span class="ev-pop-head">{heading}</span>}
     {/* Inline-only markup: a chip may sit inside a <p>, and a block tag such as
         <dl> here would make the parser close the paragraph and spill the rows
@@ -211,12 +214,39 @@ const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trus
       visibility 150ms ease;
     pointer-events: none;
   }
+  /* An invisible bridge across the gap so the pointer can travel from the chip
+     to the popover without the hover state dropping. */
+  .ev-pop::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -6px;
+    height: 6px;
+  }
   .ev:hover .ev-pop,
   .ev:focus-within .ev-pop {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
     pointer-events: auto;
+  }
+
+  /* Progressive enhancement: where CSS anchor positioning is available, pin the
+     popover with position: fixed so it escapes the clip of a scrolling table
+     container (overflow-x: auto forces overflow-y to clip, so an absolutely
+     positioned popover is cut off inside a DataTable). Browsers without anchor
+     support keep the absolute popover above, which is correct inline in prose. */
+  @supports (anchor-name: --x) {
+    .ev-pop {
+      position: fixed;
+      top: auto;
+      left: auto;
+      inset: auto;
+      position-area: bottom span-right;
+      position-try-fallbacks: flip-block, flip-inline;
+      margin-top: 6px;
+    }
   }
   .ev-pop-head {
     display: block;

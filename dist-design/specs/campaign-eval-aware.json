@@ -1,0 +1,77 @@
+{
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "spec": {
+    "analysis": "campaign.evalaware.analyze",
+    "hypotheses": [
+      {
+        "id": "H-aware-probe",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": ">",
+          "effect": null,
+          "metric": "real_probe_balanced_acc",
+          "threshold": 0.6
+        },
+        "scoreboard_row": null,
+        "statement": "a benchmark-versus-organic direction is decodable"
+      },
+      {
+        "id": "H-aware-steer",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": ">",
+          "effect": null,
+          "metric": "delta_r_per_steer",
+          "threshold": 0.05
+        },
+        "scoreboard_row": null,
+        "statement": "steering along the direction inflates the score"
+      },
+      {
+        "id": "H-aware-organic-fpr",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": "<",
+          "effect": null,
+          "metric": "organic_fpr",
+          "threshold": 0.1
+        },
+        "scoreboard_row": null,
+        "statement": "the probe does not spuriously flag organic prompts (equivalence bound, an affirmative null)"
+      }
+    ],
+    "id": "campaign-eval-aware",
+    "kill_criteria": [
+      {
+        "comparator": "<",
+        "id": "K-aware",
+        "metric": "real_probe_balanced_acc",
+        "threshold": 0.55
+      }
+    ],
+    "science": "S16-robustness",
+    "subjects": {
+      "datasets": [
+        "evalaware-paired",
+        "wildchat-organic",
+        "arena-organic"
+      ],
+      "extra": {
+        "slice_hashes": {
+          "arena-organic": "ds:a59032da6e2ab4e7fa4ad2cc647f4734",
+          "evalaware-paired": "ds:94c82e6925d2654c1bb974be5e76b5ee",
+          "wildchat-organic": "ds:e57a0be8be68113371133cea828e6e8b"
+        }
+      },
+      "organisms": [],
+      "signals": [
+        "evalaware-rms"
+      ]
+    },
+    "title": "The RM knows it is being tested, and steering along that direction inflates reward",
+    "version": 1
+  },
+  "spec_hash": "spec:3671c68e023554a042cd340ae8dded8e",
+  "study_id": "study:campaign-eval-aware@v1#3671c68e"
+}

@@ -1,0 +1,53 @@
+{
+  "frozen_at": "2026-07-18T23:46:57.951556+00:00",
+  "git_sha": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "spec": {
+    "analysis": "campaign.metaledger.analyze",
+    "hypotheses": [
+      {
+        "id": "H-brier",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": "<",
+          "effect": null,
+          "metric": "brier_directional",
+          "threshold": 0.25
+        },
+        "scoreboard_row": null,
+        "statement": "the campaign's directional predictions, each assigned a pre-run probability, beat a coin"
+      },
+      {
+        "id": "H-coverage",
+        "prediction": {
+          "ci_excludes": null,
+          "comparator": ">=",
+          "effect": 0.8,
+          "metric": "interval_coverage_0p8",
+          "threshold": 0.6
+        },
+        "scoreboard_row": null,
+        "statement": "the nominal-0.8 prediction intervals cover the observed values near their nominal rate"
+      }
+    ],
+    "id": "campaign-meta-ledger",
+    "kill_criteria": [
+      {
+        "comparator": ">=",
+        "id": "K-meta",
+        "metric": "brier_directional",
+        "threshold": 0.25
+      }
+    ],
+    "science": "S00-meta",
+    "subjects": {
+      "datasets": [],
+      "extra": {},
+      "organisms": [],
+      "signals": []
+    },
+    "title": "The campaign scores its own calibration",
+    "version": 1
+  },
+  "spec_hash": "spec:b8659763ad1e9bf0ca0fa9a1c98fc29b",
+  "study_id": "study:campaign-meta-ledger@v1#b8659763"
+}
