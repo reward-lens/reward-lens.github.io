@@ -65,6 +65,9 @@ const ogUrl = new URL(ogImage, Astro.site);
     <meta property="og:image" content={ogUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <slot name="head" />
+    <!-- Analytics intentionally absent. If wanted later, a privacy-respecting
+         option (self-hosted Plausible or GoatCounter) mounts here; see
+         SITE_REPORT.md. -->
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
