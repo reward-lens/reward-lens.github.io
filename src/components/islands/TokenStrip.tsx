@@ -92,28 +92,54 @@ export default function TokenStrip({ demo }: { demo: DemoData }) {
         </button>
       </div>
 
-      <div className="ts-strip" aria-label="Per-token reward contributions">
+      <div
+        className="ts-strip"
+        role="group"
+        tabIndex={0}
+        aria-label="Per-token reward contributions. Arrow keys move between tokens; the exact values follow as a table."
+        onKeyDown={(e) => {
+          const cur = tip?.i ?? -1;
+          const last = active.tokens.length - 1;
+          if (e.key === "ArrowRight") {
+            e.preventDefault();
+            const i = Math.min(cur + 1, last);
+            setTip({ i, v: active.tokens[i].v });
+          } else if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            const i = Math.max(cur - 1, 0);
+            setTip({ i, v: active.tokens[i].v });
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            setTip({ i: 0, v: active.tokens[0].v });
+          } else if (e.key === "End") {
+            e.preventDefault();
+            setTip({ i: last, v: active.tokens[last].v });
+          } else if (e.key === "Escape") {
+            setTip(null);
+          }
+        }}
+        onBlur={() => setTip(null)}
+        onMouseLeave={() => setTip(null)}
+      >
         {active.tokens.map((tok, i) => {
           const mag = Math.min(Math.abs(tok.v) / vmax, 1);
-          const pct = Math.round(mag * 62);
+          // Capped at 45% so ink text keeps AA contrast on the strongest
+          // token backgrounds in both themes; exact values live in the
+          // readout line and the table.
+          const pct = Math.round(mag * 45);
           const color = tok.v >= 0 ? "var(--pos)" : "var(--neg)";
           const inPrompt = i < active.response_start;
           return (
-            <button
+            <span
               key={i}
-              type="button"
-              className={`ts-tok${inPrompt ? " ts-tok-prompt" : ""}`}
+              className={`ts-tok${inPrompt ? " ts-tok-prompt" : ""}${tip?.i === i ? " ts-tok-active" : ""}`}
               style={{
                 background: `color-mix(in oklab, ${color} ${pct}%, transparent)`,
               }}
-              aria-label={`token ${JSON.stringify(tok.t)}: ${fmt(tok.v)}`}
               onMouseEnter={() => setTip({ i, v: tok.v })}
-              onFocus={() => setTip({ i, v: tok.v })}
-              onMouseLeave={() => setTip(null)}
-              onBlur={() => setTip(null)}
             >
               {tok.t.replace(/\n/g, "⏎") || "·"}
-            </button>
+            </span>
           );
         })}
       </div>

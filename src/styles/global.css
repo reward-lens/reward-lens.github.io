@@ -65,7 +65,8 @@ main {
 
 a {
   color: var(--info);
-  text-decoration-color: color-mix(in oklab, var(--info) 45%, transparent);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in oklab, var(--info) 55%, transparent);
   text-underline-offset: 2px;
 }
 a:hover {

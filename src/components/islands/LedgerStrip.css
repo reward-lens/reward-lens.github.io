@@ -10,6 +10,12 @@
   align-items: flex-end;
 }
 
+.ledger-marks:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-chip);
+}
+
 .ledger-mark {
   display: block;
   flex: 1 1 0;
@@ -19,10 +25,11 @@
   border-radius: var(--r-chip);
   transform-origin: bottom;
   transition: opacity 150ms ease, transform 150ms ease;
+  cursor: pointer;
 }
 
 .ledger-mark:hover,
-.ledger-mark:focus-visible {
+.ledger-active {
   transform: scaleY(1.15);
 }
 

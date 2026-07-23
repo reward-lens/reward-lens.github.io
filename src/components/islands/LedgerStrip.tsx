@@ -3,8 +3,12 @@ import "./LedgerStrip.css";
 
 // One mark per adjudicated hypothesis, in frozen-registry order. The strip is
 // the site's one orchestrated animation: a single left-to-right draw on first
-// view, instant everywhere else. Colors come from the status tokens; kills
-// carry a notch cut into the mark.
+// view, instant everywhere else.
+//
+// Keyboard model: the strip is ONE tab stop. Arrow keys move the active mark,
+// Home/End jump, Enter opens the card page. Fifty-three separate 8px tab
+// stops would be both unusable and an accessibility failure; the full data
+// also lives in the visually-hidden table and on the hypothesis board.
 
 export interface StripRow {
   card: string;
@@ -48,9 +52,11 @@ export default function LedgerStrip({
   animate?: boolean;
 }) {
   const [drawn, setDrawn] = useState(false);
-  const [tip, setTip] = useState<{ row: StripRow; x: number } | null>(null);
+  const [active, setActive] = useState<number | null>(null);
+  const [tipX, setTipX] = useState(0);
   const [focusCard, setFocusCard] = useState<string | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const marksRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const reduced = window.matchMedia(
@@ -73,59 +79,90 @@ export default function LedgerStrip({
     return () => window.removeEventListener("hashchange", applyHash);
   }, [animate, rows]);
 
-  const show = (row: StripRow, el: HTMLElement) => {
+  const showAt = (i: number) => {
+    setActive(i);
     const wrap = wrapRef.current;
-    if (!wrap) return;
+    const mark = marksRef.current?.children[i] as HTMLElement | undefined;
+    if (!wrap || !mark) return;
     const wb = wrap.getBoundingClientRect();
-    const eb = el.getBoundingClientRect();
-    setTip({ row, x: eb.left - wb.left + eb.width / 2 });
+    const eb = mark.getBoundingClientRect();
+    const x = eb.left - wb.left + eb.width / 2;
+    setTipX(Math.min(Math.max(x, 110), wb.width - 110));
   };
 
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const cur = active ?? -1;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      showAt(Math.min(cur + 1, rows.length - 1));
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      showAt(Math.max(cur - 1, 0));
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      showAt(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      showAt(rows.length - 1);
+    } else if (e.key === "Enter" && active !== null) {
+      window.location.href = `/campaign/${rows[active].slug}/`;
+    } else if (e.key === "Escape") {
+      setActive(null);
+    }
+  };
+
+  const activeRow = active !== null ? rows[active] : null;
+
   return (
-    <div className={`ledger-strip${drawn ? " ledger-animate" : ""}`} ref={wrapRef}>
-      <div className="ledger-marks" role="list" aria-label="53 adjudicated hypotheses">
+    <div
+      className={`ledger-strip${drawn ? " ledger-animate" : ""}`}
+      ref={wrapRef}
+    >
+      <div
+        className="ledger-marks"
+        ref={marksRef}
+        role="group"
+        tabIndex={0}
+        aria-label={`53 adjudicated hypotheses in registry order: 16 confirmed, 21 refuted, 16 inconclusive, 8 kills fired. Arrow keys move between marks, Enter opens the card. The same data follows as a table.`}
+        onKeyDown={onKeyDown}
+        onBlur={() => setActive(null)}
+        onMouseLeave={() => setActive(null)}
+      >
         {rows.map((row, i) => {
           const dim = focusCard !== null && row.slug !== focusCard;
           return (
-            <a
-              role="listitem"
+            <div
               key={`${row.card}-${row.h}`}
-              href={`/campaign/${row.slug}/`}
-              className={`ledger-mark${row.kill ? " ledger-kill" : ""}${dim ? " ledger-dim" : ""}`}
+              className={`ledger-mark${row.kill ? " ledger-kill" : ""}${dim ? " ledger-dim" : ""}${active === i ? " ledger-active" : ""}`}
               style={
                 {
                   background: OUTCOME_COLOR[row.outcome],
                   animationDelay: `${(i * 900) / rows.length}ms`,
                 } as React.CSSProperties
               }
-              aria-label={`${row.card} ${row.h}: ${row.outcome}${row.kill ? `, ${row.kill} fired` : ""}. ${row.metric} ${row.comparator} ${fmt(row.threshold)}, observed ${fmt(row.observed)}.`}
-              onMouseEnter={(e) => show(row, e.currentTarget)}
-              onFocus={(e) => show(row, e.currentTarget)}
-              onMouseLeave={() => setTip(null)}
-              onBlur={() => setTip(null)}
+              onMouseEnter={() => showAt(i)}
+              onClick={() => {
+                window.location.href = `/campaign/${row.slug}/`;
+              }}
             />
           );
         })}
       </div>
 
-      {tip && (
-        <div
-          className="ledger-tip"
-          role="status"
-          style={{ left: `${tip.x}px` }}
-        >
+      {activeRow && (
+        <div className="ledger-tip" role="status" style={{ left: `${tipX}px` }}>
           <span className="ledger-tip-head">
-            {tip.row.card} · {tip.row.h}
+            {activeRow.card} · {activeRow.h}
           </span>
           <span className="ledger-tip-line">
-            registered {tip.row.metric} {tip.row.comparator}{" "}
-            {fmt(tip.row.threshold)}
-            {tip.row.prob !== null ? ` at p ${tip.row.prob}` : ""}
+            registered {activeRow.metric} {activeRow.comparator}{" "}
+            {fmt(activeRow.threshold)}
+            {activeRow.prob !== null ? ` at p ${activeRow.prob}` : ""}
           </span>
           <span className="ledger-tip-line">
-            observed {fmt(tip.row.observed)} ·{" "}
-            {OUTCOME_GLYPH[tip.row.outcome]} {tip.row.outcome}
-            {tip.row.kill ? ` · ${tip.row.kill} fired` : ""}
+            observed {fmt(activeRow.observed)} ·{" "}
+            {OUTCOME_GLYPH[activeRow.outcome]} {activeRow.outcome}
+            {activeRow.kill ? ` · ${activeRow.kill} fired` : ""}
           </span>
         </div>
       )}
@@ -147,7 +184,9 @@ export default function LedgerStrip({
         <tbody>
           {rows.map((row) => (
             <tr key={`t-${row.card}-${row.h}`}>
-              <td>{row.card}</td>
+              <td>
+                <a href={`/campaign/${row.slug}/`}>{row.card}</a>
+              </td>
               <td>{row.h}</td>
               <td>
                 {row.metric} {row.comparator} {fmt(row.threshold)}

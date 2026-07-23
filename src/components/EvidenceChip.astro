@@ -44,7 +44,7 @@ function sig4(v: number): string {
 }
 
 function fmtCi(n: number | null): string {
-  return n === null || n === undefined ? "—" : sig4(n);
+  return n === null || n === undefined ? "none" : sig4(n);
 }
 
 const isNum = typeof value === "number";
@@ -63,7 +63,7 @@ const popId = "ev-" + Math.random().toString(36).slice(2, 10);
 // Anchor name for the progressive-enhancement fixed popover (see styles).
 const anchorName = "--" + popId;
 
-const ariaLabel = `${heading ? heading + ", " : ""}${displayValue}, trust ${trustWord}`;
+const ariaLabel = `${displayValue} ${trust}, trust ${trustWord}${heading ? ", " + heading : ""}`;
 ---
 
 <span class="ev">

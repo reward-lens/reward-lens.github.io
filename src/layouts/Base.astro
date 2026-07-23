@@ -11,6 +11,10 @@ import "@fontsource/ibm-plex-mono/latin-400.css";
 import "@fontsource/ibm-plex-mono/latin-500.css";
 import SiteHeader from "@components/SiteHeader.astro";
 import SiteFooter from "@components/SiteFooter.astro";
+import monoWoff from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url";
+import sansWoff from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
+import sansSemiWoff from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2?url";
+import displayWoff from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
 
 interface Props {
   title: string;
@@ -42,6 +46,10 @@ const ogUrl = new URL(ogImage, Astro.site);
         document.documentElement.dataset.theme = t;
       })();
     </script>
+    <link rel="preload" href={sansWoff} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sansSemiWoff} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoWoff} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={displayWoff} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
