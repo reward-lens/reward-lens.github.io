@@ -6,6 +6,8 @@
 // id in a copyable code element, and the registered threshold when supplied.
 // Works inline in a prose sentence and inside a table cell.
 
+import evidenceIndex from "@data/evidence-index.json";
+
 interface Props {
   value: string | number;
   trust: "E" | "C" | "R" | "A";
@@ -62,6 +64,11 @@ const hasCi =
 const popId = "ev-" + Math.random().toString(36).slice(2, 10);
 // Anchor name for the progressive-enhancement fixed popover (see styles).
 const anchorName = "--" + popId;
+
+const evidenceHref =
+  evidenceId && (evidenceIndex as Record<string, unknown>)[evidenceId]
+    ? `/evidence/${evidenceId.replace("ev:", "")}/`
+    : null;
 
 const ariaLabel = `${displayValue} ${trust}, trust ${trustWord}${heading ? ", " + heading : ""}`;
 ---
@@ -132,7 +139,13 @@ const ariaLabel = `${displayValue} ${trust}, trust ${trustWord}${heading ? ", " 
           <>
             <span class="ev-k">Evidence</span>
             <span class="ev-v ev-id-row">
-              <code class="ev-id">{evidenceId}</code>
+              {evidenceHref ? (
+                <a class="ev-id-link" href={evidenceHref}>
+                  <code class="ev-id">{evidenceId}</code>
+                </a>
+              ) : (
+                <code class="ev-id">{evidenceId}</code>
+              )}
               <button
                 type="button"
                 class="ev-copy"
@@ -281,6 +294,12 @@ const ariaLabel = `${displayValue} ${trust}, trust ${trustWord}${heading ? ", " 
     display: flex;
     align-items: center;
     gap: var(--sp-2);
+  }
+  .ev-id-link {
+    text-decoration: none;
+  }
+  .ev-id-link:hover .ev-id {
+    color: var(--info);
   }
   .ev-id {
     font-family: var(--font-mono);

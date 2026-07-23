@@ -49,7 +49,7 @@ const receipts = [
       },
       {
         value: 0.433962,
-        label: "patching AUC",
+        label: "patching AUC; the card refuted, K-avp fired",
         evidenceId: ev("adj-avp"),
         observable: "patching_recovery_auc",
         subject: "ADJ-AVP",
@@ -255,7 +255,7 @@ const frontier = [
           that projection and what feeds it.
         </p>
         <p>
-          The strip here is live data: per-token contributions to the score of
+          The strip here is real, precomputed data: per-token contributions to the score of
           the smallest fleet model, computed with the library's dense
           instrument on its built-in diagnostic pairs. On the formatting pair
           the model prefers the rejected completion; that miss ships as is.
@@ -290,7 +290,7 @@ const frontier = [
 
   <section class="band band-campaign" aria-labelledby="camp-h">
     <div class="band-inner">
-      <h2 id="camp-h">The first pre-registered audit of reward models</h2>
+      <h2 id="camp-h">The first pre-registered white-box audit of reward models</h2>
       <p class="band-lede">
         In July 2026 the discipline was put through a live fire exercise: 27
         study cards, 53 hypotheses with frozen thresholds and kill criteria,
@@ -472,7 +472,7 @@ const frontier = [
   .band h2 {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-size: clamp(2.5rem, 3.5vw, 2.5rem);
     margin: 0 0 var(--sp-6);
   }
   .band-split {
@@ -569,7 +569,7 @@ const frontier = [
     color: var(--ink-2);
     border: 1px solid var(--line);
     border-radius: var(--r-chip);
-    padding: 1px 6px;
+    padding: 0 6px;
   }
   .receipts-note {
     color: var(--ink-3);
@@ -593,7 +593,7 @@ const frontier = [
   .rung-letter {
     font-family: var(--font-mono);
     font-size: var(--text-lg);
-    color: var(--accent);
+    color: var(--ink-2);
     border: 1px solid var(--line-strong);
     border-radius: var(--r-chip);
     width: 32px;

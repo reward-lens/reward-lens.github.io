@@ -55,8 +55,10 @@ const fmt = (n: number | null) =>
           <tr>
             <th>Model</th>
             <th>Weights</th>
-            <th>crystallization</th>
-            <th>snr</th>
+            <th>
+              <a href="/docs/instruments/lens-crystallization/">crystallization</a>
+            </th>
+            <th><a href="/docs/instruments/prompt-snr/">snr</a></th>
             <th>Records</th>
             <th>GPU-seconds</th>
           </tr>
@@ -97,7 +99,10 @@ const fmt = (n: number | null) =>
     <p class="atlas-footnote">
       crystallization and snr come from each model's
       <code>campaign.index.table</code> on the rb2-full slice; models without
-      a merged index table show a dash. The per-model pages carry the full
+      a merged index table show a dash. The column headers link the docs that
+      define each instrument, and
+      <a href="/docs/instruments/index-library/">the index library</a> defines
+      the rest of the per-model metrics. The per-model pages carry the full
       observable tables with evidence ids.
     </p>
   </div>

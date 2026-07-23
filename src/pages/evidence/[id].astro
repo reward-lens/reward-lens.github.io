@@ -1,0 +1,68 @@
+---
+import { readFileSync } from "node:fs";
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+
+export function getStaticPaths() {
+  const lines = readFileSync(
+    new URL("src/data/claims-store/evidence.jsonl", `file://${process.cwd()}/`),
+    "utf-8",
+  )
+    .split("\n")
+    .filter(Boolean);
+  return lines.map((line) => {
+    const record = JSON.parse(line);
+    return {
+      params: { id: record.id.replace("ev:", "") },
+      props: { record },
+    };
+  });
+}
+
+const { record } = Astro.props;
+const card = record.subject?.extra?.card ?? "";
+const slug = card.toLowerCase();
+---
+
+<Base
+  title={`${record.id} · evidence · reward-lens`}
+  description={`The adjudication record for ${card}, shown whole.`}
+>
+  <div class="rec-wrap">
+    <PageHeader
+      eyebrow="evidence record"
+      title={record.observable}
+      lede={`Adjudication record for ${card}, from the merged campaign store, shown whole.`}
+    />
+    <p class="rec-links">
+      <code>{record.id}</code> ·{" "}
+      <a href={`/campaign/${slug}/`}>the {card} card</a> ·{" "}
+      <a href="/evidence/">all shipped records</a>
+    </p>
+    <pre class="rec-json" tabindex="0"><code>{JSON.stringify(record, null, 1)}</code></pre>
+  </div>
+</Base>
+
+<style>
+  .rec-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .rec-links {
+    font-size: var(--text-sm);
+    color: var(--ink-2);
+    margin: 0 0 var(--sp-4);
+  }
+  .rec-json {
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: var(--sp-4);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--ink-2);
+    overflow-x: auto;
+    max-width: var(--measure-wide);
+  }
+</style>

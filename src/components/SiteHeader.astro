@@ -117,15 +117,25 @@ const path = Astro.url.pathname;
   /* Wordmark is loaded as <img>, so currentColor cannot inherit. Ship both
      theme variants and toggle by the data-theme attribute the head script
      always sets, so a manual theme toggle swaps them too. */
-  .wm-dark,
-  .wm-light {
+  .wm-dark {
     display: none;
+  }
+  .wm-light {
+    display: block;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .wm-dark {
+      display: block;
+    }
+    :global(:root:not([data-theme="light"])) .wm-light {
+      display: none;
+    }
   }
   :global(:root[data-theme="dark"]) .wm-dark {
     display: block;
   }
-  :global(:root[data-theme="light"]) .wm-light {
-    display: block;
+  :global(:root[data-theme="dark"]) .wm-light {
+    display: none;
   }
   .desktop-nav {
     display: flex;

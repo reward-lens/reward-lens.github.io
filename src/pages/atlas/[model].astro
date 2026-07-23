@@ -30,7 +30,7 @@ const trustLetter = (t: string) =>
     <PageHeader
       eyebrow="atlas"
       title={model.slug}
-      lede={`${model.n_entries} stored measurements, ${Math.round(model.total_gpu_seconds).toLocaleString("en-US")} metered GPU-seconds.`}
+      lede={`${model.n_entries} stored measurements; ${Math.round(model.total_gpu_seconds).toLocaleString("en-US")} GPU-seconds metered, summed over this model\u2019s records (the method page groups spend by arc, a different total).`}
     />
 
     <p class="model-hf">
@@ -41,7 +41,7 @@ const trustLetter = (t: string) =>
     </p>
 
     {
-      model.headline.map((h: any) => (
+      model.headline.filter((h: any) => h.rows.length > 0).map((h: any) => (
         <section class="headline-block">
           <h2>{h.name}</h2>
           <DataTable compact>
@@ -82,8 +82,12 @@ const trustLetter = (t: string) =>
         The full card: one row per stored Evidence about this model, built with
         <code>reward_lens.artifacts.card.build_card</code> against the merged
         campaign store. Values that are payloads (vectors, tables, captures)
-        show their shape; the evidence id resolves each one.
+        show their shape. These ids name records in the store itself, whose
+        payload arrays are too large to host; the records this site cites as
+        receipts resolve at <a href="/evidence/">/evidence/</a>.
       </p>
+      <details class="entries-details">
+      <summary>Show all rows</summary>
       <DataTable compact stickyFirst>
         <table>
           <thead>
@@ -120,6 +124,7 @@ const trustLetter = (t: string) =>
           </tbody>
         </table>
       </DataTable>
+      </details>
     </section>
 
     <p class="model-provenance">
@@ -164,6 +169,12 @@ const trustLetter = (t: string) =>
     font-size: var(--text-sm);
     max-width: var(--measure-prose);
     margin: 0 0 var(--sp-4);
+  }
+  .entries-details summary {
+    cursor: pointer;
+    font-size: var(--text-sm);
+    color: var(--info);
+    padding: var(--sp-2) 0;
   }
   .entry-value code {
     font-size: var(--text-xs);

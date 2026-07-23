@@ -1861,7 +1861,7 @@
   "id": "meta-ledger",
   "card": "META-LEDGER",
   "title": "The campaign scores its own calibration",
-  "science": "S0",
+  "science": null,
   "science_name": null,
   "science_raw": "S00-meta",
   "verdict": "refuted",

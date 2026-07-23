@@ -7,9 +7,14 @@
 interface Props {
   compact?: boolean;
   stickyFirst?: boolean;
+  label?: string;
 }
 
-const { compact = false, stickyFirst = false } = Astro.props;
+const {
+  compact = false,
+  stickyFirst = false,
+  label = "Data table",
+} = Astro.props;
 const cls = [
   "data-table",
   compact ? "is-compact" : "",
@@ -19,7 +24,7 @@ const cls = [
   .join(" ");
 ---
 
-<div class="scroll-x data-table-scroll" tabindex="0" role="region" aria-label="Data table, scrollable">
+<div class="scroll-x data-table-scroll" tabindex="0" role="region" aria-label={label}>
   <div class={cls}>
     <slot />
   </div>

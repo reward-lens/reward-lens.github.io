@@ -362,7 +362,7 @@ def main() -> None:
         outcomes = adj.get("outcomes") or {}
         metrics = adj.get("metrics") or {}
         science_raw = spec["science"]
-        m = re.match(r"S0*(\d+)", science_raw or "")
+        m = re.match(r"S0*([1-9]\d*)", science_raw or "")
         s_id = f"S{m.group(1)}" if m else None
         slug = card.lower()
         fig = f"card-{slug}"
@@ -567,6 +567,22 @@ def main() -> None:
         for card in ordered_cards:
             fh.write(adjudication_lines[card] + "\n")
     prov.record(evidence_path, store_dir / "evidence.jsonl")
+
+    # ---- resolvable evidence: the records the site cites as receipts -------
+    # Every adjudication record ships whole and gets its own page, so an
+    # evidence id printed as a receipt on campaign pages resolves for a
+    # visitor. Ids outside this set (payload captures) are labeled as
+    # store-only where they appear.
+    resolvable = {}
+    for card in ordered_cards:
+        env = adjudications[card]
+        resolvable[env["id"]] = {
+            "card": card,
+            "slug": card.lower(),
+            "observable": env["observable"],
+        }
+    write_json(DATA / "evidence-index.json", resolvable)
+    prov.record(evidence_path, DATA / "evidence-index.json")
 
     # ---- fleet (8.4) --------------------------------------------------------
     sys.path.insert(0, str(FINAL))

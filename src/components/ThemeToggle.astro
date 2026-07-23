@@ -52,15 +52,38 @@
     color: var(--ink-2);
     cursor: pointer;
   }
+  @media (max-width: 760px) {
+    .theme-toggle {
+      width: 44px;
+      height: 44px;
+    }
+  }
   .theme-toggle:hover {
     color: var(--ink);
     border-color: var(--line-strong);
   }
-  :global([data-theme="dark"]) .icon-moon {
+  .icon-sun {
     display: none;
   }
-  :global([data-theme="light"]) .icon-sun {
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .icon-sun {
+      display: block;
+    }
+    :global(:root:not([data-theme="light"])) .icon-moon {
+      display: none;
+    }
+  }
+  :global(:root[data-theme="dark"]) .icon-sun {
+    display: block;
+  }
+  :global(:root[data-theme="dark"]) .icon-moon {
     display: none;
+  }
+  :global(:root[data-theme="light"]) .icon-sun {
+    display: none;
+  }
+  :global(:root[data-theme="light"]) .icon-moon {
+    display: block;
   }
 </style>
 

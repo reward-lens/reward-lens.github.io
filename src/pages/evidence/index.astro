@@ -1,0 +1,96 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import evidenceIndex from "@data/evidence-index.json";
+
+const records = Object.entries(evidenceIndex).map(([id, meta]) => ({
+  id,
+  ...(meta as { card: string; slug: string; observable: string }),
+}));
+---
+
+<Base
+  title="Evidence · reward-lens"
+  description="The adjudication records this site cites as receipts, shown whole."
+>
+  <div class="ev-wrap">
+    <PageHeader
+      eyebrow="receipts"
+      title="Evidence records"
+      lede="Every campaign number on this site cites an evidence id. The records behind those citations are here, whole."
+    />
+
+    <div class="ev-prose">
+      <p>
+        An evidence id names one record in the campaign's append-only store.
+        The records cited as receipts on this site are the 27 adjudication
+        records, one per card: each holds the frozen thresholds and
+        comparators, the observed metrics, the per-hypothesis outcomes, and
+        any fired kill criteria. All 27 ship with this site and resolve
+        below.
+      </p>
+      <p>
+        The full merged store holds 1,363 records; the rest are measurement
+        payloads (activation captures, score banks, matrices) with sidecar
+        arrays that total hundreds of megabytes, so they are not hosted here.
+        Their ids still appear on the Atlas pages as provenance, and the
+        <a
+          href="https://github.com/reward-lens/reward-lens.github.io/blob/main/src/data/provenance.json"
+          >provenance manifest</a
+        > records the hash of every projection this site was built from.
+      </p>
+    </div>
+
+    <ul class="ev-list">
+      {
+        records.map((r) => (
+          <li>
+            <a href={`/evidence/${r.id.replace("ev:", "")}/`}>
+              <code>{r.id}</code>
+            </a>
+            <span class="ev-list-meta">
+              {r.observable} · <a href={`/campaign/${r.slug}/`}>{r.card}</a>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .ev-wrap {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--sp-12);
+  }
+  .ev-prose {
+    max-width: var(--measure-prose);
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin-bottom: var(--sp-8);
+  }
+  .ev-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .ev-list li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+    align-items: baseline;
+    border-bottom: 1px solid var(--line);
+    padding: var(--sp-2) 0;
+    font-size: var(--text-sm);
+  }
+  .ev-list code {
+    font-size: var(--text-xs);
+  }
+  .ev-list-meta {
+    color: var(--ink-3);
+    font-size: var(--text-xs);
+  }
+</style>

@@ -58,6 +58,14 @@
   .footer-links a {
     color: var(--ink-2);
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
+  @media (max-width: 760px) {
+    .footer-links a {
+      min-height: 44px;
+    }
   }
   .footer-links a:hover {
     color: var(--ink);

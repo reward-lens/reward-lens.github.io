@@ -1,0 +1,137 @@
+{
+ "ev:6bf316c059230ff4ff99b118b1664631": {
+  "card": "ERR-RB2",
+  "slug": "err-rb2",
+  "observable": "campaign.adjudication.ERR-RB2"
+ },
+ "ev:1acdc14e2fa16124786a9cd0d44a03b2": {
+  "card": "FORECAST-CAT",
+  "slug": "forecast-cat",
+  "observable": "campaign.adjudication.FORECAST-CAT"
+ },
+ "ev:14bc4c666b5b115cf1fd2c86cf209f01": {
+  "card": "STYLE-RMB",
+  "slug": "style-rmb",
+  "observable": "campaign.adjudication.STYLE-RMB"
+ },
+ "ev:5cd71da5713f2b2fb77697318b842401": {
+  "card": "PPE-BON",
+  "slug": "ppe-bon",
+  "observable": "campaign.adjudication.PPE-BON"
+ },
+ "ev:d746d48eef7a5630cecbd3e97a9d9cb8": {
+  "card": "LADDER",
+  "slug": "ladder",
+  "observable": "campaign.adjudication.LADDER"
+ },
+ "ev:c978e3958769ecf93dcf079771a3aedb": {
+  "card": "CHI-DRIFT",
+  "slug": "chi-drift",
+  "observable": "campaign.adjudication.CHI-DRIFT"
+ },
+ "ev:02a1669641150750737afc8291255bf9": {
+  "card": "HUMP",
+  "slug": "hump",
+  "observable": "campaign.adjudication.HUMP"
+ },
+ "ev:0b9b34f7e2af83d3b0ca32a60791a859": {
+  "card": "GAUGE-E19",
+  "slug": "gauge-e19",
+  "observable": "campaign.adjudication.GAUGE-E19"
+ },
+ "ev:095096260d9209c4fb9935cbb215812b": {
+  "card": "GAUGE-XFAM",
+  "slug": "gauge-xfam",
+  "observable": "campaign.adjudication.GAUGE-XFAM"
+ },
+ "ev:137077efe204a6daddd359f54c494453": {
+  "card": "HACK-FORE",
+  "slug": "hack-fore",
+  "observable": "campaign.adjudication.HACK-FORE"
+ },
+ "ev:41058731abf1d0b1590d4f2286e8771c": {
+  "card": "SURGERY",
+  "slug": "surgery",
+  "observable": "campaign.adjudication.SURGERY"
+ },
+ "ev:46e1500c4d39f9821c137ae0b00ac0da": {
+  "card": "VERIF-PRM",
+  "slug": "verif-prm",
+  "observable": "campaign.adjudication.VERIF-PRM"
+ },
+ "ev:e7fd3fee89a0c56cf4465212601d0d26": {
+  "card": "JUDGE-VBC",
+  "slug": "judge-vbc",
+  "observable": "campaign.adjudication.JUDGE-VBC"
+ },
+ "ev:e036326c47c7a0f52330559479e03790": {
+  "card": "VALUES-CONTEST",
+  "slug": "values-contest",
+  "observable": "campaign.adjudication.VALUES-CONTEST"
+ },
+ "ev:426a8cbed7f6d6dfb61d8fe3ed5264a4": {
+  "card": "FORENSIC-RECEIPT",
+  "slug": "forensic-receipt",
+  "observable": "campaign.adjudication.FORENSIC-RECEIPT"
+ },
+ "ev:0c80d9086ebb0ad9704b88a8eefb01fa": {
+  "card": "ATLAS-VCE",
+  "slug": "atlas-vce",
+  "observable": "campaign.adjudication.ATLAS-VCE"
+ },
+ "ev:a34316feccee3beaed93c05ce5888567": {
+  "card": "FACT-KUI",
+  "slug": "fact-kui",
+  "observable": "campaign.adjudication.FACT-KUI"
+ },
+ "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b": {
+  "card": "CAPACITY-WELCH",
+  "slug": "capacity-welch",
+  "observable": "campaign.adjudication.CAPACITY-WELCH"
+ },
+ "ev:54fb272fd011c8ca07a4959f553341ab": {
+  "card": "EVAL-AWARE",
+  "slug": "eval-aware",
+  "observable": "campaign.adjudication.EVAL-AWARE"
+ },
+ "ev:844ad06a5aeb1d89c21c13c19a28cbd2": {
+  "card": "TOPO-HODGE",
+  "slug": "topo-hodge",
+  "observable": "campaign.adjudication.TOPO-HODGE"
+ },
+ "ev:01c81c7185640f9b962b9115f360732e": {
+  "card": "EMB-LORA",
+  "slug": "emb-lora",
+  "observable": "campaign.adjudication.EMB-LORA"
+ },
+ "ev:b37f71c015ebfd697d7deb2a7efb5f7e": {
+  "card": "CAL-TRANSFER",
+  "slug": "cal-transfer",
+  "observable": "campaign.adjudication.CAL-TRANSFER"
+ },
+ "ev:a34457e83cd4eec10d080804a2533e82": {
+  "card": "ADJ-AVP",
+  "slug": "adj-avp",
+  "observable": "campaign.adjudication.ADJ-AVP"
+ },
+ "ev:491f7f378d0b58dfdadebc9aaee7c983": {
+  "card": "CONF-PARTIAL",
+  "slug": "conf-partial",
+  "observable": "campaign.adjudication.CONF-PARTIAL"
+ },
+ "ev:3990df7af1488c08ad62786d879b0b0f": {
+  "card": "META-LEDGER",
+  "slug": "meta-ledger",
+  "observable": "campaign.adjudication.META-LEDGER"
+ },
+ "ev:a7ed2d6b81c5f79458dad733defb3803": {
+  "card": "T3-DECOMP",
+  "slug": "t3-decomp",
+  "observable": "campaign.adjudication.T3-DECOMP"
+ },
+ "ev:9d51086b170b359d58d8eb4bf4f882fb": {
+  "card": "T3-FIELD",
+  "slug": "t3-field",
+  "observable": "campaign.adjudication.T3-FIELD"
+ }
+}

@@ -1,0 +1,229 @@
+/* Styles for the rl-* markup the docs corpus carries (chips, tier keys,
+   trust dots, grid cards). Ported from the original docs stylesheet so the
+   26 pages using this markup render as authored; colors come from the docs
+   palette pipeline (docs/diagrams/palette.json), the same source as the
+   shipped diagram SVGs, so chips and figures on a page stay one language. */
+
+:root {
+  --rl-tier-observational: #0d9488;
+  --rl-tier-causal: #b45309;
+  --rl-tier-vulnerability: #be123c;
+  --rl-trust-exploratory: #94a3b8;
+  --rl-trust-calibrated: #3b82f6;
+  --rl-trust-registered: #7c3aed;
+  --rl-trust-adjudicated: #15803d;
+  --rl-gauge: #0891b2;
+  --rl-accent: #e85d2c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --rl-tier-observational: #2dd4bf;
+  --rl-tier-causal: #f59e0b;
+  --rl-tier-vulnerability: #fb7185;
+  --rl-trust-exploratory: #64748b;
+  --rl-trust-calibrated: #60a5fa;
+  --rl-trust-registered: #a78bfa;
+  --rl-trust-adjudicated: #22c55e;
+  --rl-gauge: #22d3ee;
+  --rl-accent: #fb8c5a;
+}
+}
+
+:root[data-theme="dark"] {
+  --rl-tier-observational: #2dd4bf;
+  --rl-tier-causal: #f59e0b;
+  --rl-tier-vulnerability: #fb7185;
+  --rl-trust-exploratory: #64748b;
+  --rl-trust-calibrated: #60a5fa;
+  --rl-trust-registered: #a78bfa;
+  --rl-trust-adjudicated: #22c55e;
+  --rl-gauge: #22d3ee;
+  --rl-accent: #fb8c5a;
+}
+
+:root[data-theme="light"] {
+  --rl-tier-observational: #0d9488;
+  --rl-tier-causal: #b45309;
+  --rl-tier-vulnerability: #be123c;
+  --rl-trust-exploratory: #94a3b8;
+  --rl-trust-calibrated: #3b82f6;
+  --rl-trust-registered: #7c3aed;
+  --rl-trust-adjudicated: #15803d;
+  --rl-gauge: #0891b2;
+  --rl-accent: #e85d2c;
+}
+
+.rl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  margin: 0.15rem 0 0.7rem;
+}
+
+.rl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.14em 0.62em;
+  border-radius: var(--r-pill);
+  border: 1px solid currentColor;
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.55;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.rl-chip .rl-chip__k {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.65;
+}
+
+.rl-chip--obs {
+  color: var(--rl-tier-observational);
+}
+.rl-chip--causal {
+  color: var(--rl-tier-causal);
+}
+.rl-chip--vuln {
+  color: var(--rl-tier-vulnerability);
+}
+.rl-chip--gauge {
+  color: var(--rl-gauge);
+}
+.rl-chip--works {
+  color: var(--ink-2);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+
+.rl-chip--fill,
+.rl-chip--exploratory,
+.rl-chip--calibrated,
+.rl-chip--registered,
+.rl-chip--adjudicated {
+  border-color: transparent;
+  color: #fff;
+}
+.rl-chip--exploratory {
+  background: var(--rl-trust-exploratory);
+}
+.rl-chip--calibrated {
+  background: var(--rl-trust-calibrated);
+}
+.rl-chip--registered {
+  background: var(--rl-trust-registered);
+}
+.rl-chip--adjudicated {
+  background: var(--rl-trust-adjudicated);
+}
+
+.rl-badge {
+  display: inline-block;
+  padding: 0.12em 0.6em;
+  border-radius: var(--r-pill);
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.rl-badge--observational {
+  background: var(--rl-tier-observational);
+}
+.rl-badge--causal {
+  background: var(--rl-tier-causal);
+}
+.rl-badge--vulnerability {
+  background: var(--rl-tier-vulnerability);
+}
+
+.rl-readout {
+  border-left: 3px solid var(--rl-accent);
+  padding: 0.2rem 0 0.2rem 0.9rem;
+  margin: 0.6rem 0 1.2rem;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+.rl-key {
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+.rl-key .rl-dot {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  margin-right: 0.25em;
+  vertical-align: middle;
+}
+.rl-dot--observational {
+  background: var(--rl-tier-observational);
+}
+.rl-dot--causal {
+  background: var(--rl-tier-causal);
+}
+.rl-dot--vulnerability {
+  background: var(--rl-tier-vulnerability);
+}
+
+.rl-trust {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-weight: 600;
+}
+.rl-trust::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: currentColor;
+}
+.rl-trust--exploratory {
+  color: var(--rl-trust-exploratory);
+}
+.rl-trust--calibrated {
+  color: var(--rl-trust-calibrated);
+}
+.rl-trust--registered {
+  color: var(--rl-trust-registered);
+}
+.rl-trust--adjudicated {
+  color: var(--rl-trust-adjudicated);
+}
+
+/* Landing galleries: the "grid cards" markup passes through the port. */
+.prose .grid.cards > ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-3);
+}
+.prose .grid.cards > ul > li {
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--bg-raised);
+  padding: var(--sp-3) var(--sp-4);
+  margin: 0;
+}
+.prose .grid.cards.rl-obs > ul > li {
+  border-left: 3px solid var(--rl-tier-observational);
+}
+.prose .grid.cards.rl-cau > ul > li {
+  border-left: 3px solid var(--rl-tier-causal);
+}
+.prose .grid.cards.rl-vul > ul > li {
+  border-left: 3px solid var(--rl-tier-vulnerability);
+}
