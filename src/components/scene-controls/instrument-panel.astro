@@ -1,0 +1,169 @@
+---
+/**
+ * The instrument panel: the sticky half of the movement.
+ *
+ * WHAT IS IN HERE AND WHY IT IS NOT IN THE CANVAS. The panel holds the source
+ * plate, the legend and the pause control, and it is complete on its own. A
+ * reader who never gets a canvas, who cannot see it, or who has scripting off
+ * reads which subject is on the bench, where its numbers came from, what the
+ * reading does not establish, and the name and gloss of every part the scene
+ * draws. Nothing on this site depends on interpreting the three-dimensional
+ * image, and this component is where that promise is kept.
+ *
+ * THE CANVAS IS OPTIONAL AND THERE MAY ONLY EVER BE ONE. `mountScene` is off by
+ * default because the homepage already mounts the island in its first viewport,
+ * and a second one would be a second WebGL context in a document whose browser
+ * caps them. A page that has no other instrument passes `mountScene`.
+ *
+ * The panel scrolls inside itself rather than growing past the viewport, so a
+ * long plate on a short screen never pushes the legend under the fold of a
+ * sticky column the reader cannot scroll past.
+ */
+import SceneMount from "../scene/core/SceneMount";
+import SourcePlate from "./source-plate.astro";
+import ObjectLegend from "./object-legend.astro";
+import PauseMotion from "./pause-motion.astro";
+
+interface Props {
+  cases: readonly string[];
+  active: string;
+  /** Mount the one WebGL island here. Only on a page that has no other. */
+  mountScene?: boolean;
+  class?: string;
+}
+
+const { cases, active, mountScene = false, class: extraClass = "" } = Astro.props;
+---
+
+<div class:list={["panel", extraClass]} data-scene-controls>
+  {
+    mountScene && (
+      <div class="panel__viewport" aria-hidden="true">
+        <SceneMount client:idle />
+      </div>
+    )
+  }
+
+  {/*
+    The order is what the reader needs in the order they need it: what is on
+    the bench, the parts they can isolate, the switch that stops the motion,
+    and then the record's scope and limits. The plate used to be whole and
+    directly under the viewport, and its scope and caveat pushed the legend
+    past the bottom of the sticky column on a 900px screen, so the movement's
+    one affordance was never on screen. That was found by opening the capture.
+  */}
+  <div class="panel__body">
+    <SourcePlate cases={cases} active={active} part="head" />
+    <ObjectLegend cases={cases} active={active} />
+    <div class="panel__footer">
+      <PauseMotion />
+    </div>
+    <SourcePlate cases={cases} active={active} part="detail" />
+  </div>
+</div>
+
+<script>
+  /* A side-effect import. The module binds itself once per document and guards
+     against a second run, so a page carrying two panels still has one set of
+     listeners and one bridge. */
+  import "./controls.client";
+</script>
+
+<style>
+  .panel {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+    min-width: 0;
+    min-block-size: 0;
+    overflow-y: auto;
+    /*
+      Scroll anchoring off. The panel swaps blocks of different heights when the
+      subject changes, and the browser's anchoring then shifts the panel's own
+      offset to keep whatever it had anchored to in place, which put the plate's
+      kicker line just above the top edge on the integrated homepage. The reset
+      on a subject change is in `controls.client.ts`; this is what stops the
+      browser from undoing it.
+    */
+    overflow-anchor: none;
+    /* A sticky column that scrolls inside itself still needs its content to be
+       reachable by keyboard, and a focused control inside an overflow container
+       is scrolled into view by the browser. Padding keeps the focus ring off
+       the clipping edge when it does. */
+    padding-inline: var(--space-1);
+    /*
+      Clearance for the site header, and it is a workaround rather than the fix.
+
+      Measured on the integrated homepage: the header is sticky, 65px tall and
+      at the top of the viewport, and the story's sticky column pins at
+      `top: var(--space-7)`, which is 48px. So the first 17px of this panel sits
+      behind the header, and what it clipped was the plate's kicker line. The
+      real fix is one value in `home/story/instrument-story.astro`, which is the
+      build lead's file, so it is reported in the handoff and this keeps the
+      plate legible until it lands. 24px against a 17px shortfall, because the
+      header's height is type and will not stay at exactly 65.
+    */
+    padding-block-start: var(--space-5);
+  }
+
+  .panel__viewport {
+    position: relative;
+    inline-size: 100%;
+    /* The camera's distance was solved so that the bench's twelve world units
+       span a 1440 by 840 box, which is 1.71 to 1. Sixteen to nine is the
+       nearest common ratio to it, so the movement frames what the hero frames
+       rather than cropping the fan. A fixed height would crop it on a short
+       screen; a ratio scales with the column. */
+    aspect-ratio: 16 / 9;
+    /*
+      No `min-block-size: 0` here, and the omission is load-bearing. With it,
+      the grid row this item sits in collapsed to its content, which is nothing
+      at all because the canvas inside is absolutely positioned, while the item
+      itself still resolved its own height from the aspect ratio and overflowed
+      the row. The source plate was then laid out underneath the canvas and the
+      canvas painted over it: the head of the plate was missing from every
+      capture at 1440 and present in the accessibility tree, which is the worst
+      shape a layout bug can take.
+    */
+    pointer-events: none;
+  }
+  .panel__viewport :global(.instrument-scene) {
+    position: absolute;
+    inset: 0;
+  }
+  .panel__viewport :global(canvas) {
+    display: block;
+    inline-size: 100% !important;
+    block-size: 100% !important;
+  }
+
+  .panel__body {
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  .panel__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  /*
+    The sticky column's own ceiling, restated.
+
+    `max-block-size: 100%` looks like the right answer and is not: the parent's
+    ceiling is a max, its height is auto, so the percentage resolves against the
+    panel's own content and the browser treats it as none. The panel then
+    overflowed its column and painted over the section below it, which is what
+    the 1440 capture showed. The value is `home/story/instrument-story`'s, which
+    is the build lead's file and cannot be read from here, so it is duplicated
+    with its source named rather than guessed at.
+  */
+  @media (min-width: 64rem) /* --bp-lg */ {
+    .panel {
+      max-block-size: calc(100dvh - var(--space-9));
+    }
+  }
+</style>

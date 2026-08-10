@@ -2,8 +2,10 @@
 title: Trajectory graders
 description: An agent's reward is over a whole episode. Can you point an experiment at the receipt it lied about?
 section: models-and-signals
-order: 27
+order: 28
 source: docs/content/models-and-signals/trajectory-graders.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -71,4 +73,4 @@ The span types are only as good as the spans you feed in. If a trajectory arrive
 
 ## Reference
 
-[`TrajectoryRM`](/docs/reference/signals/#reward_lens.signals.trajectory.TrajectoryRM), and the trajectory schema in [the data reference](/docs/reference/data/).
+[`TrajectoryRM`](/docs/api/signals/#reward_lens.signals.trajectory.TrajectoryRM), and the trajectory schema in [the data reference](/docs/api/data/).

@@ -2,8 +2,10 @@
 title: Component attribution
 description: Which heads and MLPs actually wrote the score?
 section: instruments
-order: 32
+order: 33
 source: docs/content/instruments/attribution.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -84,4 +86,4 @@ One more concrete limit. The residual-stream decomposition is exact at the block
 
 The number arrives at trust level **EXPLORATORY**. The decomposition is exact, but exact is not calibrated: no calibration provider is wired in this release, so no scorecard yet certifies that a large attribution share predicts anything about the model's behavior under optimization. Exploratory means unaudited, not wrong. Trust the arithmetic (the shares genuinely sum to the margin), compare shares across models freely because the gauge is invariant, and treat the ranking as a lead to confirm causally rather than a conclusion. What would move it up the ladder is a scorecard on organisms with known circuits; that machinery is [calibration and organisms](/docs/discipline/calibration-and-organisms/).
 
-Full signatures and return fields: [`DirectLinearAttribution`](/docs/reference/measure/#reward_lens.measure.battery.dla.DirectLinearAttribution). To attribute a real score end to end, see [attribute a reward score](/docs/how-to/attribute-a-score/).
+Full signatures and return fields: [`DirectLinearAttribution`](/docs/api/measure/#reward_lens.measure.battery.dla.DirectLinearAttribution). To attribute a real score end to end, see [attribute a reward score](/docs/how-to/attribute-a-score/).

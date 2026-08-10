@@ -1,0 +1,567 @@
+---
+/**
+ * /see/grader/  ·  act three
+ *
+ * Purpose, from pages/see-grader.md:6: show that the thing producing the scores
+ * in acts one and two is itself a measurement device that nobody calibrated,
+ * and that this library's honest answer to most questions about it is a
+ * refusal. A reader should leave understanding that a refusal is a reading, not
+ * a failure.
+ *
+ * THIS ACT CARRIES THE PROJECT'S SELF-INDICTMENT and part 5c is not optional
+ * and is not softened. It is here rather than on the homepage because here it
+ * is evidence, offered by a page that has just spent four parts being hard on
+ * other people's instruments, and there it would be a pitch.
+ *
+ * The one thing to resist in 5c is framing it as a strength. It is stated, its
+ * numbers are given, and the page moves on. No aggregate "N of M predictions
+ * held" is published in either form: the summarising sentence is not
+ * preregistered and the two available counts, 53 hypotheses and 17 headline
+ * calls, are different counts that must not be mixed.
+ *
+ * THE LOG-ONLY STATE IS 0, 0, 1, 1, AND THIS PAGE IS BUILT TO THAT CORRECTION
+ * RATHER THAN AROUND IT (C-46). The claim this act was written against said
+ * log-only access produces zero readings and thirteen refusals ON EVERY CARD.
+ * Measured from the release artifacts: is_equiv and swebench drop to zero;
+ * verl_gsm8k and verl_search_r1 keep exactly one, the field countable from a
+ * log alone. The upstream generator produced the slogan by interpolating one
+ * card's numbers and stating them of four.
+ *
+ * The corrected version is the better one and this page makes that point: it
+ * says what a log actually buys, which is almost nothing and not literally
+ * nothing, and that distinction is the kind of thing the whole act is about.
+ * Nothing here states a count; every count is taken from the fields being
+ * rendered.
+ *
+ * ACT THREE'S NUMBERS CITE DOCUMENTS, NOT RECORDS, AND THAT IS AN ESCALATION.
+ * grader-cards.json carries an evidenceId on every card and on every bare
+ * handler count. NOT ONE OF THE EIGHT RESOLVES against evidence-index.json,
+ * which holds the campaign's twenty-seven. A fabricated resolution is the one
+ * defect that would discredit every other number on the site, so the cards cite
+ * the rendered artifacts the generator read, each with its sha256 in the same
+ * file. Reported to P1 with the packet.
+ *
+ * TWO COPY PLACEHOLDERS HAVE NO GENERATED FIELD AND THEIR SENTENCES ARE
+ * TRUNCATED RATHER THAN HALF-FILLED.
+ *   {{gold_pairs}}          240, in GROUND-TRUTH.md §4.3 and inside the card's
+ *                           own corpus string. No numeric field carries it.
+ *   {{mutants_killed_others}}  "2, 24 and 26". Three per-subject values that a
+ *                           route may not join into one number. The comparison
+ *                           they exist to make renders as the four-subject
+ *                           table beside the zero, which is where the page file
+ *                           wants it and is stronger than the sentence.
+ */
+import ActLayout from "@components/acts/act-layout.astro";
+import ActSection from "@components/acts/act-section.astro";
+import ActMeta from "@components/acts/act-meta.astro";
+import ActQuestion from "@components/acts/act-question.astro";
+import ActProse from "@components/acts/act-prose.astro";
+import ActBlock from "@components/acts/act-block.astro";
+import ActFacts from "@components/acts/act-facts.astro";
+import ActGraderCards from "@components/acts/act-grader-cards.astro";
+import ActRefusalList from "@components/acts/act-refusal-list.astro";
+import BundlePanel from "@components/acts/bundle-panel.astro";
+import VersionChip from "@components/base/version-chip.astro";
+import FigureFrame from "@components/base/figure-frame.astro";
+import CodeBlock from "@components/base/code-block.astro";
+import { requireRelease, trustLadder } from "@components/base/data";
+import { copy, ui } from "../../copy";
+import { text, publicRecord, publicRefusals } from "../../lib/see-public-text";
+import cards from "@data/cards.json";
+import graderCards from "@data/grader-cards.json";
+import refusals from "@data/refusals.json";
+import bundles from "@data/bundles.json";
+
+const acts = copy.acts as Record<string, any>;
+const act = acts.grader as Record<string, string>;
+const parts = acts.parts.grader as Record<string, string>;
+const figures = acts.figures as Record<string, Record<string, string>>;
+const release = requireRelease("/see/grader/");
+
+/* THIS PROJECT'S AUDIT OF ITS OWN CALIBRATION, read out of the archive's card
+   store. The store is the v2 research log's and it keys a result by
+   `adjudication_ev`, which is the field this route reads and never renders:
+   src/lib/see-public-text.ts turns it into a human source and the record page
+   keeps the store's own names, which is what D-05 reserves it for. */
+const audit = (cards as any[]).find((c) => c.id === "meta-ledger");
+if (!audit) {
+  throw new Error(
+    "/see/grader/: this project's audit of its own calibration is not in " +
+      "src/data/cards.json. Part 5e is not optional (pages/see-grader.md:15).",
+  );
+}
+const hypothesis = (metric: string) => {
+  const h = audit.hypotheses.find((x: any) => x.metric === metric);
+  if (!h) {
+    throw new Error(
+      `/see/grader/: no frozen prediction on "${metric}" in the calibration ` +
+        `audit. Part 5e states both its numbers against both the thresholds ` +
+        `fixed before the data and it does not state one without the other.`,
+    );
+  }
+  return h;
+};
+const brier = hypothesis("brier_directional");
+const coverage = hypothesis("interval_coverage_0p8");
+
+/* The stored record id, and the public wording for what the record is OF. The
+   number stays bound to the record so a reader can still open it. */
+const auditEvidence: string = audit.adjudication_ev;
+const auditRecord = publicRecord("meta-ledger");
+
+const gc = graderCards as any;
+const bundle = (bundles as any).bundles.find((b: any) => b.route === "/see/grader/");
+if (!bundle) {
+  throw new Error(
+    "/see/grader/: no bundle for this route in src/data/bundles.json. This is " +
+      "the strongest section 6 of the three acts and it does not render a " +
+      "download link with nothing behind it.",
+  );
+}
+
+/* The rendered card artifact each number came from, by card and access state.
+   Every one is in meta.derivedFrom with its sha256, so a reader can check the
+   file the generator actually read. */
+const docFor = (key: string, access: string) => {
+  const want = access === "full" ? `cards/${key}.txt` : `cards/${key}-log-only.txt`;
+  const found = gc.meta.derivedFrom.find((d: any) => d.document.endsWith(want));
+  if (!found) {
+    throw new Error(
+      `/see/grader/: no artifact in grader-cards.json:meta.derivedFrom for ` +
+        `"${want}". Act three's numbers cite the artifact they were read from ` +
+        `and this one names none.`,
+    );
+  }
+  return { document: found.document, line: null };
+};
+const TOTALS_DOC = { document: gc.meta.derivedFrom[0].document, line: null };
+const isEquiv = gc.cards.find((c: any) => c.key === "is_equiv");
+if (!isEquiv) {
+  throw new Error(
+    "/see/grader/: the mathematical equivalence checker is not in " +
+      "src/data/grader-cards.json. It is the subject of part 4's sharp " +
+      "finding and the part does not render without it.",
+  );
+}
+const CHECKER_DOC = docFor("is_equiv", "full");
+
+const num = (v: number) => String(v);
+
+/* 5e's four numbers, each bound to the audit's own record. The coin and the
+   coverage figure are the thresholds the predictions were frozen against
+   before the data existed, which is what makes them comparisons rather than
+   opinions. */
+const bindIndictment = {
+  brier: {
+    display: num(brier.observed),
+    evidenceId: auditEvidence,
+    record: auditRecord,
+    label: "directional Brier score",
+  },
+  brier_coin: {
+    display: num(brier.threshold),
+    evidenceId: auditEvidence,
+    record: auditRecord,
+    label: "the threshold a coin sets",
+  },
+  coverage: {
+    display: num(coverage.observed),
+    evidenceId: auditEvidence,
+    record: auditRecord,
+    label: "interval coverage",
+  },
+  coverage_registered: {
+    display: num(coverage.threshold),
+    evidenceId: auditEvidence,
+    record: auditRecord,
+    label: "the coverage threshold fixed before the data",
+  },
+};
+
+/* Part 4's numbers. Every one is a field of a generated record and none is
+   arithmetic done here. */
+const bindResult = {
+  card_fields_total: { display: num(gc.meta.fullAccess.fields), source: TOTALS_DOC, label: "card fields" },
+  card_fields_read: { display: num(gc.meta.fullAccess.read), source: TOTALS_DOC, label: "fields read" },
+  card_fields_refused: {
+    display: num(gc.meta.fullAccess.refused),
+    source: TOTALS_DOC,
+    label: "fields refused",
+  },
+};
+const bindMutation = {
+  mutant_count: { display: num(isEquiv.competentMutants), source: CHECKER_DOC, label: "competent mutants" },
+  mutation_score: { display: num(isEquiv.mutationScore), source: CHECKER_DOC, label: "mutation score" },
+  // gold_pairs and mutants_killed_others are deliberately absent. Header note.
+};
+const bindHandlers = {
+  bare_handlers: { display: num(isEquiv.bareHandlerCount), source: CHECKER_DOC, label: "bare handlers" },
+  checker_lines: { display: num(isEquiv.sourceLines), source: CHECKER_DOC, label: "source lines" },
+};
+const bindMetamorphic = {
+  metamorphic_violations: {
+    display: num(isEquiv.metamorphicViolations),
+    source: CHECKER_DOC,
+    label: "metamorphic violations",
+  },
+  metamorphic_pairs: {
+    display: num(isEquiv.metamorphicApplicablePairs),
+    source: CHECKER_DOC,
+    label: "applicable pairs",
+  },
+};
+/* The access sentence's one number, counted rather than stated: the lowest
+   read count across the four cards at log-only access is what "drop to" means,
+   and it is read off the data rather than written here. */
+const logOnlyFloor = Math.min(...gc.cards.map((c: any) => c.access.log_only.readCount));
+const bindAccess = {
+  log_only_zero_read: {
+    display: num(logOnlyFloor),
+    source: docFor("is_equiv", "log_only"),
+    label: "fields read at log-only access",
+  },
+};
+
+/**
+ * Truncate at the first unfillable clause, and never past a sentence boundary.
+ * The same helper act one carries, for the same reason: a deletion that leaves
+ * a trailing clause referring to the deleted one produces a false sentence
+ * nobody wrote. This only ever deletes.
+ */
+const truncateUnfilled = (template: string, filled: Record<string, unknown>) => {
+  const missing = [...template.matchAll(/\{\{\s*([a-z0-9_.]+)\s*\}\}/gi)]
+    .map((x) => x[1])
+    .filter((k) => !(k in filled));
+  if (!missing.length) return template;
+  const holds = (s: string) => missing.some((k) => s.includes(`{{${k}}}`));
+
+  return template
+    .split(/(?<=\.)\s+/)
+    .map((sentence) => {
+      const clauses = sentence.split(/,\s+/);
+      const at = clauses.findIndex(holds);
+      if (at === -1) return sentence;
+      if (at === 0) return "";
+      const kept = clauses.slice(0, at).join(", ");
+      return kept.endsWith(".") ? kept : `${kept}.`;
+    })
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+};
+
+/* Humanised field names from the generated data. copy.yaml carries no column
+   headings for these components; escalated with the packet. */
+const cardLabels = {
+  read: "read",
+  refused: "refused",
+  fields: "fields",
+  access: "access",
+  subjects: "subjects",
+};
+const refusalLabels = {
+  reasons: "refusal reasons",
+  remedy: "remedy",
+  answerable: "answerable",
+};
+---
+
+<ActLayout title={act.title} description={act.question}>
+  <VersionChip slot="banner" describes={release.unpublished ?? release.latest} />
+
+  {/* ---------------------------------------------------------------- part 1 */}
+  <ActSection part={1} heading={parts.question} headingLevel={1}>
+    {/* This question lands harder here than it would have first. Acts one and
+        two both rest on scores a grader produced, so asking whether the grader
+        is sound is a question about everything the reader has already accepted.
+        The ordering is what gives it force. Do not reorder the acts. */}
+    <ActMeta
+      slot="margin"
+      items={[
+        { label: "subjects", value: "four scoring programs" },
+        { label: "reproduction", value: ui.not_reproduced },
+      ]}
+    />
+    <ActQuestion question={act.question} />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 2 */}
+  <ActSection part={2} heading={parts.setup}>
+    <ActMeta
+      slot="margin"
+      items={[
+        { label: "subjects", value: "four scoring programs" },
+        { label: "access", value: gc.meta.accessStates.join(", ") },
+        { label: "trust", value: trustLadder.levels[0].name },
+      ]}
+    />
+    <ActProse text={act.setup} />
+
+    <ActFacts
+      class="gr__facts"
+      caption={parts.setup}
+      facts={[
+        { label: "subjects", display: num(gc.meta.subjectCount), source: TOTALS_DOC },
+        { label: "fields per card", display: num(gc.meta.fieldsPerCard), source: TOTALS_DOC },
+        ...gc.cards.map((c: any) => ({
+          label: c.displayName,
+          display: num(c.graderCalls),
+          source: docFor(c.key, "full"),
+          compare: c.subject.corpus,
+        })),
+      ]}
+      compareLabel="corpus"
+    />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 3 */}
+  <ActSection part={3} heading={parts.instrument} width="wide">
+    <ActGraderCards
+      cards={gc.cards}
+      accessStates={gc.meta.accessStates}
+      sourceFor={docFor}
+      labels={cardLabels}
+    />
+
+    {/* The access comparison in the library's own words, beneath the exhibit
+        that performs it. It is the strongest single argument in this act and
+        the corrected version is stronger than the slogan it replaces. */}
+    <ActBlock heading={act.access_heading} level={3}>
+      <ActProse text={act.access_body} bind={bindAccess} />
+      <ActFacts
+        class="gr__facts"
+        caption={act.access_heading}
+        facts={gc.cards.map((c: any) => ({
+          label: c.displayName,
+          display: num(c.access.log_only.readCount),
+          source: docFor(c.key, "log_only"),
+          compare: num(c.access.log_only.refusedCount),
+        }))}
+        compareLabel="refused"
+      />
+    </ActBlock>
+
+    {/* The vocabulary those reason names come from, rendered where a reader
+        met them. Flat, seventeen, ungrouped: D-09. */}
+    <ActRefusalList
+      reasons={publicRefusals(refusals.reasons as any) as any}
+      question={refusals.remedySort.question}
+      note={refusals.remedySort.note}
+      labels={refusalLabels}
+    />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 4 */}
+  <ActSection part={4} heading={parts.result}>
+    {/* 4a. Across four cards, more than half the fields refused. A majority of
+        refusals is not a failure of the instrument. It is the instrument
+        declining to produce numbers it cannot justify, on four programs that
+        are producing numbers in production right now without declining
+        anything. */}
+    <ActBlock heading={act.result_heading} level={3}>
+      <ActProse text={act.result} bind={bindResult} />
+      <ActFacts
+        class="gr__facts"
+        caption={act.result_heading}
+        facts={gc.cards.map((c: any) => ({
+          label: c.displayName,
+          display: num(c.access.full.refusedCount),
+          source: docFor(c.key, "full"),
+          compare: num(c.access.full.readCount),
+        }))}
+        compareLabel="read"
+      />
+    </ActBlock>
+
+    {/* 4b. The sharp finding, WITH ITS SCOPE BESIDE THE ZERO rather than in
+        part 5. The comparison to the other three subjects is what makes a score
+        of zero a finding rather than a broken harness, so a reader cannot see
+        the zero without seeing what makes it meaningful. */}
+    <ActBlock heading={act.mutation_heading} level={3}>
+      <ActProse text={truncateUnfilled(act.mutation, bindMutation)} bind={bindMutation} />
+
+      <ActProse class="gr__block-p" text={act.handlers} bind={bindHandlers} />
+      <ActProse class="gr__block-p" text={act.metamorphic} bind={bindMetamorphic} />
+
+      {/* WHAT A SCORE OF ZERO IS NOT, printed against the zero rather than in
+          part 5. A reader who takes an absence of detection on one checker for
+          a defect rate across verifiers has over-read the strongest number on
+          the page, and the correction has to arrive before they leave the
+          block. The denominator is beside it in the figure below. */}
+      <ActProse class="gr__block-p" text={text("acts.grader.mutation_scope")} />
+    </ActBlock>
+
+    {/* Fig. 3.2, THE SLOT S2's FIGURE FILM TAKES, reserved and filled rather
+        than left empty. pages/see-grader.md:129 says the slot renders the
+        static composition until the film delivers, and that the two are the
+        same data with no visible gap either way. That is exactly true here: the
+        film draws sixty mutants against a 240-pair corpus with the other three
+        subjects' kill counts beside the zero, and so does this table.
+
+        THE ARTIFACT IS NOT REACHABLE FROM THIS SITE YET, and that is reported
+        rather than worked around. `film/scripts/render.mjs:288` emits
+        `figure/see-grader.webm` and its poster into `film/out/`, which is
+        Remotion's own tree; nothing copies either into `site/public/`, so there
+        is no URL to point `kind="film"` at. When that path exists the frame
+        gains `src` and `poster` and nothing else here changes.
+
+        The comparison sits INSIDE the frame with the zero, because a reader
+        cannot be allowed to see a mutation score of zero without seeing that
+        the same instrument kills 2, 24 and 26 on the other three. That is what
+        makes it a finding rather than a broken harness, and it is why it is
+        here and not in part 5. */}
+    <FigureFrame
+      slot="figure"
+      number="3.2"
+      title={figures.mutation_survival.title}
+      scope={figures.mutation_survival.scope}
+      caption={figures.mutation_survival.caption}
+      bleed={true}
+    >
+      <ActFacts
+        caption={figures.mutation_survival.title}
+        facts={gc.cards.map((c: any) => ({
+          label: c.displayName,
+          display: num(c.killedMutants),
+          source: docFor(c.key, "full"),
+          compare: num(c.competentMutants),
+        }))}
+        compareLabel="competent mutants"
+      />
+    </FigureFrame>
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 5 */}
+  <ActSection part={5} heading={parts.not_established}>
+    {/* 5a. What four subjects do not license. The sentence says none of the
+        four is a rollout from a policy under training; the table is the
+        measured form of that sentence rather than an assertion of it. Every
+        card records PRE_RUN as its phase and PROGRAM as its substrate, which is
+        exactly the claim, readable off the data. */}
+    <ActProse text={act.not_established} />
+    <ActFacts
+      class="gr__facts"
+      caption={act.not_established.split(".")[0]}
+      facts={gc.cards.map((c: any) => ({
+        label: c.displayName,
+        display: c.phase,
+        source: docFor(c.key, "full"),
+        compare: c.substrate,
+      }))}
+      compareLabel="substrate"
+    />
+
+    {/* 5b. THE LIMIT ON PART 4's OWN INSTRUMENT, which nothing else on the page
+        states. The metamorphic arm reports zero violations on one of the four
+        subjects and its applicable-pair count there is also zero, so that zero
+        is not a reading: it is an instrument with nothing to read. Printing it
+        beside the other three is the same discipline part 4b applies to the
+        mutation score, turned on the page's own evidence. */}
+    {/* Split on the comma, not on the period. `acts.grader.metamorphic` carries
+        two placeholders in its second clause, and a period-split heading
+        shipped them into rendered HTML as literal `{{...}}`. The first clause
+        is a complete phrase and holds no placeholder. */}
+    <ActBlock heading={act.metamorphic.split(",")[0]} level={3}>
+      <ActFacts
+        class="gr__facts"
+        caption={act.metamorphic.split(",")[0]}
+        facts={gc.cards.map((c: any) => ({
+          label: c.displayName,
+          display: String(c.metamorphicViolations),
+          source: docFor(c.key, "full"),
+          compare: String(c.metamorphicApplicablePairs),
+        }))}
+        compareLabel="applicable pairs"
+      />
+    </ActBlock>
+
+    {/* 5c. WHY the thirty refused, which bounds what a refusal establishes. A
+        RECORD_INCOMPLETE refusal says something about the record it was handed
+        and nothing about the grader, and twenty-one of the thirty are that. The
+        act's argument survives it and is narrower than it first reads. */}
+    <ActBlock heading={text("acts.grader.refusal_reasons_heading")} level={3}>
+      <ActProse text={text("acts.grader.refusal_reasons_body")} />
+      <ActFacts
+        class="gr__facts"
+        caption={text("acts.grader.refusal_reasons_heading")}
+        facts={Object.entries(gc.meta.fullAccess.byReason).map(([reason, n]) => ({
+          label: reason,
+          display: String(n),
+          source: TOTALS_DOC,
+        }))}
+      />
+    </ActBlock>
+
+    {/* 5d. The top rung is defined, enforced, documented, and empty. The
+        sentence is scoped and the scope is load-bearing: nothing IN THIS
+        REPOSITORY has reached it, not the stronger and unverified claim that
+        nothing ever can (D-15). */}
+    <ActBlock heading={(trustLadder as unknown as { heading: string }).heading} level={3}>
+      {/* THE RUNGS THEMSELVES ARE NOT DRAWN HERE, and that is a deliberate
+          change. Two of the four rung names are the archive's own vocabulary
+          for a frozen prediction and for one that held, and this route's whole
+          job is to read as an audit of a scoring program rather than as
+          research-log bookkeeping. The sentence is the result: the top rung is
+          defined, enforced, documented, and empty. The ladder itself, with all
+          four names and what each licenses, is /limits/'s to render, and that
+          is the page a reader who wants the scheme should be on. */}
+      <ActProse text={act.ladder_empty} />
+    </ActBlock>
+
+    {/* 5e. This project scored its own calibration, and failed. Both Brier
+        numbers render adjacent, so 0.26 against 0.25 reads as "worse than a
+        coin" without arithmetic. It is here rather than on the homepage
+        because here it is evidence, offered by a page that has just spent four
+        parts being hard on other people's instruments, and there it would be a
+        pitch. Do not soften it and do not frame it as a strength. */}
+    <ActBlock heading={text("acts.grader.self_indictment_heading")} level={3}>
+      <ActProse text={text("acts.grader.self_indictment")} bind={bindIndictment} />
+      <ActProse class="gr__block-p" text={act.self_indictment_note} />
+    </ActBlock>
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 6 */}
+  <ActSection part={6} heading={parts.reproduce}>
+    <CodeBlock code={bundle.command} lang="bash" verified={true} label={bundle.filename} />
+    <BundlePanel bundle={bundle} requirements={act.bundle_requirements} />
+  </ActSection>
+</ActLayout>
+
+<style>
+  /* THESE SELECTORS ARE GLOBAL AND THAT IS NOT LAZINESS. Astro scopes a page's
+     styles by stamping `data-astro-cid-<page>` on elements in the PAGE's own
+     markup, and a child component's root element carries only its own id. Every
+     spacing class this route hands to a component was therefore inert: the rule
+     compiled to `.gr__facts[data-astro-cid-<page>]` and matched nothing,
+     which is why prose and the table beneath it sat with no interval between
+     them on every part of this route. Invisible in the code, obvious in the
+     picture.
+
+     The names are route-prefixed, so a global rule here cannot collide with
+     anything: `gr__*` exists on this route and nowhere else. */
+  :global(.gr__facts),
+  :global(.gr__block-p) {
+    margin-block-start: var(--space-5);
+  }
+
+  .gr__scope {
+    margin-block-start: var(--space-4);
+  }
+
+  /* The four rungs in order, the fourth hollow. A list, not a progress bar: a
+     progress treatment would frame the empty rung as incompleteness, and it is
+     the result. */
+  .gr__ladder {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .gr__rung {
+    min-width: 0;
+  }
+</style>

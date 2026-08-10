@@ -1,0 +1,379 @@
+---
+/**
+ * figure-frame  ·  design/components/figure-frame.md
+ *
+ * One frame, one numbering, one caption structure and one provenance for every
+ * figure on the site, so a chart on a documentation page is trusted exactly as
+ * much as one on the homepage. Roughly ninety instances.
+ *
+ * The frame holds four kinds of content and must not care which: a static SVG,
+ * a raster in two themes, a hydrated interactive island, and a silent looping
+ * figure film. Nothing changes between them except what the body slot contains
+ * and whether a pause control appears. That uniformity is what makes
+ * DECISIONS.md D-11's transplanted principle survive: the tool's own rendered
+ * output is content, not something to be redrawn.
+ *
+ * The <figure> is never focusable. Giving the frame a tabindex so the whole
+ * thing can be tabbed to is the mistake this component is most likely to be
+ * built with; it is not a control. Only its links, its pause button and its
+ * island's own controls are in the tab order.
+ *
+ * A figure legible at 1440 and mush at 390 is a defect, not a responsive
+ * success. The frame does not scale a wide chart down; the page swaps what is
+ * inside it.
+ */
+import TrustBadge from "./trust-badge.astro";
+import { ui } from "../../copy";
+
+interface Download {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  /** "1.2". Rendered as FIG. 1.2. Assigned by the page, sequential within it. */
+  number: string;
+  /** From copy.yaml. Set in type-mono-label, caps. */
+  title: string;
+  /** The right end of the header bar. Never a value, always a scope. */
+  scope?: string | null;
+  /** From copy.yaml. Describes the shape, not the title. */
+  caption: string;
+  trust?: string | null;
+  evidenceId?: string | null;
+  /** The caption row's record link text. Defaults to copy.yaml's own. */
+  evidenceLabel?: string | null;
+  downloads?: Download[];
+  kind?: "static" | "interactive" | "film";
+  /** kind="film" only. Under 400 KB, VP9 or AV1, with a WebP poster. */
+  src?: string | null;
+  poster?: string | null;
+  /** true lets the body slot use the full grid width. */
+  bleed?: boolean;
+  class?: string;
+}
+
+const {
+  number,
+  title,
+  scope = null,
+  caption,
+  trust = null,
+  evidenceId = null,
+  evidenceLabel = null,
+  downloads = [],
+  kind = "static",
+  src = null,
+  poster = null,
+  bleed = false,
+  class: extraClass = "",
+} = Astro.props;
+
+// A frame with no body fails the build. There is no empty state.
+if (kind === "film" ? !src : !Astro.slots.has("default")) {
+  throw new Error(
+    `figure-frame "FIG. ${number} ${title}": no body. ` +
+      `components/figure-frame.md: "Empty: does not exist. A frame with no body fails ` +
+      `the build."`,
+  );
+}
+const uid = `fig-${number.replace(/[^0-9a-z]/gi, "-")}`;
+const headId = `${uid}-head`;
+---
+
+<figure
+  class:list={["ff", `ff--${kind}`, bleed && "ff--bleed", extraClass]}
+  data-figure
+>
+  <div class="ff__head type-mono-label" id={headId}>
+    <span class="ff__id">{ui.figure_prefix} {number} · {title}</span>
+    {scope && <span class="ff__scope">{scope}</span>}
+  </div>
+
+  <div class="ff__body">
+    {
+      kind === "film" ? (
+        <>
+          <video
+            class="ff__film"
+            src={src!}
+            poster={poster ?? undefined}
+            muted
+            loop
+            playsinline
+            preload="none"
+            data-film
+          />
+          <button
+            type="button"
+            class="ff__pause type-mono-label"
+            aria-pressed="false"
+            data-film-toggle
+            data-play={ui.film_play}
+            data-pause={ui.film_pause}
+          >
+            {ui.film_play}
+          </button>
+        </>
+      ) : (
+        <slot />
+      )
+    }
+  </div>
+
+  {
+    kind === "interactive" && (
+      <div class="ff__fallback" data-fallback>
+        <slot name="fallback" />
+      </div>
+    )
+  }
+
+  <figcaption class="ff__caption" aria-describedby={headId}>
+    <p class="ff__caption-text type-body-sm">{caption}</p>
+    <div class="ff__caption-row">
+      {trust && <TrustBadge level={trust} form="chip" />}
+      {
+        (evidenceId || downloads.length > 0) && (
+          <span class="ff__links">
+            {evidenceId && (
+              <a class="ff__link type-mono-sm" href={`/evidence/${evidenceId.replace(/^ev:/, "")}/`}>
+                {evidenceLabel ?? ui.provenance_record_link} ›
+              </a>
+            )}
+            {downloads.map((d) => (
+              <a class="ff__link type-mono-sm" href={d.href} download>
+                <svg
+                  class="ff__glyph"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" />
+                </svg>
+                {d.label}
+              </a>
+            ))}
+          </span>
+        )
+      }
+    </div>
+  </figcaption>
+</figure>
+
+<script>
+  // The film never autoplays and the control is a real button whose
+  // aria-pressed tracks it. Under prefers-reduced-motion the control is absent
+  // rather than disabled, which the stylesheet handles, so nothing is wired.
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduced) {
+    for (const toggle of document.querySelectorAll<HTMLButtonElement>(
+      "[data-film-toggle]",
+    )) {
+      const film = toggle.parentElement?.querySelector<HTMLVideoElement>(
+        "[data-film]",
+      );
+      if (!film) continue;
+      // The label names the action the control is about to take, and both
+      // words come from copy.yaml through the two data attributes. The film is
+      // server-rendered paused, so the control starts on `play`.
+      //
+      // The label and aria-pressed follow the film's own play and pause
+      // events rather than the click. A source that cannot play never fires
+      // one, so the control does not announce itself as playing something
+      // that is not.
+      film.addEventListener("play", () => {
+        toggle.setAttribute("aria-pressed", "true");
+        toggle.textContent = toggle.dataset.pause ?? toggle.textContent;
+      });
+      film.addEventListener("pause", () => {
+        toggle.setAttribute("aria-pressed", "false");
+        toggle.textContent = toggle.dataset.play ?? toggle.textContent;
+      });
+      toggle.addEventListener("click", () => {
+        if (film.paused) void film.play();
+        else film.pause();
+      });
+    }
+  }
+</script>
+
+<style>
+  .ff {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+    background: var(--surface-1);
+    /* tokens.css:208 calls --line-strong "a card or figure boundary". */
+    border: var(--border-w) solid var(--line-strong);
+    border-radius: var(--radius-2);
+    overflow: hidden;
+  }
+
+  /* --- header bar ---
+     States the figure's identity and its N in one horizontal band, so the
+     reader knows the scope before reading the shape. It sits on --surface-2,
+     so its text is --ink-2 and never --ink-3. */
+  .ff__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    min-width: 0;
+    padding: var(--space-3) var(--space-5);
+    background: var(--surface-2);
+    border-block-end: var(--border-w) solid var(--line);
+    color: var(--ink-2);
+  }
+  .ff__id,
+  .ff__scope {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  /* The scope moves onto a second line rather than truncating — and `flex:
+     none` was what stopped it doing so. `none` is `0 0 auto`: the item is
+     frozen at its max-content width and may not shrink, so `min-width: 0` and
+     `overflow-wrap: anywhere` above had nothing to act on. The head bar wraps,
+     the scope lands on its own line still at max-content, and the frame's own
+     `overflow: hidden` cuts it. At 390 that read as "…KILLS A SUB" mid-word.
+
+     `0 1 auto` is the default and it is written out rather than deleted so the
+     next person to reach for `flex: none` here reads why it is not. */
+  .ff__scope {
+    flex: 0 1 auto;
+  }
+
+  .ff__body {
+    position: relative;
+    min-width: 0;
+    padding: var(--space-5);
+  }
+  .ff--bleed .ff__body {
+    padding: 0;
+  }
+  .ff__body :global(img),
+  .ff__body :global(svg),
+  .ff__body :global(video) {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  .ff__film {
+    inline-size: 100%;
+  }
+  .ff__pause {
+    position: absolute;
+    inset-block-end: var(--space-4);
+    inset-inline-end: var(--space-4);
+    color: var(--ink);
+    background: var(--surface-2);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+  }
+  .ff__pause:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  /* Absent, not disabled. */
+  @media (prefers-reduced-motion: reduce) {
+    .ff__pause {
+      display: none;
+    }
+  }
+
+  /* The interactive fallback: the data as a table beneath the poster. Nothing
+     is lost with scripting off, only operability, so this is removed once the
+     island has hydrated rather than hidden ahead of time. */
+  .ff__fallback {
+    border-block-start: var(--border-w) solid var(--line);
+    padding: var(--space-4) var(--space-5);
+    min-width: 0;
+  }
+
+  /* --- caption --- */
+  .ff__caption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-4) var(--space-5) var(--space-5);
+    border-block-start: var(--border-w) solid var(--line);
+  }
+  .ff__caption-text {
+    color: var(--ink-2);
+    margin: 0;
+    max-inline-size: min(var(--measure-caption), 100%);
+    min-width: 0;
+  }
+
+  /* Wraps, trust chip first and downloads last. It must wrap and not clip at
+     390. */
+  .ff__caption-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .ff__links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .ff__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    /* ink3-ok: the caption sits on --surface-1 (4.85:1). The only raised fill
+       in this file is the header bar, whose text is --ink-2. */
+    color: var(--ink-3); /* ink3-ok: the caption sits on --surface-1, 4.85:1 */
+    min-width: 0;
+  }
+  .ff__link:hover {
+    color: var(--ink);
+  }
+  .ff__link:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  /* One of the four glyphs in DESIGN.md §9: 1.5px stroke, 16px on a 24px box. */
+  .ff__glyph {
+    inline-size: var(--space-4);
+    block-size: var(--space-4);
+    flex: none;
+  }
+
+  /* Below --bp-md the frame loses its side padding and the body goes edge to
+     edge inside the border. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .ff__head,
+    .ff__caption,
+    .ff__fallback {
+      padding-inline: var(--space-4);
+    }
+    .ff__body {
+      padding: var(--space-4);
+    }
+    .ff--bleed .ff__body {
+      padding: 0;
+    }
+  }
+
+  @media print {
+    .ff__pause {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,14 @@
+{
+ "contentHash": "cdabe24af64fdc8242519264fe7a5159",
+ "humanSource": "Quoted from the library documentation, discipline/trust-ladder and caveats.",
+ "immutableIds": [
+  "copy.yaml:trust_ladder.limits[2]"
+ ],
+ "label": "Exploratory does not mean wrong.",
+ "limitation": "Exploratory does not mean wrong.",
+ "scope": "What it does not do.",
+ "slug": "ladder-limit-3",
+ "sourceUrl": "/limits/",
+ "statement": "It means unaudited. Most of what this site shows you is exploratory, the anti-correlation included, and it is still the most useful thing here. It cannot make a measurement true. It can only stop you from calling it more settled than it is.",
+ "type": "limitation"
+}

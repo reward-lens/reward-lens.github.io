@@ -2,8 +2,10 @@
 title: The evidence store
 description: Where does a number live after you measure it, and what stops it from drifting? In most workflows a result lives in a notebook cell, gets copied into a slide,
 section: discipline
-order: 62
+order: 89
 source: docs/content/discipline/evidence-store.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -13,7 +15,7 @@ import ThemedFigure from "@components/ThemedFigure.astro";
 
 ## Append-only, typed, queryable
 
-The [`EvidenceStore`](/docs/reference/core/#reward_lens.core.store.EvidenceStore) is a JSONL log of [`Evidence`](/docs/discipline/anatomy-of-evidence/) objects. It supports `append`, `get`, `find`, containment, and length. It does not support delete or update. A result goes in once and stays, which means the store is an audit trail, not a scratchpad: you can always ask what was measured, on what subject, at what trust level, and by which run.
+The [`EvidenceStore`](/docs/api/core/#reward_lens.core.store.EvidenceStore) is a JSONL log of [`Evidence`](/docs/discipline/anatomy-of-evidence/) objects. It supports `append`, `get`, `find`, containment, and length. It does not support delete or update. A result goes in once and stays, which means the store is an audit trail, not a scratchpad: you can always ask what was measured, on what subject, at what trust level, and by which run.
 
 ```python
 from reward_lens.core import make_evidence, SubjectRef

@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "1e85b59ec82c6b8109599508443308c1",
+ "humanSource": "The frozen study \"Does the process reward model verify or style-read\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:46e1500c4d39f9821c137ae0b00ac0da",
+  "campaign.adjudication.VERIF-PRM",
+  "study:campaign-verif-prm@v1#616bec72",
+  "spec:616bec72ae5ab5714b01adaef378aba9"
+ ],
+ "label": "Does the process reward model verify or style-read",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one.",
+ "quantity": {
+  "name": "verification_score",
+  "unit": null,
+  "value": 0.8335037201890538
+ },
+ "scope": "One frozen study, adjudicated once, on qwen-prm, over processbench-full.",
+ "slug": "measured-verif-prm-verification-score",
+ "sourceUrl": "/evidence/46e1500c4d39f9821c137ae0b00ac0da/",
+ "statement": "A supporting measurement from the frozen study \"Does the process reward model verify or style-read\", with no prediction registered against it in advance.",
+ "subject": "qwen-prm, over processbench-full",
+ "type": "measured-result"
+}

@@ -1,0 +1,156 @@
+/* =============================================================================
+   PRINT
+   Researchers print things. A printed page of this site has to survive being
+   read next to the run it describes.
+
+   There is no print palette in tokens.css and one must not be invented, so the
+   surfaces are remapped onto CSS system colours, which the print context
+   already resolves correctly: Canvas is the paper, CanvasText is the ink,
+   GrayText is the secondary, ButtonBorder is the rule. The data colours
+   (comp, trust, state, written/realized, alarm) are left alone, because a
+   printed figure that loses its band colours loses its content.
+   ============================================================================= */
+
+@media print {
+  /* Both selectors are needed. tokens.css sets these on `:root[data-theme=...]`
+     at specificity (0,2,0), and the head script always sets that attribute, so a
+     bare `:root` here loses on specificity and the page prints in the dark
+     theme. `:root[data-theme]` matches the same weight and this file is imported
+     last, so it wins on source order. */
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+
+    --ground: Canvas;
+    --surface-1: Canvas;
+    --surface-2: Canvas;
+    --surface-3: Canvas;
+    --surface-4: Canvas;
+
+    --ink: CanvasText;
+    --ink-2: CanvasText;
+    --ink-3: GrayText;
+    --beam: CanvasText;
+    --beam-wash: transparent;
+
+    --line: ButtonBorder;
+    --line-strong: ButtonBorder;
+    --line-control: ButtonBorder;
+
+    --code-bg: Canvas;
+    --code-inline-bg: Canvas;
+    --shadow-raised: none;
+    --shadow-overlay: none;
+    --selection-bg: transparent;
+  }
+
+  @page {
+    margin: var(--space-6) var(--space-5);
+  }
+
+  /* Chrome that has no meaning on paper. */
+  .skip-link,
+  .nav-shell,
+  .theme-toggle,
+  .site-footer__links,
+  [data-print="hide"],
+  [data-scene],
+  pagefind-ui,
+  #search,
+  video,
+  iframe {
+    display: none !important;
+  }
+
+  /* The page is a document, not a viewport. */
+  html,
+  body {
+    background: var(--ground);
+    color: var(--ink);
+  }
+  body {
+    display: block;
+  }
+  main {
+    max-width: none;
+  }
+
+  /* A figure prints at its static rendering, with its caption, and never
+     splits across a page break. An interactive figure has already been
+     replaced by its still by the time it gets here. */
+  figure,
+  .figure,
+  table,
+  pre,
+  blockquote,
+  [data-figure] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  figure,
+  [data-figure] {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  figcaption {
+    break-before: avoid;
+    page-break-before: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* A link a reader cannot follow needs its destination written out. Internal
+     anchors and fragment links do not, so they are excluded. */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-sm-size);
+    letter-spacing: var(--type-mono-sm-track);
+    word-break: break-all;
+  }
+
+  /* Provenance panels become numbered endnotes. On screen the panel is an
+     overlay opened from a chip; on paper the chip takes a number and the panel
+     prints in order at the end of the document. */
+  main {
+    counter-reset: provenance;
+  }
+  [data-provenance] {
+    counter-increment: provenance;
+  }
+  [data-provenance]::after {
+    content: counter(provenance);
+    vertical-align: super;
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-label-size);
+    letter-spacing: var(--type-mono-label-track);
+    margin-left: var(--space-1);
+  }
+  [data-provenance-panel] {
+    display: block !important;
+    position: static !important;
+    border: none;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+  [data-provenance-endnotes] {
+    display: block !important;
+    counter-reset: provenance-note;
+    border-top: var(--border-w) solid var(--line);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+  }
+  [data-provenance-endnotes] > * {
+    counter-increment: provenance-note;
+  }
+  [data-provenance-endnotes] > *::before {
+    content: counter(provenance-note) ". ";
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-sm-size);
+  }
+}

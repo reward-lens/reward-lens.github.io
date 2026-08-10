@@ -1,0 +1,14 @@
+{
+ "contentHash": "4702b0d2d84b87ba3bcae40ac68839d7",
+ "humanSource": "The project's own statement of what it is not claiming, carried on the limits page.",
+ "immutableIds": [
+  "copy.yaml:limits.not_claiming[1]"
+ ],
+ "label": "Not white-box superiority.",
+ "limitation": "Not white-box superiority.",
+ "scope": "What is not being claimed.",
+ "slug": "not-claiming-2",
+ "sourceUrl": "/limits/",
+ "statement": "The bar is decorrelation plus signal, reported against a scaffolded black-box baseline every time. Three published head-to-heads put white-box last, and the correlation between a white-box instrument's errors and a black-box baseline's errors is a required output field.",
+ "type": "limitation"
+}

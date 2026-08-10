@@ -2,8 +2,10 @@
 title: Classifier reward models
 description: Your reward model is a sequence classifier with a scalar head. What does reward-lens do with it?
 section: models-and-signals
-order: 22
+order: 23
 source: docs/content/models-and-signals/classifier-rms.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -84,4 +86,4 @@ Two more things worth stating flat. Raw scores from two different models are nea
 
 ## Reference
 
-[`ClassifierRM`](/docs/reference/signals/#reward_lens.signals.classifier.ClassifierRM), [`wrap_hf_model`](/docs/reference/signals/#reward_lens.signals.loaders.wrap_hf_model), [`from_tiny`](/docs/reference/signals/#reward_lens.signals.loaders.from_tiny).
+[`ClassifierRM`](/docs/api/signals/#reward_lens.signals.classifier.ClassifierRM), [`wrap_hf_model`](/docs/api/signals/#reward_lens.signals.loaders.wrap_hf_model), [`from_tiny`](/docs/api/signals/#reward_lens.signals.loaders.from_tiny).

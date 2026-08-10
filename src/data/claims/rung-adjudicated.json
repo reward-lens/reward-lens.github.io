@@ -1,0 +1,14 @@
+{
+ "artifact": "design/copy.yaml trust_ladder",
+ "contentHash": "6a794db792d25e1fd3268d93c67e765a",
+ "humanSource": "Quoted from the library documentation, discipline/trust-ladder and caveats.",
+ "immutableIds": [
+  "copy.yaml:trust_ladder.levels.adjudicated"
+ ],
+ "label": "adjudicated",
+ "limitation": "The ladder is a ceiling on overclaiming, not a source of truth, and it is worth being exact about its limits, because a discipline that oversells itself is just a new way to be wrong.",
+ "scope": "The level is never set by a caller. It is computed from whether the evidence carries a calibration reference, whether it was produced under a frozen study, and whether it survived its kill criteria. There is no setter and no back door. If you want a higher rung, you have to make a truer fact.",
+ "slug": "rung-adjudicated",
+ "statement": "Calibrated and registered, and the frozen prediction held. The top rung, and the rarest.",
+ "type": "definition"
+}

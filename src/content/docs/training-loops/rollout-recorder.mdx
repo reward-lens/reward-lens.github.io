@@ -2,8 +2,10 @@
 title: The rollout recorder
 description: Can you name the direction a policy is exploiting before the gold reward falls?
 section: training-loops
-order: 47
+order: 72
 source: docs/content/training-loops/rollout-recorder.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -23,7 +25,7 @@ The hypothesis it rests on is worth stating plainly. Reward hacking shows up in 
 
 ## Naming the direction, with lead time
 
-The recorder holds no model. It consumes activations a caller extracts, which is what lets it run in shadow mode on a live run and what makes a synthetic organism a faithful stand-in. [`synthetic_hack_rollout`](/docs/reference/dynamics-loops/#reward_lens.loops.recorder.synthetic_hack_rollout) builds a CPU rollout that drifts along a planted hack direction, so the naming and lead-time claims are checkable without a GPU:
+The recorder holds no model. It consumes activations a caller extracts, which is what lets it run in shadow mode on a live run and what makes a synthetic organism a faithful stand-in. [`synthetic_hack_rollout`](/docs/api/dynamics-loops/#reward_lens.loops.recorder.synthetic_hack_rollout) builds a CPU rollout that drifts along a planted hack direction, so the naming and lead-time claims are checkable without a GPU:
 
 ```python
 from reward_lens.loops import RolloutRecorder, synthetic_hack_rollout
@@ -48,7 +50,7 @@ The recorder recovers the planted direction by name, `hack`, out of the bank of 
 
 ## How onset is detected
 
-The onsets are changepoints. Each feature's dose trajectory gets a [`cusum_changepoint`](/docs/reference/dynamics-loops/#reward_lens.loops.recorder.cusum_changepoint), a single mean-shift split scored against a permutation null, and the exploited direction is the significant feature with the largest shift. The gold reward gets its own changepoint, and the lead time is the gap between the two onsets. Each fires an [`OnsetAlarm`](/docs/reference/dynamics-loops/#reward_lens.loops.recorder.OnsetAlarm) naming what moved, when, and how significantly:
+The onsets are changepoints. Each feature's dose trajectory gets a [`cusum_changepoint`](/docs/api/dynamics-loops/#reward_lens.loops.recorder.cusum_changepoint), a single mean-shift split scored against a permutation null, and the exploited direction is the significant feature with the largest shift. The gold reward gets its own changepoint, and the lead time is the gap between the two onsets. Each fires an [`OnsetAlarm`](/docs/api/dynamics-loops/#reward_lens.loops.recorder.OnsetAlarm) naming what moved, when, and how significantly:
 
 ```python
 for a in report.onset_alarms:

@@ -1,0 +1,331 @@
+---
+/**
+ * The forest plot: every headline call against its own frozen threshold.
+ *
+ * THE RULE THIS FIGURE EXISTS TO FIX. The vendored figure at
+ * public/figures/campaign/hero1-ledger.*.png labels its seventeen rows with
+ * internal identifiers, `ERR-RB2/H-err-qwen` and sixteen more. That is the
+ * single worst instance of the banned-vocabulary problem on the old site, and
+ * gate 7 checks this figure specifically rather than being suppressed by the
+ * route's allowance. Every row label here is the card's public title from
+ * cards.json. The PNG is not used.
+ *
+ * COLOUR. Two hues and three shapes, never four hues. Confirmed at --written,
+ * refuted at --realized, and a refuted-on-interval marker distinguished by
+ * shape. Seventeen rows in four hues would make colour decorative, which
+ * DESIGN.md §5.1 forbids. The outcome word also renders on every row in both
+ * compositions, so the encoding survives greyscale and a screen reader.
+ *
+ * THE PLOT IS NOT THE DATA. The margin is a position on an axis and is never
+ * printed as a number: it is derived and resolves to no evidence record. What
+ * prints is the observed value, carrying its adjudication record through a
+ * provenance chip, and the frozen line it was judged against. Both are in the
+ * record.
+ *
+ * At 390 the plot is absent and the list is the whole figure, per
+ * figure-frame's rule that a figure illegible at 390 gets a different
+ * composition rather than a scaled one.
+ */
+import ProvenanceChip from "@components/base/provenance-chip.astro";
+import { chipRecord } from "../evidence/_store";
+import { HERO_CLIP, fmt, headlineRows } from "./_campaign";
+
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+
+/* Geometry, in user units. The SVG scales to its container.
+   The row label sits ON ITS OWN LINE above the marker rather than in a left
+   gutter. The public names run to 83 characters ("Dark reward tracks the
+   criteria-to-dimension ratio; ArmoRM respects the Welch floor"), an SVG
+   <text> does not wrap, and a gutter wide enough for that leaves no plot. A
+   gutter narrow enough for the plot would have to truncate the names, which
+   is the failure this figure exists to fix. */
+const ROW = 46;
+const LABEL_DY = 14;
+const MARK_DY = 33;
+const PAD_TOP = 10;
+const PAD_BOTTOM = 30;
+const WIDTH = 900;
+const HEIGHT = PAD_TOP + headlineRows.length * ROW + PAD_BOTTOM;
+
+const clip = (m: number) => Math.max(-HERO_CLIP, Math.min(HERO_CLIP, m));
+/* A marker at the clip sits exactly on the frame, so half its glyph falls
+   outside the viewBox and the row reads as empty. The drawn position is inset
+   by the marker radius; the row still states its observed value and its frozen
+   line in text beneath, so nothing is lost to the inset. */
+const MARK_R = 5;
+const x = (m: number) =>
+  Math.max(
+    MARK_R + 1,
+    Math.min(
+      WIDTH - MARK_R - 1,
+      ((clip(m) + HERO_CLIP) / (2 * HERO_CLIP)) * WIDTH,
+    ),
+  );
+const y = (i: number) => PAD_TOP + i * ROW + MARK_DY;
+const labelY = (i: number) => PAD_TOP + i * ROW + LABEL_DY;
+
+const ticks = [-4, -2, 0, 2, 4];
+
+const marker = (row: (typeof headlineRows)[number], cx: number, cy: number) => {
+  const r = 5;
+  if (row.interval) {
+    return `M ${cx} ${cy - r} L ${cx + r} ${cy} L ${cx} ${cy + r} L ${cx - r} ${cy} Z`;
+  }
+  if (row.outcome === "confirmed") return "";
+  return `M ${cx - r} ${cy - r} L ${cx + r} ${cy + r} M ${cx + r} ${cy - r} L ${cx - r} ${cy + r}`;
+};
+---
+
+<div class="fp">
+  <svg
+    class="fp__svg"
+    viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+    width={WIDTH}
+    height={HEIGHT}
+    role="img"
+    aria-label={label}
+  >
+    {
+      ticks.map((t) => (
+        <g>
+          <line
+            class="fp__grid"
+            x1={x(t)}
+            x2={x(t)}
+            y1={PAD_TOP}
+            y2={HEIGHT - PAD_BOTTOM}
+          />
+          <text class="fp__tick" x={x(t)} y={HEIGHT - PAD_BOTTOM + 16}>
+            {t}
+          </text>
+        </g>
+      ))
+    }
+    <line
+      class="fp__zero"
+      x1={x(0)}
+      x2={x(0)}
+      y1={PAD_TOP}
+      y2={HEIGHT - PAD_BOTTOM}
+    />
+
+    {
+      headlineRows.map((row, i) => {
+        const cy = y(i);
+        const cx = x(row.margin);
+        const state = row.outcome === "confirmed" ? "held" : "missed";
+        return (
+          <g class="fp__row" data-state={state}>
+            <line
+              class="fp__rule"
+              x1="0"
+              x2={WIDTH}
+              y1={PAD_TOP + i * ROW}
+              y2={PAD_TOP + i * ROW}
+            />
+            <text class="fp__label" x="0" y={labelY(i)}>
+              {row.label}
+            </text>
+            <text class="fp__outcome" x={WIDTH} y={labelY(i)} text-anchor="end">
+              {row.outcome}
+            </text>
+            {row.ciMargins && (
+              <line
+                class="fp__ci"
+                x1={x(row.ciMargins[0])}
+                x2={x(row.ciMargins[1])}
+                y1={cy}
+                y2={cy}
+              />
+            )}
+            {row.outcome === "confirmed" && !row.interval ? (
+              <circle class="fp__dot" cx={cx} cy={cy} r="5" />
+            ) : (
+              <path
+                class={row.interval ? "fp__diamond" : "fp__cross"}
+                d={marker(row, cx, cy)}
+              />
+            )}
+          </g>
+        );
+      })
+    }
+  </svg>
+
+  <ol class="fp__list">
+    {
+      headlineRows.map((row) => {
+        const state = row.outcome === "confirmed" ? "held" : "missed";
+        return (
+          <li class="fp__item" data-state={state}>
+            <a class="fp__name type-body" href={`/log/cards/${row.slug}/`}>
+              {row.label}
+            </a>
+            <span class="fp__numbers type-mono-sm">
+              <ProvenanceChip
+                evidenceId={row.evidenceId}
+                field={row.metric}
+                display={fmt(row.observed) ?? ""}
+                record={chipRecord(row.evidenceId)}
+              />
+              <span class="fp__line">
+                {row.comparator} {fmt(row.threshold)}
+              </span>
+            </span>
+            <span class="fp__verdict type-mono-label">{row.outcome}</span>
+            <span class="fp__bar" aria-hidden="true">
+              <span
+                class="fp__bar-fill"
+                style={`--fp-left:${(clip(Math.min(row.margin, 0)) / (2 * HERO_CLIP)) * 100 + 50}%;--fp-width:${(Math.abs(clip(row.margin)) / (2 * HERO_CLIP)) * 100}%`}
+              />
+            </span>
+          </li>
+        );
+      })
+    }
+  </ol>
+</div>
+
+<style>
+  .fp {
+    min-width: 0;
+  }
+
+  .fp__svg {
+    display: none;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .fp__grid,
+  .fp__rule {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+  .fp__zero {
+    stroke: var(--ink-2);
+    stroke-width: 1.5;
+  }
+  .fp__tick,
+  .fp__label,
+  .fp__outcome {
+    fill: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-sm-size);
+  }
+  .fp__tick {
+    text-anchor: middle;
+  }
+  .fp__label {
+    fill: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--type-body-sm-size);
+    text-anchor: start;
+  }
+  .fp__ci {
+    stroke-width: 2;
+  }
+  .fp__cross {
+    stroke-width: 2;
+    fill: none;
+  }
+  .fp__diamond,
+  .fp__dot {
+    stroke-width: 1;
+  }
+
+  /* Two hues. The third shape carries the interval case. */
+  .fp__row[data-state="held"] .fp__dot,
+  .fp__row[data-state="held"] .fp__diamond {
+    fill: var(--written);
+    stroke: var(--ground);
+  }
+  .fp__row[data-state="held"] .fp__cross,
+  .fp__row[data-state="held"] .fp__ci {
+    stroke: var(--written);
+  }
+  .fp__row[data-state="missed"] .fp__dot,
+  .fp__row[data-state="missed"] .fp__diamond {
+    fill: var(--realized);
+    stroke: var(--ground);
+  }
+  .fp__row[data-state="missed"] .fp__cross,
+  .fp__row[data-state="missed"] .fp__ci {
+    stroke: var(--realized);
+  }
+
+  /* ---- the 390 composition, which is also the text alternative ---- */
+  .fp__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .fp__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .fp__name {
+    color: var(--ink);
+  }
+  .fp__numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    align-items: baseline;
+    color: var(--ink-2);
+    min-width: 0;
+  }
+  /* --ink-2, not --ink-3: this file paints --surface-2 on the micro-bar track,
+     and --ink-3 is 4.29:1 there, which is AA-large and not AA-body. C-15. */
+  .fp__line {
+    color: var(--ink-2);
+  }
+  .fp__verdict {
+    color: var(--ink-2);
+  }
+  .fp__bar {
+    display: block;
+    position: relative;
+    block-size: var(--space-1);
+    background: var(--surface-2);
+    border-radius: var(--radius-1);
+  }
+  .fp__bar-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--fp-left);
+    inline-size: var(--fp-width);
+    border-radius: var(--radius-1);
+  }
+  .fp__item[data-state="held"] .fp__bar-fill {
+    background: var(--written);
+  }
+  .fp__item[data-state="missed"] .fp__bar-fill {
+    background: var(--realized);
+  }
+
+  /* Back at --bp-md, both of them. The row waited for --bp-xl for one build
+     because a closed provenance panel in a middle column was still in layout
+     and overflowed the page at 768. The repair on `main` makes a closed panel
+     `display: none`. See the note in /log/index.astro. */
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .fp__svg {
+      display: block;
+    }
+    .fp__item {
+      grid-template-columns:
+        minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, auto)
+        minmax(6rem, 8rem);
+      align-items: center;
+    }
+  }
+</style>

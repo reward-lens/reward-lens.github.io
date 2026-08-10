@@ -1,69 +1,123 @@
 ---
+/**
+ * 404  ·  the documentation moved and every old path redirects.
+ *
+ * The Pagefind mount stays: it is the site's one search index and C-27 records
+ * that this page is currently the only place it is mounted. It is progressive:
+ * with scripting off the section is absent rather than an empty box, and the
+ * route list below is the whole page.
+ *
+ * The four destinations come from `copy.yaml:nav.primary`, so a route that
+ * moves does not leave a dead link here.
+ */
 import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import { copy, nav, ui } from "../copy";
+
+const errors = copy.errors as Record<string, string>;
+const docsItem = nav.primary.find((i) => i.href === "/docs/");
+/* Four places worth trying, one per footer group, labels reused from
+   copy.yaml:nav.footer_groups rather than written here. */
+const tryThese = nav.footer_groups.map((g) => g.items[0]);
 ---
 
-<Base
-  title="Not found · reward-lens"
-  description="No evidence at this address."
->
-  <div class="nf-wrap">
-    <h1 class="nf-title">No evidence at this address.</h1>
-    <p class="nf-sub">
-      The page you asked for is not in the store. Search the site, or start
-      from a section.
+<Base title={`${errors.not_found_title} · reward-lens`} description={errors.not_found_body}>
+  <div class="wrap nf">
+    <PageHeader title={errors.not_found_title} lede={errors.not_found_body} />
+
+    <p class="nf__action type-body">
+      <a href={docsItem?.href ?? "/docs/"}>{errors.not_found_action}</a>
     </p>
-    <div id="nf-search"></div>
-    <nav class="nf-links" aria-label="Main sections">
-      <a href="/campaign/">Campaign</a>
-      <a href="/atlas/">Atlas</a>
-      <a href="/docs/">Docs</a>
-      <a href="/science/">Science</a>
+
+    <section class="nf__search" aria-labelledby="nf-search-h">
+      <h2 class="type-mono-label nf__h" id="nf-search-h">{ui.search_open}</h2>
+      <div id="nf-search"></div>
+    </section>
+
+    <nav class="nf__nav" aria-label={nav.footer_aria}>
+      <ul class="nf__links type-body">
+        {tryThese.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+      </ul>
     </nav>
   </div>
 
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" slot="head" />
   <script is:inline src="/pagefind/pagefind-ui.js"></script>
   <script is:inline>
     window.addEventListener("DOMContentLoaded", () => {
-      if (window.PagefindUI) {
-        new window.PagefindUI({
-          element: "#nf-search",
-          showSubResults: true,
-          showImages: false,
+      if (!window.PagefindUI) return;
+      const mount = document.querySelector("#nf-search");
+      new window.PagefindUI({
+        element: "#nf-search",
+        showSubResults: true,
+        showImages: false,
+        // pages/404.md §2: the field is focused on load. The reader arrived
+        // here with a page name in mind and no page to go back to.
+        autofocus: true,
+      });
+
+      // Pagefind's Default UI names its input with a `placeholder` and a
+      // `title` and nothing else, which is axe's `label-title-only` and the
+      // last two entries on gate 14's ratchet, one per theme. Pagefind 1.5
+      // says as much itself in the build log: the Component UI has "better
+      // accessibility", and swapping to it is a dependency decision this
+      // packet does not get to make.
+      //
+      // The label it should have is already on the page and visible: the h2
+      // above the mount. `aria-labelledby` points at that, so the field is
+      // named by rendered copy rather than by a string invented here, and no
+      // copy.yaml key is needed.
+      //
+      // The input does not exist when the constructor returns in every
+      // Pagefind build, so this observes rather than assuming. It disconnects
+      // on success and after 5s, so a Pagefind that never mounts does not
+      // leave an observer running on the page.
+      const name = () => {
+        const input = mount?.querySelector("input[type='text'], input.pagefind-ui__search-input");
+        if (!input) return false;
+        input.setAttribute("aria-labelledby", "nf-search-h");
+        input.removeAttribute("title");
+        return true;
+      };
+      if (!name()) {
+        const obs = new MutationObserver(() => {
+          if (name()) obs.disconnect();
         });
+        obs.observe(mount, { childList: true, subtree: true });
+        setTimeout(() => obs.disconnect(), 5000);
       }
     });
   </script>
 </Base>
 
 <style>
-  .nf-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: var(--sp-16) var(--page-pad);
-    min-height: 50vh;
+  .nf {
+    padding-block: var(--space-7) var(--space-8);
+    min-block-size: 50vh;
+    min-width: 0;
   }
-  .nf-title {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin: 0 0 var(--sp-3);
+  .nf__action {
+    margin: 0 0 var(--space-6);
   }
-  .nf-sub {
-    color: var(--ink-2);
-    margin: 0 0 var(--sp-6);
-    max-width: 48ch;
+  /* Absent rather than an empty box when the script cannot run. */
+  .nf__search {
+    display: none;
+    max-inline-size: min(36rem, 100%);
+    margin-bottom: var(--space-6);
   }
-  #nf-search {
-    max-width: 36rem;
-    margin-bottom: var(--sp-8);
+  :global(:root[data-js]) .nf__search {
+    display: block;
   }
-  .nf-links {
+  .nf__h {
+    margin: 0 0 var(--space-2);
+    color: var(--ink-3);
+  }
+  .nf__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    gap: var(--sp-6);
     flex-wrap: wrap;
-  }
-  .nf-links a {
-    font-weight: 600;
+    gap: var(--space-3) var(--space-5);
   }
 </style>

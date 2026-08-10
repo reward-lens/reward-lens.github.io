@@ -1,7 +1,19 @@
 ---
-// KillBadge: a registered kill criterion firing. Reads "K-<name> fired" in the
-// refuted color family, stamped in mono with a square treatment so it never
-// reads as a VerdictChip.
+// RETIRED, AND NOT IMPORTED BY ANYTHING. Nothing in src/ renders this, so it
+// reaches no page and appears in no gate report.
+//
+// Two reasons it must not be picked up as-is. It builds `K-<name>` and puts it
+// in the reader's face, and `K-*` is one of the ~620 identifier families D-05
+// bans from rendered HTML, so the first page that uses this fails gate 7 on its
+// own output. And the thing it announces is the campaign's pre-registration
+// apparatus, which the public vocabulary replaces with the outcome: the result
+// contradicted the prediction. A badge saying which mechanism fired is the
+// process, and the outcome is the part a reader can act on.
+//
+// Left in the tree rather than deleted, because deleting one of a pair of
+// similarly named components is how a route nobody was looking at stops
+// building. Its disposition is a deletion, once someone has checked that no
+// branch still under construction imports it.
 
 interface Props {
   kill: string;

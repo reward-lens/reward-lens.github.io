@@ -1,0 +1,26 @@
+{
+ "comparator": "< 0.06",
+ "contentHash": "f727724cdb539d99f8f4450c1b7d0972",
+ "humanSource": "The frozen study \"Benchmark forecasting from internals plus a 200-pair slice\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:1acdc14e2fa16124786a9cd0d44a03b2",
+  "campaign.adjudication.FORECAST-CAT",
+  "study:campaign-forecast-cat@v1#39a99a5a",
+  "spec:39a99a5ab61d6f8e744a40b3804d21ab",
+  "H-forecast-mae"
+ ],
+ "label": "Benchmark forecasting from internals plus a 200-pair slice",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. P(observed MAE beats the no-skill null's 5 percent boundary 0.048 | true MAE at the frozen 0.06), 6 categories; a no-skill forecast passes the frozen bound itself 0.100 of the time, and true MAEs at or below 0.038 detect at 80 percent.",
+ "quantity": {
+  "name": "forecast_mae",
+  "unit": null,
+  "value": 0.08695840679817465
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full and rb2-calibration-200.",
+ "slug": "measured-forecast-cat-forecast-mae",
+ "sourceUrl": "/evidence/1acdc14e2fa16124786a9cd0d44a03b2/",
+ "statement": "internals plus a 200-pair slice forecast per-category RB2 accuracy within 0.06 MAE.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full and rb2-calibration-200",
+ "type": "measured-result"
+}

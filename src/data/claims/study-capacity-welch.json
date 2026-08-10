@@ -1,0 +1,18 @@
+{
+ "contentHash": "8a216d6ba52a3a855c3655f250b204d6",
+ "humanSource": "The frozen study \"Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b",
+  "campaign.adjudication.CAPACITY-WELCH",
+  "study:campaign-capacity-welch@v1#9fc6a434",
+  "spec:9fc6a4346dcd4ba18e2d12391971c413"
+ ],
+ "label": "Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on fleet and armorm, over rb2-full.",
+ "slug": "study-capacity-welch",
+ "sourceUrl": "/evidence/f9e6a003a5a1e0aa0fe3ff1eca0d9c7b/",
+ "statement": "The frozen study \"Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor\" was adjudicated mixed, over 3 registered predictions of which 1 held, 2 did not.",
+ "subject": "fleet and armorm, over rb2-full",
+ "type": "interpretation"
+}

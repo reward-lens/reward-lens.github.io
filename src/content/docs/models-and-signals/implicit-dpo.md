@@ -2,8 +2,10 @@
 title: Implicit (DPO) rewards
 description: Your DPO checkpoint never had a reward head. Can you still treat it as a reward model?
 section: models-and-signals
-order: 25
+order: 26
 source: docs/content/models-and-signals/implicit-dpo.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -76,4 +78,4 @@ There is no single head direction, so the linear-readout battery does *not* atta
 
 ## Reference
 
-[`ImplicitRM`](/docs/reference/signals/#reward_lens.signals.implicit.ImplicitRM).
+[`ImplicitRM`](/docs/api/signals/#reward_lens.signals.implicit.ImplicitRM).

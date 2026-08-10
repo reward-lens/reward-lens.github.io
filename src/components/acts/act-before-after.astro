@@ -1,0 +1,240 @@
+---
+/**
+ * act-before-after  ·  components/before-after.md
+ *
+ * Put a state and its successor in one frame, at the same scale, on the same
+ * axis, so the difference is read rather than remembered. The before never
+ * leaves.
+ *
+ * THE RULE THAT MAKES IT HONEST IS A LAYOUT RULE, NOT A STYLING ONE. Before and
+ * after share one axis, one scale and one origin. A comparison drawn at two
+ * scales is not a comparison, and a percentage change shown against a rebased
+ * axis is the oldest chart lie there is. This component owns the axis and the
+ * two values are drawn into it; neither may bring its own scale, and passing an
+ * axis per value fails the build.
+ *
+ * "WHAT CHANGED" IS A REQUIRED FIELD, NOT A CAPTION. A before-after that does
+ * not name the intervention is two numbers next to each other. Naming it is
+ * what makes the pair an argument. There is no `highlightAfter` and no
+ * `emphasis`: neither state is the favoured one, which is the whole point on a
+ * page whose subject is a number that was published and then withdrawn.
+ *
+ * SIGN IS THE ONLY THING COLOUR ENCODES: --written for the before and
+ * --realized for the after, the site's central divergence pair used for exactly
+ * what it means. A third series is not supported, because a third series is not
+ * a before and an after.
+ *
+ * NOTHING ANIMATES, at any tier, including on first view. A before-after whose
+ * after slides in tells the reader the change is happening now, and what
+ * happened is that somebody ran two conditions and measured both.
+ *
+ * WHERE THIS FILE SHOULD LIVE. `before-after` is one of the twenty-one
+ * contracts and its home is src/components/base/, which is packet F2's path and
+ * which no wave-1 packet owns. It is built here because act two's part 5 is the
+ * contract's own first "Correct" usage and P4 is the packet that needs it. It
+ * moves to base/ the moment a second packet does.
+ */
+import ActSource from "@components/acts/act-source.astro";
+
+export interface Side {
+  label: string;
+  value: number;
+  display: string;
+  source: { document: string; line: number | null };
+}
+
+interface Props {
+  before: Side;
+  after: Side;
+  /** What changed between them. Never optional. */
+  intervention: string;
+  /** The axis's unit label, for the accessible name. */
+  unit?: string | null;
+  class?: string;
+}
+
+const { before, after, intervention, unit = null, class: extraClass = "" } = Astro.props;
+
+if (!intervention || !intervention.trim()) {
+  throw new Error(
+    "act-before-after: no intervention. A before-after that does not name what " +
+      "changed is two numbers next to each other, and the name is what makes " +
+      "the pair an argument (components/before-after.md, Anatomy).",
+  );
+}
+
+/* ONE axis, derived from both values together, with zero always on it. The
+   two values here disagree in sign, which is the entire finding, so an axis
+   that did not span zero would hide it. */
+const lo = Math.min(0, before.value, after.value);
+const hi = Math.max(0, before.value, after.value);
+const span = hi - lo || 1;
+const pad = span * 0.08;
+
+const W = 1000;
+const ROW = 68;
+const PAD_L = 4;
+const PAD_R = 4;
+const AXIS = 34;
+const H = ROW * 2 + AXIS;
+const plotW = W - PAD_L - PAD_R;
+
+const x = (v: number) => PAD_L + ((v - (lo - pad)) / (hi - lo + pad * 2)) * plotW;
+const zero = x(0);
+
+const rows = [
+  { side: before, y: ROW * 0.5, kind: "before" as const },
+  { side: after, y: ROW * 1.5, kind: "after" as const },
+];
+
+const alt =
+  `${before.label} ${before.display}${unit ? ` ${unit}` : ""}. ` +
+  `${after.label} ${after.display}${unit ? ` ${unit}` : ""}. ` +
+  `What changed: ${intervention}`;
+
+const tableId = `ba-${before.label.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`;
+---
+
+<div class:list={["ba", extraClass]}>
+  <svg viewBox={`0 0 ${W} ${H}`} class="ba__svg" role="img" aria-label={alt} aria-describedby={tableId}>
+    {/* The shared origin, drawn, so a reader can see that both bars start from
+        the same place and that one of them crosses it. */}
+    <line class="ba__zero" x1={zero} x2={zero} y1="0" y2={ROW * 2} />
+
+    {
+      rows.map((r) => (
+        <>
+          <line
+            class={`ba__bar ba__bar--${r.kind}`}
+            x1={zero}
+            x2={x(r.side.value)}
+            y1={r.y}
+            y2={r.y}
+          />
+          <circle
+            class={`ba__end ba__end--${r.kind}`}
+            cx={x(r.side.value)}
+            cy={r.y}
+            r="7"
+          />
+        </>
+      ))
+    }
+
+    <line class="ba__axis" x1={PAD_L} x2={W - PAD_R} y1={ROW * 2} y2={ROW * 2} />
+  </svg>
+
+  {/* The same two numbers as text, keyboard reachable, each carrying its own
+      citation. A comparison whose numbers exist only as bar lengths is not
+      available to a screen reader, and this is the same data rather than a
+      summary of it (criterion 5). */}
+  <dl class="ba__values" id={tableId}>
+    {
+      rows.map((r) => (
+        <div class={`ba__row ba__row--${r.kind}`}>
+          <dt class="ba__label type-body-sm">{r.side.label}</dt>
+          <dd class="ba__value type-mono-base">
+            <ActSource
+              display={r.side.display}
+              document={r.side.source.document}
+              line={r.side.source.line}
+              label={r.side.label}
+            />
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <p class="ba__intervention type-body-sm">{intervention}</p>
+</div>
+
+<style>
+  .ba {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .ba__svg {
+    inline-size: 100%;
+    block-size: auto;
+    display: block;
+  }
+
+  .ba__zero {
+    stroke: var(--line-strong);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .ba__axis {
+    stroke: var(--line);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .ba__bar {
+    stroke-width: 10;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* The divergence pair, used for exactly what it means. The before does not
+     fade once the after is drawn: that is replace with extra steps, and it
+     tells the reader the first measurement stopped being true. */
+  .ba__bar--before,
+  .ba__end--before {
+    stroke: var(--written);
+    fill: var(--written);
+  }
+
+  .ba__bar--after,
+  .ba__end--after {
+    stroke: var(--realized);
+    fill: var(--realized);
+  }
+
+  .ba__values {
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .ba__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-width: 0;
+    border-inline-start: var(--border-w-accent) solid var(--line);
+    padding-inline-start: var(--space-3);
+  }
+
+  .ba__row--before {
+    border-inline-start-color: var(--written);
+  }
+
+  .ba__row--after {
+    border-inline-start-color: var(--realized);
+  }
+
+  .ba__label {
+    margin: 0;
+    color: var(--ink-2);
+    min-width: 0;
+  }
+
+  .ba__value {
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* Inside the frame, not below it, because it is what the reader needs to
+     understand the pair at all. The caption carries the scope; this carries the
+     intervention. */
+  .ba__intervention {
+    margin: 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+</style>

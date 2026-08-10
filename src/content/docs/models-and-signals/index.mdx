@@ -2,8 +2,10 @@
 title: Models and signals
 description: Will these instruments run on my grader?
 section: models-and-signals
-order: 21
+order: 22
 source: docs/content/models-and-signals/index.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -19,7 +21,7 @@ Usually yes, and the page tells you exactly when. reward-lens does not assume yo
 **One protocol, eight adapters.** Each grader in the ring implements the same small surface: score an item, score it token by token, expose activations along named readouts. An instrument is written once against the protocol in the centre and runs on every adapter that has the capabilities it needs.
 
 
-The ring is the eight grader shapes the field actually ships: a classifier reward model, an LLM judge, a process reward model that scores each step, a DPO checkpoint used as an implicit reward, a rubric head, a trajectory grader, a dense per-token extractor, and an ensemble. The centre is the [`RewardSignal`](/docs/reference/signals/#reward_lens.signals.base.RewardSignal) protocol. Nothing in the instrument battery names a specific architecture. It names capabilities, and a grader either has them or it does not.
+The ring is the eight grader shapes the field actually ships: a classifier reward model, an LLM judge, a process reward model that scores each step, a DPO checkpoint used as an implicit reward, a rubric head, a trajectory grader, a dense per-token extractor, and an ensemble. The centre is the [`RewardSignal`](/docs/api/signals/#reward_lens.signals.base.RewardSignal) protocol. Nothing in the instrument battery names a specific architecture. It names capabilities, and a grader either has them or it does not.
 
 ## The signal protocol, in plain words
 

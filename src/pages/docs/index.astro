@@ -1,161 +1,254 @@
 ---
-import Base from "@layouts/Base.astro";
-import PageHeader from "@components/PageHeader.astro";
-import InstallStrip from "@components/InstallStrip.astro";
-import CliExcerpt from "@components/CliExcerpt.astro";
+/**
+ * /docs/  ·  design/pages/docs-index.md
+ *
+ * A landing page for a corpus, not a chapter. Everything on it is navigation
+ * with enough context to choose, and it ends with the reader on a
+ * documentation page rather than on this one.
+ *
+ * Four sections, in the page file's order: which version the corpus describes,
+ * four ways in, the shape of the corpus, and the three conventions.
+ *
+ * NOTHING ON THIS PAGE IS AUTHORED HERE. The prose is `copy.yaml:docs.*`, and
+ * the section list and its counts are counted from `src/data/docs-nav.json`,
+ * which is generated from the library's own mkdocs nav. That is section 3's
+ * own rule, and it is what makes the page move when the port repoints without
+ * anyone editing it.
+ */
+import Docs from "@layouts/Docs.astro";
+import "@styles/docs-legacy.css";
+import docsNav from "@data/docs-nav.json";
+import catalogue from "@data/catalogue.json";
+import type { NavItem } from "@components/docs/types";
+import { copy, nav as siteNav } from "../../copy";
 
-// One card per major section; each pitch is the opening line of that
-// section's own index page, trimmed, never rewritten.
-const sections = [
+const c = copy.docs as Record<string, string>;
+const nav = docsNav as NavItem[];
+/** This route, written once so the layout and the section filter agree. */
+const HERE = "/docs/";
+
+const footerItems = siteNav.footer_groups.flatMap((g) => g.items);
+const labelFor = (href: string) =>
+  footerItems.find((i) => i.href === href)?.label ?? href;
+
+// --- section 2 · four ways in, in the order a reader needs them ------------
+const ways = [
+  { href: "/start/", label: labelFor("/start/"), line: c.start_install },
   {
-    title: "Getting started",
-    href: "/docs/getting-started/",
-    pitch: "Three ways in. One is a browser tab and installs nothing.",
-  },
-  {
-    title: "Tutorials",
     href: "/docs/tutorials/",
-    pitch: "Two ways in, and they answer different questions.",
+    // The glob loader collapses tutorials/index.md to the id "tutorials",
+    // which is also what makes the route /docs/tutorials/.
+    label: nav.find((n) => n.href === "/docs/tutorials/")?.title ?? "",
+    line: c.start_tutorial,
   },
   {
-    title: "How-to guides",
-    href: "/docs/how-to/",
-    pitch: "You know the job and you want the exact calls.",
+    href: "/docs/refusals/",
+    label: labelFor("/docs/refusals/"),
+    line: c.start_refusals,
   },
-  {
-    title: "Models and signals",
-    href: "/docs/models-and-signals/",
-    pitch: "Will these instruments run on my grader?",
-  },
-  {
-    title: "Instruments",
-    href: "/docs/instruments/",
-    pitch:
-      "You have a reward model and a preference pair. What can you actually measure about the decision?",
-  },
-  {
-    title: "Training loops",
-    href: "/docs/training-loops/",
-    pitch:
-      "Where does the reward model sit in the loop, and where do the instruments clip on?",
-  },
-  {
-    title: "Concepts",
-    href: "/docs/concepts/",
-    pitch: "What do you have to believe before any of the tools make sense?",
-  },
-  {
-    title: "The measurement discipline",
-    href: "/docs/discipline/",
-    pitch: "What does it take to trust a number about a reward model?",
-  },
-  {
-    title: "API reference",
-    href: "/docs/reference/",
-    pitch:
-      "Which import surface owns a name, and will reaching for it pull in torch?",
-  },
+  { href: "/docs/api/", label: labelFor("/docs/api/"), line: c.start_api },
 ];
+
+// --- section 3 · the shape of the corpus, counted rather than described ----
+const countLeaves = (item: NavItem): number =>
+  (item.href && !/^https?:\/\//.test(item.href) ? 1 : 0) +
+  (item.children ?? []).reduce((n, ch) => n + countLeaves(ch), 0);
+
+const sections = nav
+  .map((item) => ({
+    title: item.title,
+    href: item.href ?? (item.children ?? []).find((ch) => ch.href)?.href ?? null,
+    pages: countLeaves(item),
+  }))
+  // The library's mkdocs nav opens with `Home: index.md`, which the port maps
+  // to this route, so the first destination on the corpus landing page was the
+  // corpus landing page. The page file's one requirement is that it ends with
+  // the reader on a documentation page rather than on this one, so the row for
+  // this route is dropped. Compared against `current`, not against the string
+  // "Home", because the title is the library's and can change.
+  .filter((s) => s.href !== null && s.pages > 0 && s.href !== HERE);
+
+// --- the contents rail -----------------------------------------------------
+// `getHeadings()` returns nothing for an .astro page, so this page's three
+// section headings were invisible to the rail and the third column was empty
+// at 1440 on the one documentation page that is about the corpus's shape.
+// contents-rail.md scopes the component to "every route under /docs/** with
+// more than two headings"; there are exactly three, and they are the same
+// three copy keys the markup below renders, so the rail and the page cannot
+// disagree about what is on it.
+const headings = [
+  { depth: 2, slug: "portal-ways", text: c.start_heading },
+  { depth: 2, slug: "portal-shape", text: c.shape_heading },
+  { depth: 2, slug: "portal-conventions", text: c.conventions_heading },
+];
+
+const version = catalogue.provenance.libraryVersion;
+const desc = `${c.heading} ${c.corpus_intro}`.replace(/\s+/g, " ").trim().slice(0, 160);
 ---
 
-<Base
-  title="Docs · reward-lens"
-  description="The reward-lens documentation: tutorials, how-to guides, the instruments, and the measurement discipline."
+<Docs
+  title={c.title}
+  description={desc}
+  current={HERE}
+  libraryVersion={version}
+  headings={headings}
+  section={c.title}
 >
-  <div class="portal-wrap">
-    <PageHeader
-      display
-      eyebrow="documentation"
-      title="The manual"
-      lede="White-box tools and built-in epistemic discipline for reward models, the objects that define what RLHF optimizes."
-    />
+  <header class="portal__head">
+    <h1 class="portal__title type-display-2">{c.heading}</h1>
+    <p class="portal__intro type-body">{c.corpus_intro}</p>
+  </header>
 
-    <div class="portal-top">
-      <InstallStrip />
-      <a
-        class="colab-link"
-        href="https://colab.research.google.com/drive/1x5zG07HdsWlNsJmkl2ddJ1yalmwwujfY?usp=sharing"
-        >Or open the Colab tour: a real 8B reward model, no install.</a
-      >
-    </div>
-
-    <div class="portal-grid">
+  <section class="portal__block" aria-labelledby="portal-ways">
+    <h2 class="portal__h type-h3" id="portal-ways">{c.start_heading}</h2>
+    <ul class="portal__ways">
       {
-        sections.map((s) => (
-          <a class="portal-card" href={s.href}>
-            <h2>{s.title}</h2>
-            <p>{s.pitch}</p>
-          </a>
+        ways.map((w) => (
+          <li class="portal__way">
+            <a class="portal__way-link type-body" href={w.href}>
+              {w.label}
+            </a>
+            <p class="portal__way-line type-body-sm">{w.line}</p>
+          </li>
         ))
       }
-    </div>
+    </ul>
+  </section>
 
-    <div class="portal-cli">
-      <CliExcerpt />
-    </div>
+  <section class="portal__block" aria-labelledby="portal-shape">
+    <h2 class="portal__h type-h3" id="portal-shape">{c.shape_heading}</h2>
+    {/*
+      Every count derives from src/data/docs-nav.json, generated from the
+      library's own mkdocs nav. Nobody authors this list. There is no evidence
+      record for a page count, so each number cites the file it was counted
+      from, which is D-35's rule for a number the store does not hold.
+    */}
+    <ul class="portal__sections">
+      {
+        sections.map((s) => (
+          <li class="portal__section">
+            <a class="portal__section-link type-body" href={s.href!}>
+              {s.title}
+            </a>
+            <span
+              class="portal__count type-mono-sm"
+              data-source="src/data/docs-nav.json"
+            >
+              {s.pages}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
-    <p class="portal-campaign">
-      The measurement discipline these pages document was put through a
-      pre-registered audit in July 2026: 27 cards, 53 frozen hypotheses,
-      refutations published with the same machinery as confirmations. The
-      scored ledger is at <a href="/campaign/">/campaign/</a>.
-    </p>
-  </div>
-</Base>
+  <section class="portal__block" aria-labelledby="portal-conventions">
+    <h2 class="portal__h type-h3" id="portal-conventions">
+      {c.conventions_heading}
+    </h2>
+    {/*
+      Each convention is demonstrated on this page as well as described: the
+      banner above is the version convention, the control in the bar is the
+      markdown one, and the refusal count below is read from the same data the
+      reference page renders.
+    */}
+    <ol class="portal__conventions">
+      <li class="portal__convention type-body">{c.convention_version}</li>
+      <li class="portal__convention type-body">{c.convention_markdown}</li>
+      <li class="portal__convention type-body">
+        {c.convention_refusals}{" "}
+        <a href="/docs/refusals/">{labelFor("/docs/refusals/")}</a>
+      </li>
+    </ol>
+  </section>
+</Docs>
 
 <style>
-  .portal-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .portal__head {
+    margin-block-end: var(--space-7);
+    max-inline-size: min(var(--measure-prose), 100%);
   }
-  .portal-top {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-4) var(--sp-8);
-    align-items: center;
-    margin-bottom: var(--sp-8);
-  }
-  .colab-link {
-    font-size: var(--text-sm);
-  }
-  .portal-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--sp-4);
-  }
-  .portal-card {
-    display: block;
-    border: 1px solid var(--line);
-    border-radius: var(--r-card);
-    background: var(--bg-raised);
-    padding: var(--sp-4);
-    text-decoration: none;
-    transition: border-color 150ms ease;
-  }
-  .portal-card:hover {
-    border-color: var(--line-strong);
-  }
-  .portal-card h2 {
-    margin: 0 0 var(--sp-2);
-    font-size: var(--text-base);
-    font-weight: 600;
+  .portal__title {
     color: var(--ink);
+    margin: 0 0 var(--space-4);
+    max-inline-size: min(var(--measure-heading), 100%);
   }
-  .portal-card p {
+  .portal__intro {
+    color: var(--ink-2);
     margin: 0;
-    font-size: var(--text-sm);
-    color: var(--ink-2);
-    line-height: 1.6;
   }
-  .portal-cli {
-    max-width: 46rem;
-    margin-top: var(--sp-8);
+
+  .portal__block {
+    margin-block-end: var(--space-7);
+    min-width: 0;
   }
-  .portal-campaign {
-    margin-top: var(--sp-8);
-    max-width: var(--measure-wide);
+  .portal__h {
+    color: var(--ink);
+    margin: 0 0 var(--space-4);
+    padding-block-end: var(--space-2);
+    border-block-end: var(--border-w) solid var(--line);
+    max-inline-size: min(var(--measure-prose), 100%);
+  }
+
+  .portal__ways,
+  .portal__sections {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  /* Blocks at body measure, stacked. Not a grid of cards: the page file is
+     explicit about that, and four cards read as four products. */
+  .portal__way {
+    margin-block-end: var(--space-4);
+    max-inline-size: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .portal__way-link {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .portal__way-line {
     color: var(--ink-2);
-    line-height: 1.7;
+    margin: var(--space-1) 0 0;
+    min-width: 0;
+  }
+
+  .portal__section {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-block-end: var(--border-w) solid var(--line);
+    max-inline-size: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .portal__section-link {
+    color: var(--ink);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .portal__count {
+    margin-inline-start: auto;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .portal__conventions {
+    margin: 0;
+    /* Tailwind's preflight resets `ol` to `list-style: none`, so these three
+       rendered as an indent with nothing to the left of it: a list pretending
+       not to be one. The page file numbers them 1 to 3 and the order is the
+       order a reader meets them on this page, so the markers come back. */
+    list-style: decimal;
+    padding-inline-start: var(--space-5);
+    max-inline-size: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .portal__convention {
+    color: var(--ink-2);
+    margin-block: var(--space-3);
+    min-width: 0;
   }
 </style>

@@ -1,0 +1,25 @@
+{
+ "comparator": "< 0.5",
+ "contentHash": "e026d97e3729f27e2f11a29a85e389a6",
+ "humanSource": "The frozen study \"Surface biases enter the reward direction before quality features\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:01c81c7185640f9b962b9115f360732e",
+  "campaign.adjudication.EMB-LORA",
+  "study:campaign-emb-lora@v1#119143a1",
+  "spec:119143a118781b223e14c8cf1ce1c560",
+  "K-emb"
+ ],
+ "label": "Surface biases enter the reward direction before quality features",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. entry-ratio point call at the frozen > 1.0, the null median: power equals the null pass rate 0.501, ratios at or above 2.60 confirm at 80 percent, and the s07 plant sits far above that; passes only through the explicit accept-underpowered path.",
+ "quantity": {
+  "name": "order_recovery_auc",
+  "unit": null,
+  "value": 0.7321428571428571
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-0.6b, over ultrafeedback-train-20k.",
+ "slug": "measured-emb-lora-order-recovery-auc",
+ "sourceUrl": "/evidence/01c81c7185640f9b962b9115f360732e/",
+ "statement": "A supporting measurement from the frozen study \"Surface biases enter the reward direction before quality features\", with no prediction registered against it in advance.",
+ "subject": "skywork-v2-qwen3-0.6b, over ultrafeedback-train-20k",
+ "type": "measured-result"
+}

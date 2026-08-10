@@ -1,0 +1,48 @@
+---
+/**
+ * The F2 base-component gallery, gated so it serves in development and cannot
+ * reach `dist/`.
+ *
+ * WHY THIS IS NOT `_gallery.astro`. Astro's underscore prefix removes a page
+ * from the routing manifest, not only from `dist/`, and the dev server uses the
+ * same manifest: `src/pages/_gallery.astro` returns 404 at
+ * http://localhost:4321/_gallery/, verified. A gallery that cannot be loaded
+ * cannot be screenshotted, so it has to be a real route.
+ *
+ * WHY IT IS GATED RATHER THAN DELETED. Every number on it is a fixture from
+ * `src/components/base/_fixtures.ts`. Gate 5 walks rendered HTML requiring each
+ * numeric token to resolve to an evidence record, and gate 7 walks for banned
+ * identifiers, so a gallery of fixtures is precisely the page that should fail
+ * both. D-33 therefore attaches a build assertion (`gallery-absent.mjs`) rather
+ * than a promise to remove it later.
+ *
+ * Deleting the file was the specified fix and it takes the gallery away from
+ * every packet still building against it, which is the one thing D-33 says not
+ * to do: the gallery is the cheapest way to catch a component regression that a
+ * page-level visual diff would blame on a page.
+ *
+ * So `getStaticPaths` returns nothing unless `PUBLIC_GALLERY=1`. The route is
+ * live under `npm run dev` and under `PUBLIC_GALLERY=1 npm run build`, and a
+ * production build emits no `dist/gallery/` at all. The assertion stays
+ * mechanical and no packet loses the gallery.
+ *
+ *   PUBLIC_GALLERY=1 npm run dev     # http://localhost:4321/gallery/
+ */
+import Base from "@layouts/Base.astro";
+import Gallery from "@components/base/gallery.astro";
+import { copy } from "../../copy";
+
+export function getStaticPaths() {
+  // import.meta.env is inlined at build time, so a production build prunes the
+  // route entirely rather than emitting an empty directory.
+  if (import.meta.env.PUBLIC_GALLERY !== "1") return [];
+  return [{ params: { rest: undefined } }];
+}
+---
+
+<Base title={`Base components · ${copy.meta.site_name}`} description={copy.meta.tagline}>
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  <div data-pagefind-ignore>
+    <Gallery />
+  </div>
+</Base>

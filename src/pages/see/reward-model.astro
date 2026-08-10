@@ -1,0 +1,713 @@
+---
+/**
+ * /see/reward-model/  ·  where a preference appears, and what causes it
+ *
+ * THE PUBLIC QUESTION. This model prefers one answer over another. Where does
+ * that preference appear inside it, and if I intervene there, does the score
+ * move?
+ *
+ * THE CONCLUSION, AND IT IS NOT THE TIE-BREAK. Observational localization and
+ * causal localization point in different directions on the same model and the
+ * same objective. So a component a visible representation makes prominent is a
+ * HYPOTHESIS ABOUT MECHANISM and not a causal result until something is
+ * patched. An agent that makes this route's headline "our frozen prediction
+ * lost" has replaced an interpretability finding with bookkeeping about a
+ * prediction, and a reader who came to look inside a reward model learns
+ * nothing from it.
+ *
+ * THE PLANTED-KEY CASE IS IN PART 5, NOT PART 4, AND THE MOVE IS DELIBERATE.
+ * It is a calibration case: the one place on this route where the answer is
+ * known by construction. It bounds what the rank disagreement establishes,
+ * which makes it a limitation, and part 5 is where limitations live. In part 4
+ * it read as the route's identity.
+ *
+ * READ DECISIONS.md D-14 BEFORE EDITING THAT BLOCK. The project's recorded
+ * prose says the two methods are "statistically tied". The numbers read
+ * otherwise: attribution recovered the planted key at AUC 1.0 and patching at
+ * 0.433962, where 0.5 is chance, and the result contradicted the prediction.
+ * D-14 resolves this by printing the frozen claim, the observation, the
+ * outcome, both scores and the project's own disclosed alternative reading, and
+ * letting a reader who wants to argue do so from the numbers. Every one of
+ * those is rendered below, from generated data, and none is summarised. AN
+ * AGENT THAT SIMPLIFIES IT TO A TIE, OR TO A WIN FOR ATTRIBUTION, BREAKS IT.
+ * Both are wrong and the second is worse, because the project declines it.
+ *
+ * WHICH DIMENSION THE PANEL OPENS ON, AND THE RULE IT IS PICKED BY. The data
+ * carries twelve dimensions and the panel is one dimension, so the route has to
+ * choose, and choosing "the one that looks worst" would be the selection this
+ * route argues against. The rule, stated and applied below rather than typed as
+ * a key: THE FIRST DIMENSION, IN THE GENERATOR'S OWN ORDER, ON WHICH THE TOP
+ * ATTRIBUTION COMPONENT MOVES THE SCORE BY LESS THAN nullThreshold. That is
+ * components/intervention-panel.md acceptance criterion 2 turned into a
+ * selector: the criterion requires the panel to open somewhere the reader can
+ * reach THE ADVERSE STATE IN ONE GESTURE, and the rule finds the first such
+ * place rather than the most flattering one. All twelve dimensions render in
+ * part 5 and in the panel's own table, so nothing is selected away.
+ *
+ * THE FINDING IS STRONGER THAN THE SPECIFICATION EXPECTED. `mlp_L31` is the top
+ * attribution component on ALL TWELVE dimensions, and on refusal_quality,
+ * confidence and sycophancy its patch rank is 64 of 64 and it patches to
+ * exactly 0.0 across all thirty pairs. Attribution's first pick is patching's
+ * last pick. Nothing here softens that and nothing clamps it: the largest
+ * movement in the set is 771% of the margin it moves, which is why the axis is
+ * not bounded at 100%.
+ *
+ * TWO DISCLOSURES ARE MANDATORY AND BOTH ARE RENDERED (EVIDENCE-VERDICTS.md
+ * §1). The two rankings are not taken over the same set: 65 components were
+ * attributed and 64 patched, because the embedding was never patched, and the
+ * page says so rather than letting a reader assume the sets match. And the
+ * correction trail, where a published correlation was superseded by the project
+ * against its own fixtures, with both values and both citations.
+ *
+ * THE SECOND MODEL IS NOT OPTIONAL. On a second reward model the same
+ * measurement is near zero rather than negative. Without it a page of negative
+ * correlations reads as "attribution is wrong", which is exactly the reading
+ * the project declines. The value is not emitted by any generator yet and is
+ * typed once, with its document and line, in src/lib/see-public-text.ts.
+ * ESCALATED there and in the packet report.
+ */
+import ActLayout from "@components/acts/act-layout.astro";
+import ActSection from "@components/acts/act-section.astro";
+import ActMeta from "@components/acts/act-meta.astro";
+import ActQuestion from "@components/acts/act-question.astro";
+import ActProse from "@components/acts/act-prose.astro";
+import ActBlock from "@components/acts/act-block.astro";
+import ActFacts from "@components/acts/act-facts.astro";
+import ActFigureDimensions from "@components/acts/act-figure-dimensions.astro";
+import BundlePanel from "@components/acts/bundle-panel.astro";
+import InterventionPanel from "@components/islands/intervention-panel.astro";
+import VersionChip from "@components/base/version-chip.astro";
+import DataTable from "@components/base/data-table.astro";
+import Callout from "@components/base/callout.astro";
+import FigureFrame from "@components/base/figure-frame.astro";
+import CodeBlock from "@components/base/code-block.astro";
+import { requireRelease, trustLadder } from "@components/base/data";
+import { copy, ui } from "../../copy";
+import {
+  text,
+  resultProse as publicResultProse,
+  publicRecord,
+  SECOND_MODEL_RHO,
+  guardArmoRho,
+} from "../../lib/see-public-text";
+import cards from "@data/cards.json";
+import intervention from "@data/intervention.json";
+import bundles from "@data/bundles.json";
+
+const acts = copy.acts as Record<string, any>;
+const act = acts.reward_model as Record<string, string>;
+const parts = acts.parts.reward_model as Record<string, string>;
+const figures = acts.figures as Record<string, Record<string, string>>;
+const release = requireRelease("/see/reward-model/");
+
+/* THE PLANTED-KEY CALIBRATION CASE, read out of the archive's card store. The
+   store is the v2 research log's: it keys a result by `adjudication_ev` and
+   calls its one-sentence summary a `kill_note`. This route reads both fields
+   and renders neither, because src/lib/see-public-text.ts turns them into a
+   human source and plain prose about what the result showed. */
+const calibration = (cards as any[]).find((c) => c.id === "adj-avp");
+if (!calibration) {
+  throw new Error(
+    "/see/reward-model/: the planted-key calibration case is not in " +
+      "src/data/cards.json. Part 5 states what this route's rank disagreement " +
+      "does not establish, and that limitation does not render from nothing.",
+  );
+}
+const m = calibration.companion_metrics as Record<string, number>;
+const frozenClaim = calibration.hypotheses[0];
+const evidenceId: string = calibration.adjudication_ev;
+const calibrationRecord = publicRecord("adj-avp");
+
+const bundle = (bundles as any).bundles.find((b: any) => b.route === "/see/reward-model/");
+if (!bundle) {
+  throw new Error(
+    "/see/reward-model/: no bundle for this route in src/data/bundles.json. " +
+      "Every act ends with a runnable path and a stated expected output, and " +
+      "part 6 does not render a download link with nothing behind it.",
+  );
+}
+
+/* Chance is a definitional constant, not a measurement, and it belongs in
+   scripts/checks/number-allowlist.json with that as its stated reason rather
+   than bound to a record (pages/see-reward-model.md:143). It renders as the
+   table's referenceRow, which says "this is the baseline both numbers are read
+   against" without a sentence. */
+const CHANCE = 0.5;
+
+/* What this block is about, in the words a reader can use. The stored card
+   id, its hypothesis id and the id of the threshold it was tested against are
+   all internal strings and none of the three is rendered (D-05). */
+const CALIBRATION_CASE = "the planted-key calibration case";
+
+/* The other block in part 5 that carries a pair of numbers. It is about the
+   correlation this project published and then superseded against its own
+   fixtures, which is a different thing from the calibration case and used to
+   share a heading with it. */
+const CORRECTION_TRAIL = "the published correlation, and the correction to it";
+
+const auc = (v: number) => v.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
+const rho = (v: number) => (v >= 0 ? `+${v.toFixed(6)}` : v.toFixed(6));
+
+/**
+ * For a correlation this page QUOTES from a document rather than recomputing.
+ *
+ * `rho` pads to six places, which is right for a value this site derived: the
+ * mean over twelve dimensions really is `-0.170885`, and trimming it would be
+ * re-rounding a measurement. It is wrong for a quotation.
+ * `reward-lens-clean/docs/BUILD_NOTES.md:44` writes `-0.256`, three places, and
+ * rendering that as `-0.256000` invents three digits the source never claimed,
+ * beside a citation pointing at the line that does not contain them.
+ *
+ * So a quoted value is written with exactly the places it was written with. The
+ * column then mixes three-place quotations with a six-place recomputation,
+ * which looks uneven and is the honest shape: the row labels are "published,
+ * then deprecated", "superseding value, as quoted" and "recomputed from the
+ * fixture", and those are three different kinds of number.
+ */
+const quotedRho = (v: number) => (v >= 0 ? `+${v}` : String(v));
+
+const headline = intervention.headline;
+/* Fails the build if a generator starts emitting the second model's
+   correlation, so the typed constant cannot outlive the gap it exists for. */
+guardArmoRho(headline as unknown as Record<string, unknown>);
+const meta = intervention.meta;
+const dims = intervention.dimensions as any[];
+const nullThreshold = intervention.nullThreshold;
+
+/* The two per-pair files the generator read, with their hashes recorded. Act
+   one's per-component numbers resolve to a document rather than to an evidence
+   record, so they cite through act-source at the weight a chip gets (D-35).
+   No line: a JSONL of 360 rows has no single line that is the number. */
+const ATTRIBUTION_DOC = { document: meta.derivedFrom[0].document, line: null };
+const PATCHING_DOC = { document: meta.derivedFrom[1].document, line: null };
+
+/* THE RULE, applied. Not "the dimension that looks worst": the first one, in
+   the generator's order, where the reader can reach the state that is bad for
+   the project in a single click. */
+const topOf = (d: any) =>
+  d.components.find((c: any) => c.id === d.topAttributionComponent) ??
+  [...d.components].sort((a: any, b: any) => a.attributionRank - b.attributionRank)[0];
+
+const opening =
+  dims.find((d) => Math.abs(topOf(d).patchFractionOfMargin) < nullThreshold.value) ?? dims[0];
+
+if (Math.abs(topOf(opening).patchFractionOfMargin) >= nullThreshold.value) {
+  throw new Error(
+    "/see/reward-model/: no dimension in src/data/intervention.json has a top " +
+      "attribution component moving less than the null threshold. That state " +
+      "is components/intervention-panel.md acceptance criterion 2 and this " +
+      "act's thesis, and a panel that cannot reach it is not this component.",
+  );
+}
+
+/* Every value the act's prose can account for, with its citation. */
+const bind = {
+  rho_mean: {
+    display: rho(headline.meanRho),
+    source: { document: headline.meanRhoSource.document, line: headline.meanRhoSource.line },
+    label: "mean rank correlation",
+  },
+  rho_worst: {
+    display: rho(headline.sharpestRho),
+    source: {
+      document: headline.meanRhoSource.document,
+      line: dims.find((d) => d.key === headline.sharpestDimension)!.spearmanRhoSource.line,
+    },
+    label: "sharpest rank correlation",
+  },
+  // rho_armo is deliberately absent. See the header note.
+};
+
+/**
+ * Truncate at the first unfillable clause, and never past a sentence boundary.
+ *
+ * The earlier form of this helper deleted only the clauses holding an unfilled
+ * placeholder, which is correct when those clauses are independent and WRONG
+ * here: the clause after the missing one refers back to it, so deleting the
+ * middle produced a sentence whose surviving tail described the wrong subject.
+ * A mechanical deletion that can invent a false statement is worse than a
+ * visible gap, so this stops at the first offending clause and drops the
+ * remainder of that sentence, and it never touches another sentence.
+ *
+ * It only ever DELETES. It writes nothing and rewords nothing. When a generator
+ * emits the missing field this call becomes a no-op and the sentence returns
+ * with no edit here.
+ */
+const truncateUnfilled = (template: string, filled: Record<string, unknown>) => {
+  const missing = [...template.matchAll(/\{\{\s*([a-z0-9_.]+)\s*\}\}/gi)]
+    .map((x) => x[1])
+    .filter((k) => !(k in filled));
+  if (!missing.length) return template;
+  const holds = (s: string) => missing.some((k) => s.includes(`{{${k}}}`));
+
+  return template
+    .split(/(?<=\.)\s+/)
+    .map((sentence) => {
+      const clauses = sentence.split(/,\s+/);
+      const at = clauses.findIndex(holds);
+      if (at === -1) return sentence;
+      if (at === 0) return "";
+      const kept = clauses.slice(0, at).join(", ");
+      return kept.endsWith(".") ? kept : `${kept}.`;
+    })
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+};
+
+const resultProse = truncateUnfilled(act.result, bind);
+
+/* Humanised field names from intervention.json. copy.yaml carries no column
+   heading or readout string for this component, which is the same gap
+   act-meta and timeline-scrubber already document and the same permission.
+   Escalated in the packet report; the moment the keys land these bind to them
+   and nothing else changes. */
+const panelLabels = {
+  attribution: "attribution rank",
+  patching: "patch rank",
+  component: "components",
+  rank: "rank",
+  movement: "moves",
+  margin: "margin",
+  original: "margin mean",
+  patched: "patch effect",
+  beyond: "ranked beyond this list",
+};
+const figureLabels = {
+  dimension: "dimension",
+  rho: "spearman rho",
+  above: "positive dimensions",
+  below: "negative dimensions",
+};
+---
+
+<ActLayout title={act.title} description={act.question}>
+  <VersionChip slot="banner" describes={release.unpublished ?? release.latest} />
+
+  {/* ---------------------------------------------------------------- part 1 */}
+  <ActSection part={1} heading={parts.question} headingLevel={1}>
+    <ActMeta
+      slot="margin"
+      items={[
+        { label: "subject", value: meta.subject },
+        { label: "reproduction", value: ui.not_reproduced },
+      ]}
+    />
+    <ActQuestion question={act.question} />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 2 */}
+  <ActSection part={2} heading={parts.setup}>
+    {/* ACCESS MATTERS HERE MORE THAN IN THE OTHER TWO ACTS and the margin says
+        so: this result needs forward AND backward access to weights. A reader
+        holding an API endpoint cannot run it, and that is a limitation of the
+        finding rather than a detail of the method. Stated in part 2 and not
+        deferred to part 5 (pages/see-reward-model.md:56). */}
+    <ActMeta
+      slot="margin"
+      items={[
+        { label: "subject", value: meta.subject },
+        { label: "access", value: "forward and backward, to weights" },
+        { label: "trust", value: trustLadder.levels[0].name },
+      ]}
+    />
+    <ActProse text={act.setup} />
+
+    <ActFacts
+      class="rm__facts"
+      caption={parts.setup}
+      facts={[
+        {
+          label: "objective dimensions",
+          display: String(meta.dimensionCount),
+          source: ATTRIBUTION_DOC,
+        },
+        {
+          label: "preference pairs per dimension",
+          display: String(opening.pairCount),
+          source: ATTRIBUTION_DOC,
+        },
+        {
+          label: "components attributed",
+          display: String(meta.attributedComponentCount),
+          source: ATTRIBUTION_DOC,
+        },
+        {
+          label: "components patched",
+          display: String(meta.patchedComponentCount),
+          source: PATCHING_DOC,
+        },
+      ]}
+    />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 3 */}
+  <ActSection part={3} heading={parts.instrument} width="wide">
+    <InterventionPanel
+      components={opening.components}
+      dimension={opening.key}
+      marginMean={opening.marginMean}
+      nullThreshold={nullThreshold.value}
+      nullHint={act.null_state_hint}
+      interactionHint={act.interaction_hint}
+      attributionSource={ATTRIBUTION_DOC}
+      patchingSource={PATCHING_DOC}
+      labels={panelLabels}
+    />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 4 */}
+  <ActSection part={4} heading={text("acts.parts.reward_model.result")}>
+    {/* 4a. THE CONCLUSION, AND IT IS ABOUT THE TWO LOCALIZATIONS RATHER THAN
+        ABOUT A PREDICTION. A component a visible representation makes
+        prominent is a hypothesis about mechanism. The rank correlation and its
+        spread are the evidence for that sentence, and the figure below carries
+        the spread, which is the finding the mean cannot show. */}
+    <ActBlock heading={text("acts.reward_model.result_heading")} level={3}>
+      <ActProse text={text("acts.reward_model.conclusion")} />
+      <ActProse class="rm__block-p" text={resultProse} bind={bind} />
+    </ActBlock>
+
+    {/* 4b. THE SECOND MODEL, AND IT IS WHAT STOPS 4a BEING READ AS
+        "ATTRIBUTION IS WRONG". Twelve negative-leaning correlations on one
+        model invite exactly that reading. On a second model the same
+        measurement is near zero: the two methods are not reliably opposed
+        either, they are unrelated in a way that depends on the model. Neither
+        pattern licenses preferring one localizer, which is the whole claim.
+
+        THE NUMBER IS TYPED, IN ONE PLACE, AND THAT IS AN ESCALATION. It sits
+        in the same fixture `intervention.json` already cites for the mean and
+        no generator emits it. src/lib/see-public-text.ts holds it with its
+        document and line, and fails the build the moment the field appears. */}
+    <ActBlock heading={text("acts.reward_model.second_model_heading")} level={3}>
+      <ActProse text={text("acts.reward_model.second_model")} />
+      <ActFacts
+        class="rm__facts"
+        caption={figures.attribution_vs_patching.title}
+        facts={[
+          {
+            label: `mean rank correlation, ${meta.subject}`,
+            display: rho(headline.meanRho),
+            source: {
+              document: headline.meanRhoSource.document,
+              line: headline.meanRhoSource.line,
+            },
+          },
+          {
+            label: `mean rank correlation, ${SECOND_MODEL_RHO.model}`,
+            display: SECOND_MODEL_RHO.display,
+            source: SECOND_MODEL_RHO.source,
+          },
+        ]}
+      />
+    </ActBlock>
+
+    {/* Fig. 1.2. All twelve dimensions, sign-encoded, at the figure slot's
+        full grid width. The mean is one number and the spread is the finding,
+        which is why the figure and not the mean is this part's centre. */}
+    <FigureFrame
+      slot="figure"
+      number="1.2"
+      title={figures.attribution_vs_patching.title}
+      scope={figures.attribution_vs_patching.scope}
+      caption={figures.attribution_vs_patching.caption}
+      bleed={true}
+    >
+      <ActFigureDimensions
+        dimensions={dims.map((d) => ({
+          key: d.key,
+          spearmanRho: d.spearmanRho,
+          source: {
+            document: d.spearmanRhoSource.document,
+            line: d.spearmanRhoSource.line,
+          },
+        }))}
+        labels={figureLabels}
+      />
+    </FigureFrame>
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 5 */}
+  <ActSection part={5} heading={parts.not_established}>
+    {/* 5a first and the rule second. The limitation comes first and the rule
+        follows from it; ending the act on the rule because it is the satisfying
+        ending is the one thing to resist (pages/see-reward-model.md:185). */}
+    <ActProse text={text("acts.reward_model.not_established")} />
+
+    {/* 5b. THE COUNTERWEIGHT TO THE STATE THE READER JUST REACHED, and it is
+        the most important limitation on this page.
+
+        A reader has just clicked the top attribution bar on one dimension and
+        watched the score move by nothing. The honest next fact is that the same
+        component is attribution's number one on ALL TWELVE dimensions and that
+        its patch rank is not 64 on all twelve: it is 64 on three, 2 on two, and
+        everything between. So the disagreement is real and it is NOT uniform,
+        and a reader who leaves with "attribution's top pick never matters" has
+        over-read the demonstration in the direction that flatters the act.
+        Twelve rows, every one of them, the flattering ones included. */}
+    <ActBlock heading={act.result_heading} level={3}>
+      <ActFacts
+        class="rm__facts"
+        caption={figures.attribution_vs_patching.title}
+        facts={dims.map((d) => {
+          const top = topOf(d);
+          return {
+            label: `${d.key}, ${top.id}`,
+            display: `${(top.patchFractionOfMargin * 100).toFixed(4)}%`,
+            source: PATCHING_DOC,
+            compare: String(top.patchRank),
+          };
+        })}
+        compareLabel="patch rank"
+      />
+    </ActBlock>
+
+    {/* 5c. THE READING THIS ACT DOES NOT LICENSE, and it is the one a reader
+        is most likely to leave with.
+
+        Both rankings have the same leader on every dimension: attribution's
+        first pick is the same component twelve times, and so is patching's, and
+        they are different components. So what the crossing lines show may be
+        two methods each with a degenerate favourite rather than twelve
+        independent disagreements, and twelve dimensions is then closer to one
+        observation repeated than to twelve. Nothing in the study rules that
+        out, this page does not rule it out, and a reader deciding how much
+        weight the correlation carries needs it. It is printed here rather than
+        left for somebody to notice. */}
+    <ActBlock heading={figures.attribution_vs_patching.title} level={3}>
+      <ActFacts
+        class="rm__facts"
+        caption={figures.attribution_vs_patching.title}
+        facts={dims.map((d) => ({
+          label: d.key,
+          display: d.topAttributionComponent,
+          source: ATTRIBUTION_DOC,
+          compare: d.topPatchComponent,
+        }))}
+        compareLabel={panelLabels.patching}
+      />
+    </ActBlock>
+
+    {/* 5d. What the instrument above was actually run on. Every one of these
+        bounds the thing a reader has just performed, and none of them is
+        anywhere else on the page: one model, one patching mode, thirty pairs
+        per dimension, and sixty-four of sixty-five components patched, because
+        the study did not patch the embedding and the panel therefore does not
+        draw it. */}
+    <ActBlock heading={figures.attribution_vs_patching.scope} level={3}>
+      {/* THE TWO RANKINGS ARE NOT OVER THE SAME SET, and the page says so in a
+          sentence rather than leaving a reader to notice that two rows of the
+          table below differ by one. EVIDENCE-VERDICTS.md §1 makes this
+          disclosure mandatory. */}
+      <ActProse text={text("acts.reward_model.component_sets")} />
+      <ActFacts
+        class="rm__facts"
+        caption={figures.attribution_vs_patching.scope}
+        facts={[
+          { label: "models", display: "1", source: ATTRIBUTION_DOC },
+          { label: "objective dimensions", display: String(meta.dimensionCount), source: ATTRIBUTION_DOC },
+          { label: "preference pairs per dimension", display: String(opening.pairCount), source: ATTRIBUTION_DOC },
+          {
+            label: "attribution rows read",
+            display: String(meta.derivedFrom[0].rows),
+            source: ATTRIBUTION_DOC,
+          },
+          {
+            label: "patching rows read",
+            display: String(meta.derivedFrom[1].rows),
+            source: PATCHING_DOC,
+          },
+          { label: "patching mode", display: meta.patchingMode, source: PATCHING_DOC },
+          {
+            label: "components attributed but not patched",
+            display: meta.unpatchedComponents.join(", "),
+            source: PATCHING_DOC,
+          },
+          /* On two of the twelve the margin is not consistently signed: the
+             model prefers the wrong answer on some pairs, so "the fraction of
+             the margin this patch moves" is measured against a quantity that
+             changes sign within the dimension. Both are printed, and the ten
+             zeroes with them, so the two are not a footnote. */
+          ...dims.map((d) => ({
+            label: `${d.key}, pairs with a negative margin`,
+            display: String(d.negativeMargins),
+            source: ATTRIBUTION_DOC,
+            compare: String(d.pairCount),
+          })),
+        ]}
+        compareLabel="of"
+      />
+    </ActBlock>
+
+    {/* 5e. The correlation the project published, and the one it corrected
+        itself to. Both numbers, both citations, the deprecated one first. It
+        belongs in this part rather than in part 4 because what it establishes
+        is a limit on how much weight the headline number can carry, and it is
+        the second time on this page the project publishes against itself. */}
+    <ActBlock heading={CORRECTION_TRAIL} level={3}>
+      <ActProse text={headline.correction.note} />
+      <ActFacts
+        class="rm__facts"
+        caption={CORRECTION_TRAIL}
+        facts={[
+          {
+            label: "published, then deprecated",
+            display: quotedRho(headline.correction.deprecatedRho),
+            source: {
+              document: headline.correction.deprecatedRhoSource.document,
+              line: headline.correction.deprecatedRhoSource.line,
+            },
+          },
+          {
+            label: "superseding value, as quoted",
+            display: quotedRho(headline.correction.supersedingRhoAsQuoted),
+            source: {
+              document: headline.correction.supersedingRhoSource.document,
+              line: headline.correction.supersedingRhoSource.line,
+            },
+          },
+          {
+            label: "recomputed from the fixture",
+            display: rho(headline.meanRho),
+            source: {
+              document: headline.meanRhoSource.document,
+              line: headline.meanRhoSource.line,
+            },
+          },
+          {
+            label: "stated tolerance",
+            display: String(headline.toleranceStated),
+            source: {
+              document: headline.meanRhoSource.document,
+              line: headline.meanRhoSource.line,
+            },
+          },
+        ]}
+      />
+    </ActBlock>
+
+    {/* 5f. THE CALIBRATION CASE. It is here, in part 5, because what it
+        establishes is a bound on part 4 rather than a second result: on the one
+        subject where the answer is known by construction, neither localization
+        recovered it well enough to be preferred, so the rank disagreement above
+        cannot be read as evidence for either method.
+
+        D-14's order, and nothing here is summarised: the claim frozen before
+        the data, both recovery scores against chance, and the project's own
+        recorded reading, which contains both the tie language and the disclosed
+        alternative. The tension between "statistically tied" and a score of
+        1.0 against 0.433962 is real, it is printed rather than smoothed, and a
+        reader who wants to argue can do it from the numbers. */}
+    <ActBlock heading={CALIBRATION_CASE} level={3}>
+      <ActProse text={text("acts.reward_model.calibration_case")} />
+
+      {/* The project's own sentence, quoted, with a label above it. Without one
+          it ran on from the paragraph above as an unattributed lower-case
+          fragment and read as the site's assertion rather than as the claim
+          under test. */}
+      <p class="rm__frozen type-body">
+        <span class="rm__frozen-label type-mono-label">
+          {text("acts.reward_model.frozen_claim_label")}
+        </span>
+        <span class="rm__statement">{frozenClaim.statement}</span>
+      </p>
+
+      <DataTable
+        caption={CALIBRATION_CASE}
+        columns={[
+          { key: "method", label: "method", kind: "text" },
+          { key: "auc", label: "key recovery, area under the curve", kind: "number", align: "end" },
+        ]}
+        rows={[
+          {
+            method: "attribution",
+            auc: {
+              value: m.attribution_recovery_auc,
+              display: auc(m.attribution_recovery_auc),
+              evidenceId,
+              record: calibrationRecord,
+            },
+          },
+          {
+            method: "causal patching",
+            auc: {
+              value: m.patching_recovery_auc,
+              display: auc(m.patching_recovery_auc),
+              evidenceId,
+              record: calibrationRecord,
+            },
+          },
+          { method: "chance", auc: { value: CHANCE, display: String(CHANCE) } },
+        ]}
+        rowKey="method"
+        referenceRow="chance"
+      />
+
+      {/* The recorded conclusion, attributed to the project rather than
+          presented as the site's own hedge. The archive stores it under a field
+          named for the mechanism that produced it; what renders is what the
+          result showed. */}
+      <Callout variant="scope" label={CALIBRATION_CASE} evidenceId={evidenceId}>
+        {publicResultProse("adj-avp", calibration.kill_note)}
+      </Callout>
+    </ActBlock>
+
+    {/* 5g. The rule a practitioner can take away. The single most portable
+        sentence in the act, set as prose at full body measure. Not a pull
+        quote and not in a box: a box would make it the act's conclusion, and
+        the limitation above it is the conclusion. */}
+    <ActProse class="rm__rule" text={act.rule} />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 6 */}
+  <ActSection part={6} heading={parts.reproduce}>
+    {/* The honest note this section owes: the full result needs weight access
+        and a GPU, the bundle path reproduces the correlation from the emitted
+        fixture without either, and the copy says which of the two it is
+        offering rather than implying the reader has reproduced the whole
+        finding. */}
+    <CodeBlock code={bundle.command} lang="bash" verified={true} label={bundle.filename} />
+    <BundlePanel bundle={bundle} requirements={act.bundle_requirements} />
+  </ActSection>
+</ActLayout>
+
+<style>
+  .rm__frozen-label {
+    color: var(--ink-2);
+  }
+
+  .rm__frozen {
+    margin: 0 0 var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    color: var(--ink);
+    min-width: 0;
+  }
+
+  .rm__statement {
+    min-width: 0;
+    flex: 1 1 20rem;
+  }
+
+  /* THESE SELECTORS ARE GLOBAL AND THAT IS NOT LAZINESS. Astro scopes a page's
+     styles by stamping `data-astro-cid-<page>` on elements in the PAGE's own
+     markup, and a child component's root element carries only its own id. Every
+     spacing class this route hands to a component was therefore inert: the rule
+     compiled to `.rm__facts[data-astro-cid-<page>]` and matched nothing,
+     which is why prose and the table beneath it sat with no interval between
+     them on every part of this route. Invisible in the code, obvious in the
+     picture.
+
+     The names are route-prefixed, so a global rule here cannot collide with
+     anything: `rm__*` exists on this route and nowhere else. */
+  :global(.rm__facts),
+  :global(.rm__block-p) {
+    margin-block-start: var(--space-5);
+  }
+
+  .rm__rule {
+    margin-block-start: var(--space-6);
+  }
+</style>

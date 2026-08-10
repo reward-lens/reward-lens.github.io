@@ -1,0 +1,17 @@
+{
+ "artifact": "swebench/harness/grading.py (swebench 4.1.0, sha256 88fc500ebaf692a5)",
+ "comparator": "mutation score 0.033 over 60 competent mutants",
+ "contentHash": "0caf517c80ab3c75c2f0a04751282ac9",
+ "humanSource": "The released grader card for this scoring program, regenerated from the release artifacts rather than restated.",
+ "immutableIds": [
+  "ev:c04b68e797fa61ee19506ffe7bc67af6",
+  "verifier:ca48315096e82c960386d4784708a672"
+ ],
+ "label": "SWE-bench grading.py",
+ "limitation": "A mutation score is a statement about this checker on this corpus, and it does not transfer to another corpus or another checker.",
+ "scope": "2400 grader calls on one corpus, at the exploratory level.",
+ "slug": "grader-swebench",
+ "statement": "A scoring program was run against a fixed corpus and 2 of 60 competent mutants were caught.",
+ "subject": "SWE-bench grading.py get_eval_tests_report, entry point get_eval_tests_report, over SWE-bench Lite gold test lists, 240 rollouts.",
+ "type": "fixture-qualification"
+}

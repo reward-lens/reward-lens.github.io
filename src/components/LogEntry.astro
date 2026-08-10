@@ -2,6 +2,10 @@
 // LogEntry: one row of the works log. Date, a neutral type chip, the title
 // (linked when links are present) and a links row. The reverse-chronological
 // container is the page's responsibility.
+//
+// NOT IMPORTED BY ANYTHING today. It carries no vocabulary of its own: every
+// string on it comes from the row it is handed, so it is clean wherever its
+// caller is.
 
 interface LinkItem {
   label: string;

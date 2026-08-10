@@ -2,8 +2,10 @@
 title: The index library
 description: Sometimes you do not want a whole instrument, you want one number.
 section: instruments
-order: 43
+order: 51
 source: docs/content/instruments/index-library.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -16,7 +18,7 @@ source: docs/content/instruments/index-library.md
 
 **Sometimes you do not want a whole instrument, you want one number.**
 
-An index is a scalar diagnostic: a single value that answers one specific worry about a reward model, computed on top of the instruments and the signal. There are eighteen of them. Each pairs a plain numpy function that returns a bare number with an observable that wraps it in [`Evidence`](/docs/reference/core/#reward_lens.core.evidence.Evidence), so you can use an index as a quick statistic or as a measurement that carries its own credentials. They exist as one page rather than eighteen because they share a shape and, more importantly, a status: none of them is calibrated yet, and that uniform honesty is worth stating once, clearly, instead of burying it eighteen times.
+An index is a scalar diagnostic: a single value that answers one specific worry about a reward model, computed on top of the instruments and the signal. There are eighteen of them. Each pairs a plain numpy function that returns a bare number with an observable that wraps it in [`Evidence`](/docs/api/core/#reward_lens.core.evidence.Evidence), so you can use an index as a quick statistic or as a measurement that carries its own credentials. They exist as one page rather than eighteen because they share a shape and, more importantly, a status: none of them is calibrated yet, and that uniform honesty is worth stating once, clearly, instead of burying it eighteen times.
 
 ## The eighteen
 
@@ -43,7 +45,7 @@ Every index below returns `EXPLORATORY` Evidence today. That is not a hedge abou
 | `Contested` | Along which representation axis do annotators actually disagree? | needs a frame | No |
 | `CoverageDisparity` | v1's coverage statistic, kept reproducible under its honest name. | invariant | No |
 
-The names are stable and importable as a set from [`reward_lens.measure.indices`](/docs/reference/measure/). Read the table as a menu of specific worries: if yours is "is this reward model rewarding style under the name of correctness," you want `StyleShare`; if it is "will optimizing against this model find a heavy tail to exploit," you want `TailIndex` and `Chi` together.
+The names are stable and importable as a set from [`reward_lens.measure.indices`](/docs/api/measure/). Read the table as a menu of specific worries: if yours is "is this reward model rewarding style under the name of correctness," you want `StyleShare`; if it is "will optimizing against this model find a heavy tail to exploit," you want `TailIndex` and `Chi` together.
 
 ## A run you can reproduce on CPU
 

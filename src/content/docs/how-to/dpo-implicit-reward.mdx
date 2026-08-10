@@ -4,6 +4,8 @@ description: You trained with DPO, so there is no reward head. Can you still mea
 section: how-to
 order: 8
 source: docs/content/how-to/dpo-implicit-reward.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -47,4 +49,4 @@ print(len(curve))    # 8   (one increment per response token; they sum to the se
 On real checkpoints, load the policy and its reference with `AutoModelForCausalLM.from_pretrained(...)` and pass both to `ImplicitRM.from_models(policy, reference, tokenizer, beta=...)`. Two 8B forwards do not fit an 8 GB GPU; the tiny path above exercises the identical code.
 
 </Callout>
-See also: [Implicit (DPO) rewards](/docs/models-and-signals/implicit-dpo/). API: [`ImplicitRM`](/docs/reference/signals/#reward_lens.signals.implicit.ImplicitRM).
+See also: [Implicit (DPO) rewards](/docs/models-and-signals/implicit-dpo/). API: [`ImplicitRM`](/docs/api/signals/#reward_lens.signals.implicit.ImplicitRM).

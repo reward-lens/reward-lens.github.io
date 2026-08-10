@@ -1,0 +1,998 @@
+---
+/**
+ * intervention-panel  ·  act one's instrument, components/intervention-panel.md
+ *
+ * The finding is a DISAGREEMENT BETWEEN TWO ORDERINGS, and an ordering
+ * disagreement is one of the few things genuinely easier to see than to read.
+ * Two ranked lists with the same component connected across them turns a
+ * Spearman correlation into a picture of crossing lines, and the crossing is
+ * the content.
+ *
+ * WHAT THE DATA TURNED OUT TO BE, and it is stronger than the contract knew.
+ * The contract was written expecting twelve components. src/data/intervention.json
+ * carries SIXTY-FOUR per dimension, and `mlp_L31` is the top attribution
+ * component on ALL TWELVE dimensions. On three of them its patch rank is 64 of
+ * 64 and it patches to exactly 0.0. Attribution's first pick is patching's last
+ * pick. That is the act's thesis, measured, and it is what a reader performs
+ * here rather than being told.
+ *
+ * THREE RULES ARE LOAD-BEARING AND ALL THREE ARE BUILT.
+ *
+ * 1. THE BEFORE NEVER LEAVES THE FRAME. The axis carries two markers: the
+ *    dimension's measured mean margin, and the margin this component's patch
+ *    moves. The original marker is a static element the script never touches,
+ *    so its rendered x is byte-identical before and after any selection
+ *    (criterion 3). Displace, do not replace.
+ *
+ * 2. THE READER MUST BE ABLE TO REACH A STATE THAT IS BAD FOR THE PROJECT. It
+ *    is not merely reachable here, it is the DEFAULT: the panel opens with no
+ *    selection and the first row of the attribution list is the component that
+ *    patches to zero. One click, and the picture is a full-length original
+ *    beside a patched bar of nothing.
+ *
+ * 3. NOTHING HERE IS A SIMULATION. Every value is a precomputed measurement
+ *    from the fixture. No interpolation, and `embed` — the one component the
+ *    study attributed but did not patch (meta.unpatchedComponents) — is not in
+ *    the arrays and is not drawn.
+ *
+ * THE AXIS IS IN MARGIN UNITS AND IT IS NOT DERIVED, which is the ruling this
+ * component turns on. The obvious axis is "score before, score after", and the
+ * repository does not contain the score after: it records the mean margin and
+ * it records how much of that margin each patch moves. Computing
+ * `marginMean - patchEffect` would mint a number the study never published,
+ * which is precisely C-42's defect one act over. So the two markers are the two
+ * measured quantities: the whole margin, and the part of it this patch accounts
+ * for. When the top attribution component moves 0.0, the reader sees a bar of
+ * everything beside a bar of nothing, which is the honest picture and a better
+ * one than a rebased score axis would have been.
+ *
+ * THE MOVEMENT AXIS IS NOT BOUNDED BY 100% AND NOTHING IS CLAMPED. The largest
+ * movement in the set is 771%, on `formatting`/`mlp_L0`. Clipping the axis at
+ * the margin would hide the most surprising value the study produced. The axis
+ * maximum is the largest measured quantity in the dimension, whichever it is.
+ *
+ * WHY THE LISTS SHOW A HEAD AND THE TABLE SHOWS ALL SIXTY-FOUR. Sixty-four rows
+ * in each list is 2,500px of list and a hairball of connectors, and the
+ * crossing stops being visible, which costs the component its entire reason for
+ * existing. So each list shows its own top `rows`, the union of the two heads
+ * is what is selectable, and every component the study measured is in the table
+ * beneath at full precision. NOTHING IS HIDDEN BY VALUE: the contract's
+ * "Incorrect: hiding components whose patch effect is near zero" is about
+ * dropping the near-zero ones, and the near-zero one is the FIRST ROW of the
+ * attribution list. A component in one head and not the other keeps its
+ * connector, drawn to a rail at the far list's foot carrying its real rank, so
+ * attribution's number one visibly has no endpoint in patching's top ten.
+ *
+ * ONE DIMENSION PER PANEL, which is what the contract's `dimension` property
+ * says, and the route states the rule it picked by. All twelve dimensions
+ * render in part 4a's figure, so nothing is selected away.
+ */
+import ActSource from "@components/acts/act-source.astro";
+
+export interface PanelComponent {
+  id: string;
+  type: string;
+  attributionValue: number;
+  attributionRank: number;
+  patchRank: number;
+  patchEffect: number;
+  patchFractionOfMargin: number;
+}
+
+interface Props {
+  /** One dimension's sixty-four, in the generator's order. */
+  components: PanelComponent[];
+  /** The dimension key, for the section's accessible name. */
+  dimension: string;
+  /** The dimension's measured mean margin. The original marker's value. */
+  marginMean: number;
+  /** From the data file, with its own citation. Never typed here. */
+  nullThreshold: number;
+  /** copy.yaml:acts.reward_model.null_state_hint */
+  nullHint: string;
+  /** copy.yaml:acts.reward_model.interaction_hint */
+  interactionHint: string;
+  /** Where the attribution numbers and the patch numbers were recorded. */
+  attributionSource: { document: string; line: number | null };
+  patchingSource: { document: string; line: number | null };
+  /** Humanised field names. copy.yaml carries none for this component. */
+  labels: {
+    attribution: string;
+    patching: string;
+    component: string;
+    rank: string;
+    movement: string;
+    margin: string;
+    original: string;
+    patched: string;
+    beyond: string;
+  };
+  /** How many rows each list shows. A layout choice, not a claim. */
+  rows?: number;
+  class?: string;
+}
+
+const {
+  components,
+  dimension,
+  marginMean,
+  nullThreshold,
+  nullHint,
+  interactionHint,
+  attributionSource,
+  patchingSource,
+  labels,
+  rows = 10,
+  class: extraClass = "",
+} = Astro.props;
+
+if (components.length < 2) {
+  throw new Error(
+    `intervention-panel "${dimension}": ${components.length} components. One ` +
+      `ranking cannot disagree with itself (components/intervention-panel.md, ` +
+      `Empty).`,
+  );
+}
+for (const c of components) {
+  const hasRank = Number.isFinite(c.patchRank);
+  const hasEffect = Number.isFinite(c.patchEffect);
+  if (hasRank !== hasEffect) {
+    throw new Error(
+      `intervention-panel "${dimension}": component ${c.id} has a patchRank ` +
+        `of ${String(c.patchRank)} and a patchEffect of ` +
+        `${String(c.patchEffect)}. A component the study did not patch is not ` +
+        `drawn and is not interpolated; one with half a measurement is a ` +
+        `generator defect.`,
+    );
+  }
+}
+
+/* Display forms. The value is the generator's; only the unit is applied here,
+   and four decimal places is the format the bundle's own expected output uses
+   for the same quantity, so a reader diffing the two sees one number. */
+const pct = (v: number) => `${(v * 100).toFixed(4)}%`;
+const units = (v: number) => v.toFixed(4);
+
+const byAttribution = [...components].sort((a, b) => a.attributionRank - b.attributionRank);
+const byPatch = [...components].sort((a, b) => a.patchRank - b.patchRank);
+const headA = byAttribution.slice(0, rows);
+const headP = byPatch.slice(0, rows);
+
+/* Selectable = the union of the two heads, so a row in either list can be
+   picked and its partner is always locatable, on the rail if not in the head. */
+const selectable = [...new Set([...headA, ...headP])];
+
+/* The axis holds every measured quantity in the dimension at its measured
+   size. Not clamped to the margin, not clamped to 100%: the largest movement
+   in this study is 7.7 times the margin it moves. */
+const axisMax = Math.max(marginMean, ...components.map((c) => Math.abs(c.patchEffect)));
+const frac = (v: number) => (axisMax === 0 ? 0 : Math.abs(v) / axisMax);
+
+/* Geometry for the connector layer. The lists are DOM and only the lines are
+   SVG (the contract's "one thing most likely to be built inaccessibly"), so the
+   SVG is a fixed viewBox the rows are laid out against. */
+const ROW = 100 / rows;
+const yOf = (i: number) => (i + 0.5) * ROW;
+const RAIL = 100 - ROW * 0.25;
+
+const offHead = headA.filter((c) => headP.indexOf(c) === -1);
+const lines = headA.map((c) => {
+  const to = headP.indexOf(c);
+  const off = to === -1;
+  return {
+    id: c.id,
+    y1: yOf(headA.indexOf(c)),
+    y2: off ? RAIL : yOf(to),
+    /* Off-head lines all land on the rail, and landing them all on ONE point
+       draws a fan rather than a crossing. They are spread across the rail's
+       right half instead, in their own order, so the bundle reads as ten
+       components leaving the top ten rather than as an ornament. */
+    x2: off ? 100 - (offHead.length - 1 - offHead.indexOf(c)) * (50 / Math.max(offHead.length, 1)) : 100,
+    offRail: off,
+    patchRank: c.patchRank,
+  };
+});
+
+const uid = `ip-${dimension.replace(/[^a-z0-9]/gi, "-")}`;
+const descId = (id: string) => `${uid}-d-${id}`;
+
+/* The citation each list's numbers carry, in the form a reader can paste. Same
+   composition act-source uses: the document, and the line where there is one. */
+const cite = (s: { document: string; line: number | null }) =>
+  s.line === null ? s.document : `${s.document}:${s.line}`;
+const attributionCite = cite(attributionSource);
+const patchingCite = cite(patchingSource);
+
+/* The client's whole state space: one entry per selectable component, with
+   every display string precomputed. No fetch, no client arithmetic beyond a
+   percentage of the axis that is already computed here, and no interpolation.
+   The measured byte cost is in the packet report. */
+const state = Object.fromEntries(
+  selectable.map((c) => [
+    c.id,
+    {
+      a: c.attributionRank,
+      p: c.patchRank,
+      m: pct(c.patchFractionOfMargin),
+      e: units(c.patchEffect),
+      w: Number((frac(c.patchEffect) * 100).toFixed(3)),
+      n: Math.abs(c.patchFractionOfMargin) < nullThreshold,
+    },
+  ]),
+);
+const payload = JSON.stringify({ t: nullThreshold, c: state });
+---
+
+<section
+  class:list={["ip", extraClass]}
+  aria-labelledby={`${uid}-h`}
+  data-intervention-panel
+  data-dimension={dimension}
+>
+  <h3 class="ip__heading type-mono-label" id={`${uid}-h`}>{dimension}</h3>
+  <p class="ip__hint type-body-sm" data-interaction-hint>{interactionHint}</p>
+
+  {/*
+    THE GRID IS TWO ROWS AND THREE COLUMNS, and that is what makes the
+    connectors mean anything. Shoot 4 had the headings inside the columns, so
+    the SVG band spanned heading-plus-list while its viewBox mapped y to the
+    list alone: every line left a row centre and landed nowhere near its
+    partner, and ten of them converged on one point in a gutter, which reads as
+    a decorative fan rather than as a crossing. Invisible in the code, obvious
+    in the picture.
+
+    Headings take their own grid row, so the second row is exactly the two
+    lists, both the same height, and a line at y=(i+0.5)/rows is on row i's
+    centre in BOTH columns by construction rather than by arithmetic that has to
+    be kept in step with the CSS.
+  */}
+  <div class="ip__grid">
+    <h4 class="ip__col-h type-mono-label" id={`${uid}-a`}>{labels.attribution}</h4>
+    <p class="ip__col-h ip__col-h--mid type-mono-label" aria-hidden="true"></p>
+    <h4 class="ip__col-h type-mono-label" id={`${uid}-p`}>{labels.patching}</h4>
+
+    {/* ------------------------------------------------ the attribution list */}
+    <div class="ip__col">
+      <ul class="ip__list" aria-labelledby={`${uid}-a`} data-attribution-rank>
+        {
+          headA.map((c) => (
+            <li class="ip__li">
+              {/*
+                THE ROW IS ITS OWN CITATION, and this is act-source's mechanism
+                inlined rather than nested. A rank rendered as text is a number
+                gate 5 walks and correctly fails when nothing says where it came
+                from, and act-source is a <button>, which cannot sit inside the
+                selection control the contract requires. So the control carries
+                `data-provenance` and its own panel: clicking it patches the
+                component, and hovering or focusing it says which file the two
+                ranks were read out of. One control, one tab stop, and the
+                number resolves to something a reader can open.
+              */}
+              <button
+                type="button"
+                class="ip__row"
+                data-component={c.id}
+                data-provenance
+                aria-pressed="false"
+                aria-describedby={descId(c.id)}
+              >
+                <span class="ip__rank type-mono-sm">{c.attributionRank}</span>
+                <span class="ip__name type-mono-sm">{c.id}</span>
+                <span class="ip__bar" aria-hidden="true">
+                  <span
+                    class="ip__bar-fill"
+                    style={`inline-size:${(
+                      (c.attributionValue / byAttribution[0].attributionValue) *
+                      100
+                    ).toFixed(3)}%`}
+                  />
+                </span>
+              </button>
+              <span class="ip__cite type-mono-sm" data-provenance-panel>{attributionCite}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {/* ------------------------------------------------- the connector layer */}
+    {/* aria-hidden: everything these encode is in the two rank numbers, which
+        are text in both lists. */}
+    <svg
+      class="ip__lines"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* The rail, drawn: the destination every connector without an endpoint
+          in the far head lands on. Without it ten dashed lines converge on a
+          bare point and read as an accident. */}
+      {lines.some((l) => l.offRail) && (
+        <line class="ip__rail-line" x1="0" y1={RAIL} x2="100" y2={RAIL} />
+      )}
+      {
+        lines.map((l) => (
+          <line
+            class="ip__line"
+            data-line={l.id}
+            data-off-rail={l.offRail ? "true" : null}
+            x1="0"
+            y1={l.y1}
+            x2={l.x2}
+            y2={l.y2}
+            vector-effect="non-scaling-stroke"
+          />
+        ))
+      }
+    </svg>
+
+    {/* ----------------------------------------------- the patch-effect list */}
+    <div class="ip__col">
+      <ul class="ip__list" aria-labelledby={`${uid}-p`} data-patch-rank>
+        {
+          headP.map((c) => (
+            <li class="ip__li">
+              <button
+                type="button"
+                class="ip__row"
+                data-component={c.id}
+                data-provenance
+                aria-pressed="false"
+                aria-describedby={descId(c.id)}
+              >
+                <span class="ip__rank type-mono-sm">{c.patchRank}</span>
+                <span class="ip__name type-mono-sm">{c.id}</span>
+                <span class="ip__bar" aria-hidden="true">
+                  <span
+                    class="ip__bar-fill"
+                    style={`inline-size:${(frac(c.patchEffect) * 100).toFixed(3)}%`}
+                  />
+                </span>
+              </button>
+              <span class="ip__cite type-mono-sm" data-provenance-panel>{patchingCite}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {/* The rail every connector without an endpoint in this head lands on,
+          carrying the rank it actually holds. Attribution's number one has no
+          endpoint in patching's top ten, and that is the finding rather than a
+          rendering limitation, so the rail says which rank it went to. */}
+      <p class="ip__rail type-mono-sm">
+        {labels.beyond}
+        {
+          lines
+            .filter((l) => l.offRail)
+            .map((l) => (
+              <span class="ip__rail-item">
+                {l.id}
+                <span class="ip__rail-rank">
+                  <ActSource
+                    display={String(l.patchRank)}
+                    document={patchingSource.document}
+                    line={patchingSource.line}
+                    label={`${labels.patching}, ${l.id}`}
+                  />
+                </span>
+              </span>
+            ))
+        }
+      </p>
+  </div>
+
+  {/* Shared descriptions: both lists' buttons for one component point here, so
+      a screen-reader user learns the two ranks together from either list.
+
+      The citation is inside the description rather than beside it, because a
+      description is read as one string and a chip a reader cannot see is not a
+      disclosure. It carries data-provenance for the same reason act-source
+      does: the numbers in it resolve to a file a reader can open. Same wording
+      act-source's own accessible name uses, so the two agree. */}
+  <div class="visually-hidden" data-provenance>
+    {
+      selectable.map((c) => (
+        <span id={descId(c.id)}>
+          {`${labels.attribution} ${c.attributionRank}, ${labels.patching} ${c.patchRank}, ${labels.movement} ${pct(c.patchFractionOfMargin)}. Recorded at ${patchingCite}.`}
+        </span>
+      ))
+    }
+  </div>
+
+  {/* ------------------------------------------------------------- the axis */}
+  <div class="ip__axis">
+    <h4 class="ip__col-h type-mono-label" id={`${uid}-ax`}>{labels.margin}</h4>
+
+    {/* The original. A static element the script never touches, at a width the
+        script never reads: criterion 3 holds by construction rather than by
+        care. */}
+    <div class="ip__track" data-original-score>
+      <span class="ip__mark-track">
+        <span class="ip__mark ip__mark--written" style={`inline-size:${(frac(marginMean) * 100).toFixed(3)}%`}></span>
+      </span>
+      <span class="ip__mark-label type-mono-sm">
+        {labels.original}
+        <ActSource
+          display={units(marginMean)}
+          document={patchingSource.document}
+          line={patchingSource.line}
+          label={labels.margin}
+        />
+      </span>
+    </div>
+
+    {/* The patched value. Absent at rest, because at rest nothing was patched
+        and drawing a second marker at zero would assert a measurement. */}
+    <div class="ip__track ip__track--patched" data-patched-track hidden>
+      <span class="ip__mark-track">
+        <span class="ip__mark ip__mark--realized" data-patched-bar style="inline-size:0%"></span>
+      </span>
+      <span class="ip__mark-label type-mono-sm">
+        {labels.patched}
+        <span data-patched-value></span>
+        <span class="ip__move" data-score-movement></span>
+      </span>
+    </div>
+  </div>
+
+  {/* Informational, never an error, and it carries no warning styling: a
+      component attribution ranks highly and patching barely moves is this act's
+      central result, not a malfunction. */}
+  <p class="ip__null type-body-sm" data-null-state-hint hidden>{nullHint}</p>
+
+  <p class="visually-hidden" aria-live="polite" data-ip-live></p>
+
+  {/* -------------------------------------------------- every component, all
+      sixty-four, at full precision, with both ranks and the patch effect. This
+      is the no-JavaScript path's completion and it is also the accessible
+      version of the two bars, so nothing here exists only as a bar length. */}
+  <details class="ip__all">
+    <summary class="ip__all-sum type-mono-label">{labels.component}</summary>
+    <div class="ip__scroll" role="group" aria-labelledby={`${uid}-tc`} tabindex="0">
+      <table class="ip__table">
+        <caption class="ip__cap type-mono-label" id={`${uid}-tc`}>{dimension}</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="type-mono-label">{labels.component}</th>
+            <th scope="col" class="type-mono-label">{labels.attribution}</th>
+            <th scope="col" class="type-mono-label">{labels.patching}</th>
+            <th scope="col" class="type-mono-label">{labels.movement}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            components.map((c) => (
+              <tr>
+                <th scope="row" class="type-mono-sm">{c.id}</th>
+                <td class="type-mono-sm">
+                  <ActSource
+                    display={String(c.attributionRank)}
+                    document={attributionSource.document}
+                    line={attributionSource.line}
+                    label={labels.attribution}
+                  />
+                </td>
+                <td class="type-mono-sm">
+                  <ActSource
+                    display={String(c.patchRank)}
+                    document={patchingSource.document}
+                    line={patchingSource.line}
+                    label={labels.patching}
+                  />
+                </td>
+                <td class="type-mono-sm">
+                  <ActSource
+                    display={pct(c.patchFractionOfMargin)}
+                    document={patchingSource.document}
+                    line={patchingSource.line}
+                    label={labels.movement}
+                  />
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <script type="application/json" data-ip-state set:html={payload} />
+</section>
+
+<script>
+  /*
+   * Selection only. Every value below was measured at build time and read out
+   * of the inlined state; nothing is computed from a model and nothing is
+   * interpolated. With this script absent both rankings, every connector and
+   * the complete table still render, which is what the contract's No
+   * JavaScript row requires.
+   *
+   * EVERY QUERY IS TYPED AND EVERY NULLABLE RESULT IS CHECKED BEFORE THE
+   * HANDLERS ARE BOUND, and that is not tidiness. The readouts this script
+   * writes into are the patched bar, its value, the movement figure and the
+   * null-state hint: exactly the nodes the ADVERSE STATE uses. If one of them
+   * is missing, the untyped version threw inside the first click handler, which
+   * left the rows bound, aria-pressed toggling, and no readout moving. A panel
+   * that responds to clicks and shows nothing is worse than a panel that never
+   * enhanced, because the reader reads the absence as the measurement. So a
+   * missing readout means this panel keeps its no-JavaScript rendering, which
+   * is complete, and the enhancement stands down for that panel alone.
+   */
+  interface Readout {
+    /** Attribution rank, as rendered. */
+    a: number;
+    /** Patch rank, as rendered. */
+    p: number;
+    /** The patch's movement as a percentage of the margin, formatted. */
+    m: string;
+    /** The patch effect in the score's own units, formatted. */
+    e: string;
+    /** Bar width, already a percentage. */
+    w: number;
+    /** Whether this component sits under the null threshold. */
+    n: boolean;
+  }
+
+  for (const panel of document.querySelectorAll<HTMLElement>("[data-intervention-panel]")) {
+    const node = panel.querySelector("[data-ip-state]");
+    if (!node) continue;
+
+    let state: Record<string, Readout>;
+    try {
+      const parsed = JSON.parse(node.textContent || "{}") as { c?: Record<string, Readout> };
+      state = parsed.c ?? {};
+    } catch {
+      continue;
+    }
+
+    const rows = [...panel.querySelectorAll<HTMLElement>(".ip__row")];
+    const lines = [...panel.querySelectorAll<HTMLElement>("[data-line]")];
+    const track = panel.querySelector<HTMLElement>("[data-patched-track]");
+    const bar = panel.querySelector<HTMLElement>("[data-patched-bar]");
+    const value = panel.querySelector<HTMLElement>("[data-patched-value]");
+    const move = panel.querySelector<HTMLElement>("[data-score-movement]");
+    const hint = panel.querySelector<HTMLElement>("[data-null-state-hint]");
+    const live = panel.querySelector<HTMLElement>("[data-ip-live]");
+
+    if (!rows.length || !track || !bar || !value || !move || !hint || !live) continue;
+
+    let current: string | null = null;
+
+    const paint = (id: string | null) => {
+      current = id;
+      for (const r of rows) {
+        const on = r.dataset.component === id;
+        r.setAttribute("aria-pressed", on ? "true" : "false");
+        r.classList.toggle("is-selected", on);
+      }
+      for (const l of lines) l.classList.toggle("is-selected", l.dataset.line === id);
+
+      if (!id || !state[id]) {
+        track.hidden = true;
+        hint.hidden = true;
+        return;
+      }
+      const s = state[id];
+      // The original marker is not in this function and never will be.
+      bar.style.inlineSize = `${s.w}%`;
+      value.textContent = s.e;
+      move.textContent = s.m;
+      track.hidden = false;
+      hint.hidden = !s.n;
+      live.textContent = `${id}, ${s.a}, ${s.p}, ${s.m}`;
+    };
+
+    /* The row under an event, or null. `e.target` is the deepest node the
+       pointer or the key landed on, which is usually a span inside the row and
+       is not always an Element at all. */
+    const rowFor = (target: EventTarget | null): HTMLElement | null =>
+      target instanceof Element ? target.closest<HTMLElement>(".ip__row") : null;
+
+    panel.addEventListener("click", (e) => {
+      const row = rowFor(e.target);
+      if (!row || !panel.contains(row)) return;
+      const id = row.dataset.component ?? null;
+      paint(id === current ? null : id);
+    });
+
+    panel.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && current) {
+        paint(null);
+        return;
+      }
+      const row = rowFor(e.target);
+      if (!row) return;
+      const list = [...(row.closest("ul") ?? panel).querySelectorAll<HTMLElement>(".ip__row")];
+      const at = list.indexOf(row);
+      const to =
+        e.key === "ArrowDown" || e.key === "ArrowRight"
+          ? at + 1
+          : e.key === "ArrowUp" || e.key === "ArrowLeft"
+            ? at - 1
+            : e.key === "Home"
+              ? 0
+              : e.key === "End"
+                ? list.length - 1
+                : -1;
+      if (to < 0 || to >= list.length) return;
+      e.preventDefault();
+      list[to].focus();
+    });
+  }
+</script>
+
+<style>
+  .ip {
+    min-width: 0;
+  }
+
+  .ip__heading {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .ip__hint {
+    margin: var(--space-3) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+
+  /* Stacked below --bp-lg with the connector layer BETWEEN the two lists, so
+     the lines are redrawn vertically rather than dropped. A stacked layout
+     without lines is two unrelated lists, and the crossing is the content. */
+  .ip__grid {
+    margin-block-start: var(--space-5);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .ip__col {
+    min-width: 0;
+  }
+
+  .ip__col-h {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-3); /* ink3-ok: column label on --ground (5.25:1), C-15 */
+  }
+
+  /* The middle column's heading slot. Empty and aria-hidden: it exists to keep
+     the connector band's grid row starting exactly where the two lists do. */
+  .ip__col-h--mid {
+    display: none;
+  }
+
+  .ip__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .ip__li {
+    min-width: 0;
+    position: relative;
+  }
+
+  /* Out of layout entirely when closed, so a citation at the right end of a row
+     cannot stretch the page's scroll width. Same reasoning, and the same
+     mechanism, as act-source's panel. */
+  .ip__cite {
+    display: none;
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(100% - var(--space-2));
+    z-index: var(--z-overlay);
+    inline-size: max-content;
+    max-inline-size: min(var(--measure-command), calc(100vw - var(--space-7)));
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-2);
+    border-radius: var(--radius-2);
+    box-shadow: var(--shadow-overlay);
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  /* :focus-visible, not :focus-within. A mouse click leaves the row focused,
+     and a focus-within rule therefore pinned the citation open over the two
+     rows beneath it for the rest of the interaction: the reader selected a
+     component and the panel ate the list. Keyboard focus still opens it,
+     because that is the path that needs it. */
+  .ip__li:hover > .ip__cite,
+  .ip__row:focus-visible ~ .ip__cite {
+    display: block;
+  }
+
+  @media print {
+    .ip__cite {
+      display: block;
+      position: static;
+      box-shadow: none;
+      background: none;
+      padding: 0;
+    }
+  }
+
+  .ip__row {
+    inline-size: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 6rem;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: 0;
+    border-radius: var(--radius-1);
+    color: var(--ink);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--dur-1) var(--curve-ui);
+  }
+
+  .ip__row:hover {
+    background: var(--surface-1);
+  }
+
+  .ip__row:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* Selection is a marker plus aria-pressed, never colour alone. */
+  .ip__row.is-selected {
+    background: var(--surface-2);
+    box-shadow: inset var(--border-w-accent) 0 0 0 var(--beam);
+  }
+
+  .ip__rank {
+    color: var(--ink-2);
+    text-align: end;
+  }
+
+  /* Row labels never truncate; they wrap. */
+  .ip__name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* The rows carry no colour at all: rank is position and the bar is --ink-3
+     on --surface-1. */
+  .ip__bar {
+    display: block;
+    block-size: var(--space-3);
+    background: var(--surface-1);
+    border-radius: var(--radius-1);
+    overflow: hidden;
+  }
+
+  .ip__bar-fill {
+    display: block;
+    block-size: 100%;
+    background: var(--ink-3); /* ink3-ok: a bar on --surface-1 is not text */
+    max-inline-size: 100%;
+  }
+
+  /* The connector layer is a band between the two lists when they stack, and a
+     column between them when they sit side by side. */
+  .ip__lines {
+    inline-size: 100%;
+    block-size: var(--space-8);
+    overflow: visible;
+  }
+
+  .ip__line {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    transition: stroke var(--dur-1) var(--curve-ui);
+  }
+
+  .ip__line[data-off-rail] {
+    stroke-dasharray: 3 3;
+  }
+
+  .ip__rail-line {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .ip__line.is-selected {
+    stroke: var(--beam);
+    stroke-width: 2;
+  }
+
+  .ip__rail {
+    margin: var(--space-3) 0 0;
+    padding-block-start: var(--space-3);
+    border-block-start: var(--border-w) dashed var(--line-strong);
+    color: var(--ink-2);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .ip__rail-item {
+    margin-inline-start: var(--space-3);
+  }
+
+  .ip__rail-rank {
+    margin-inline-start: var(--space-2);
+    color: var(--ink);
+  }
+
+  .ip__axis {
+    margin-block-start: var(--space-6);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+
+  .ip__track {
+    margin-block-start: var(--space-3);
+    min-width: 0;
+  }
+
+  /* Both markers sit in a bounded track, and that is what makes the null state
+     legible instead of absent. At 0.0000% the patched marker has no width, so
+     without a track the axis showed a full-width band and then nothing at all,
+     which reads as a rendering failure rather than as the result. With the
+     track, a bar of everything sits above an empty box of the same size, and
+     the comparison is the picture. Shoot 4 found this. */
+  .ip__mark-track {
+    display: block;
+    block-size: var(--space-4);
+    background: var(--surface-1);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-1);
+    overflow: hidden;
+  }
+
+  .ip__mark {
+    display: block;
+    block-size: 100%;
+    border-radius: var(--radius-1);
+    /* Not capped: the largest movement in this study is 7.7 times the margin,
+       and a bar that stops at the margin is a clamped number. */
+    max-inline-size: none;
+  }
+
+  /* The site's central divergence pair, used for exactly what it means. */
+  .ip__mark--written {
+    background: var(--written);
+  }
+
+  .ip__mark--realized {
+    background: var(--realized);
+    transition: inline-size var(--dur-3) var(--curve-enter);
+  }
+
+  .ip__mark-label {
+    display: block;
+    margin-block-start: var(--space-2);
+    color: var(--ink-2);
+  }
+
+  .ip__move {
+    margin-inline-start: var(--space-3);
+    color: var(--ink);
+  }
+
+  .ip__null {
+    margin: var(--space-5) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    padding-inline-start: var(--space-4);
+    border-inline-start: var(--border-w-accent) solid var(--state-refusal);
+    color: var(--ink);
+  }
+
+  .ip__all {
+    margin-block-start: var(--space-6);
+    min-width: 0;
+  }
+
+  .ip__all-sum {
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+
+  .ip__all-sum:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .ip__scroll {
+    margin-block-start: var(--space-4);
+    overflow-x: auto;
+    min-width: 0;
+  }
+
+  .ip__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* max-content with a 100% floor, or the label column wraps to three lines
+     inside a container that is already scrolling (WAVE-0 ruling 7). */
+  .ip__table {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    border-collapse: collapse;
+  }
+
+  .ip__cap {
+    caption-side: top;
+    text-align: start;
+    color: var(--ink-3); /* ink3-ok: caption on --ground, 5.25:1 */
+    padding-block-end: var(--space-3);
+  }
+
+  .ip__table th,
+  .ip__table td {
+    padding: var(--space-2) var(--space-4);
+    border-block-end: var(--border-w) solid var(--line);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  .ip__table thead th {
+    color: var(--ink-2);
+  }
+
+  .ip__table tbody th {
+    color: var(--ink);
+    font-weight: var(--type-mono-sm-weight, 400);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The patched marker appears instantly at its final position. Nothing else
+       changes, because nothing else moved. */
+    .ip__mark--realized {
+      transition: none;
+    }
+  }
+
+  @media (min-width: 64rem) /* --bp-lg */ {
+    /* Three columns, and the headings on their own row so the connector band
+       spans exactly the two lists. Row 3 carries the rail's text under the
+       patch column. */
+    .ip__grid {
+      grid-template-columns: minmax(0, 1fr) var(--space-9) minmax(0, 1fr);
+      grid-template-rows: auto auto auto;
+      align-items: start;
+      column-gap: var(--space-4);
+      row-gap: 0;
+    }
+
+    .ip__col-h--mid {
+      display: block;
+      visibility: hidden;
+    }
+
+    .ip__lines {
+      grid-row: 2;
+      grid-column: 2;
+      block-size: 100%;
+      align-self: stretch;
+      margin: 0;
+    }
+
+    .ip__grid > .ip__col:first-of-type {
+      grid-row: 2;
+      grid-column: 1;
+    }
+
+    .ip__grid > .ip__col:last-of-type {
+      grid-row: 2;
+      grid-column: 3;
+    }
+
+    .ip__rail {
+      grid-row: 3;
+      grid-column: 3;
+    }
+  }
+</style>

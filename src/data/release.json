@@ -1,0 +1,33 @@
+{
+ "latest": "3.0.0",
+ "unpublished": null,
+ "unpublishedIsAhead": false,
+ "requiresPython": ">=3.10",
+ "releases": [
+  {
+   "version": "1.0.0",
+   "uploadedAt": "2026-04-12T13:34:36.496Z"
+  },
+  {
+   "version": "2.0.0",
+   "uploadedAt": "2026-07-10T15:58:27.689Z"
+  },
+  {
+   "version": "2.0.1",
+   "uploadedAt": "2026-07-22T22:22:30.065Z"
+  },
+  {
+   "version": "3.0.0",
+   "uploadedAt": "2026-08-07T23:44:30.694Z"
+  }
+ ],
+ "urls": {
+  "publishedHomepage": "https://github.com/reward-lens/reward-lens",
+  "publishedDocumentation": "https://reward-lens.github.io",
+  "canonicalRepo": "https://github.com/reward-lens/reward-lens",
+  "canonicalDocs": "https://reward-lens.github.io",
+  "publishedUrlsAreStale": false
+ },
+ "changelogUrl": "https://github.com/reward-lens/reward-lens/blob/main/CHANGELOG.md",
+ "fetchedAt": "2026-08-10T00:45:35.000Z"
+}

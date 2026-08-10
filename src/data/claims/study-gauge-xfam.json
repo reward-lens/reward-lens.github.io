@@ -1,0 +1,19 @@
+{
+ "contentHash": "2277bbc2aa49e834c914dc9c7a178c2e",
+ "humanSource": "The frozen study \"Canonical cross-family angles predict pairwise disagreement\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:095096260d9209c4fb9935cbb215812b",
+  "campaign.adjudication.GAUGE-XFAM",
+  "study:campaign-gauge-xfam@v1#092fef0f",
+  "spec:092fef0fc58c288b71ea361dce7b5738"
+ ],
+ "label": "Canonical cross-family angles predict pairwise disagreement",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-helpfulness-512 and rb2-full.",
+ "slug": "study-gauge-xfam",
+ "sourceUrl": "/evidence/095096260d9209c4fb9935cbb215812b/",
+ "statement": "The frozen study \"Canonical cross-family angles predict pairwise disagreement\" was adjudicated inconclusive, over 2 registered predictions of which 2 returned no value.",
+ "status": "unrun",
+ "subject": "fleet, over rb2-helpfulness-512 and rb2-full",
+ "type": "interpretation"
+}

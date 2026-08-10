@@ -2,8 +2,10 @@
 title: Best-of-N analysis
 description: How much does it cost, in nats, to keep the best of n samples?
 section: training-loops
-order: 45
+order: 70
 source: docs/content/training-loops/best-of-n.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -51,7 +53,7 @@ np.round(bon_kl([1, 2, 4, 8, 16, 64, 256, 1024, 10000]), 4)
 
 ## What the nats buy
 
-The KL is the x-axis. The y-axis is the reward those nats actually purchase, and that you estimate from a bank of scored base-policy samples with [`bon_ladder`](/docs/reference/dynamics-loops/#reward_lens.loops.bon.bon_ladder). It uses the exact expected maximum of $n$ draws from the empirical reward distribution, so a bank of a few hundred samples can preview $n$ far larger than the bank itself:
+The KL is the x-axis. The y-axis is the reward those nats actually purchase, and that you estimate from a bank of scored base-policy samples with [`bon_ladder`](/docs/api/dynamics-loops/#reward_lens.loops.bon.bon_ladder). It uses the exact expected maximum of $n$ draws from the empirical reward distribution, so a bank of a few hundred samples can preview $n$ far larger than the bank itself:
 
 ```python
 import numpy as np
@@ -70,7 +72,7 @@ print(np.round(lad.expected_reward, 4).tolist())
 # [-0.0161, 0.5464, 1.0157, 1.7489, 2.637]
 ```
 
-The ladder comes back as [Evidence](/docs/concepts/measurement-you-can-trust/): the gauge is `invariant` because a KL in nats and a reward in the model's own score units do not depend on any activation basis, and the trust is `EXPLORATORY` because a raw ladder is a description, not a calibrated claim. The default sweep, [`DEFAULT_NS`](/docs/reference/dynamics-loops/#reward_lens.loops.bon.DEFAULT_NS), runs the doubling sequence $1, 2, 4, \ldots, 8192, 10000$, which is even spacing on the log-$n$ axis the frontier is read on.
+The ladder comes back as [Evidence](/docs/concepts/measurement-you-can-trust/): the gauge is `invariant` because a KL in nats and a reward in the model's own score units do not depend on any activation basis, and the trust is `EXPLORATORY` because a raw ladder is a description, not a calibrated claim. The default sweep, [`DEFAULT_NS`](/docs/api/dynamics-loops/#reward_lens.loops.bon.DEFAULT_NS), runs the doubling sequence $1, 2, 4, \ldots, 8192, 10000$, which is even spacing on the log-$n$ axis the frontier is read on.
 
 <ThemedFigure light="/figures/docs/best-of-n-ladder-light.svg" dark="/figures/docs/best-of-n-ladder-dark.svg" alt="Best-of-N as an exact nat ruler. The left panel is the closed-form KL price across the doubling ladder; the right panel is what those nats buy on a synthetic bank, where the proxy reward keeps climbing while the gold objective peaks and turns back over." />
 

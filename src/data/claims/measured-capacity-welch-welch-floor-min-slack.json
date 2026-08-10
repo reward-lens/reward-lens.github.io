@@ -1,0 +1,26 @@
+{
+ "comparator": ">= 0",
+ "contentHash": "8469ae533c955774bbff35e0d02864c9",
+ "humanSource": "The frozen study \"Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b",
+  "campaign.adjudication.CAPACITY-WELCH",
+  "study:campaign-capacity-welch@v1#9fc6a434",
+  "spec:9fc6a4346dcd4ba18e2d12391971c413",
+  "H-welch"
+ ],
+ "label": "Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "welch_floor_min_slack",
+  "unit": null,
+  "value": 0.8163979052568419
+ },
+ "scope": "One frozen study, adjudicated once, on fleet and armorm, over rb2-full.",
+ "slug": "measured-capacity-welch-welch-floor-min-slack",
+ "sourceUrl": "/evidence/f9e6a003a5a1e0aa0fe3ff1eca0d9c7b/",
+ "statement": "the ArmoRM 19-head coherence matrix respects the Welch floor.",
+ "status": "supported",
+ "subject": "fleet and armorm, over rb2-full",
+ "type": "measured-result"
+}

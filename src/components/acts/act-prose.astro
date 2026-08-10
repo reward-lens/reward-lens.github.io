@@ -1,0 +1,155 @@
+---
+/**
+ * act-prose  ·  body copy inside a part, with its numbers bound
+ *
+ * One owner for paragraph type, colour, measure and rhythm across all three
+ * acts. A route passes a copy.yaml string and gets paragraphs; it never sets a
+ * measure or a colour, which is how three routes stay one object.
+ *
+ * copy.yaml folds its long strings, so a value arrives as one paragraph with a
+ * trailing newline. A blank line in the source is the only paragraph break,
+ * and it is honoured here rather than in a route.
+ *
+ * Body is --ink, not --ink-2. Secondary ink on primary prose is the quiet way
+ * a page starts telling the reader which parts matter, and on these three
+ * routes the part that matters is usually the one nobody would emphasise.
+ *
+ * WHY THIS COMPONENT SUBSTITUTES RATHER THAN TAKING A FILLED STRING, added in
+ * the route pass and it is the difference between the acts passing gate 5 and
+ * failing it. `acts.run.result` reads "alarms at step {{alarm_step}}, a lead of
+ * {{alarm_lead}} transition widths". Filling that with `fill()` before it gets
+ * here produces "step 90" as plain text in a paragraph, and gate 5 walks every
+ * text node in dist/ and counts 90 as an unbound number, correctly: nothing in
+ * the rendered HTML says where it came from. So the substitution happens HERE,
+ * and each substituted value renders inside its own citation, which is the
+ * chip on two acts and a document-and-line on the third (D-35).
+ *
+ * A key with no binding is left as it arrived. That is deliberate and visible:
+ * a route that forgets to bind a value gets a `{{key}}` in its own output
+ * rather than a silently plausible sentence.
+ */
+import ActSource from "@components/acts/act-source.astro";
+import ProvenanceChip from "@components/base/provenance-chip.astro";
+
+export interface BoundValue {
+  /** Already formatted by the caller. A component never re-rounds a value. */
+  display: string;
+  /**
+   * D-35's weaker grade: a document and a line, for numbers with no record.
+   * The line is null where the document has none: a binary rollout table, a
+   * zip, or a JSONL of 360 rows where no single line is the number. act-source
+   * renders the document alone in that case rather than faking a line.
+   */
+  source?: { document: string; line: number | null } | null;
+  /** The stronger grade. Resolved against evidence-index.json or it throws. */
+  evidenceId?: string | null;
+  /**
+   * Fields merged over the resolved record, forwarded unchanged to
+   * provenance-chip, which has taken the same property since it was written.
+   *
+   * THE THREE DEMONSTRATION ROUTES NEED IT AND NOTHING ELSE DOES. Their
+   * numbers resolve to records in the v2 research log's store, whose
+   * `observable`, `subject` and trust rung are that programme's own vocabulary.
+   * The route names what the record is OF in public words and leaves the record
+   * itself untouched, so the link still opens the store's own entry. Doing that
+   * here rather than in a route is what keeps one translation table
+   * (src/lib/see-public-text.ts) instead of one per caller.
+   */
+  record?: Record<string, unknown>;
+  /** What the value is, for the accessible name. */
+  label?: string;
+}
+
+interface Props {
+  /** From copy.yaml, with its {{...}} still in place. */
+  text: string;
+  /** One entry per placeholder the caller can account for. */
+  bind?: Record<string, BoundValue>;
+  class?: string;
+}
+
+const { text, bind = {}, class: extraClass = "" } = Astro.props;
+
+const paragraphs = text
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+
+if (!paragraphs.length) {
+  throw new Error(
+    "act-prose: empty text. A part that has nothing to say renders nothing, " +
+      "so the caller omits this component rather than passing an empty string.",
+  );
+}
+
+for (const [key, value] of Object.entries(bind)) {
+  if (!value.source && !value.evidenceId) {
+    throw new Error(
+      `act-prose: "${key}" binds "${value.display}" with neither an evidenceId ` +
+        `nor a source. Every number rendered anywhere resolves to something a ` +
+        `reader can open (DESIGN.md's one rule, gate 5). If it resolves to ` +
+        `neither, it does not render.`,
+    );
+  }
+}
+
+/* Split each paragraph into literal text and placeholders, keeping the
+   placeholder in the output when nothing binds it. */
+const SPLIT = /(\{\{\s*[a-z0-9_.]+\s*\}\})/gi;
+const KEY = /\{\{\s*([a-z0-9_.]+)\s*\}\}/i;
+
+const pieces = paragraphs.map((p) =>
+  p
+    .split(SPLIT)
+    .filter((s) => s !== "")
+    .map((s) => {
+      const k = s.match(KEY);
+      const value = k ? bind[k[1]] : undefined;
+      return value ? { kind: "bound" as const, value } : { kind: "text" as const, s };
+    }),
+);
+---
+
+<div class:list={["act-p", "type-body", extraClass]}>
+  {
+    pieces.map((parts) => (
+      <p>
+        {parts.map((piece) =>
+          piece.kind === "text" ? (
+            piece.s
+          ) : piece.value.evidenceId ? (
+            <ProvenanceChip
+              evidenceId={piece.value.evidenceId}
+              display={piece.value.display}
+              field={piece.value.label ?? ""}
+              record={piece.value.record ?? {}}
+            />
+          ) : (
+            <ActSource
+              display={piece.value.display}
+              document={piece.value.source!.document}
+              line={piece.value.source!.line}
+              label={piece.value.label ?? null}
+            />
+          ),
+        )}
+      </p>
+    ))
+  }
+</div>
+
+<style>
+  .act-p {
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .act-p p {
+    margin: 0 0 var(--space-4);
+  }
+
+  .act-p p:last-child {
+    margin-block-end: 0;
+  }
+</style>

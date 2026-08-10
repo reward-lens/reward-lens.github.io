@@ -1,0 +1,107 @@
+---
+/**
+ * Which subject the state is showing.
+ *
+ * The scorer state has six recorded cases behind it: one score tree, four
+ * verifier audits and one localizer comparison. They are different subjects,
+ * different artifacts and different scopes, so the source plate has to change
+ * when the reader changes between them, and this is the control that changes
+ * it.
+ *
+ * A native radio group, so arrow keys, the roving tab stop and the group's
+ * announcement are the platform's rather than this packet's. The visible label
+ * is the case's own `publicLabel` shortened to its subject, taken from the
+ * generated manifest; the machine id travels in `value`, where a reader never
+ * sees it.
+ */
+import { caseById } from "./facts";
+
+interface Props {
+  cases: readonly string[];
+  active: string;
+  legend: string;
+  class?: string;
+}
+
+const { cases, active, legend, class: extraClass = "" } = Astro.props;
+
+/**
+ * The state each case belongs to travels with the radio.
+ *
+ * The bridge refuses a case the active state cannot show, and that guard turned
+ * this control into a no-op the first time it was driven in a browser:
+ * focusing a radio scrolls it into view, the story's observer can publish the
+ * neighbouring state on the way, and the change then arrived against a state
+ * that does not own the case. Every case declares its state in the manifest, so
+ * the answer is already generated and is read rather than assumed.
+ */
+const stateOf = (id: string) => caseById(id).state;
+
+/**
+ * The plate's label is a full sentence about the subject and the corpus. A
+ * radio needs the subject only, so the label is the part before the first
+ * comma, which is how the generator writes every one of them.
+ */
+const shortLabel = (id: string) => caseById(id).publicLabel.split(",")[0];
+const name = `scene-subject-${cases.join("-").slice(0, 40)}`;
+---
+
+<fieldset class:list={["subject", extraClass]}>
+  <legend class="subject__legend type-mono-label">{legend}</legend>
+  <div class="subject__options">
+    {
+      cases.map((id) => (
+        <label class="subject__option type-body-sm">
+          <input
+            type="radio"
+            name={name}
+            value={id}
+            checked={id === active}
+            data-scene-subject
+            data-scene-subject-state={stateOf(id)}
+          />
+          <span>{shortLabel(id)}</span>
+        </label>
+      ))
+    }
+  </div>
+</fieldset>
+
+<style>
+  .subject {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .subject__legend {
+    padding: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+  .subject__options {
+    display: grid;
+    gap: var(--space-2);
+    margin-block-start: var(--space-3);
+  }
+  .subject__option {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: baseline;
+    color: var(--ink-2);
+    cursor: pointer;
+    min-width: 0;
+  }
+  .subject__option:hover,
+  .subject__option:focus-within {
+    color: var(--ink);
+  }
+  .subject__option input {
+    accent-color: var(--control);
+    margin: 0;
+  }
+  .subject__option input:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+</style>

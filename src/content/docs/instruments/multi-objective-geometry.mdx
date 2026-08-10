@@ -2,8 +2,10 @@
 title: Multi-objective geometry
 description: When a reward head scores nineteen objectives at once, do they point the same way or nineteen different ways?
 section: instruments
-order: 38
+order: 39
 source: docs/content/instruments/multi-objective-geometry.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -130,4 +132,4 @@ It is observational. The cosine between two objective directions is a statement 
 
 The number arrives at trust level **EXPLORATORY**. The cosine geometry is exact arithmetic on the head's weights, but no calibration provider is wired in this release, so no scorecard yet relates an objective geometry to behavior under multi-objective optimization. Exploratory means unaudited, not wrong. Use the matrix to see how a multi-objective head's goals relate and to know when the single-direction instruments are approximating; do not carry a raw cosine across models, and do not yet read a negative cell as a guaranteed training conflict. The trust level and what would raise it are covered in [the trust ladder](/docs/discipline/trust-ladder/).
 
-Full signatures and return fields: [`MultiObjectiveGeometry`](/docs/reference/measure/#reward_lens.measure.battery.geometry.MultiObjectiveGeometry). For where these heads come from, see [rubric heads](/docs/models-and-signals/rubric-heads/).
+Full signatures and return fields: [`MultiObjectiveGeometry`](/docs/api/measure/#reward_lens.measure.battery.geometry.MultiObjectiveGeometry). For where these heads come from, see [rubric heads](/docs/models-and-signals/rubric-heads/).

@@ -1,0 +1,19 @@
+{
+ "contentHash": "8616c047563f34f86fadddfbda454edf",
+ "humanSource": "The frozen study \"Intransitive preference mass no scalar reward can represent\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2",
+  "campaign.adjudication.TOPO-HODGE",
+  "study:campaign-topo-hodge@v1#7206aa3a",
+  "spec:7206aa3a670d99eb3640c3230ce3b7fb"
+ ],
+ "label": "Intransitive preference mass no scalar reward can represent",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on nectar-tournaments and ultrafeedback-tournaments.",
+ "slug": "study-topo-hodge",
+ "sourceUrl": "/evidence/844ad06a5aeb1d89c21c13c19a28cbd2/",
+ "statement": "The frozen study \"Intransitive preference mass no scalar reward can represent\" was adjudicated confirmed, over 1 registered predictions of which 1 held.",
+ "status": "supported",
+ "subject": "nectar-tournaments and ultrafeedback-tournaments",
+ "type": "interpretation"
+}

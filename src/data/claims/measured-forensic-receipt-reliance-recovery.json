@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.5",
+ "contentHash": "60648d4894fe7ecfbcfe6b18ff0b2c5c",
+ "humanSource": "The frozen study \"Skepticism and receipt reliance predict who rewards fabricated receipts\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:426a8cbed7f6d6dfb61d8fe3ed5264a4",
+  "campaign.adjudication.FORENSIC-RECEIPT",
+  "study:campaign-forensic-receipt@v1#e0aa318b",
+  "spec:e0aa318bf24297c18530a2ad9c805bf3",
+  "H-reliance"
+ ],
+ "label": "Skepticism and receipt reliance predict who rewards fabricated receipts",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. fraction of positive grader contrasts at n = 5 graders: the frozen 0.5 sits at the null center, the point call passes under the null 0.51 of the time, and 80 percent confirmation needs per-grader positive-contrast probability 0.67, the s15-plant regime (calibration 0.993).",
+ "quantity": {
+  "name": "reliance_recovery",
+  "unit": null,
+  "value": 0
+ },
+ "scope": "One frozen study, adjudicated once, on fleet-subset, over receipt-triples-1600.",
+ "slug": "measured-forensic-receipt-reliance-recovery",
+ "sourceUrl": "/evidence/426a8cbed7f6d6dfb61d8fe3ed5264a4/",
+ "statement": "the two group contrasts separate graders as their planted values would.",
+ "status": "refuted",
+ "subject": "fleet-subset, over receipt-triples-1600",
+ "type": "measured-result"
+}

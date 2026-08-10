@@ -1,0 +1,208 @@
+---
+/**
+ * act-refusal-list  ·  the seventeen reasons, flat, on act three
+ *
+ * A reader has just watched thirteen fields decline with names like
+ * ACCESS_INSUFFICIENT and RECORD_INCOMPLETE, so this is the vocabulary those
+ * names come from, rendered where they were met rather than only on a
+ * documentation route.
+ *
+ * FLAT. SEVENTEEN. NOT GROUPED, and this is D-09 rather than a layout
+ * preference. The obvious information design is three buckets: a remedy you can
+ * apply here, one that is upstream, and one that is nowhere. THE LIBRARY SORTS
+ * EXACTLY THREE OF THE SEVENTEEN THAT WAY and assigns the other fourteen to no
+ * group at all; there is no code structure that classifies them. Inventing
+ * fourteen classifications the library does not make would be the site
+ * asserting a taxonomy its own subject does not hold, on the page whose entire
+ * subject is not asserting things you cannot support.
+ *
+ * So the three that carry a mapping render it as a PROPERTY OF THAT REASON,
+ * inline, in the flat list, and the other fourteen render without one and
+ * without an empty slot where one would go. Nothing on this list carries a
+ * group attribute, which the driven test checks over the built HTML, because
+ * the failure this rule guards against is a later pass adding
+ * `data-refusal-group` for styling and creating the taxonomy by accident.
+ *
+ * BLUE, NEVER RED, NEVER A WARNING TRIANGLE, NEVER BEHIND A TOGGLE. The accent
+ * is --state-refusal, the same rule refusal-card carries, because a refusal is
+ * a success in this library's semantics and styling it as a failure inverts the
+ * site's argument. There is no "show all" disclosure: seventeen items is not a
+ * length problem, and hiding them would say the site finds them embarrassing.
+ *
+ * THE COUNTS ARE COUNTED, NEVER STATED. The file carries counts.reasons,
+ * counts.sorted and counts.unsorted; this renders the list and lets the reader
+ * count, and the one place a count appears it is derived from the rows being
+ * rendered so it cannot drift from them.
+ */
+export interface RefusalReason {
+  name: string;
+  meaning: string;
+  whatToDo: string;
+  remedy: { remedy: string; answerable: string; answerableLabel: string } | null;
+}
+
+interface Props {
+  reasons: RefusalReason[];
+  /** The library's own question, from the generated file. Not written here. */
+  question: string;
+  /** The generated note stating how far the mapping actually goes. */
+  note: string;
+  labels: { reasons: string; remedy: string; answerable: string };
+  class?: string;
+}
+
+const { reasons, question, note, labels, class: extraClass = "" } = Astro.props;
+
+if (!reasons.length) {
+  throw new Error(
+    "act-refusal-list: no reasons. The list is the library's own enum and it " +
+      "renders all of it or none of it.",
+  );
+}
+
+const sorted = reasons.filter((r) => r.remedy).length;
+---
+
+<section class:list={["rl", extraClass]} aria-labelledby="rl-h" data-refusal-list>
+  <h4 class="rl__h type-mono-label" id="rl-h">{labels.reasons}</h4>
+
+  {/* The library's own framing, which is sharper than a taxonomy would have
+      been: these look alike and send you in different directions, and the test
+      that separates them is a question about the remedy rather than about the
+      reason's name. The note beneath states how far it actually goes. */}
+  <p class="rl__q type-body">{question}</p>
+  <p class="rl__note type-body-sm">
+    <span class="rl__count type-mono-sm">{sorted}</span>
+    {note}
+  </p>
+
+  <ul class="rl__list">
+    {
+      reasons.map((r) => (
+        <li class="rl__item">
+          {/* The enum's own name, meaning and guidance, generated from the
+              library's source by build_catalogue.py and reproduced here. <samp>
+              because that is what it is: a program's own output, quoted. The
+              numerals inside it belong to the library's prose, and the site
+              does not silently edit a text it reproduces. Same reasoning gates
+              5 and 9 already carry for the ported reference corpus. */}
+          <p class="rl__name type-mono-base"><samp>{r.name}</samp></p>
+          <p class="rl__meaning type-body-sm"><samp>{r.meaning}</samp></p>
+          <p class="rl__do type-body-sm"><samp>{r.whatToDo}</samp></p>
+          {r.remedy && (
+            <p class="rl__remedy type-body-sm">
+              <span class="rl__remedy-label type-mono-label">{labels.remedy}</span>
+              <samp>{r.remedy.remedy}</samp>
+              <span class="rl__where type-mono-sm">
+                <span class="rl__where-label type-mono-label">{labels.answerable}</span>
+                {r.remedy.answerableLabel}
+              </span>
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .rl {
+    margin-block-start: var(--space-7);
+    padding-block-start: var(--space-6);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+
+  .rl__h {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .rl__q {
+    margin: var(--space-4) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink);
+  }
+
+  .rl__note {
+    margin: var(--space-3) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+
+  .rl__count {
+    color: var(--ink);
+    margin-inline-end: var(--space-2);
+  }
+
+  .rl__list {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  /* The accent is the refusal state's own colour, on every one of the
+     seventeen. Never red, never amber, and no glyph. */
+  .rl__item {
+    min-width: 0;
+    padding: var(--space-4);
+    padding-inline-start: var(--space-5);
+    background: var(--surface-1);
+    border-radius: var(--radius-2);
+    border-inline-start: var(--border-w-accent) solid var(--state-refusal);
+  }
+
+  .rl__name {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  /* The quotation is semantic; the type is the list's. */
+  .rl samp {
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .rl__meaning {
+    margin: var(--space-3) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink);
+  }
+
+  .rl__do {
+    margin: var(--space-3) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+
+  /* A property of the three reasons that carry one, not a group heading. */
+  .rl__remedy {
+    margin: var(--space-3) 0 0;
+    padding-block-start: var(--space-3);
+    border-block-start: var(--border-w) solid var(--line);
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink);
+  }
+
+  .rl__remedy-label,
+  .rl__where-label {
+    color: var(--ink-3); /* ink3-ok: label on --surface-1, 4.85:1 (C-15) */
+    margin-inline-end: var(--space-2);
+  }
+
+  .rl__where {
+    display: block;
+    margin-block-start: var(--space-2);
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .rl__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

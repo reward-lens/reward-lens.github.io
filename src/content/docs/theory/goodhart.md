@@ -2,8 +2,10 @@
 title: Goodhart and overoptimization
 description: 'Why does a policy trained on a good reward model still go wrong? There is a line people repeat: whatever the reward fails to measure becomes the thing the'
 section: theory
-order: 67
+order: 96
 source: docs/content/theory/goodhart.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # Goodhart and overoptimization

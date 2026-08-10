@@ -1,0 +1,80 @@
+---
+/**
+ * act-block  ·  a sub-block inside a part, and the equal-weight guarantee
+ *
+ * Parts 4 and 5 of every act are two or three blocks each, and the rule that
+ * governs them is the same rule on all three routes:
+ *
+ *   "The control gets equal visual weight, never a caveat treatment. Same
+ *    heading level, same type, same measure, directly adjacent."
+ *
+ * Act two's result and the two signals it discarded; act one's disagreement
+ * and the registered prediction that was refuted; act three's refusal count
+ * and the project's audit of its own calibration. In every case one block is
+ * flattering and the next is not, and the next is the one the site is for.
+ *
+ * THE GUARANTEE IS THAT THIS COMPONENT HAS NO KNOBS. There is no `variant`, no
+ * `emphasis`, no `tone`, no `collapsed` and no `caveat`. Both blocks in a pair
+ * are the same component with the same props, so they cannot drift apart in a
+ * later edit and no route can decide that one of them is a footnote. Same
+ * reasoning as data-table having no `sortable` property.
+ *
+ * The heading is an <h2> at type-h3. The page files say <h3>
+ * (see-run.md:92, see-reward-model.md:111, see-grader.md:101), which presumes
+ * an <h2> on the part above it; copy.yaml has no part heading for parts 1 to 5
+ * of any act, so promoting these to <h2> keeps the document outline valid
+ * without inventing a string. When the part headings land, `level` moves to 3
+ * here and nothing else changes.
+ */
+interface Props {
+  /** From copy.yaml. Required: a block with no heading is a paragraph. */
+  heading: string;
+  /** 2 today, 3 once copy.yaml carries a heading for parts 1 to 5. */
+  level?: 2 | 3;
+  class?: string;
+}
+
+const { heading, level = 2, class: extraClass = "" } = Astro.props;
+const Heading = `h${level}` as "h2" | "h3";
+---
+
+<div class:list={["act-b", extraClass]}>
+  <Heading class="act-b__heading type-h3">{heading}</Heading>
+  <slot />
+</div>
+
+<style>
+  /* --space-6 is "between sibling blocks". The two blocks of a part sit
+     directly adjacent at the same interval, so neither reads as attached to
+     the other as a note.
+     `:not(:first-child)` rather than an adjacent-sibling rule, because part 5
+     opens with loose prose and then its blocks: at shoot 1 the first block's
+     heading butted straight onto the last line of that prose and read as its
+     final sentence. */
+  .act-b:not(:first-child) {
+    margin-block-start: var(--space-6);
+  }
+
+  .act-b__heading {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  /* One measure for every block. A caveat treatment usually arrives as a
+     narrower column or a smaller type role, and both are unreachable from
+     here. */
+  .act-b {
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+
+  .act-b > :global(p) {
+    margin: 0 0 var(--space-4);
+    color: var(--ink);
+  }
+
+  .act-b > :global(p:last-child) {
+    margin-block-end: 0;
+  }
+</style>

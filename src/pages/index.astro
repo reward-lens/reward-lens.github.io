@@ -1,655 +1,119 @@
 ---
+/**
+ * `/`  ·  the room, then three movements.
+ *
+ * This page composes and does nothing else. Every section is a component under
+ * `components/home/`, each of which owns its own data, its own copy keys and
+ * its own guards. Nothing is read, filled or asserted here.
+ *
+ * THAT IS A CHANGE, and the reason is worth keeping. This file used to be the
+ * page: nine sections built inline, thirty-three declarations of frontmatter
+ * resolving evidence records, filling copy and warning about content it could
+ * not bind. When the homepage was rebuilt into the three movements below, the
+ * sections went to components and the frontmatter stayed, so the file kept
+ * resolving records for a trust badge nobody rendered, filling three paragraphs
+ * nobody printed, and warning at every build about missing content for
+ * sections §4, §6 and §8, which by then did not exist. Twenty-nine of the
+ * thirty-three declarations were dead, and so were twenty-two of the
+ * twenty-three style rules. A page that computes what it does not show is a
+ * page that will eventually show something it did not compute.
+ *
+ * The one warning worth keeping moved to its owner: the hosted-notebook link
+ * has a label in copy.yaml and no URL, and `handoff-block.astro` says so in the
+ * component that would render it.
+ *
+ * The movements, in scroll order:
+ *
+ *   ONE   `InstrumentStory`  the whole chain in five states, carried by the
+ *                            instrument. A complete argument in DOM order with
+ *                            no scene, which is what the reduced-motion,
+ *                            no-WebGL and no-JavaScript paths get.
+ *   TWO   `ProofBench`       three real mechanisms, each ending at the route
+ *                            that shows the whole thing.
+ *   THREE `TrustStrip`,      why a reading can be believed, what has not been
+ *         `BoundaryMap`,     earned, and the reader's own run.
+ *         `HandoffBlock`
+ */
 import Base from "@layouts/Base.astro";
-import InstallStrip from "@components/InstallStrip.astro";
-import CliExcerpt from "@components/CliExcerpt.astro";
-import ThemedFigure from "@components/ThemedFigure.astro";
-import EvidenceChip from "@components/EvidenceChip.astro";
-import LedgerStrip from "@components/islands/LedgerStrip.tsx";
-import TokenStrip from "@components/islands/TokenStrip.tsx";
-import ledger from "@data/ledger.json";
-import cards from "@data/cards.json";
-import demo from "@data/demos/lens-demo.json";
-import captions from "@data/captions.json";
+import Hero from "@components/home/hero.astro";
+import InstrumentStory from "@components/home/story/instrument-story.astro";
+import ProofBench from "@components/home/proof/proof-bench.astro";
+import TrustStrip from "@components/home/boundary/trust-strip.astro";
+import BoundaryMap from "@components/home/boundary/boundary-map.astro";
+import HandoffBlock from "@components/home/handoff/handoff-block.astro";
+import { copy } from "../copy";
 
-const stripRows = ledger.map((r) => ({
-  card: r.card,
-  slug: r.slug,
-  h: r.hypothesis_id,
-  statement: r.statement,
-  metric: r.metric,
-  comparator: r.comparator,
-  threshold: r.threshold,
-  prob: r.registered_prob,
-  observed: r.observed,
-  outcome: r.outcome as "confirmed" | "refuted" | "inconclusive",
-  kill: r.kill_id,
-}));
-
-const ev = (id: string) => cards.find((c) => c.id === id)!.adjudication_ev;
-
-const receipts = [
-  {
-    claim: "Run a rigorous white-box audit of reward models, end to end.",
-    chips: [
-      { value: "27 cards", plain: true },
-      { value: "53 frozen hypotheses", plain: true },
-      { value: "$17.73 metered", plain: true },
-    ],
-    href: "/campaign/",
-  },
-  {
-    claim: "Attribute a reward score, and know when attribution lies.",
-    chips: [
-      {
-        value: 1.0,
-        label: "attribution AUC",
-        evidenceId: ev("adj-avp"),
-        observable: "attribution_recovery_auc",
-        subject: "ADJ-AVP",
-      },
-      {
-        value: 0.433962,
-        label: "patching AUC; the card refuted, K-avp fired",
-        evidenceId: ev("adj-avp"),
-        observable: "patching_recovery_auc",
-        subject: "ADJ-AVP",
-      },
-    ],
-    href: "/campaign/adj-avp/",
-  },
-  {
-    claim: "Intervene with certificates and honest costs.",
-    chips: [
-      {
-        value: 0.885616,
-        label: "exploit drift cut",
-        evidenceId: ev("surgery"),
-        observable: "exploit_drift_reduction",
-        subject: "SURGERY",
-      },
-      {
-        value: -0.398752,
-        label: "benchmark cost, published",
-        evidenceId: ev("surgery"),
-        observable: "rb2_accuracy_delta_after_erasure",
-        subject: "SURGERY",
-      },
-    ],
-    href: "/campaign/surgery/",
-  },
-  {
-    claim: "Track a reward direction forming over training.",
-    chips: [
-      {
-        value: "monotone",
-        label: "w_r stabilization, confirmed",
-        evidenceId: ev("emb-lora"),
-        observable: "w_r_stabilization_monotone",
-        subject: "EMB-LORA",
-      },
-    ],
-    href: "/campaign/emb-lora/",
-  },
-  {
-    claim:
-      "Forecast drift under optimization pressure from base-policy statistics.",
-    chips: [
-      {
-        value: 0.964286,
-        label: "rho, standing theorem T9",
-        evidenceId: ev("chi-drift"),
-        observable: "chi_bon_spearman",
-        subject: "CHI-DRIFT",
-      },
-    ],
-    href: "/campaign/chi-drift/",
-  },
-  {
-    claim: "Measure what no scalar reward can represent.",
-    chips: [
-      {
-        value: 0.213976,
-        label: "cyclic preference mass",
-        evidenceId: ev("topo-hodge"),
-        observable: "intransitive_mass",
-        subject: "TOPO-HODGE",
-      },
-    ],
-    href: "/campaign/topo-hodge/",
-  },
-  {
-    claim: "Catch a judge deciding before it writes its reasoning.",
-    chips: [
-      {
-        value: 1.0,
-        label: "verdict prefix match",
-        evidenceId: ev("judge-vbc"),
-        observable: "verdict_prefix_match_rate",
-        subject: "JUDGE-VBC",
-      },
-    ],
-    href: "/campaign/judge-vbc/",
-  },
-  {
-    claim: "And the discipline audits itself in public.",
-    chips: [
-      {
-        value: 0.26,
-        label: "Brier, against the coin's 0.25; K-meta fired",
-        evidenceId: ev("meta-ledger"),
-        observable: "brier_directional",
-        subject: "META-LEDGER",
-      },
-    ],
-    href: "/campaign/meta-ledger/",
-  },
-];
-
-const capabilities = [
-  {
-    title: "Attribute a score to heads and layers",
-    code: "mb.run(DirectLinearAttribution(), mb.Context(signal=signal, view=view))",
-  },
-  {
-    title: "Patch and verify causally",
-    code: "mb.run(PatchGrid(), mb.Context(signal=signal, view=view))",
-  },
-  {
-    title: "Run the bias battery",
-    code: "mb.run(BiasBattery(), mb.Context(signal=signal, view=view))",
-  },
-  {
-    title: "Track w_r formation over checkpoints",
-    code: "from reward_lens.dynamics import CheckpointSequence",
-  },
-  {
-    title: "Forecast drift under best-of-n",
-    code: "from reward_lens.loops import SusceptibilitySpectrum, BoNLadder",
-  },
-  {
-    title: "Freeze a study and adjudicate it",
-    code: "reward-lens study freeze spec.json",
-  },
-];
-
-const rungs = [
-  {
-    letter: "E",
-    word: "exploratory",
-    line: "A bare measurement. Nothing has earned it more than that.",
-  },
-  {
-    letter: "C",
-    word: "calibrated",
-    line: "The instrument holds a scorecard from runs against planted ground truth.",
-  },
-  {
-    letter: "R",
-    word: "registered",
-    line: "The prediction predated the data, frozen and hashed.",
-  },
-  {
-    letter: "A",
-    word: "adjudicated",
-    line: "Machinery compared it to its frozen threshold and wrote the verdict.",
-  },
-];
-
-const frontier = [
-  {
-    q: "Forecast the hack before any RL",
-    line: "Can the KL location of the Goodhart hump be predicted from internals alone? The drift ordering held; the hump location is unrun.",
-  },
-  {
-    q: "Calibration that transfers across scales",
-    line: "The 0.419 gap against a frozen 0.15 bound is now the problem statement.",
-  },
-  {
-    q: "Localize process errors in verifiers",
-    line: "The dense extractor failed its answer-key validation on a real PRM, so the instrument itself is open.",
-  },
-];
+const home = copy.home as Record<string, any>;
 ---
 
-<Base
-  title="reward-lens: see what the reward model actually learned"
-  description="White-box tools and built-in epistemic discipline for reward models, the objects that define what RLHF optimizes."
-  ogImage="/og/default.png"
->
-  <section class="hero">
-    <h1 class="hero-title">See what the reward model actually learned.</h1>
-    <p class="hero-sub">
-      White-box tools and built-in epistemic discipline for reward models, the
-      objects that define what RLHF optimizes.
-    </p>
-    <div class="hero-actions">
-      <InstallStrip />
-      <div class="hero-buttons">
-        <a class="btn btn-primary" href="/campaign/">Read the audit</a>
-        <a class="btn" href="/docs/">Open the docs</a>
-      </div>
-    </div>
-    <div class="hero-cli">
-      <CliExcerpt />
-    </div>
-    <div class="hero-strip">
-      <LedgerStrip client:load rows={stripRows} />
-      <p class="hero-strip-caption">
-        53 pre-registered hypotheses about ten reward models, adjudicated
-        July 2026: <span class="cap-ok">16 confirmed</span>,
-        <span class="cap-bad">21 refuted</span>,
-        <span class="cap-none">16 inconclusive</span>, 8 kills fired. Hover
-        any mark.
-      </p>
-    </div>
-  </section>
+<Base title={copy.meta.site_name} description={home.meta_description}>
+  <!-- §1 · the claim. The room. -->
+  <Hero />
 
-  <section class="band" aria-labelledby="lens-h">
-    <div class="band-inner band-split">
-      <div class="band-copy">
-        <h2 id="lens-h">One output direction</h2>
-        <p>
-          A reward model reads text, forms a hidden state <code>h</code>, and
-          one learned direction turns it into the score:
-          <code>r(x) = w_r · h + b</code>. Everything on this site is about
-          that projection and what feeds it.
-        </p>
-        <p>
-          The strip here is real, precomputed data: per-token contributions to the score of
-          the smallest fleet model, computed with the library's dense
-          instrument on its built-in diagnostic pairs. On the formatting pair
-          the model prefers the rejected completion; that miss ships as is.
-        </p>
-        <ThemedFigure
-          light="/figures/docs/reward-projection-light.svg"
-          dark="/figures/docs/reward-projection-dark.svg"
-          alt="The reward projection: a hidden state read out along one learned direction"
-        />
-      </div>
-      <div class="band-demo">
-        <TokenStrip client:visible demo={demo} />
-      </div>
-    </div>
-  </section>
+  <div class="home">
+    {/*
+      MOVEMENT ONE: the whole chain, carried by the instrument.
 
-  <section class="band" aria-labelledby="cap-h">
-    <div class="band-inner">
-      <h2 id="cap-h">The instruments</h2>
-      <div class="cap-grid">
-        {
-          capabilities.map((c) => (
-            <div class="cap-tile">
-              <h3>{c.title}</h3>
-              <code class="cap-code" tabindex="0">{c.code}</code>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+      Five states in scroll order: what scored the rollout, what the optimizer
+      actually saw, where the update came from, what the policy became, and what
+      can be seen while the run is still changeable. The visual slot is empty
+      until the live scene lands; the story is a complete argument in DOM order
+      without it, which is the property that has to hold for the reduced-motion,
+      no-WebGL and no-JavaScript paths anyway.
+    */}
+    <InstrumentStory />
 
-  <section class="band band-campaign" aria-labelledby="camp-h">
-    <div class="band-inner">
-      <h2 id="camp-h">The first pre-registered white-box audit of reward models</h2>
-      <p class="band-lede">
-        In July 2026 the discipline was put through a live fire exercise: 27
-        study cards, 53 hypotheses with frozen thresholds and kill criteria,
-        predictions hashed before the run, then adjudicated by machinery
-        against a merged evidence store. 16 confirmed, 21 refuted, 16
-        inconclusive; 8 kill criteria fired, including the campaign's kill on
-        its own calibration.
-      </p>
-      <ThemedFigure
-        light="/figures/campaign/hero1-ledger.light.png"
-        dark="/figures/campaign/hero1-ledger.dark.png"
-        alt="One row per headline call: position shows the margin by which the frozen call held or failed, color the adjudication"
-        caption={captions["hero1-ledger"]}
-      />
-      <ul class="receipts">
-        {
-          receipts.map((r) => (
-            <li class="receipt-row">
-              <a class="receipt-claim" href={r.href}>
-                {r.claim}
-              </a>
-              <span class="receipt-chips">
-                {r.chips.map((chip: any) =>
-                  chip.plain ? (
-                    <span class="receipt-plain">{chip.value}</span>
-                  ) : (
-                    <span class="receipt-chip">
-                      <EvidenceChip
-                        value={chip.value}
-                        trust="A"
-                        evidenceId={chip.evidenceId}
-                        observable={chip.observable}
-                        subject={chip.subject}
-                      />
-                      <span class="receipt-label">{chip.label}</span>
-                    </span>
-                  ),
-                )}
-              </span>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="receipts-note">
-        Refutations and missing evidence are published with the same
-        machinery.
-      </p>
-      <a class="btn btn-primary" href="/campaign/">Read the scored ledger</a>
-    </div>
-  </section>
+    {/*
+      MOVEMENT TWO: three real mechanisms, each with room to teach one idea.
+      Not a feature grid. Each ends at the route that shows the whole thing.
+    */}
+    <ProofBench />
 
-  <section class="band" aria-labelledby="trust-h">
-    <div class="band-inner">
-      <h2 id="trust-h">Every number wears its trust level</h2>
-      <div class="rungs">
-        {
-          rungs.map((r) => (
-            <div class="rung">
-              <span class="rung-letter">{r.letter}</span>
-              <div>
-                <p class="rung-word">{r.word}</p>
-                <p class="rung-line">{r.line}</p>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-      <p class="band-close">
-        The gates compute these levels; no caller can override them.
-      </p>
-    </div>
-  </section>
+    {/*
+      MOVEMENT THREE: why a reading can be believed, what has not been earned,
+      and the reader's own run.
 
-  <section class="band" aria-labelledby="frontier-h">
-    <div class="band-inner">
-      <h2 id="frontier-h">Open problems, stated as measurable questions</h2>
-      <div class="frontier-grid">
-        {
-          frontier.map((f) => (
-            <div class="frontier-tile">
-              <h3>{f.q}</h3>
-              <p>{f.line}</p>
-            </div>
-          ))
-        }
-      </div>
-      <a class="quiet-link" href="/science/">The science page carries the rest.</a>
-    </div>
-  </section>
+      The trust strip is deliberately here and deliberately short. It used to be
+      the page's emotional centre, four abstract rungs above the fold, and that
+      ordering asked a stranger to care how carefully the tool measures before
+      telling them what it measures.
+    */}
+    <TrustStrip />
+    <BoundaryMap />
+    <HandoffBlock />
+  </div>
 </Base>
 
 <style>
-  .hero {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: var(--sp-16) var(--page-pad) var(--sp-12);
-  }
-  .hero-title {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.6rem, 6vw, 4rem);
-    line-height: 1.08;
-    letter-spacing: -0.01em;
-    margin: 0 0 var(--sp-4);
-    max-width: 18ch;
-  }
-  .hero-sub {
-    font-size: var(--text-lg);
-    color: var(--ink-2);
-    max-width: 52ch;
-    line-height: 1.6;
-    margin: 0 0 var(--sp-8);
-  }
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-4) var(--sp-8);
-    align-items: center;
-    margin-bottom: var(--sp-12);
-  }
-  .hero-buttons {
-    display: flex;
-    gap: var(--sp-3);
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: var(--text-sm);
-    color: var(--ink);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-card);
-    padding: var(--sp-2) var(--sp-4);
-    min-height: 40px;
-    text-decoration: none;
-  }
-  .btn:hover {
-    border-color: var(--ink-3);
-  }
-  .btn-primary {
-    color: var(--accent-ink);
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-  .btn-primary:hover {
-    border-color: var(--accent);
-    filter: brightness(1.06);
-  }
-  .hero-cli {
-    max-width: 46rem;
-    margin-bottom: var(--sp-12);
-  }
-  .hero-strip-caption {
-    margin: var(--sp-3) 0 0;
-    font-size: var(--text-sm);
-    color: var(--ink-3);
-    max-width: var(--measure-wide);
-  }
-  .cap-ok {
-    color: var(--ok-ink);
-  }
-  .cap-bad {
-    color: var(--bad-ink);
-  }
-  .cap-none {
-    color: var(--none-ink);
-  }
-
-  .band {
-    border-top: 1px solid var(--line);
-    padding: var(--sp-16) 0;
-  }
-  .band-inner {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad);
-  }
-  .band h2 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.5rem, 3.5vw, 2.5rem);
-    margin: 0 0 var(--sp-6);
-  }
-  .band-split {
+  .home {
+    width: 100%;
+    max-width: min(var(--grid-max), 100%);
+    margin-inline: auto;
+    padding-inline: var(--page-pad);
+    padding-block: var(--space-9) var(--space-9);
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: var(--sp-12);
-    align-items: start;
-  }
-  .band-copy p {
-    color: var(--ink-2);
-    line-height: 1.7;
-    max-width: 46ch;
+    gap: var(--space-9);
+    min-width: 0;
   }
 
-  .cap-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--sp-4);
-  }
-  .cap-tile {
-    border: 1px solid var(--line);
-    border-radius: var(--r-card);
-    background: var(--bg-raised);
-    padding: var(--sp-4);
-  }
-  .cap-tile h3 {
-    margin: 0 0 var(--sp-2);
-    font-size: var(--text-base);
-    font-weight: 600;
-  }
-  .cap-code {
-    display: block;
-    font-size: var(--text-xs);
-    color: var(--ink-2);
-    background: var(--bg-inset);
-    border: 1px solid var(--line);
-    border-radius: var(--r-chip);
-    padding: var(--sp-2);
-    overflow-x: auto;
-    white-space: pre;
-  }
+  /* CONTAINMENT, NOT A FIX, and the underlying defect is reported.
+     provenance-chip.astro leaves a closed panel `position: absolute` at the
+     chip's own left edge, capped at min(--measure-command, 100vw - --space-7).
+     That cap does not account for how far into the line the number sits, so a
+     chip past the halfway mark puts an invisible 544px box outside the viewport
+     and the document's scrollWidth goes with it: 1148 at 768 and 1298 at 1024,
+     measured. It reproduces on /gallery/ too (871 at 768), so it predates this
+     page.
 
-  .band-lede {
-    color: var(--ink-2);
-    line-height: 1.7;
-    max-width: var(--measure-wide);
-    margin: 0 0 var(--sp-6);
-  }
-  .receipts {
-    list-style: none;
-    margin: var(--sp-8) 0 var(--sp-4);
-    padding: 0;
-  }
-  .receipt-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-4);
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--line);
-    padding: var(--sp-3) 0;
-  }
-  .receipt-row:first-child {
-    border-top: 1px solid var(--line);
-  }
-  .receipt-claim {
-    color: var(--ink);
-    text-decoration: none;
-    font-size: var(--text-base);
-    flex: 1;
-    min-width: 18rem;
-  }
-  .receipt-claim:hover {
-    color: var(--info);
-  }
-  .receipt-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-4);
-    align-items: center;
-  }
-  .receipt-chip {
-    display: inline-flex;
-    gap: var(--sp-2);
-    align-items: center;
-  }
-  .receipt-label {
-    font-size: var(--text-xs);
-    color: var(--ink-3);
-  }
-  .receipt-plain {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--ink-2);
-    border: 1px solid var(--line);
-    border-radius: var(--r-chip);
-    padding: 0 6px;
-  }
-  .receipts-note {
-    color: var(--ink-3);
-    font-size: var(--text-sm);
-    margin: 0 0 var(--sp-6);
-  }
-
-  .rungs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: var(--sp-4);
-  }
-  .rung {
-    display: flex;
-    gap: var(--sp-3);
-    border: 1px solid var(--line);
-    border-radius: var(--r-card);
-    background: var(--bg-raised);
-    padding: var(--sp-4);
-  }
-  .rung-letter {
-    font-family: var(--font-mono);
-    font-size: var(--text-lg);
-    color: var(--ink-2);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-chip);
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: none;
-  }
-  .rung-word {
-    margin: 0 0 var(--sp-1);
-    font-weight: 600;
-  }
-  .rung-line {
-    margin: 0;
-    font-size: var(--text-sm);
-    color: var(--ink-2);
-    line-height: 1.6;
-  }
-  .band-close {
-    margin: var(--sp-6) 0 0;
-    font-weight: 600;
-  }
-
-  .frontier-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--sp-4);
-    margin-bottom: var(--sp-6);
-  }
-  .frontier-tile {
-    border: 1px solid var(--line);
-    border-radius: var(--r-card);
-    padding: var(--sp-4);
-  }
-  .frontier-tile h3 {
-    margin: 0 0 var(--sp-2);
-    font-size: var(--text-base);
-    font-weight: 600;
-  }
-  .frontier-tile p {
-    margin: 0;
-    font-size: var(--text-sm);
-    color: var(--ink-2);
-    line-height: 1.6;
-  }
-  .quiet-link {
-    font-size: var(--text-sm);
-  }
-
-  @media (max-width: 900px) {
-    .band-split {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .band-demo {
-      order: -1;
-    }
+     Opening the panel switches it to `position: fixed` with measured
+     coordinates, so on the scripted path a closed panel's absolute position is
+     never used for anything. Parking it out of flow while closed changes
+     nothing a reader sees and takes the overflow with it. The no-JavaScript
+     path, where hover and focus open the absolute panel and its closed position
+     IS its open position, is deliberately untouched. */
+  :global(:root[data-js]) .home :global(.prov:not([data-open]) > .prov__panel) {
+    position: fixed;
+    inset-inline: 0 auto;
+    top: 0;
   }
 </style>

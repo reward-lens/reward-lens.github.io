@@ -2,8 +2,10 @@
 title: Write an adapter
 description: You have a grader reward-lens does not ship an adapter for. How do you make every instrument work on it?
 section: how-to
-order: 20
+order: 21
 source: docs/content/how-to/write-an-adapter.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -77,4 +79,4 @@ Five checks, all passing, on a real adapter. The `readout_matches_head` check is
 `run_adapter_conformance` runs the checks that apply: pass `check_head=False` for an ensemble or an implicit signal that has no single linear head to match against. A skipped check is reported as a skip, not a silent pass, so the report never overstates what was verified.
 
 </Callout>
-See also: [classifier reward models](/docs/models-and-signals/classifier-rms/), [the signals index](/docs/models-and-signals/), [`RewardSignal`](/docs/reference/signals/#reward_lens.signals.base.RewardSignal), [`run_adapter_conformance`](/docs/reference/signals/#reward_lens.signals.conformance_adapters.run_adapter_conformance).
+See also: [classifier reward models](/docs/models-and-signals/classifier-rms/), [the signals index](/docs/models-and-signals/), [`RewardSignal`](/docs/api/signals/#reward_lens.signals.base.RewardSignal), [`run_adapter_conformance`](/docs/api/signals/#reward_lens.signals.conformance_adapters.run_adapter_conformance).

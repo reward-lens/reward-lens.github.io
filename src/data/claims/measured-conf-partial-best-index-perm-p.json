@@ -1,0 +1,26 @@
+{
+ "comparator": "< 0.05",
+ "contentHash": "fd75eb40fb7df35e8069beaabb4db851",
+ "humanSource": "The frozen study \"Do the indices carry information beyond size, accuracy, and lineage\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:491f7f378d0b58dfdadebc9aaee7c983",
+  "campaign.adjudication.CONF-PARTIAL",
+  "study:campaign-conf-partial@v1#3ecef7c0",
+  "spec:3ecef7c08cb489d49083f607184717bc",
+  "H-partial-perm"
+ ],
+ "label": "Do the indices carry information beyond size, accuracy, and lineage",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "best_index_perm_p",
+  "unit": null,
+  "value": 0.046795320467953205
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "measured-conf-partial-best-index-perm-p",
+ "sourceUrl": "/evidence/491f7f378d0b58dfdadebc9aaee7c983/",
+ "statement": "the surviving index clears its permutation null.",
+ "status": "supported",
+ "subject": "fleet, over rb2-full",
+ "type": "measured-result"
+}

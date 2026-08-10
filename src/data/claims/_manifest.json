@@ -1,0 +1,743 @@
+{
+ "byEvidenceField": {
+  "ev:01c81c7185640f9b962b9115f360732e": {
+   "metrics.order_recovery_auc": "measured-emb-lora-order-recovery-auc",
+   "metrics.order_recovery_auc_ci_high": "measured-emb-lora-order-recovery-auc",
+   "metrics.order_recovery_auc_ci_low": "measured-emb-lora-order-recovery-auc",
+   "metrics.real_bias_before_quality": "measured-emb-lora-real-bias-before-quality",
+   "metrics.real_bias_before_quality_ci_high": "measured-emb-lora-real-bias-before-quality",
+   "metrics.real_bias_before_quality_ci_low": "measured-emb-lora-real-bias-before-quality",
+   "metrics.w_r_stabilization_monotone": "measured-emb-lora-w-r-stabilization-monotone",
+   "metrics.w_r_stabilization_monotone_ci_high": "measured-emb-lora-w-r-stabilization-monotone",
+   "metrics.w_r_stabilization_monotone_ci_low": "measured-emb-lora-w-r-stabilization-monotone",
+   "order_recovery_auc": "measured-emb-lora-order-recovery-auc",
+   "order_recovery_auc_ci_high": "measured-emb-lora-order-recovery-auc",
+   "order_recovery_auc_ci_low": "measured-emb-lora-order-recovery-auc",
+   "real_bias_before_quality": "measured-emb-lora-real-bias-before-quality",
+   "real_bias_before_quality_ci_high": "measured-emb-lora-real-bias-before-quality",
+   "real_bias_before_quality_ci_low": "measured-emb-lora-real-bias-before-quality",
+   "w_r_stabilization_monotone": "measured-emb-lora-w-r-stabilization-monotone",
+   "w_r_stabilization_monotone_ci_high": "measured-emb-lora-w-r-stabilization-monotone",
+   "w_r_stabilization_monotone_ci_low": "measured-emb-lora-w-r-stabilization-monotone"
+  },
+  "ev:0c80d9086ebb0ad9704b88a8eefb01fa": {
+   "metrics.real_vce": "measured-atlas-vce-real-vce",
+   "metrics.real_vce_ci_high": "measured-atlas-vce-real-vce",
+   "metrics.real_vce_ci_low": "measured-atlas-vce-real-vce",
+   "metrics.reward_convergent_p_value": "measured-atlas-vce-reward-convergent-p-value",
+   "metrics.reward_convergent_p_value_ci_high": "measured-atlas-vce-reward-convergent-p-value",
+   "metrics.reward_convergent_p_value_ci_low": "measured-atlas-vce-reward-convergent-p-value",
+   "real_vce": "measured-atlas-vce-real-vce",
+   "real_vce_ci_high": "measured-atlas-vce-real-vce",
+   "real_vce_ci_low": "measured-atlas-vce-real-vce",
+   "reward_convergent_p_value": "measured-atlas-vce-reward-convergent-p-value",
+   "reward_convergent_p_value_ci_high": "measured-atlas-vce-reward-convergent-p-value",
+   "reward_convergent_p_value_ci_low": "measured-atlas-vce-reward-convergent-p-value"
+  },
+  "ev:1acdc14e2fa16124786a9cd0d44a03b2": {
+   "forecast_mae": "measured-forecast-cat-forecast-mae",
+   "forecast_mae_ci_high": "measured-forecast-cat-forecast-mae",
+   "forecast_mae_ci_low": "measured-forecast-cat-forecast-mae",
+   "forecast_mae_minus_size_baseline": "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "forecast_mae_minus_size_baseline_ci_high": "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "forecast_mae_minus_size_baseline_ci_low": "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "metrics.forecast_mae": "measured-forecast-cat-forecast-mae",
+   "metrics.forecast_mae_ci_high": "measured-forecast-cat-forecast-mae",
+   "metrics.forecast_mae_ci_low": "measured-forecast-cat-forecast-mae",
+   "metrics.forecast_mae_minus_size_baseline": "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "metrics.forecast_mae_minus_size_baseline_ci_high": "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "metrics.forecast_mae_minus_size_baseline_ci_low": "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "metrics.size_baseline_mae": "measured-forecast-cat-size-baseline-mae",
+   "metrics.size_baseline_mae_ci_high": "measured-forecast-cat-size-baseline-mae",
+   "metrics.size_baseline_mae_ci_low": "measured-forecast-cat-size-baseline-mae",
+   "metrics.slice_baseline_mae": "measured-forecast-cat-slice-baseline-mae",
+   "metrics.slice_baseline_mae_ci_high": "measured-forecast-cat-slice-baseline-mae",
+   "metrics.slice_baseline_mae_ci_low": "measured-forecast-cat-slice-baseline-mae",
+   "size_baseline_mae": "measured-forecast-cat-size-baseline-mae",
+   "size_baseline_mae_ci_high": "measured-forecast-cat-size-baseline-mae",
+   "size_baseline_mae_ci_low": "measured-forecast-cat-size-baseline-mae",
+   "slice_baseline_mae": "measured-forecast-cat-slice-baseline-mae",
+   "slice_baseline_mae_ci_high": "measured-forecast-cat-slice-baseline-mae",
+   "slice_baseline_mae_ci_low": "measured-forecast-cat-slice-baseline-mae"
+  },
+  "ev:3990df7af1488c08ad62786d879b0b0f": {
+   "brier_directional": "measured-meta-ledger-brier-directional",
+   "brier_directional_ci_high": "measured-meta-ledger-brier-directional",
+   "brier_directional_ci_low": "measured-meta-ledger-brier-directional",
+   "interval_coverage_0p8": "measured-meta-ledger-interval-coverage-0p8",
+   "interval_coverage_0p8_ci_high": "measured-meta-ledger-interval-coverage-0p8",
+   "interval_coverage_0p8_ci_low": "measured-meta-ledger-interval-coverage-0p8",
+   "metrics.brier_directional": "measured-meta-ledger-brier-directional",
+   "metrics.brier_directional_ci_high": "measured-meta-ledger-brier-directional",
+   "metrics.brier_directional_ci_low": "measured-meta-ledger-brier-directional",
+   "metrics.interval_coverage_0p8": "measured-meta-ledger-interval-coverage-0p8",
+   "metrics.interval_coverage_0p8_ci_high": "measured-meta-ledger-interval-coverage-0p8",
+   "metrics.interval_coverage_0p8_ci_low": "measured-meta-ledger-interval-coverage-0p8",
+   "metrics.n_directional": "measured-meta-ledger-n-directional",
+   "metrics.n_directional_ci_high": "measured-meta-ledger-n-directional",
+   "metrics.n_directional_ci_low": "measured-meta-ledger-n-directional",
+   "metrics.n_intervals": "measured-meta-ledger-n-intervals",
+   "metrics.n_intervals_ci_high": "measured-meta-ledger-n-intervals",
+   "metrics.n_intervals_ci_low": "measured-meta-ledger-n-intervals",
+   "n_directional": "measured-meta-ledger-n-directional",
+   "n_directional_ci_high": "measured-meta-ledger-n-directional",
+   "n_directional_ci_low": "measured-meta-ledger-n-directional",
+   "n_intervals": "measured-meta-ledger-n-intervals",
+   "n_intervals_ci_high": "measured-meta-ledger-n-intervals",
+   "n_intervals_ci_low": "measured-meta-ledger-n-intervals"
+  },
+  "ev:41058731abf1d0b1590d4f2286e8771c": {
+   "erasure_certificate_pass": "measured-surgery-erasure-certificate-pass",
+   "erasure_certificate_pass_ci_high": "measured-surgery-erasure-certificate-pass",
+   "erasure_certificate_pass_ci_low": "measured-surgery-erasure-certificate-pass",
+   "exploit_drift_reduction": "measured-surgery-exploit-drift-reduction",
+   "exploit_drift_reduction_ci_high": "measured-surgery-exploit-drift-reduction",
+   "exploit_drift_reduction_ci_low": "measured-surgery-exploit-drift-reduction",
+   "metrics.erasure_certificate_pass": "measured-surgery-erasure-certificate-pass",
+   "metrics.erasure_certificate_pass_ci_high": "measured-surgery-erasure-certificate-pass",
+   "metrics.erasure_certificate_pass_ci_low": "measured-surgery-erasure-certificate-pass",
+   "metrics.exploit_drift_reduction": "measured-surgery-exploit-drift-reduction",
+   "metrics.exploit_drift_reduction_ci_high": "measured-surgery-exploit-drift-reduction",
+   "metrics.exploit_drift_reduction_ci_low": "measured-surgery-exploit-drift-reduction",
+   "metrics.probe_recovery_auc": "measured-surgery-probe-recovery-auc",
+   "metrics.probe_recovery_auc_ci_high": "measured-surgery-probe-recovery-auc",
+   "metrics.probe_recovery_auc_ci_low": "measured-surgery-probe-recovery-auc",
+   "metrics.rb2_accuracy_delta_after_erasure": "measured-surgery-rb2-accuracy-delta-after-erasure",
+   "metrics.rb2_accuracy_delta_after_erasure_ci_high": "measured-surgery-rb2-accuracy-delta-after-erasure",
+   "metrics.rb2_accuracy_delta_after_erasure_ci_low": "measured-surgery-rb2-accuracy-delta-after-erasure",
+   "probe_recovery_auc": "measured-surgery-probe-recovery-auc",
+   "probe_recovery_auc_ci_high": "measured-surgery-probe-recovery-auc",
+   "probe_recovery_auc_ci_low": "measured-surgery-probe-recovery-auc",
+   "rb2_accuracy_delta_after_erasure": "measured-surgery-rb2-accuracy-delta-after-erasure",
+   "rb2_accuracy_delta_after_erasure_ci_high": "measured-surgery-rb2-accuracy-delta-after-erasure",
+   "rb2_accuracy_delta_after_erasure_ci_low": "measured-surgery-rb2-accuracy-delta-after-erasure"
+  },
+  "ev:426a8cbed7f6d6dfb61d8fe3ed5264a4": {
+   "metrics.omission_credulity_gap": "measured-forensic-receipt-omission-credulity-gap",
+   "metrics.omission_credulity_gap_ci_high": "measured-forensic-receipt-omission-credulity-gap",
+   "metrics.omission_credulity_gap_ci_low": "measured-forensic-receipt-omission-credulity-gap",
+   "metrics.reliance_recovery": "measured-forensic-receipt-reliance-recovery",
+   "metrics.reliance_recovery_ci_high": "measured-forensic-receipt-reliance-recovery",
+   "metrics.reliance_recovery_ci_low": "measured-forensic-receipt-reliance-recovery",
+   "metrics.skepticism_effect": "measured-forensic-receipt-skepticism-effect",
+   "metrics.skepticism_effect_ci_high": "measured-forensic-receipt-skepticism-effect",
+   "metrics.skepticism_effect_ci_low": "measured-forensic-receipt-skepticism-effect",
+   "omission_credulity_gap": "measured-forensic-receipt-omission-credulity-gap",
+   "omission_credulity_gap_ci_high": "measured-forensic-receipt-omission-credulity-gap",
+   "omission_credulity_gap_ci_low": "measured-forensic-receipt-omission-credulity-gap",
+   "reliance_recovery": "measured-forensic-receipt-reliance-recovery",
+   "reliance_recovery_ci_high": "measured-forensic-receipt-reliance-recovery",
+   "reliance_recovery_ci_low": "measured-forensic-receipt-reliance-recovery",
+   "skepticism_effect": "measured-forensic-receipt-skepticism-effect",
+   "skepticism_effect_ci_high": "measured-forensic-receipt-skepticism-effect",
+   "skepticism_effect_ci_low": "measured-forensic-receipt-skepticism-effect"
+  },
+  "ev:46e1500c4d39f9821c137ae0b00ac0da": {
+   "dense_localization_auc": "measured-verif-prm-dense-localization-auc",
+   "dense_localization_auc_ci_high": "measured-verif-prm-dense-localization-auc",
+   "dense_localization_auc_ci_low": "measured-verif-prm-dense-localization-auc",
+   "metrics.dense_localization_auc": "measured-verif-prm-dense-localization-auc",
+   "metrics.dense_localization_auc_ci_high": "measured-verif-prm-dense-localization-auc",
+   "metrics.dense_localization_auc_ci_low": "measured-verif-prm-dense-localization-auc",
+   "metrics.style_share": "measured-verif-prm-style-share",
+   "metrics.style_share_ci_high": "measured-verif-prm-style-share",
+   "metrics.style_share_ci_low": "measured-verif-prm-style-share",
+   "metrics.verification_score": "measured-verif-prm-verification-score",
+   "metrics.verification_score_ci_high": "measured-verif-prm-verification-score",
+   "metrics.verification_score_ci_low": "measured-verif-prm-verification-score",
+   "style_share": "measured-verif-prm-style-share",
+   "style_share_ci_high": "measured-verif-prm-style-share",
+   "style_share_ci_low": "measured-verif-prm-style-share",
+   "verification_score": "measured-verif-prm-verification-score",
+   "verification_score_ci_high": "measured-verif-prm-verification-score",
+   "verification_score_ci_low": "measured-verif-prm-verification-score"
+  },
+  "ev:491f7f378d0b58dfdadebc9aaee7c983": {
+   "best_index_perm_p": "measured-conf-partial-best-index-perm-p",
+   "best_index_perm_p_ci_high": "measured-conf-partial-best-index-perm-p",
+   "best_index_perm_p_ci_low": "measured-conf-partial-best-index-perm-p",
+   "lineage_check_pass": "measured-conf-partial-lineage-check-pass",
+   "lineage_check_pass_ci_high": "measured-conf-partial-lineage-check-pass",
+   "lineage_check_pass_ci_low": "measured-conf-partial-lineage-check-pass",
+   "max_abs_partial_corr": "measured-conf-partial-max-abs-partial-corr",
+   "max_abs_partial_corr_ci_high": "measured-conf-partial-max-abs-partial-corr",
+   "max_abs_partial_corr_ci_low": "measured-conf-partial-max-abs-partial-corr",
+   "metrics.best_index_perm_p": "measured-conf-partial-best-index-perm-p",
+   "metrics.best_index_perm_p_ci_high": "measured-conf-partial-best-index-perm-p",
+   "metrics.best_index_perm_p_ci_low": "measured-conf-partial-best-index-perm-p",
+   "metrics.lineage_check_pass": "measured-conf-partial-lineage-check-pass",
+   "metrics.lineage_check_pass_ci_high": "measured-conf-partial-lineage-check-pass",
+   "metrics.lineage_check_pass_ci_low": "measured-conf-partial-lineage-check-pass",
+   "metrics.max_abs_partial_corr": "measured-conf-partial-max-abs-partial-corr",
+   "metrics.max_abs_partial_corr_ci_high": "measured-conf-partial-max-abs-partial-corr",
+   "metrics.max_abs_partial_corr_ci_low": "measured-conf-partial-max-abs-partial-corr"
+  },
+  "ev:54fb272fd011c8ca07a4959f553341ab": {
+   "delta_r_per_steer": "measured-eval-aware-delta-r-per-steer",
+   "delta_r_per_steer_ci_high": "measured-eval-aware-delta-r-per-steer",
+   "delta_r_per_steer_ci_low": "measured-eval-aware-delta-r-per-steer",
+   "metrics.delta_r_per_steer": "measured-eval-aware-delta-r-per-steer",
+   "metrics.delta_r_per_steer_ci_high": "measured-eval-aware-delta-r-per-steer",
+   "metrics.delta_r_per_steer_ci_low": "measured-eval-aware-delta-r-per-steer",
+   "metrics.organic_fpr": "measured-eval-aware-organic-fpr",
+   "metrics.organic_fpr_ci_high": "measured-eval-aware-organic-fpr",
+   "metrics.organic_fpr_ci_low": "measured-eval-aware-organic-fpr",
+   "metrics.real_probe_balanced_acc": "measured-eval-aware-real-probe-balanced-acc",
+   "metrics.real_probe_balanced_acc_ci_high": "measured-eval-aware-real-probe-balanced-acc",
+   "metrics.real_probe_balanced_acc_ci_low": "measured-eval-aware-real-probe-balanced-acc",
+   "organic_fpr": "measured-eval-aware-organic-fpr",
+   "organic_fpr_ci_high": "measured-eval-aware-organic-fpr",
+   "organic_fpr_ci_low": "measured-eval-aware-organic-fpr",
+   "real_probe_balanced_acc": "measured-eval-aware-real-probe-balanced-acc",
+   "real_probe_balanced_acc_ci_high": "measured-eval-aware-real-probe-balanced-acc",
+   "real_probe_balanced_acc_ci_low": "measured-eval-aware-real-probe-balanced-acc"
+  },
+  "ev:6bf316c059230ff4ff99b118b1664631": {
+   "err_auroc_delta_llama8b": "measured-err-rb2-err-auroc-delta-llama8b",
+   "err_auroc_delta_llama8b_ci_high": "measured-err-rb2-err-auroc-delta-llama8b",
+   "err_auroc_delta_llama8b_ci_low": "measured-err-rb2-err-auroc-delta-llama8b",
+   "err_auroc_delta_min_family": "measured-err-rb2-err-auroc-delta-min-family",
+   "err_auroc_delta_min_family_ci_high": "measured-err-rb2-err-auroc-delta-min-family",
+   "err_auroc_delta_min_family_ci_low": "measured-err-rb2-err-auroc-delta-min-family",
+   "err_auroc_delta_qwen8b": "measured-err-rb2-err-auroc-delta-qwen8b",
+   "err_auroc_delta_qwen8b_ci_high": "measured-err-rb2-err-auroc-delta-qwen8b",
+   "err_auroc_delta_qwen8b_ci_low": "measured-err-rb2-err-auroc-delta-qwen8b",
+   "err_auroc_internal_llama8b": "measured-err-rb2-err-auroc-internal-llama8b",
+   "err_auroc_internal_llama8b_ci_high": "measured-err-rb2-err-auroc-internal-llama8b",
+   "err_auroc_internal_llama8b_ci_low": "measured-err-rb2-err-auroc-internal-llama8b",
+   "err_auroc_internal_qwen8b": "measured-err-rb2-err-auroc-internal-qwen8b",
+   "err_auroc_internal_qwen8b_ci_high": "measured-err-rb2-err-auroc-internal-qwen8b",
+   "err_auroc_internal_qwen8b_ci_low": "measured-err-rb2-err-auroc-internal-qwen8b",
+   "err_auroc_margin_llama8b": "measured-err-rb2-err-auroc-margin-llama8b",
+   "err_auroc_margin_llama8b_ci_high": "measured-err-rb2-err-auroc-margin-llama8b",
+   "err_auroc_margin_llama8b_ci_low": "measured-err-rb2-err-auroc-margin-llama8b",
+   "err_auroc_margin_qwen8b": "measured-err-rb2-err-auroc-margin-qwen8b",
+   "err_auroc_margin_qwen8b_ci_high": "measured-err-rb2-err-auroc-margin-qwen8b",
+   "err_auroc_margin_qwen8b_ci_low": "measured-err-rb2-err-auroc-margin-qwen8b",
+   "metrics.err_auroc_delta_llama8b": "measured-err-rb2-err-auroc-delta-llama8b",
+   "metrics.err_auroc_delta_llama8b_ci_high": "measured-err-rb2-err-auroc-delta-llama8b",
+   "metrics.err_auroc_delta_llama8b_ci_low": "measured-err-rb2-err-auroc-delta-llama8b",
+   "metrics.err_auroc_delta_min_family": "measured-err-rb2-err-auroc-delta-min-family",
+   "metrics.err_auroc_delta_min_family_ci_high": "measured-err-rb2-err-auroc-delta-min-family",
+   "metrics.err_auroc_delta_min_family_ci_low": "measured-err-rb2-err-auroc-delta-min-family",
+   "metrics.err_auroc_delta_qwen8b": "measured-err-rb2-err-auroc-delta-qwen8b",
+   "metrics.err_auroc_delta_qwen8b_ci_high": "measured-err-rb2-err-auroc-delta-qwen8b",
+   "metrics.err_auroc_delta_qwen8b_ci_low": "measured-err-rb2-err-auroc-delta-qwen8b",
+   "metrics.err_auroc_internal_llama8b": "measured-err-rb2-err-auroc-internal-llama8b",
+   "metrics.err_auroc_internal_llama8b_ci_high": "measured-err-rb2-err-auroc-internal-llama8b",
+   "metrics.err_auroc_internal_llama8b_ci_low": "measured-err-rb2-err-auroc-internal-llama8b",
+   "metrics.err_auroc_internal_qwen8b": "measured-err-rb2-err-auroc-internal-qwen8b",
+   "metrics.err_auroc_internal_qwen8b_ci_high": "measured-err-rb2-err-auroc-internal-qwen8b",
+   "metrics.err_auroc_internal_qwen8b_ci_low": "measured-err-rb2-err-auroc-internal-qwen8b",
+   "metrics.err_auroc_margin_llama8b": "measured-err-rb2-err-auroc-margin-llama8b",
+   "metrics.err_auroc_margin_llama8b_ci_high": "measured-err-rb2-err-auroc-margin-llama8b",
+   "metrics.err_auroc_margin_llama8b_ci_low": "measured-err-rb2-err-auroc-margin-llama8b",
+   "metrics.err_auroc_margin_qwen8b": "measured-err-rb2-err-auroc-margin-qwen8b",
+   "metrics.err_auroc_margin_qwen8b_ci_high": "measured-err-rb2-err-auroc-margin-qwen8b",
+   "metrics.err_auroc_margin_qwen8b_ci_low": "measured-err-rb2-err-auroc-margin-qwen8b"
+  },
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2": {
+   "curl_mass": "measured-topo-hodge-curl-mass",
+   "curl_mass_ci_high": "measured-topo-hodge-curl-mass",
+   "curl_mass_ci_low": "measured-topo-hodge-curl-mass",
+   "gradient_mass": "measured-topo-hodge-gradient-mass",
+   "gradient_mass_ci_high": "measured-topo-hodge-gradient-mass",
+   "gradient_mass_ci_low": "measured-topo-hodge-gradient-mass",
+   "harmonic_mass": "measured-topo-hodge-harmonic-mass",
+   "harmonic_mass_ci_high": "measured-topo-hodge-harmonic-mass",
+   "harmonic_mass_ci_low": "measured-topo-hodge-harmonic-mass",
+   "intransitive_mass": "measured-topo-hodge-intransitive-mass",
+   "intransitive_mass_ci_high": "measured-topo-hodge-intransitive-mass",
+   "intransitive_mass_ci_low": "measured-topo-hodge-intransitive-mass",
+   "metrics.curl_mass": "measured-topo-hodge-curl-mass",
+   "metrics.curl_mass_ci_high": "measured-topo-hodge-curl-mass",
+   "metrics.curl_mass_ci_low": "measured-topo-hodge-curl-mass",
+   "metrics.gradient_mass": "measured-topo-hodge-gradient-mass",
+   "metrics.gradient_mass_ci_high": "measured-topo-hodge-gradient-mass",
+   "metrics.gradient_mass_ci_low": "measured-topo-hodge-gradient-mass",
+   "metrics.harmonic_mass": "measured-topo-hodge-harmonic-mass",
+   "metrics.harmonic_mass_ci_high": "measured-topo-hodge-harmonic-mass",
+   "metrics.harmonic_mass_ci_low": "measured-topo-hodge-harmonic-mass",
+   "metrics.intransitive_mass": "measured-topo-hodge-intransitive-mass",
+   "metrics.intransitive_mass_ci_high": "measured-topo-hodge-intransitive-mass",
+   "metrics.intransitive_mass_ci_low": "measured-topo-hodge-intransitive-mass"
+  },
+  "ev:a34316feccee3beaed93c05ce5888567": {
+   "kui_control_fleet_median": "measured-fact-kui-kui-control-fleet-median",
+   "kui_control_fleet_median_ci_high": "measured-fact-kui-kui-control-fleet-median",
+   "kui_control_fleet_median_ci_low": "measured-fact-kui-kui-control-fleet-median",
+   "kui_gap": "measured-fact-kui-kui-gap",
+   "kui_gap_ci_high": "measured-fact-kui-kui-gap",
+   "kui_gap_ci_low": "measured-fact-kui-kui-gap",
+   "kui_gap_fleet_median": "measured-fact-kui-kui-gap-fleet-median",
+   "kui_gap_fleet_median_ci_high": "measured-fact-kui-kui-gap-fleet-median",
+   "kui_gap_fleet_median_ci_low": "measured-fact-kui-kui-gap-fleet-median",
+   "kui_gap_perm_p": "measured-fact-kui-kui-gap-perm-p",
+   "kui_gap_perm_p_ci_high": "measured-fact-kui-kui-gap-perm-p",
+   "kui_gap_perm_p_ci_low": "measured-fact-kui-kui-gap-perm-p",
+   "metrics.kui_control_fleet_median": "measured-fact-kui-kui-control-fleet-median",
+   "metrics.kui_control_fleet_median_ci_high": "measured-fact-kui-kui-control-fleet-median",
+   "metrics.kui_control_fleet_median_ci_low": "measured-fact-kui-kui-control-fleet-median",
+   "metrics.kui_gap": "measured-fact-kui-kui-gap",
+   "metrics.kui_gap_ci_high": "measured-fact-kui-kui-gap",
+   "metrics.kui_gap_ci_low": "measured-fact-kui-kui-gap",
+   "metrics.kui_gap_fleet_median": "measured-fact-kui-kui-gap-fleet-median",
+   "metrics.kui_gap_fleet_median_ci_high": "measured-fact-kui-kui-gap-fleet-median",
+   "metrics.kui_gap_fleet_median_ci_low": "measured-fact-kui-kui-gap-fleet-median",
+   "metrics.kui_gap_perm_p": "measured-fact-kui-kui-gap-perm-p",
+   "metrics.kui_gap_perm_p_ci_high": "measured-fact-kui-kui-gap-perm-p",
+   "metrics.kui_gap_perm_p_ci_low": "measured-fact-kui-kui-gap-perm-p"
+  },
+  "ev:a34457e83cd4eec10d080804a2533e82": {
+   "attribution_recovery_auc": "measured-adj-avp-attribution-recovery-auc",
+   "attribution_recovery_auc_ci_high": "measured-adj-avp-attribution-recovery-auc",
+   "attribution_recovery_auc_ci_low": "measured-adj-avp-attribution-recovery-auc",
+   "metrics.attribution_recovery_auc": "measured-adj-avp-attribution-recovery-auc",
+   "metrics.attribution_recovery_auc_ci_high": "measured-adj-avp-attribution-recovery-auc",
+   "metrics.attribution_recovery_auc_ci_low": "measured-adj-avp-attribution-recovery-auc",
+   "metrics.patching_recovery_auc": "measured-adj-avp-patching-recovery-auc",
+   "metrics.patching_recovery_auc_ci_high": "measured-adj-avp-patching-recovery-auc",
+   "metrics.patching_recovery_auc_ci_low": "measured-adj-avp-patching-recovery-auc",
+   "metrics.real8b_avp_spearman": "measured-adj-avp-real8b-avp-spearman",
+   "metrics.real8b_avp_spearman_ci_high": "measured-adj-avp-real8b-avp-spearman",
+   "metrics.real8b_avp_spearman_ci_low": "measured-adj-avp-real8b-avp-spearman",
+   "metrics.recovery_gap": "measured-adj-avp-recovery-gap",
+   "metrics.recovery_gap_ci_high": "measured-adj-avp-recovery-gap",
+   "metrics.recovery_gap_ci_low": "measured-adj-avp-recovery-gap",
+   "patching_recovery_auc": "measured-adj-avp-patching-recovery-auc",
+   "patching_recovery_auc_ci_high": "measured-adj-avp-patching-recovery-auc",
+   "patching_recovery_auc_ci_low": "measured-adj-avp-patching-recovery-auc",
+   "real8b_avp_spearman": "measured-adj-avp-real8b-avp-spearman",
+   "real8b_avp_spearman_ci_high": "measured-adj-avp-real8b-avp-spearman",
+   "real8b_avp_spearman_ci_low": "measured-adj-avp-real8b-avp-spearman",
+   "recovery_gap": "measured-adj-avp-recovery-gap",
+   "recovery_gap_ci_high": "measured-adj-avp-recovery-gap",
+   "recovery_gap_ci_low": "measured-adj-avp-recovery-gap"
+  },
+  "ev:a7ed2d6b81c5f79458dad733defb3803": {
+   "metrics.real_tacit_fraction": "measured-t3-decomp-real-tacit-fraction",
+   "metrics.real_tacit_fraction_ci_high": "measured-t3-decomp-real-tacit-fraction",
+   "metrics.real_tacit_fraction_ci_low": "measured-t3-decomp-real-tacit-fraction",
+   "real_tacit_fraction": "measured-t3-decomp-real-tacit-fraction",
+   "real_tacit_fraction_ci_high": "measured-t3-decomp-real-tacit-fraction",
+   "real_tacit_fraction_ci_low": "measured-t3-decomp-real-tacit-fraction"
+  },
+  "ev:b37f71c015ebfd697d7deb2a7efb5f7e": {
+   "max_abs_auc_difference": "measured-cal-transfer-max-abs-auc-difference",
+   "max_abs_auc_difference_ci_high": "measured-cal-transfer-max-abs-auc-difference",
+   "max_abs_auc_difference_ci_low": "measured-cal-transfer-max-abs-auc-difference",
+   "metrics.max_abs_auc_difference": "measured-cal-transfer-max-abs-auc-difference",
+   "metrics.max_abs_auc_difference_ci_high": "measured-cal-transfer-max-abs-auc-difference",
+   "metrics.max_abs_auc_difference_ci_low": "measured-cal-transfer-max-abs-auc-difference",
+   "metrics.per_instrument_auc_differences": "measured-cal-transfer-per-instrument-auc-differences",
+   "metrics.per_instrument_auc_differences_ci_high": "measured-cal-transfer-per-instrument-auc-differences",
+   "metrics.per_instrument_auc_differences_ci_low": "measured-cal-transfer-per-instrument-auc-differences",
+   "per_instrument_auc_differences": "measured-cal-transfer-per-instrument-auc-differences",
+   "per_instrument_auc_differences_ci_high": "measured-cal-transfer-per-instrument-auc-differences",
+   "per_instrument_auc_differences_ci_low": "measured-cal-transfer-per-instrument-auc-differences"
+  },
+  "ev:c978e3958769ecf93dcf079771a3aedb": {
+   "chi_bon_spearman": "measured-chi-drift-chi-bon-spearman",
+   "chi_bon_spearman_ci_high": "measured-chi-drift-chi-bon-spearman",
+   "chi_bon_spearman_ci_low": "measured-chi-drift-chi-bon-spearman",
+   "chi_bon_spearman_second_model": "measured-chi-drift-chi-bon-spearman-second-model",
+   "chi_bon_spearman_second_model_ci_high": "measured-chi-drift-chi-bon-spearman-second-model",
+   "chi_bon_spearman_second_model_ci_low": "measured-chi-drift-chi-bon-spearman-second-model",
+   "chi_minus_variance_baseline_spearman": "measured-chi-drift-chi-minus-variance-baseline-spearman",
+   "chi_minus_variance_baseline_spearman_ci_high": "measured-chi-drift-chi-minus-variance-baseline-spearman",
+   "chi_minus_variance_baseline_spearman_ci_low": "measured-chi-drift-chi-minus-variance-baseline-spearman",
+   "metrics.chi_bon_spearman": "measured-chi-drift-chi-bon-spearman",
+   "metrics.chi_bon_spearman_ci_high": "measured-chi-drift-chi-bon-spearman",
+   "metrics.chi_bon_spearman_ci_low": "measured-chi-drift-chi-bon-spearman",
+   "metrics.chi_bon_spearman_second_model": "measured-chi-drift-chi-bon-spearman-second-model",
+   "metrics.chi_bon_spearman_second_model_ci_high": "measured-chi-drift-chi-bon-spearman-second-model",
+   "metrics.chi_bon_spearman_second_model_ci_low": "measured-chi-drift-chi-bon-spearman-second-model",
+   "metrics.chi_minus_variance_baseline_spearman": "measured-chi-drift-chi-minus-variance-baseline-spearman",
+   "metrics.chi_minus_variance_baseline_spearman_ci_high": "measured-chi-drift-chi-minus-variance-baseline-spearman",
+   "metrics.chi_minus_variance_baseline_spearman_ci_low": "measured-chi-drift-chi-minus-variance-baseline-spearman"
+  },
+  "ev:d746d48eef7a5630cecbd3e97a9d9cb8": {
+   "ladder_8b_chi_teacher_in_interval": "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "ladder_8b_chi_teacher_in_interval_ci_high": "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "ladder_8b_chi_teacher_in_interval_ci_low": "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "ladder_8b_crystallization_in_interval": "measured-ladder-ladder-8b-crystallization-in-interval",
+   "ladder_8b_crystallization_in_interval_ci_high": "measured-ladder-ladder-8b-crystallization-in-interval",
+   "ladder_8b_crystallization_in_interval_ci_low": "measured-ladder-ladder-8b-crystallization-in-interval",
+   "ladder_8b_metrics_in_interval": "measured-ladder-ladder-8b-metrics-in-interval",
+   "ladder_8b_metrics_in_interval_ci_high": "measured-ladder-ladder-8b-metrics-in-interval",
+   "ladder_8b_metrics_in_interval_ci_low": "measured-ladder-ladder-8b-metrics-in-interval",
+   "ladder_8b_snr_in_interval": "measured-ladder-ladder-8b-snr-in-interval",
+   "ladder_8b_snr_in_interval_ci_high": "measured-ladder-ladder-8b-snr-in-interval",
+   "ladder_8b_snr_in_interval_ci_low": "measured-ladder-ladder-8b-snr-in-interval",
+   "ladder_extrap_minus_flat_error": "measured-ladder-ladder-extrap-minus-flat-error",
+   "ladder_extrap_minus_flat_error_ci_high": "measured-ladder-ladder-extrap-minus-flat-error",
+   "ladder_extrap_minus_flat_error_ci_low": "measured-ladder-ladder-extrap-minus-flat-error",
+   "metrics.ladder_8b_chi_teacher_in_interval": "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "metrics.ladder_8b_chi_teacher_in_interval_ci_high": "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "metrics.ladder_8b_chi_teacher_in_interval_ci_low": "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "metrics.ladder_8b_crystallization_in_interval": "measured-ladder-ladder-8b-crystallization-in-interval",
+   "metrics.ladder_8b_crystallization_in_interval_ci_high": "measured-ladder-ladder-8b-crystallization-in-interval",
+   "metrics.ladder_8b_crystallization_in_interval_ci_low": "measured-ladder-ladder-8b-crystallization-in-interval",
+   "metrics.ladder_8b_metrics_in_interval": "measured-ladder-ladder-8b-metrics-in-interval",
+   "metrics.ladder_8b_metrics_in_interval_ci_high": "measured-ladder-ladder-8b-metrics-in-interval",
+   "metrics.ladder_8b_metrics_in_interval_ci_low": "measured-ladder-ladder-8b-metrics-in-interval",
+   "metrics.ladder_8b_snr_in_interval": "measured-ladder-ladder-8b-snr-in-interval",
+   "metrics.ladder_8b_snr_in_interval_ci_high": "measured-ladder-ladder-8b-snr-in-interval",
+   "metrics.ladder_8b_snr_in_interval_ci_low": "measured-ladder-ladder-8b-snr-in-interval",
+   "metrics.ladder_extrap_minus_flat_error": "measured-ladder-ladder-extrap-minus-flat-error",
+   "metrics.ladder_extrap_minus_flat_error_ci_high": "measured-ladder-ladder-extrap-minus-flat-error",
+   "metrics.ladder_extrap_minus_flat_error_ci_low": "measured-ladder-ladder-extrap-minus-flat-error"
+  },
+  "ev:e7fd3fee89a0c56cf4465212601d0d26": {
+   "flip_rate": "measured-judge-vbc-flip-rate",
+   "flip_rate_ci_high": "measured-judge-vbc-flip-rate",
+   "flip_rate_ci_low": "measured-judge-vbc-flip-rate",
+   "metrics.flip_rate": "measured-judge-vbc-flip-rate",
+   "metrics.flip_rate_ci_high": "measured-judge-vbc-flip-rate",
+   "metrics.flip_rate_ci_low": "measured-judge-vbc-flip-rate",
+   "metrics.verdict_prefix_match_rate": "measured-judge-vbc-verdict-prefix-match-rate",
+   "metrics.verdict_prefix_match_rate_ci_high": "measured-judge-vbc-verdict-prefix-match-rate",
+   "metrics.verdict_prefix_match_rate_ci_low": "measured-judge-vbc-verdict-prefix-match-rate",
+   "verdict_prefix_match_rate": "measured-judge-vbc-verdict-prefix-match-rate",
+   "verdict_prefix_match_rate_ci_high": "measured-judge-vbc-verdict-prefix-match-rate",
+   "verdict_prefix_match_rate_ci_low": "measured-judge-vbc-verdict-prefix-match-rate"
+  },
+  "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b": {
+   "capacity_perm_p": "measured-capacity-welch-capacity-perm-p",
+   "capacity_perm_p_ci_high": "measured-capacity-welch-capacity-perm-p",
+   "capacity_perm_p_ci_low": "measured-capacity-welch-capacity-perm-p",
+   "dark_reward_kdeff_spearman": "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "dark_reward_kdeff_spearman_ci_high": "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "dark_reward_kdeff_spearman_ci_low": "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "metrics.capacity_perm_p": "measured-capacity-welch-capacity-perm-p",
+   "metrics.capacity_perm_p_ci_high": "measured-capacity-welch-capacity-perm-p",
+   "metrics.capacity_perm_p_ci_low": "measured-capacity-welch-capacity-perm-p",
+   "metrics.dark_reward_kdeff_spearman": "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "metrics.dark_reward_kdeff_spearman_ci_high": "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "metrics.dark_reward_kdeff_spearman_ci_low": "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "metrics.welch_floor_min_slack": "measured-capacity-welch-welch-floor-min-slack",
+   "metrics.welch_floor_min_slack_ci_high": "measured-capacity-welch-welch-floor-min-slack",
+   "metrics.welch_floor_min_slack_ci_low": "measured-capacity-welch-welch-floor-min-slack",
+   "welch_floor_min_slack": "measured-capacity-welch-welch-floor-min-slack",
+   "welch_floor_min_slack_ci_high": "measured-capacity-welch-welch-floor-min-slack",
+   "welch_floor_min_slack_ci_low": "measured-capacity-welch-welch-floor-min-slack"
+  }
+ },
+ "byEvidenceId": {
+  "ev:01c81c7185640f9b962b9115f360732e": [
+   "measured-emb-lora-order-recovery-auc",
+   "measured-emb-lora-real-bias-before-quality",
+   "measured-emb-lora-w-r-stabilization-monotone",
+   "study-emb-lora"
+  ],
+  "ev:02a1669641150750737afc8291255bf9": [
+   "open-hump-hump-interior-present",
+   "open-hump-hump-kl-abs-error",
+   "study-hump"
+  ],
+  "ev:095096260d9209c4fb9935cbb215812b": [
+   "open-gauge-xfam-spearman-canonical-angle-vs-disagreement",
+   "open-gauge-xfam-xfam-perm-p",
+   "study-gauge-xfam"
+  ],
+  "ev:0b9b34f7e2af83d3b0ca32a60791a859": [
+   "open-gauge-e19-canonical-minus-raw",
+   "open-gauge-e19-raw-cos-v01-v02",
+   "open-gauge-e19-residual-concept-matches-top-behavioral-delta",
+   "study-gauge-e19"
+  ],
+  "ev:0c80d9086ebb0ad9704b88a8eefb01fa": [
+   "measured-atlas-vce-real-vce",
+   "measured-atlas-vce-reward-convergent-p-value",
+   "study-atlas-vce"
+  ],
+  "ev:137077efe204a6daddd359f54c494453": [
+   "open-hack-fore-flag-hit-rate-minus-behavioral",
+   "study-hack-fore"
+  ],
+  "ev:14bc4c666b5b115cf1fd2c86cf209f01": [
+   "open-style-rmb-biasbattery-rmbench-perm-p",
+   "open-style-rmb-spearman-biasbattery-vs-rmbench-hard",
+   "open-style-rmb-spearman-minus-behavioral-baseline",
+   "study-style-rmb"
+  ],
+  "ev:1acdc14e2fa16124786a9cd0d44a03b2": [
+   "measured-forecast-cat-forecast-mae",
+   "measured-forecast-cat-forecast-mae-minus-size-baseline",
+   "measured-forecast-cat-size-baseline-mae",
+   "measured-forecast-cat-slice-baseline-mae",
+   "study-forecast-cat"
+  ],
+  "ev:3990df7af1488c08ad62786d879b0b0f": [
+   "measured-meta-ledger-brier-directional",
+   "measured-meta-ledger-interval-coverage-0p8",
+   "measured-meta-ledger-n-directional",
+   "measured-meta-ledger-n-intervals",
+   "study-meta-ledger"
+  ],
+  "ev:41058731abf1d0b1590d4f2286e8771c": [
+   "measured-surgery-erasure-certificate-pass",
+   "measured-surgery-exploit-drift-reduction",
+   "measured-surgery-probe-recovery-auc",
+   "measured-surgery-rb2-accuracy-delta-after-erasure",
+   "study-surgery"
+  ],
+  "ev:426a8cbed7f6d6dfb61d8fe3ed5264a4": [
+   "measured-forensic-receipt-omission-credulity-gap",
+   "measured-forensic-receipt-reliance-recovery",
+   "measured-forensic-receipt-skepticism-effect",
+   "study-forensic-receipt"
+  ],
+  "ev:46e1500c4d39f9821c137ae0b00ac0da": [
+   "measured-verif-prm-dense-localization-auc",
+   "measured-verif-prm-style-share",
+   "measured-verif-prm-verification-score",
+   "study-verif-prm"
+  ],
+  "ev:491f7f378d0b58dfdadebc9aaee7c983": [
+   "measured-conf-partial-best-index-perm-p",
+   "measured-conf-partial-lineage-check-pass",
+   "measured-conf-partial-max-abs-partial-corr",
+   "study-conf-partial"
+  ],
+  "ev:54fb272fd011c8ca07a4959f553341ab": [
+   "measured-eval-aware-delta-r-per-steer",
+   "measured-eval-aware-organic-fpr",
+   "measured-eval-aware-real-probe-balanced-acc",
+   "study-eval-aware"
+  ],
+  "ev:5cd71da5713f2b2fb77697318b842401": [
+   "open-ppe-bon-bon-lowerquantile-beats-mean",
+   "open-ppe-bon-spearman-tail-vs-bon-plateau",
+   "study-ppe-bon"
+  ],
+  "ev:6bf316c059230ff4ff99b118b1664631": [
+   "measured-err-rb2-err-auroc-delta-llama8b",
+   "measured-err-rb2-err-auroc-delta-min-family",
+   "measured-err-rb2-err-auroc-delta-qwen8b",
+   "measured-err-rb2-err-auroc-internal-llama8b",
+   "measured-err-rb2-err-auroc-internal-qwen8b",
+   "measured-err-rb2-err-auroc-margin-llama8b",
+   "measured-err-rb2-err-auroc-margin-qwen8b",
+   "study-err-rb2"
+  ],
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2": [
+   "derived-decomposition-curl",
+   "derived-decomposition-gradient",
+   "derived-decomposition-harmonic",
+   "measured-topo-hodge-curl-mass",
+   "measured-topo-hodge-gradient-mass",
+   "measured-topo-hodge-harmonic-mass",
+   "measured-topo-hodge-intransitive-mass",
+   "study-topo-hodge"
+  ],
+  "ev:9d51086b170b359d58d8eb4bf4f882fb": [
+   "open-t3-field-flat-hack-overlap-minus-random",
+   "study-t3-field"
+  ],
+  "ev:a34316feccee3beaed93c05ce5888567": [
+   "measured-fact-kui-kui-control-fleet-median",
+   "measured-fact-kui-kui-gap",
+   "measured-fact-kui-kui-gap-fleet-median",
+   "measured-fact-kui-kui-gap-perm-p",
+   "study-fact-kui"
+  ],
+  "ev:a34457e83cd4eec10d080804a2533e82": [
+   "measured-adj-avp-attribution-recovery-auc",
+   "measured-adj-avp-patching-recovery-auc",
+   "measured-adj-avp-real8b-avp-spearman",
+   "measured-adj-avp-recovery-gap",
+   "study-adj-avp"
+  ],
+  "ev:a7ed2d6b81c5f79458dad733defb3803": [
+   "measured-t3-decomp-real-tacit-fraction",
+   "study-t3-decomp"
+  ],
+  "ev:b37f71c015ebfd697d7deb2a7efb5f7e": [
+   "measured-cal-transfer-max-abs-auc-difference",
+   "measured-cal-transfer-per-instrument-auc-differences",
+   "study-cal-transfer"
+  ],
+  "ev:c978e3958769ecf93dcf079771a3aedb": [
+   "measured-chi-drift-chi-bon-spearman",
+   "measured-chi-drift-chi-bon-spearman-second-model",
+   "measured-chi-drift-chi-minus-variance-baseline-spearman",
+   "study-chi-drift"
+  ],
+  "ev:d746d48eef7a5630cecbd3e97a9d9cb8": [
+   "measured-ladder-ladder-8b-chi-teacher-in-interval",
+   "measured-ladder-ladder-8b-crystallization-in-interval",
+   "measured-ladder-ladder-8b-metrics-in-interval",
+   "measured-ladder-ladder-8b-snr-in-interval",
+   "measured-ladder-ladder-extrap-minus-flat-error",
+   "study-ladder"
+  ],
+  "ev:e036326c47c7a0f52330559479e03790": [
+   "open-values-contest-contested-raterspread-spearman",
+   "open-values-contest-ensemble-minus-contested-spearman",
+   "study-values-contest"
+  ],
+  "ev:e7fd3fee89a0c56cf4465212601d0d26": [
+   "measured-judge-vbc-flip-rate",
+   "measured-judge-vbc-verdict-prefix-match-rate",
+   "study-judge-vbc"
+  ],
+  "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b": [
+   "measured-capacity-welch-capacity-perm-p",
+   "measured-capacity-welch-dark-reward-kdeff-spearman",
+   "measured-capacity-welch-welch-floor-min-slack",
+   "study-capacity-welch"
+  ]
+ },
+ "counts": {
+  "definition": 5,
+  "derived-result": 3,
+  "fixture-qualification": 4,
+  "interpretation": 27,
+  "limitation": 10,
+  "measured-result": 63,
+  "open-hypothesis": 16,
+  "software-capability": 1
+ },
+ "defaultForEvidenceId": {
+  "ev:01c81c7185640f9b962b9115f360732e": "study-emb-lora",
+  "ev:02a1669641150750737afc8291255bf9": "study-hump",
+  "ev:095096260d9209c4fb9935cbb215812b": "study-gauge-xfam",
+  "ev:0b9b34f7e2af83d3b0ca32a60791a859": "study-gauge-e19",
+  "ev:0c80d9086ebb0ad9704b88a8eefb01fa": "study-atlas-vce",
+  "ev:137077efe204a6daddd359f54c494453": "study-hack-fore",
+  "ev:14bc4c666b5b115cf1fd2c86cf209f01": "study-style-rmb",
+  "ev:1acdc14e2fa16124786a9cd0d44a03b2": "study-forecast-cat",
+  "ev:3990df7af1488c08ad62786d879b0b0f": "study-meta-ledger",
+  "ev:41058731abf1d0b1590d4f2286e8771c": "study-surgery",
+  "ev:426a8cbed7f6d6dfb61d8fe3ed5264a4": "study-forensic-receipt",
+  "ev:46e1500c4d39f9821c137ae0b00ac0da": "study-verif-prm",
+  "ev:491f7f378d0b58dfdadebc9aaee7c983": "study-conf-partial",
+  "ev:54fb272fd011c8ca07a4959f553341ab": "study-eval-aware",
+  "ev:5cd71da5713f2b2fb77697318b842401": "study-ppe-bon",
+  "ev:6bf316c059230ff4ff99b118b1664631": "study-err-rb2",
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2": "study-topo-hodge",
+  "ev:9d51086b170b359d58d8eb4bf4f882fb": "study-t3-field",
+  "ev:a34316feccee3beaed93c05ce5888567": "study-fact-kui",
+  "ev:a34457e83cd4eec10d080804a2533e82": "study-adj-avp",
+  "ev:a7ed2d6b81c5f79458dad733defb3803": "study-t3-decomp",
+  "ev:b37f71c015ebfd697d7deb2a7efb5f7e": "study-cal-transfer",
+  "ev:c978e3958769ecf93dcf079771a3aedb": "study-chi-drift",
+  "ev:d746d48eef7a5630cecbd3e97a9d9cb8": "study-ladder",
+  "ev:e036326c47c7a0f52330559479e03790": "study-values-contest",
+  "ev:e7fd3fee89a0c56cf4465212601d0d26": "study-judge-vbc",
+  "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b": "study-capacity-welch"
+ },
+ "generatedBy": "scripts/build_claims.mjs",
+ "metricAccounting": {
+  "comparatorAbsenceWord": "none registered",
+  "metricsInStore": 80,
+  "unitSource": "none. The 53 ledger metric names and the 190 quantity ids in quantities.json do not intersect, so every campaign quantity states unit null.",
+  "withoutRegisteredComparator": 24
+ },
+ "outcomeMapping": {
+  "confirmed": "supported",
+  "inconclusive": "inconclusive",
+  "refuted": "refuted",
+  "unrun": "unrun"
+ },
+ "proseSubstitutions": [
+  {
+   "reason": "carries a registry identifier (\"S15\")",
+   "skipped": "cards.json kill_note",
+   "text": "the disclosure-game framing adds nothing over raw reliance; the shipped S15 kill",
+   "where": "interpretation study-forensic-receipt"
+  },
+  {
+   "reason": "carries a registry identifier (\"K-kui\")",
+   "skipped": "cards.json power_acceptance.note",
+   "text": "fleet-median star KUI at n = 10 models over a 6-property battery; the property-random null passes the frozen 0.2 0.03 of the time, the K-kui permutation kill ca",
+   "where": "measured-result measured-fact-kui-kui-control-fleet-median"
+  },
+  {
+   "reason": "carries a registry identifier (\"K-kui\")",
+   "skipped": "cards.json power_acceptance.note",
+   "text": "fleet-median star KUI at n = 10 models over a 6-property battery; the property-random null passes the frozen 0.2 0.03 of the time, the K-kui permutation kill ca",
+   "where": "measured-result measured-fact-kui-kui-gap"
+  },
+  {
+   "reason": "carries a registry identifier (\"K-kui\")",
+   "skipped": "cards.json power_acceptance.note",
+   "text": "fleet-median star KUI at n = 10 models over a 6-property battery; the property-random null passes the frozen 0.2 0.03 of the time, the K-kui permutation kill ca",
+   "where": "measured-result measured-fact-kui-kui-gap-fleet-median"
+  },
+  {
+   "reason": "carries a registry identifier (\"K-kui\")",
+   "skipped": "cards.json power_acceptance.note",
+   "text": "fleet-median star KUI at n = 10 models over a 6-property battery; the property-random null passes the frozen 0.2 0.03 of the time, the K-kui permutation kill ca",
+   "where": "measured-result measured-fact-kui-kui-gap-perm-p"
+  },
+  {
+   "reason": "carries a registry identifier (\"K-kui\")",
+   "skipped": "cards.json power_acceptance.note",
+   "text": "fleet-median star KUI at n = 10 models over a 6-property battery; the property-random null passes the frozen 0.2 0.03 of the time, the K-kui permutation kill ca",
+   "where": "interpretation study-fact-kui"
+  }
+ ],
+ "retirements": [
+  {
+   "citation": "design/scene/EVIDENCE-VERDICTS.md section 8",
+   "kind": "corrected",
+   "slug": "derived-decomposition-curl"
+  },
+  {
+   "citation": "design/scene/EVIDENCE-VERDICTS.md section 8",
+   "kind": "corrected",
+   "slug": "measured-topo-hodge-curl-mass"
+  },
+  {
+   "citation": "design/scene/EVIDENCE-VERDICTS.md section 8",
+   "kind": "retired",
+   "slug": "measured-topo-hodge-intransitive-mass"
+  }
+ ],
+ "sources": [
+  {
+   "file": "src/data/claims-store/evidence.jsonl",
+   "records": 27
+  },
+  {
+   "file": "src/data/cards.json",
+   "records": 27
+  },
+  {
+   "file": "src/data/ledger.json",
+   "records": 53
+  },
+  {
+   "file": "src/data/grader-cards.json",
+   "records": 4
+  },
+  {
+   "file": "src/data/decomposition.json",
+   "records": 3
+  },
+  {
+   "file": "src/data/release.json",
+   "records": 4
+  },
+  {
+   "file": "design/copy.yaml",
+   "records": 10
+  }
+ ],
+ "unmappedOutcomes": [
+  {
+   "cards": [
+    "CAPACITY-WELCH",
+    "CONF-PARTIAL",
+    "EMB-LORA",
+    "EVAL-AWARE",
+    "FORECAST-CAT",
+    "LADDER",
+    "SURGERY"
+   ],
+   "outcome": "mixed"
+  }
+ ]
+}

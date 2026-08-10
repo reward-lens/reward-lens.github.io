@@ -2,8 +2,10 @@
 title: Background and theory
 description: 'Why is there a w_r to read along at all? The rest of these docs take the reward model as given: here is the direction, here is the score, here is how to watch'
 section: theory
-order: 65
+order: 94
 source: docs/content/theory/index.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # Background and theory
@@ -38,4 +40,4 @@ The reward is a fitted probabilistic object, not a measurement. It comes from th
 
 </div>
 
-These pages explain the ideas. Where an idea becomes a preregistered experiment you can run or refute, it turns up again in [the sixteen sciences](/docs/sciences/), and where the instrument that computes it lives, the [reference](/docs/reference/) holds the exact call.
+These pages explain the ideas. Where an idea becomes a preregistered experiment you can run or refute, it turns up again in [the sixteen sciences](/docs/sciences/), and where the instrument that computes it lives, the [reference](/docs/api/) holds the exact call.

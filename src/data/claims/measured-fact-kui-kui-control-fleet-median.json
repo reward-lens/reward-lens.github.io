@@ -1,0 +1,26 @@
+{
+ "comparator": "< 0.1",
+ "contentHash": "d55dac39ba45e234d52d38d3f65a09ae",
+ "humanSource": "The frozen study \"The fleet decodes a property it does not price\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:a34316feccee3beaed93c05ce5888567",
+  "campaign.adjudication.FACT-KUI",
+  "study:campaign-fact-kui@v1#dcdc401f",
+  "spec:dcdc401fbbe744065b8f175de0384372",
+  "H-kui-control"
+ ],
+ "label": "The fleet decodes a property it does not price",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "kui_control_fleet_median",
+  "unit": null,
+  "value": 0.35355339059327373
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "measured-fact-kui-kui-control-fleet-median",
+ "sourceUrl": "/evidence/a34316feccee3beaed93c05ce5888567/",
+ "statement": "a priced control property shows no such gap.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full",
+ "type": "measured-result"
+}

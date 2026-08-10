@@ -1,0 +1,27 @@
+{
+ "generator": "build_api_ref",
+ "source": "scripts/build_api_ref.py",
+ "values": {
+  "directives": 152,
+  "groups": 13,
+  "poor_griffe_output": 3,
+  "source_tree": "reward-lens-clean",
+  "symbols_by_group": {
+   "artifacts-operate": 5,
+   "concepts": 6,
+   "core": 14,
+   "data": 9,
+   "dynamics-loops": 16,
+   "geometry": 7,
+   "interventions": 11,
+   "legacy": 25,
+   "measure": 32,
+   "organisms": 14,
+   "signals": 17,
+   "stats": 10,
+   "studies": 8
+  },
+  "symbols_rendered": 174,
+  "unique_directive_paths": 152
+ }
+}

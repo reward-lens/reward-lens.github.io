@@ -1,0 +1,20 @@
+# Gate 14's ratchet: WCAG 2.2 AA violations that exist today and are somebody's to fix.
+#
+# One line per violation: owning packet | date recorded | source file | theme | route | rule | selector.
+#
+# D-29: wiring the real palette exposed six serious contrast violations in five
+# legacy files, all --ink-3 on a raised surface, which the v1 blue-black palette
+# hid. They belong to P4, P5 and P6, which rewrite those files in wave 1.
+#
+# THIS LIST MAY SHRINK AND MUST NOT GROW. A violation that is not here fails the
+# build. Q1 cannot sign off while this file is non-empty.
+#
+# It is a ratchet and not an allow-list. An allow-list is permanent by default,
+# and it is how the previous site ended up with a perfect accessibility score
+# nobody was re-checking. A ratchet expires by construction, because the only
+# permitted direction is down. The shape is borrowed from the library's own
+# assay/docs/gen_catalogue.py rather than invented here.
+#
+# Re-record after a packet lands:  node scripts/checks/axe.mjs --record
+
+

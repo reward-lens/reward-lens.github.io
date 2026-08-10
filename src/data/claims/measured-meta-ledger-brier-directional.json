@@ -1,0 +1,26 @@
+{
+ "comparator": "< 0.25",
+ "contentHash": "6202bb5e9c81b72922ccd14853051d74",
+ "humanSource": "The frozen study \"The campaign scores its own calibration\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:3990df7af1488c08ad62786d879b0b0f",
+  "campaign.adjudication.META-LEDGER",
+  "study:campaign-meta-ledger@v1#b8659763",
+  "spec:b8659763ad1e9bf0ca0fa9a1c98fc29b",
+  "H-brier"
+ ],
+ "label": "The campaign scores its own calibration",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "brier_directional",
+  "unit": null,
+  "value": 0.26
+ },
+ "scope": "One frozen study, adjudicated once, on the campaign's own record, rather than a model or a dataset.",
+ "slug": "measured-meta-ledger-brier-directional",
+ "sourceUrl": "/evidence/3990df7af1488c08ad62786d879b0b0f/",
+ "statement": "the campaign's directional predictions, each assigned a pre-run probability, beat a coin.",
+ "status": "refuted",
+ "subject": "the campaign's own record, rather than a model or a dataset",
+ "type": "measured-result"
+}

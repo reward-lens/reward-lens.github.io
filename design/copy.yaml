@@ -1,0 +1,1406 @@
+# Every string on the site. Nothing is typed twice: page titles, preview images,
+# structured data and the pages themselves all render from this file.
+#
+# Rules enforced against this file by CI:
+#   - no em dashes anywhere
+#   - no banned internal identifier (data/banned-terms.json, ~620 strings)
+#   - no hype vocabulary (the list in QA.md §6.2)
+#   - every quantitative claim carries its scope in the same string as the number
+#   - every numeric token is bound to an evidence id or allow-listed with a reason
+#
+# `ev:` values are evidence ids. `{{...}}` is a value rendered from generated data
+# and must never be typed as a literal here.
+
+meta:
+  site_name: reward-lens
+  tagline: Instruments for the gap between the reward you wrote down and the objective your policy moved toward.
+  author: Mohammed Suhail B Nadaf
+  licence: MIT
+
+urls:
+  site: https://reward-lens.github.io/
+  repo: https://github.com/reward-lens/reward-lens
+  docs: https://reward-lens.github.io/docs/
+  pypi: https://pypi.org/project/reward-lens/
+  preprint: https://arxiv.org/abs/2604.26130
+  issues: https://github.com/reward-lens/reward-lens/issues
+
+# ---------------------------------------------------------------------------
+# NAVIGATION
+# Added at build time. Every label here is user-facing and had no source, which
+# would have forced F1 to invent six strings on its first afternoon.
+#
+# Six items in the primary nav and no more. `/limits/` is in it deliberately:
+# for this audience a stated limitation is a feature, and burying it in the
+# footer would be the one placement that reads as hiding it.
+#
+# The footer carries four route groups rather than a link dump. The grouping is
+# by what a reader came to do: watch it work, use it, check it, or judge the
+# project. `/evidence/` sits under "Check" and not under "Use", because it is
+# the route that makes every other number believable.
+# ---------------------------------------------------------------------------
+nav:
+  primary:
+    - {label: See,    href: /see/}
+    - {label: Start,  href: /start/}
+    - {label: Docs,   href: /docs/}
+    - {label: Evidence, href: /evidence/}
+    - {label: Limits, href: /limits/}
+    - {label: About,  href: /about/}
+  home_aria: reward-lens home
+  primary_aria: Primary
+  footer_aria: Site
+  # The small-screen disclosure button. It was announcing as "Primary", the region's
+  # name, because it had no string of its own.
+  menu_aria: Menu
+  menu_aria_expanded: Close menu
+  footer_groups:
+    - heading: See it work
+      items:
+        - {label: How it works,        href: /see/}
+        - {label: Inside a reward model, href: /see/reward-model/}
+        - {label: Inside a training run, href: /see/run/}
+        - {label: Audit a grader,      href: /see/grader/}
+    - heading: Use it
+      items:
+        - {label: Start here,          href: /start/}
+        - {label: Documentation,       href: /docs/}
+        - {label: API reference,       href: /docs/api/}
+        - {label: Refusal reference,   href: /docs/refusals/}
+    - heading: Check it
+      items:
+        - {label: Evidence records,    href: /evidence/}
+        - {label: Instrument atlas,    href: /atlas/}
+        - {label: What it cannot do,   href: /limits/}
+        - {label: Historical log,      href: /log/}
+    - heading: The project
+      items:
+        - {label: About,               href: /about/}
+        - {label: Open problems,       href: /collaborate/}
+        - {label: Repository,          href: "{{urls.repo}}"}
+        - {label: Package index,       href: "{{urls.pypi}}"}
+
+# ---------------------------------------------------------------------------
+# THE HEADLINE
+# Twenty candidates were written. Kept, not deleted, so the build team can see
+# what was rejected and why. Only `shipped` renders.
+# ---------------------------------------------------------------------------
+_headline_candidates:
+  - text: You wrote a reward function. Your policy optimized something else.
+    verdict: SHIPPED
+    note: >
+      States the project's thesis, which no competitor states. Names the failure in the
+      practitioner's own words. Implies no detection capability, so it survives the project's
+      own rule against "predicts reward hacking". Cannot be said by another product.
+  - text: Read the objective your policy actually moved toward.
+    verdict: finalist, rejected
+    note: >
+      "Read" overclaims. The realized objective is not readable; it is recovered by measuring a
+      deformation and inverting. The library's own README is careful about this and the headline
+      would contradict it.
+  - text: The score is one number. This takes it apart.
+    verdict: finalist, rejected
+    note: True, small, and covers act one only. That is the v2 scope the site is moving past.
+  - text: See what the reward model actually learned.
+    verdict: rejected
+    note: "The current site's headline. Decent, and v2-scoped: static model only."
+  - text: Instruments for reward models, training runs and the graders in between.
+    verdict: rejected
+    note: A catalogue, not a claim. Would work for any toolkit.
+  - text: Your reward function is not your objective.
+    verdict: rejected
+    note: True and abstract. No practitioner recognises their week in it.
+  - text: What did your policy actually optimize?
+    verdict: rejected
+    note: A question headline puts the work on the reader on the first screen.
+  - text: Nobody can see inside a reward score. This can.
+    verdict: rejected
+    note: Overclaims twice. "Nobody" is false and "can" is unqualified.
+  - text: The reward you wrote and the reward you got.
+    verdict: rejected
+    note: Close, and "got" is vague where "optimized" is specific.
+  - text: An instrument for reward, and a record of what it could not see.
+    verdict: rejected
+    note: Good second half, and the first half is a category rather than a claim.
+  - text: Measure the objective, not the reward function.
+    verdict: rejected
+    note: Imperative and it reads as advice rather than as a finding.
+  - text: Every training run is an experiment nobody is measuring.
+    verdict: rejected
+    note: Strong, and it is about the field rather than about the tool.
+  - text: Reward models are measured, not read.
+    verdict: rejected
+    note: A slogan. Elegant and it does not tell a stranger what they get.
+  - text: One number goes in. This is what it was made of.
+    verdict: rejected
+    note: Good for the mechanism section, too small for the hero.
+  - text: Look inside the score your policy is chasing.
+    verdict: rejected
+    note: '"Look inside" is the generic interpretability register.'
+  - text: Find out what your grader is actually rewarding.
+    verdict: rejected
+    note: Act three only, and "find out" promises an answer the library often refuses.
+  - text: The gap between written and realized, made observable.
+    verdict: rejected
+    note: The project's own words, and it needs the project's vocabulary to parse.
+  - text: Watch the objective drift while the run is still going.
+    verdict: rejected
+    note: Implies a live capability the shipped release does not dispatch.
+  - text: Reward hacking has a shape. This measures it.
+    verdict: rejected
+    note: Overclaims. One run, one signal, and a false-positive rate that is not settled.
+  - text: Instruments that tell you when they cannot see.
+    verdict: rejected
+    note: The differentiator, and it leads with the limitation, which reads as apology in a hero.
+
+# ---------------------------------------------------------------------------
+# HOMEPAGE
+# ---------------------------------------------------------------------------
+home:
+  title: reward-lens
+  meta_description: >
+    Instruments that take a reward score apart, follow the objective through a training run,
+    and say when a reading cannot be made.
+
+  # The decomposition block was removed from the homepage 2026-08-10. Its caption
+  # carried the intransitive-mass claim, and that claim is dead: the later
+  # analysis found zero cyclic triples in 186,378 triangles, 10,000 of 10,000
+  # sampled tournaments acyclic, and the measured value sitting on the encoding
+  # floor. It survives only as a correction under the historical log. The
+  # generator and the schema are kept; the public sentence is not.
+
+  hero:
+    # The previous headline, "Your policy optimized something else", was retired
+    # 2026-08-10. It states as fact the one thing this project has never
+    # measured: no artifact anywhere carries an observed-versus-predicted policy
+    # movement, and the reconciliation's actual finding is that the residual sits
+    # about 854,000 times above the first-order prediction. The site's own rule
+    # forbids asserting a policy response for a subject where none was measured,
+    # and the shipped headline was the clearest violation of it on the page.
+    headline_a: The reward went up.
+    headline_b: What changed inside the model?
+    subhead: >
+      Reward Lens instruments the path from a grader's score to the advantages training used,
+      the update that followed, and the policy that came out. Inspect what was favoured, what
+      moved, and what the account still cannot explain.
+    secondary_action: Follow the signal
+
+  mechanism:
+    kicker: The mechanism
+    heading: A reward model returns one number. The number has parts.
+    body_1: >
+      Rank a model's components by how much attribution assigns them. Rank them again by how much
+      causal patching says they carry. On the canonical Skywork model the two rankings correlate at
+      {{rho_mean}}, averaged over twelve objective dimensions, and reach {{rho_worst}} on code
+      correctness.
+    body_2: >
+      Negative. The late MLP blocks dominate the explanation. The strongest causal head sits at
+      layer 0. The place the reward visibly accumulates is not the place that causes it, so a tall
+      attribution bar is a hypothesis about importance and not a demonstration of one.
+    evidence: ev:e04-fixture
+
+  first_result:
+    kicker: The first result
+    heading: The two standard ways to localize a preference disagree, and the tie-break went against us.
+    body: >
+      On a model organism with a planted answer key, the registered prediction was that causal
+      patching would recover that key better than attribution. It did not. Attribution recovered the
+      planted key at an area under the curve of {{attribution_auc}}; patching reached
+      {{patching_auc}}, against a chance level of 0.5. The registered kill criterion fired. The
+      recorded conclusion is that neither localization can be preferred, because the answer key's
+      own noise is a live alternative explanation, visible in the emitted margin distribution.
+    scope: One model organism, one planted key, one frozen study.
+    evidence: ev:a34457e83cd4eec10d080804a2533e82
+    link: Inside the reward model
+
+  code:
+    kicker: The first script
+    heading: This runs, and it costs nothing.
+    body: >
+      A grader card describes a scoring program as a measurement device rather than as a leaderboard
+      row. Planning one makes no grader call and loads no model, so it tells you what a card would
+      contain and what it would cost before you spend anything.
+    output_note: Two of thirteen fields would read. Eleven would refuse, each naming the input it lacked.
+
+  run:
+    kicker: The run
+    heading: One signal moved before the labelled transition. Two that moved earlier were discarded.
+    body: >
+      On a public labelled run of {{rollout_count}} rollouts over {{step_count}} training steps
+      ({{step_count_alt}} by the run's other record), the
+      hacking transition fits at step {{transition_midpoint}} with a 10-to-90 width of
+      {{transition_width}} steps. The shipped signal's derivative alarms at step {{alarm_step}}, a
+      lead of {{alarm_lead}} transition widths. The registered gradient-norm comparator peaks at
+      step {{comparator_step}}, which is after the midpoint: it lags.
+    control_heading: The part that makes it credible
+    control_body: >
+      Two other signals appear to lead by more. Both were discarded. On order-destroyed surrogates
+      built from the same series they fire on {{surrogate_variance_level}} and
+      {{surrogate_gradnorm_cusum}} of cases. The shipped derivative fires on
+      {{surrogate_shipped}}, or {{surrogate_shipped_trainer}} computed from the trainer log's own
+      recorded variance. A lead that fires on two thirds of surrogates is not a detection, and
+      separating those was the work.
+    scope: One run. The false-positive rate across runs is not settled.
+    evidence: ev:r4-run
+    link: Inside the training run
+
+  discipline:
+    kicker: The discipline
+    heading: A reading is evidence or a refusal.
+    body: >
+      A refusal carries a reason, the numbers that produced it, and a remedy written as an
+      instruction. It cannot be constructed without one. It is a success and not a downgrade: an
+      instrument that cannot answer says so, instead of returning a worse number, a None or a zero.
+      A card with a refusals section on it tells you more than a card without, because a blank field
+      and a measured zero look identical and mean opposite things.
+    ladder_heading: Every number carries its trust level, and the level is computed rather than claimed.
+    ladder_note: >
+      The gates derive the level from three facts: whether the evidence carries a calibration
+      reference, whether it was produced under a frozen study, and whether it survived its own kill
+      criteria. There is no setter and no back door. If you want a higher rung, you have to make a
+      truer fact.
+    link: Audit the grader
+
+  limits:
+    kicker: What it cannot do
+    heading: Stated once, so nobody has to discover it in review.
+    body: >
+      Not all of it is built. The kernel, the record, the access layer, the grader wrapper, the
+      verifier series and the metrology are built and tested. The capability report can price a
+      measurement and route you to the instrument that performs it; it cannot yet dispatch the
+      measurement itself. Ten of the twelve trainer adapters are not built. The compute-gated studies
+      ship as code, a runbook and a price rather than as results.
+    link: Everything this does not do
+
+  # -------------------------------------------------------------------------
+  # THE INSTRUMENT STORY. Five states, in scroll order, driving the sticky
+  # scene. Each is one heading, one or two paragraphs, at most one control.
+  #
+  # The order is the argument: what scored the rollout, what the optimizer
+  # actually saw, where the update came from, what the policy became, and what
+  # can be seen while the run is still changeable. The trust machinery comes
+  # after all five, because a reader who does not yet know what the tool does
+  # has no reason to care how carefully it does it.
+  # -------------------------------------------------------------------------
+  story:
+    section_label: Follow the signal
+    section_headline: >
+      A score has to pass through a training process before it can change a model.
+
+    scorer:
+      kicker: The scorer
+      heading: The score is where the investigation starts, not where it ends.
+      body_1: >
+        People specify an outcome. A real training system then executes something else on its
+        behalf: a grader, a verifier, a reward model, or a program. The number it returns may be
+        composed from several parts, sensitive to surface features, or reachable by a route nobody
+        intended.
+      body_2: >
+        Reward Lens keeps that scoring process inspectable wherever the available access allows,
+        and preserves the components, gates and overrides before they collapse into one number.
+
+    selection:
+      kicker: The effective training signal
+      heading: A score is not an update.
+      body_1: >
+        In the policy-gradient runs shown here the optimizer never sees the score. It sees an
+        advantage. Grouping, baselines, normalization, masks and clipping all sit between the two,
+        and any of them can change the sign as well as the size of what a rollout contributes.
+      body_2: >
+        Keeping the score tree and the run record intact makes the alternative computable: change
+        one component of the reward and the same recorded rollouts can be scored again, without
+        calling the grader, to see which of them would have been reinforced instead.
+
+    update:
+      kicker: The update
+      heading: One update has an address.
+      body_1: >
+        The optimizer computes local credit and then discards the decomposition, keeping only the
+        summed direction. Reward Lens partitions that immediate gradient back across the rollouts
+        that produced it, and checks the partition against an independently computed full update
+        rather than trusting it.
+      body_2: >
+        Contributions align, oppose, and cancel. On the recorded step shown here more than half of
+        the per-rollout gradient mass cancels before the optimizer sees any direction at all.
+      caveat: >
+        This audits one step at the current parameters. It does not assign long-run responsibility
+        for a behaviour that emerged over a whole run.
+
+    response:
+      kicker: The policy response
+      heading: The policy is the object that changed.
+      body_1: >
+        Weight distance is not the question. Behaviour and internal features can move differently
+        from each other, and both can move differently from what the training signal selected for.
+        Four quantities are distinct here: the pressure applied, the response the policy could
+        cheaply make, the movement actually observed, and the part of that movement nothing
+        accounts for.
+      body_2: >
+        This is the account Reward Lens is built to make close or visibly fail. On the run
+        available here it does not close. The budget balances, but it balances on the sampling
+        noise of two small batches, and the test's own detection floor sits hundreds of thousands
+        of times above the effect it is arbitrating. Neither verdict could have failed
+        meaningfully, and that is the honest reading.
+
+    run:
+      kicker: The live run
+      heading: A useful warning arrives before the decision is irreversible.
+      body_1: >
+        On one public labelled run, a variance-derivative signal alarms before the fitted
+        behavioural transition, and the named gradient-norm comparator peaks after it. The
+        interesting part is not the lead. It is the control.
+      body_2: >
+        Two signals appeared to lead by more and were both discarded, because on order-destroyed
+        surrogates built from the same series they fire on roughly two thirds of cases. A signal
+        that alarms on noise has not detected anything. Separating those was the work.
+      caveat: >
+        One run, one scalar time series. No activations were read and no mechanism was named. An
+        alarm and an explanation are different achievements.
+
+  # -------------------------------------------------------------------------
+  # THE PROOF BENCH. Two or three large pieces of evidence, each with enough
+  # room to teach one idea. Not a feature grid.
+  # -------------------------------------------------------------------------
+  proof:
+    section_label: What the instrument can already show
+    section_headline: Three places where the ordinary training story loses information.
+
+    reward_model:
+      heading: Where a reward appears is not where it is caused.
+      body: >
+        Rank a reward model's components by how much attribution assigns them, then rank them again
+        by how much causal patching says they carry. On one widely used model the two orderings
+        disagree, sharply on some objectives. On another they are almost unrelated, in the other
+        direction. Attribution answers where the reward is visible. Patching asks what changes it
+        when intervened on. Neither number licenses the other's claim.
+      link: Inside a reward model
+
+    training:
+      heading: Change the reward. Watch the update change with it.
+      body: >
+        Open a reward score tree, disable one component, and see which of the recorded advantages
+        change sign. Then follow a single rollout from its score, through its advantage, into its
+        signed contribution to the update, and compare the summed partition against an
+        independently computed full gradient.
+      link: Follow a training update
+
+    grader:
+      heading: The policy is only as aligned as the pressure applied to it.
+      body: >
+        A grader card treats a scoring program as a measurement device rather than a leaderboard
+        row: its source, its corpus, its branch coverage, how much of it a deliberate mutation can
+        change without being caught, and which of its fields are even readable under the access you
+        actually have. On one widely used equivalence checker, none of the tested mutations was
+        caught.
+      link: Audit a grader
+
+  # -------------------------------------------------------------------------
+  # THE TRUST LAYER. Compact, and downstream of the argument. This is no longer
+  # the site's emotional centre: it explains why the readings above can be
+  # believed, and then it stops.
+  # -------------------------------------------------------------------------
+  trust:
+    heading: Every claim says how far it reaches.
+    body: >
+      A result carries its subject, its access, its uncertainty, its comparator, its source and its
+      scope. When the available record cannot support an answer, the result names what is missing
+      and what would make the question answerable, rather than returning a worse number. A measured
+      zero and a missing measurement are never allowed to look the same.
+
+  # -------------------------------------------------------------------------
+  # THE BOUNDARY. A map, not an apology.
+  # -------------------------------------------------------------------------
+  boundary:
+    heading: What this has earned, and what it has not.
+    works_label: Works now
+    works:
+      - Inspect reward models with observational and causal instruments.
+      - Preserve composed scores and replay them against the advantages a run actually used.
+      - Audit where one immediate update came from, against an independent full gradient.
+      - Inspect graders and verifier programs, including what a mutation can change unnoticed.
+      - Measure behavioural and representational movement in stated feature spaces.
+      - Return a sourced reading, or a specific reason it cannot read.
+    not_label: Not established
+    not_yet:
+      - A general decoder of a policy's true objective.
+      - A causal explanation of a naturalistic reward-hacking run.
+      - Forecasting that holds across models, seeds and mechanisms.
+      - Separating a target from a correlated passenger, in practice.
+      - Long-horizon credit across many turns and tool calls.
+      - A closed account of selection through to policy response, at an informative scale.
+    link: Everything this does not do
+
+  install_next:
+    heading: Start with your run.
+    body: >
+      The capability report reads what your record and your access can actually support. It names
+      which questions are answerable, what each one costs, and which information was never
+      recorded, before you spend anything.
+    # 'end to end' is banned when the stages shown come from separate cases,
+    # and on this site they do.
+    tutorial: Follow one example on one run
+    notebook: The hosted notebook, no install
+    docs: Read the documentation
+    evidence: Inspect the instrument atlas
+
+# ---------------------------------------------------------------------------
+# INSTALL STRIP
+# ---------------------------------------------------------------------------
+install:
+  command: pip install reward-lens
+  aria: "Copy the install command: pip install reward-lens"
+  copy_label: copy
+  copied_label: copied
+  copied_announce: Install command copied to clipboard
+  copy_unavailable: select to copy
+  version_prefix: installs
+  # D-25: 3.0.0 is tagged in the repository and has not been uploaded to the package
+  # index. It stopped being a release candidate at commit 2e75a0d. The row reads
+  # "installs 2.0.1 · 3.0.0 not yet published ›" and links the changelog entry.
+  prerelease_suffix: not yet published
+  # 3.0.0 reached the package index on 2026-08-07, which made this string
+  # contradict itself: it named the same version as both published and
+  # unreleased. The component fills it unconditionally, so it has to be true
+  # whether or not a newer version is pending, and the pending case is already
+  # carried by the visible "not yet published" link beside it.
+  version_aria: >
+    The published release is {{released_version}}. This is what pip install reward-lens gets.
+  # 'pulls nothing compiled' is false against the wheel: the base install
+  # brings numpy, scipy, pandas, scikit-learn and pydantic-core. What is true,
+  # and what a reader actually wants to know, is that it needs no GPU and no
+  # model download. Measured in a fresh virtualenv built from the index.
+  python_note: >-
+    Python 3.10 or newer. The base install needs no GPU, no model download and neither
+    Torch nor Transformers.
+
+# ---------------------------------------------------------------------------
+# THE THREE ACTS
+# ---------------------------------------------------------------------------
+acts:
+  # Part headings. Six per act, because every part needs an h2 for the outline
+  # to be valid and no key existed for parts 1 to 5. P4 found this by building
+  # the shell: the page files specify h3 sub-blocks inside parts 4 and 5, which
+  # presumes an h2 above them. Worded per act rather than shared, because "The
+  # result" is equally true of all three and DESIGN.md section 7.1 bans a label
+  # that would be equally true on another page.
+  parts:
+    reward_model:
+      question: Where does a preference live inside a reward model?
+      setup: What was measured, and with what access
+      instrument: Rank it two ways and watch them disagree
+      result: The rankings do not match, and the registered prediction did not hold
+      not_established: What this does not establish
+      reproduce: Run it yourself
+    run:
+      question: Is the objective drifting while the run is still going?
+      setup: What was measured, and with what access
+      instrument: Move through the run and watch the signals
+      result: One signal led. The registered comparator lagged.
+      not_established: What this does not establish
+      reproduce: Run it yourself
+    grader:
+      question: Is the grader underneath all of this sound?
+      setup: What was measured, and with what access
+      instrument: Read a card, and watch most of it decline
+      result: More than half the fields refused, and the one that read found a problem
+      not_established: What this does not establish
+      reproduce: Run it yourself
+  # Figure titles and captions. figure-frame requires both and neither existed,
+  # so no figure on any act route could render at all. Numbers stay as
+  # placeholders bound to generated data.
+  figures:
+    attribution_vs_patching:
+      title: Attribution rank against patch-effect rank
+      caption: >
+        Twelve objective dimensions on one model. Above the zero line the two methods agree on a
+        component's importance; below it they disagree. Eight of twelve fall below.
+      scope: One model, twelve dimensions, one frozen study.
+    detector_comparison:
+      title: The same detectors, on the real run and on order-destroyed surrogates
+      caption: >
+        A surrogate keeps every value of the real series and destroys the order. A detector that
+        fires as often on the surrogate as on the real run is reading the distribution, not the
+        drift.
+      scope: One run. The false-alarm rate across runs is not settled.
+    mutation_survival:
+      title: Sixty mutations, and the answer key that noticed none of them
+      caption: >
+        Each mark is one mutant of the equivalence checker, run against its own benchmark's gold
+        answer pairs. A mutant is killed when the pairs disagree with the original. None were.
+      # No figures in this line: figure-frame's scope is "never a value, always
+      # a scope", and the table inside this very figure already binds all four
+      # kill counts to their own sources. What this had to stop doing was
+      # claiming a substantial kill rate on all three comparators when one of
+      # the three is near-zero too.
+      scope: >
+        One checker, and the comparison rests on two of the other three subjects rather than all
+        three: the same instrument kills a substantial share of mutants on both verl environments
+        and almost none on SWE-bench's report builder. That is what makes a score of zero a finding
+        rather than a broken harness. The counts are in the table.
+  index:
+    title: See it work
+    heading: Three questions, three instruments, and what each one could not answer.
+    subhead: >
+      One reward model, one training run, one grader. Each one ends with the code, the data and the
+      expected output, so you can run it yourself.
+
+  reward_model:
+    title: Inside the reward model
+    question: This model prefers one answer over another. Where does that preference live, and if I intervene there, does the score move?
+    setup: >
+      Skywork-Reward-Llama-3.1-8B-v0.2, twelve objective dimensions, forward and backward access to
+      the model. Components ranked twice: once by observational attribution, once by causal patching.
+    result_heading: The two rankings do not match.
+    result: >
+      Spearman rank correlation {{rho_mean}} across twelve dimensions on this model, reaching
+      {{rho_worst}} on code correctness and {{rho_armo}} on a second model, which is near zero.
+      Eight of the twelve dimensions are negative and four are positive.
+    not_established: >
+      This does not establish that attribution is wrong and patching is right. On a model organism
+      with a planted answer key, the registered prediction that patching would recover the key better
+      than attribution was refuted and the kill criterion fired. The recorded conclusion is that
+      neither localization can be preferred. A noisy answer key is the disclosed alternative reading
+      and it has not been ruled out.
+    rule: >
+      Treat attribution as a hypothesis generator, never as evidence of cause. If you have not
+      patched, you do not have a causal result, no matter how clean the attribution bar looks.
+    interaction_hint: Pick a component and patch it. The original score stays on the axis.
+    null_state_hint: >
+      Some components that attribution ranks highly move the score almost not at all when patched.
+      Those are the interesting ones.
+    # What the bundle path actually gives you, which is less than the full result. Stated
+    # rather than implied, because a reader who runs this and thinks they have reproduced
+    # the whole finding has been misled by the section that promised the most.
+    bundle_requirements: >
+      Python 3.10 or newer. No GPU, no model download and no network. This reproduces the rank
+      correlation from the emitted fixture. Reproducing the patching run itself needs weight access
+      and a GPU, and the bundle does not contain the model.
+
+  run:
+    title: Watch the run
+    question: My policy is training right now. Is the objective it is actually optimizing drifting away from the one I wrote, and will I know before it is obvious?
+    setup: >
+      A public labelled reinforcement-learning run with reward hacking: {{rollout_count}} labelled
+      rollouts across {{step_count}} training steps, or {{step_count_alt}} by the run's other
+      record, which is the count its own rollout table carries. The hacking transition is fitted at step
+      {{transition_midpoint}} with a 10-to-90 width of {{transition_width}} steps.
+    result_heading: The shipped signal leads. The registered comparator lags.
+    result: >
+      The variance derivative alarms at step {{alarm_step}}, a lead of {{alarm_lead}} transition
+      widths. The registered gradient-norm comparator peaks at step {{comparator_step}}, which is
+      {{comparator_lag_steps}} steps after the midpoint, a lead of {{comparator_lead}} widths.
+    control_heading: Two signals that lead by more, and why they were discarded.
+    control: >
+      The variance level alarms at step {{level_alarm_step}} for a lead of {{level_lead}} widths and
+      fires on {{surrogate_variance_level}} of order-destroyed surrogates from the same series. The
+      gradient norm under a cumulative-sum detector fires on {{surrogate_gradnorm_cusum}}. The
+      shipped derivative fires on {{surrogate_shipped}}.
+    defect_heading: A defect this build found in its own frozen analysis.
+    defect: >
+      The frozen path for a companion prediction standardised the series against a mean the
+      post-transition regime had raised, so it used the future to define what normal looked like and
+      reported a large lead that is an artifact. A detector that uses the future to define normal
+      cannot measure a lead time, and it will report one. Both numbers are published, they disagree
+      in sign, and the flattering one was declined.
+    companion_heading: The companion prediction on the same run, which went the other way.
+    companion: >
+      A second registered quantity was predicted to move before the labelled hack rate. It lags, by
+      {{lambda_lag}} transition widths. The sign is robust and the magnitude is not. What failed is
+      the lead-time claim and not the instrument.
+    not_established: >
+      This is one run. The false-positive rate across runs is not settled, and the registered
+      comparator could not be computed on the companion analysis at all, because the published
+      rollout table carries no optimiser telemetry.
+    step_count_disagreement: >
+      Two records of this run report its length differently, as {{step_count}} steps and as
+      {{step_count_alt}}. This site uses {{step_count}} and says so here rather than choosing one
+      quietly. The public rollout table labels its steps from one, which accounts for the difference
+      arithmetically without establishing which record is right.
+    scrubber_aria: Training step. Arrow keys step by one, page keys by ten, home and end go to the ends.
+    bundle_requirements: >
+      Python 3.10 or newer. No GPU, no model and no network. The bundle carries the labelled rollout
+      table, so the fit regenerates end to end from what is in it. The alarm does not: the rollout table
+      records lengths and outcomes and carries no reward and no group index, so a within-group
+      reward variance cannot be formed from it. The bundle re-fits the transition and prints its
+      own numbers beside the ledger's.
+
+  grader:
+    title: Is the measurement real
+    question: Everything above depends on a grader producing scores. Is the grader sound?
+    setup: >
+      Four scoring programs in wide use: a mathematical equivalence checker from a standard maths
+      benchmark, the report builder inside a software-engineering benchmark's grading module, and two
+      environment reward functions that ship with a widely used trainer.
+    result_heading: Across four cards, more than half the fields refused.
+    result: >
+      {{card_fields_total}} fields rendered, {{card_fields_read}} read, {{card_fields_refused}}
+      refused, and none of them for want of access.
+    mutation_heading: The sharp finding.
+    mutation: >
+      The mathematical equivalence checker was mutated {{mutant_count}} ways. Its own benchmark's
+      {{gold_pairs}} real gold answer pairs failed to notice a single one. Mutation score
+      {{mutation_score}}. The same instrument kills {{mutants_killed_others}} of
+      {{mutant_count}} on the other three subjects, so it is not reporting zero everywhere.
+    handlers: >
+      That checker ends in {{bare_handlers}} bare exception handlers in about {{checker_lines}}
+      lines, each converting an internal failure into a raw string comparison returned as a verdict.
+      No caller can distinguish a real match from a fallback.
+    metamorphic: >
+      Under transformations no human marker would distinguish, its verdict changes on
+      {{metamorphic_violations}} of {{metamorphic_pairs}} applicable pairs.
+    access_heading: The same four subjects, for a reader who holds only a log.
+    access_body: >
+      Two of the four cards drop to {{log_only_zero_read}} fields read. The other two keep exactly
+      one, the single field countable from a log alone. Nothing else survives, so a card is a list of
+      what it would take.
+    ladder_empty: >
+      The top rung of the trust ladder is defined, enforced, documented, and empty. Nothing in this
+      repository has reached it.
+    self_indictment_heading: The campaign scored its own calibration, and failed.
+    self_indictment: >
+      The previous campaign's directional Brier score was {{brier}} against a coin at
+      {{brier_coin}}. Its interval coverage was {{coverage}} against a registered
+      {{coverage_registered}}. Its own meta-level kill criterion fired. The recorded conclusion is
+      that the campaign's directional calls do not beat a coin, and that the discipline does not
+      calibrate itself.
+    self_indictment_note: >
+      A second one, because it is the better demonstration: a replication harness built here took a
+      published row from this project's own ledger, tried to reproduce it from the evidence store,
+      and reported that it did not.
+    not_established: >
+      None of the four subjects is a rollout from a policy under training. This says what a grader
+      does to inputs, not what it does to an optimisation run.
+    # Corrected: this described a card renderer pointed at the reader's own program, which
+    # needs the library installed and therefore a network. The bundle that exists ships the
+    # release artifacts and re-derives them with the standard library. The renderer is a real
+    # capability and it is the library's, not the bundle's, so it is named as the next step
+    # rather than as what the download does.
+    bundle_requirements: >
+      Python 3.10 or newer. No GPU, no model, no grader call and no network. Every field on every
+      card re-derives from the artifacts in the bundle using the standard library alone. Pointing
+      the same instrument at a scoring program you already have needs the installed library, and
+      that is the next step rather than this one.
+
+# ---------------------------------------------------------------------------
+# THE TRUST LADDER
+# Quoted close to verbatim from the documentation, with attribution, because the
+# project's own wording is better than anything written for the site.
+# ---------------------------------------------------------------------------
+trust_ladder:
+  heading: What each rung licenses
+  intro: The rung is not a vibe. It is a specific permission to make a specific kind of statement.
+  levels:
+    - name: exploratory
+      definition: >
+        The starting position. A number produced by a tool that has never been scored against a case
+        with a known answer. Most measurements live here, and that is fine, as long as you quote them
+        as hypotheses.
+      licenses: >
+        Licenses "we observed." You may report the number and what you saw. You may not call it
+        validated.
+    - name: calibrated
+      definition: >
+        The tool has a scorecard. It was graded on a model organism whose structure was planted by
+        construction, it recovered that structure, and the score is monotone in the strength of the
+        planted signal.
+      licenses: >
+        Licenses "this tool, on cases like this, recovers the truth at this rate." The scorecard is
+        the warrant, and it is quotable.
+    - name: registered
+      definition: >
+        The claim was frozen before the run. A study spec, with its predictions, was content-hashed
+        and git-stamped, so the result is adjudicated against a prediction that provably predates the
+        data.
+      licenses: >
+        Licenses "we predicted this in advance, and here is the outcome." The freeze is the warrant.
+    - name: adjudicated
+      definition: Calibrated and registered, and the frozen prediction held. The top rung, and the rarest.
+      licenses: >
+        Licenses the strongest claim the library will let you make about a single measurement: a
+        preregistered prediction, from a calibrated instrument, that held.
+  # Rendered against the hollow fourth rung. Scoped exactly as D-15 scopes it: what was
+  # verified is that nothing in this repository has reached it, not that nothing ever can.
+  unoccupied_note: Nothing in this repository has reached this rung.
+  computed_note: >
+    The level is never set by a caller. It is computed from whether the evidence carries a
+    calibration reference, whether it was produced under a frozen study, and whether it survived its
+    kill criteria. There is no setter and no back door. If you want a higher rung, you have to make a
+    truer fact.
+  ordering_note: >
+    Registered outranks calibrated. A frozen, surviving prediction on an uncalibrated tool is worth
+    more than a calibrated tool run with no prior commitment, because preregistration defends against
+    the subtler failure: fitting a story to the data after seeing it.
+  limits_heading: What it does not do
+  limits_intro: >
+    The ladder is a ceiling on overclaiming, not a source of truth, and it is worth being exact about
+    its limits, because a discipline that oversells itself is just a new way to be wrong.
+  limits:
+    - title: Calibration does not transfer for free.
+      body: >
+        A scorecard earned on a family of planted-rule organisms tells you how a tool behaves on
+        organisms like those. It is evidence about the instrument in a regime, not a warranty on your
+        reward model.
+    - title: Registered does not mean true.
+      body: >
+        It means the prediction predated the data. A frozen prediction can be frozen and wrong, and
+        the most useful outcome of a preregistered study is often a clean refutation, which the
+        library records as prominently as a confirmation.
+    - title: Exploratory does not mean wrong.
+      body: >
+        It means unaudited. Most of what this site shows you is exploratory, the anti-correlation
+        included, and it is still the most useful thing here. It cannot make a measurement true. It
+        can only stop you from calling it more settled than it is.
+  source_note: Quoted from the library documentation, discipline/trust-ladder and caveats.
+
+# ---------------------------------------------------------------------------
+# REFUSALS
+# ---------------------------------------------------------------------------
+refusals:
+  heading: When an instrument declines
+  intro: >
+    A reading is evidence or a refusal. A refusal is a value, not an exception. It is never a None,
+    never a zero, and never a silent fall back to a worse estimator, because a confident wrong number
+    is the only output this design treats as unforgivable.
+  remedy_rule: >
+    A refusal carries a remedy written as an instruction rather than a diagnosis, and it cannot be
+    constructed without one, because a refusal with no remedy is a tool that looks broken instead of
+    a tool that looks careful.
+  answerable_heading: "The one question that sorts them: where is the remedy answerable?"
+  answerable_intro: >
+    Three of the seventeen look most alike and send you in three different directions, and the test
+    that separates them is a single question about the remedy rather than anything about the reason's
+    name.
+  answerable_note: >
+    The library sorts these three. It does not assign the other fourteen to a group, and neither does
+    this page.
+  card_labels:
+    quantity: quantity
+    reason: reason
+    missing: what was missing
+    remedy: remedy
+    bound: bound
+  # The accessible name for a reason chip. `card_labels.reason` is the visible
+  # field label and reads as "reason: ABOVE_LOD_BELOW_LOQ", which loses the fact
+  # that this is a refusal at all.
+  reason_aria_prefix: "refusal reason:"
+  # The plain-language outcome string beside a reason chip. A refusal card's
+  # greyscale acceptance criterion depends on this existing, because it is the
+  # non-colour carrier of the reading outcome.
+  state_labels:
+    evidence: read
+    refusal: declined
+    bounded: detected, not quantifiable
+
+# ---------------------------------------------------------------------------
+# LIMITS
+# ---------------------------------------------------------------------------
+limits:
+  title: What this does not do
+  heading: Stated once, so nobody has to discover it in review.
+  early_note: >
+    This project is early. One person built it, and no result on this site has been independently
+    reproduced. Everything below is what that means concretely.
+  not_claiming_heading: What is not being claimed
+  not_claiming:
+    - title: Not the Goodhart turning point.
+      body: >
+        That is occupied, with a solver. What is measured here is the turn in a named gold signal,
+        and if that signal is itself a proxy for something inexpressible, which it always is, then a
+        measured turn is the turn for that signal.
+    - title: Not white-box superiority.
+      body: >
+        The bar is decorrelation plus signal, reported against a scaffolded black-box baseline every
+        time. Three published head-to-heads put white-box last, and the correlation between a
+        white-box instrument's errors and a black-box baseline's errors is a required output field.
+    - title: Not that nobody predicts reward hacking.
+      body: At least four methods do, one of which detects a latent propensity persisting while the behaviour is suppressed.
+    - title: Not that intervals are absent from the field.
+      body: A government evaluator published 95% confidence intervals six days before this project's own field scan ran.
+    - title: Not that monitors degrading under pressure is a new observation.
+      body: >
+        It is a small live subfield with results pointing in both directions. What is missing is
+        turning that degradation curve into the figure of merit by which competing monitors are ranked.
+    - title: Not linear-representation realism.
+      body: The portfolio is deliberately built so that most of it survives that hypothesis failing completely.
+  unbuilt_heading: What is not built
+  # The four sentences that carry the page's argument from one state to the
+  # next: how many instruments exist, what "implemented" does and does not mean,
+  # what a qualified reading would be, and what was claimed. They were typed
+  # into the page file because this block carried no key for a state word.
+  # Relocated, not rewritten. Every number is a placeholder.
+  totals_note: >
+    {{implemented_count}} of the registry's instruments are implemented and {{open_count}} are
+    specified and not built.
+  capability_note: >
+    Implemented means the code exists. It does not mean it has been run, and it does not mean it
+    has been run on anything real. The build record keeps those apart across {{capability_count}}
+    capabilities, and {{hardware_count}} of them were exercised on a GPU rather than on a stub or a
+    CPU fixture.
+  qualified_note: >
+    A reading is a different thing again. The archive keeps {{record_count}} records and
+    {{qualified_count}} of them are calibrated against a reference material, so no instrument on
+    this site has been qualified in the sense the library defines. Every archived record sits at
+    the lowest evidence strength.
+  claims_note: >
+    What was claimed, and how it came out, is a fourth thing. The archive froze its predictions
+    before the runs and kept every outcome, including the ones that went nowhere.
+  reproduction_none: No independent reproduction has been recorded.
+
+# ---------------------------------------------------------------------------
+# SECONDARY ROUTES
+#
+# Drafted by the build lead at round 0 of the second dispatch, against the
+# prose already written into pages/evidence.md, pages/log.md and
+# pages/collaborate.md. Where those files already carried a sentence in the
+# project's voice it was relocated rather than rewritten, because the page file
+# was the wrong home for it and not the wrong wording. See GROUND-TRUTH.md C-18.
+#
+# Every number is a {{placeholder}} bound to generated data. Nothing here
+# carries a typed measurement.
+#
+# NOT YET DRAFTED: the /docs/ index, whose page file does not exist yet.
+# ---------------------------------------------------------------------------
+docs:
+  title: Documentation
+  heading: Roughly ninety pages, ported from the library's own repository.
+  corpus_intro: >
+    These pages are generated from the library's documentation rather than written here, so they
+    move when it moves. Each one says which version it describes, and a page describing an older
+    version says so at the top instead of leaving you to find out.
+  start_heading: Start somewhere
+  start_install: Have not installed it yet
+  start_tutorial: Installed it, and want one worked example end to end
+  start_refusals: Hit a refusal and do not know what it means
+  start_api: Know what you want and need the signature
+  shape_heading: What is in here
+  conventions_heading: How to read these pages
+  convention_version: >
+    Every page says which library version it describes. A page describing an older version carries a
+    banner naming it, because a documentation page that is quietly a release behind is worse than
+    one that is loudly two.
+  convention_markdown: >
+    Every page can be copied as markdown, and has a plain-markdown twin at the same path. A fair
+    number of readers hand these pages to a language model, and a page that copies as styled HTML is
+    a page that arrives as noise.
+  convention_refusals: >
+    Refusals are values rather than errors. They are blue, they carry a remedy, and there are
+    seventeen of them.
+  api_title: API reference
+  api_heading: Signatures, types, and what each call refuses.
+  api_intro: >
+    Generated from the library's own source at build time, so it cannot describe a symbol that does
+    not exist. Each entry carries what it returns and, where it can decline, every reason it can
+    decline for. That last list is usually the more useful half.
+  api_refusals_note: >
+    The seventeen refusal reasons have their own page, because each one's meaning is worth reading
+    rather than looking up.
+
+atlas:
+  title: Instrument atlas
+  heading: What can actually be measured, and what it costs to measure it.
+  intro: >
+    An instrument measures one quantity, needs a stated level of access to do it, and returns either
+    a reading with its trust level or a refusal naming what was missing. This catalogue is generated
+    from the library's own registry rather than maintained by hand, so it cannot list an instrument
+    the library does not have.
+  catalogue_heading: Find an instrument
+  filter_measures: What it measures
+  filter_access: What access it needs
+  filter_returns: What it returns
+  filter_status: Implemented or open
+  # The two facets the atlas rendered as unlabelled columns because a filter
+  # needs a legend and a legend is a string. `object` is the registry's
+  # substrate list and `phase` is when the instrument can run relative to a
+  # training run. Both are closed vocabularies the registry writes in capitals.
+  filter_object: What kind of object
+  filter_phase: When it can run
+  # The header of a count column. Its absence is the whole reason three tables
+  # on this site became description lists: there was no word for "how many", so
+  # the first attempt put IMPLEMENTED over a column of record counts and the
+  # second went around the problem by dropping the header. Deliberately generic,
+  # because the three columns it heads count records, capabilities and claims.
+  count_label: how many
+  status_implemented: implemented
+  status_open: open
+  status_open_note: >
+    Specified and not built. Listed here at the same weight as the rest, because a catalogue that
+    quietly separates what exists from what is planned is one a reader stops trusting the moment
+    they notice.
+  gap_heading: What is not here
+  gap_body: >
+    The registry defines {{quantity_count}} quantities. {{estimator_count}} have an estimator. The
+    remaining {{open_target_count}} are open research targets, and they are the same list that
+    drives the open problems page.
+  gap_note: >
+    A catalogue with no stated gap reads as complete. Publishing the open count is what makes the
+    implemented count mean anything.
+  # The editorial note over the published substitution table. The count is a
+  # placeholder because the generator decides how many names it replaced.
+  substitution_note: >
+    {{substitution_count}} of the names in the table above are not the ones the library's registry
+    uses. Each is printed below with the field it replaced, because a name changed silently is a
+    name a reader cannot check against the package. The registry's own names ship inside the
+    library, in its instrument catalogue.
+
+  # ---------------------------------------------------------------------------
+  # /atlas/<subject>/ · one reward model, and what the archive holds about it.
+  #
+  # Six sentences that were typed into the page file because this block carried
+  # no key for that route, and a heading that borrowed `log.cards_heading` and
+  # therefore put "The cards" over a count of stored records. Relocated rather
+  # than rewritten: the page file was the wrong home for them and not the wrong
+  # wording. Same case as C-18.
+  #
+  # Every number is a placeholder filled from src/data/atlas.json at the point
+  # of use. Nothing here carries a typed measurement.
+  # ---------------------------------------------------------------------------
+  subject_lede: >
+    {{record_count}} records were kept about this reward model, and {{gpu_seconds}} GPU-seconds
+    were metered producing them.
+  # Two more headings that were borrowed from the evidence block, found by
+  # opening the capture rather than by reading the page file. `The reading` came
+  # from `evidence.record_value_heading`, which names one record's value, and
+  # `Find a record` from `evidence.explorer_heading`, which put the explorer's
+  # invitation over a list that is not a finder and has nothing to filter. Same
+  # deviation as the borrowed `log.cards_heading`, two sections further down.
+  subject_readings_heading: What was actually read
+  subject_named_heading: The records the archive named
+  subject_holds_heading: What the archive holds
+  subject_holds_body: >
+    The v2 campaign kept {{record_count}} records about this model. They are counted here by the
+    kind of thing each one holds, because the archive stores payloads rather than readings: a bank
+    of scores, a matrix, a capture manifest. {{named_count}} of them carry a name the v2 campaign
+    wrote at the time, and those are listed.
+  subject_uniform_note: >
+    Every one of these {{record_count}} records is at the lowest evidence strength the library
+    defines, on the invariant gauge, with no interval and no readout, and not one of them is
+    calibrated against a reference material. That is a fact about the archive rather than about the
+    model, and it is why nothing on this page is presented as a result.
+  subject_withheld_note: >
+    {{withheld_count}} names are counted above and not printed: they were written out of the v2
+    campaign's own internal identifiers, which this site does not put in front of a reader outside
+    the archive.
+  # `{{evidence_link}}` and `{{archive_link}}` are the two routes this sentence
+  # sends a reader to. They are placeholders rather than prose so the link text
+  # stays bound to `evidence.title` and `log.title` and cannot drift from the
+  # pages it names.
+  #
+  # The article before `{{archive_link}}` is gone. `log.title` is "The archive",
+  # so the sentence this replaces rendered "is in the The archive" on all ten
+  # subject pages. Found by opening the 1440 capture, not by a gate.
+  subject_provenance: >
+    Built from the merged v2 campaign evidence store at site build time. The store itself is not
+    published, and the payload arrays behind these records are too large to host. The records this
+    site cites as receipts resolve at {{evidence_link}}, and the study they came from is in
+    {{archive_link}}.
+
+start:
+  title: Start here
+  heading: From nothing to a real reading.
+  first_reading_heading: The first reading
+  first_reading_body: >
+    This runs as pasted. It reads one quantity off a scoring program and returns either a value with
+    its trust level or a refusal naming the input it needed. No GPU, no model download, no network.
+  refusal_heading: It will refuse, and that is the system working
+  refusal_body: >
+    More than half the fields on a real card refuse. A refusal is a value rather than an error: it
+    carries the reason, the input that was missing, and a remedy written as an instruction. The
+    first one is startling and then it is the most useful thing the library gives you, because it
+    tells you what you would need in order to make the measurement real.
+  refusal_note: >
+    Nothing here is broken when this happens. An instrument that returned a number anyway would be
+    the thing to worry about.
+  next_heading: Where to go next
+  next_back_reference: See what these instruments were built to find
+
+about:
+  title: About
+  heading: What this is, and how much weight it carries.
+  what_it_is: >
+    A Python library and a set of instruments for measuring reward models, training runs and the
+    graders in between. It is built around one rule: a reading is either evidence carrying a trust
+    level that was computed rather than claimed, or a refusal carrying a remedy.
+  conditions_heading: The conditions this was built under
+  # The previous wording led with the absence of an institution, funding and
+  # review. Two of those three are facts about the author's circumstances rather
+  # than about the evidence, and putting them first turns a lack of funding into
+  # the project's public identity. What actually bears on how much weight a
+  # reader should give a result is that it is single-author and unreproduced,
+  # and that is what this says.
+  conditions: >
+    An independent, open-source mechanistic-interpretability project, built and maintained by one
+    author. No result on this site has been independently reproduced.
+  conditions_note: >
+    Those are conditions on the evidence rather than a preamble. A single-author project without
+    external review is a different object from a laboratory's output, and a reader who found that
+    out later would be right to re-read everything above it. It is also the reason the evidence
+    levels and the refusal system exist: they are what this project has instead of reviewers.
+  checking_heading: How the results are checked
+  checking: >
+    Predictions are frozen, with the result that would contradict them, before the runs. Evidence
+    levels are computed from
+    three facts about the evidence rather than set by whoever wrote the code. Every number on this
+    site resolves to a record, and the site does not build if one does not.
+  checking_limit: >
+    None of that is a substitute for peer review. It catches a specific class of mistake, and it
+    does not catch the class that review catches.
+  empty_rung: >
+    The strongest evidence level is defined, enforced, documented, and empty. Nothing in this
+    repository has reached it.
+  citations_heading: What you can check
+  next_heading: Where to go from here
+
+evidence:
+  title: Evidence records
+  heading: Every number on this site came from somewhere.
+  intro: >
+    Every number rendered anywhere on this site is bound to a record. A record carries the
+    observable, the value with its interval, the trust level, the subject it was measured on, what
+    it cost, and the commit that produced it. The binding is checked when the site is built: a
+    number that resolves to neither a record nor a reasoned exception fails the build.
+  explorer_heading: Find a record
+  explorer_hint: >
+    Filter by what you remember about a number rather than by its identifier. The identifier is how
+    the machine finds a record and it is the last thing anyone remembers.
+  # The two facets that differ between the 27 records, and the free-text field
+  # over them. Grouping the list by result stood in for all three while this
+  # block carried no `filter_*` key: a group heading is a value in the data and
+  # needed no invented string, which made it the only affordance the explorer
+  # could have. These are the legends that let it become a filter.
+  #
+  # There is no `filter_observable` and no `filter_kind`. Every one of the 27
+  # records carries the same observable family and the same payload kind, so
+  # either legend would head a control with one option and no ability to
+  # exclude anything. See the packet log.
+  filter_result: How it came out
+  filter_subject: What it was measured on
+  search_label: Search these records
+  # Corrected when it was first rendered. This key was written before the
+  # explorer had any controls and it named two that do not exist: there is no
+  # observable filter and no trust level filter, because every record carries
+  # the same value for both. An empty state whose remedy points at a control a
+  # reader cannot find is the failure this project's own refusal doctrine exists
+  # to prevent, so the remedy names the three controls the page actually has.
+  explorer_empty: >
+    Nothing matched those filters. Clear the subject, which is the one that most often returns
+    nothing once a result is chosen beside it, or search for a word from the claim instead.
+  coverage_heading: How much of this is covered
+  coverage_body: >
+    The build sweeps every numeral in the rendered text of every page and finds {{numbers_total}} of
+    them. {{numbers_bound}} resolve to a record. {{numbers_unresolved}} do not, and that is the
+    larger number. Of those, {{numbers_deferred}} sit on routes the sweep defers and does not check
+    at all, {{numbers_ported}} are on the generated API reference, where the figures are the
+    library's own and this archive has no record to bind them to, {{numbers_context}} are a release
+    version, an interpreter version, a figure or section label, a preprint address, a table's
+    baseline row or a definition ported from the library's registry, each recognised by what
+    surrounds it and checked against the file the build generated rather than trusted for its shape,
+    and {{numbers_allowlisted}} forms of numeral are permanent exceptions with a stated reason: a
+    date, a version string or an axis label is a legitimate exception and a measurement is not.
+  coverage_note: >
+    That is a count of numerals, not of distinct values: the same figure quoted on three pages counts
+    three times, because what the build can check is occurrences. The exception list is published
+    rather than hidden, and so is the shortfall, because a claim that every number resolves is worth
+    nothing unless the count of the ones that do not is printed beside it rather than left to
+    subtraction. The deferred routes are the honest part of this to look at: they are not numbers
+    known to be unbound, they are numbers nobody has examined yet. Binding them is unfinished, and
+    the site does not describe itself as though it were.
+  record_value_heading: The reading
+  record_uncertainty_heading: Uncertainty
+  record_subject_heading: Subject
+  record_measurements_heading: Measurements
+  record_provenance_heading: Provenance
+  record_rendered_on_heading: Rendered on
+  record_rendered_on_none: >
+    No page on this site currently renders this number.
+  record_derived_from: Derived from
+
+  # The store is frozen and one of its readings is wrong. Both facts render, on
+  # the record itself, because a reader who follows a number down to /evidence/
+  # is doing the thing this route exists for and must not have to already know.
+  # The store's own key for the record. It is the thing a machine looks a
+  # record up by and the last thing a reader remembers, so it renders under a
+  # label instead of as the page's first heading.
+  record_key_heading: Store key
+  record_key_hint: Click to select the whole key.
+
+  withdrawn_label: Withdrawn
+  withdrawn_heading: This reading was withdrawn.
+  withdrawn_body: >
+    The record below is the frozen adjudication and it still reads
+    {{stored_verdict}}. It is not being edited, because a store that gets
+    rewritten when a result becomes inconvenient is not evidence. The later
+    measurement is this: a recount found {{cyclic_triples}} cyclic triples in
+    {{triangles}} triangles, and {{acyclic_tournaments}} of {{tournaments}}
+    sampled tournaments were acyclic. The adjudicated value {{stored_value}}
+    exceeds the decomposition's own floor by {{observed_minus_floor}}, which is
+    to say the reading measured the floor and not the quantity.
+  withdrawn_link: Read the recount
+
+log:
+  title: The archive
+  heading: A preregistered campaign, kept whole.
+  intro: >
+    A set of hypotheses frozen with their kill criteria before the runs, adjudicated afterwards by
+    machinery against a merged evidence store. It describes work done against the previous version
+    of the library, and it is kept here in full, including the calls that went nowhere.
+  # The one-line label at the top of the route. `intro` already says the work
+  # was done against the previous version of the library; what it does not do is
+  # name the version, and a reader scanning for that is scanning for "v2".
+  v2_label: This is the v2 research log.
+  archive_note: >
+    This is the one route that still uses the campaign's internal names. They are what the frozen
+    specifications were called, and renaming them here would make the record harder to check rather
+    than easier to read.
+  ledger_heading: The ledger
+  ledger_body: >
+    {{ledger_rows}} hypotheses: {{ledger_confirmed}} confirmed, {{ledger_refuted}} refuted,
+    {{ledger_inconclusive}} inconclusive. In the order the campaign ran them.
+  ledger_counting_note: >
+    The ledger and the headline set are different counts of different things. The figure below
+    counts {{headline_calls}} headline calls. The two do not add together and neither is a score.
+  forest_heading: Every headline call against its own frozen threshold
+  corrections_heading: What this got wrong
+  corrections_body: >
+    The campaign reported a rank correlation of {{deprecated_correlation}}. The value measured from
+    the fixture is {{current_correlation}}, and it supersedes it. The old number is still live in
+    the shipped README. It is written out here because the correction is the content, and this is
+    the only route on the site where that string is allowed to appear.
+  self_assessment_heading: The campaign scored its own calibration
+  self_assessment: >
+    It also asked whether its own directional predictions had been any good, and adjudicated that
+    question by the same machinery it used on everything else. The answer, and the numbers behind
+    it, are in the third act.
+  cards_heading: The cards
+  cards_body: >
+    All {{card_count}} are here, grouped by verdict. The inconclusive ones are kept because
+    removing them would be selection, and this is the page where selection would be least
+    defensible.
+  method_link: How the adjudication worked
+
+collaborate:
+  title: Open problems
+  heading: The strongest experiment this project could run does not exist yet.
+  missing_experiment: >
+    It would be a single run where the grader is inspected, the estimator is recorded, the policy's
+    feature changes are followed, a prediction is frozen in advance, and that prediction is scored
+    against a real labelled outcome. All five, on the same run.
+  missing_experiment_why: >
+    The three cases are three separate runs on three separate subjects: a static reward model, a
+    public labelled training run, and four scoring programs. Nothing connects them except the
+    argument, and the argument is what the missing experiment would test. Someone can help define
+    it before it is frozen, which is the only window in which help is worth anything under this
+    project's own rules.
+  open_problems_heading: What is unsolved
+  open_problems_intro: >
+    Each of these states what the question is, what already exists, what would count as an answer,
+    and what the first step is. An entry that cannot say what would count as an answer is not ready
+    and is not listed.
+  open_problems_derived_note: >
+    Entries marked as derived come from the library's own registry, where a quantity with no
+    estimator is an open target. The rest are written by hand and say so.
+  help_heading: What would actually help
+  help:
+    - title: An independent reproduction of any result here.
+      body: >
+        Every bundle on this site currently reads that no independent reproduction has been
+        recorded. Changing one of those lines is worth more than any new feature, and it is the one
+        thing this project cannot do for itself.
+    - title: A labelled run to test this against.
+      body: >
+        The run in the second act is public and it is one run. The false-positive rate across runs
+        is the open question, and it needs runs this project does not have.
+    - title: A trainer adapter.
+      body: >
+        Two of the twelve are built. The other ten are mechanical work against interfaces that
+        already exist, and each one makes the instruments reachable from a stack they cannot
+        currently see.
+    - title: Adversarial review of a frozen specification, before it runs.
+      body: >
+        A prediction is only worth freezing if someone has tried to break it first. After the run
+        there is nothing useful left to say about the design.
+  reach_heading: How to reach the work
+  reach_body: >
+    The repository and the issue tracker are below. The unit of collaboration here is a frozen
+    specification rather than a pull request, so the useful first message is usually about a
+    measurement rather than about code.
+
+# ---------------------------------------------------------------------------
+# THE FILM
+# In-frame labels for the explainer film and its figure films. Written by the
+# build lead after S2 reported it had composed them itself, which rule 1
+# forbids. Same shape as C-18: a surface was built before anyone noticed its
+# strings had no home.
+#
+# These are burned into frames rather than rendered as DOM, so they are the one
+# set of strings gate 9 cannot check by walking HTML. Gate 24 checks them
+# against the caption track instead.
+# ---------------------------------------------------------------------------
+film:
+  labels:
+    behaviour: behaviour
+    training_step: training step
+    value: value
+    difference: the difference
+    order_destroyed: order destroyed
+    alarm_again: alarm again
+    mean_completion_characters: mean completion characters
+    step: step
+  insert_a:
+    one_episode: one episode
+    one_reward: one reward
+    every_token: every token gets the same number
+    signal_learned: this is the signal the policy learns from
+  insert_b:
+    written: the objective you wrote
+    realized: the objective you got
+    measurable: the difference is measurable
+    invertible: and invertible
+  figure_run:
+    real: the real series
+    scrambled: the same values, order destroyed
+    fires_anyway: the detector fires anyway
+
+# ---------------------------------------------------------------------------
+# MICROCOPY
+# ---------------------------------------------------------------------------
+ui:
+  skip_link: Skip to content
+  theme_toggle_aria: Switch between light and dark
+  search_open: Search
+  search_placeholder: Search the documentation
+  search_no_results: Nothing matched. Try a symbol name, a refusal reason, or an instrument.
+  search_hint: Enter to open, arrow keys to move, Escape to close
+  copy_page: Copy page as markdown
+  copy_page_done: Copied
+  download_data: Download the data
+  download_code: Download the code that made it
+  loading: Loading…
+  error_generic: That did not load. The page still works without it.
+  scene_failed: The instrument view did not start. Everything it shows is below, as figures.
+  provenance_open: Where this number came from
+  provenance_close: Close
+  prev: Previous
+  next: Next
+  edit_page: Edit this page
+  on_this_page: On this page
+  on_this_section: On this section
+  version_chip: Describes library {{version}}
+  # Two banner directions, and they are not the same fact. `stale_banner` is a ported page
+  # describing an older version than the release (D-04). `unpublished_banner` is this site
+  # describing work that is not on the package index (D-01, D-25). A page can need one or
+  # the other and never both.
+  #
+  # These say "not released" rather than "tagged and not released". The v3.0.0 tag exists
+  # only in the local working tree; the public repository's newest tag is v2.0.1, held back
+  # deliberately. A reader who went looking for the tag would not find it, and this site
+  # does not make claims a reader cannot check. See GROUND-TRUTH.md C-17.
+  stale_banner: This page describes {{described_version}}. The current release is {{current_version}}.
+  unpublished_banner: >
+    This page describes {{described_version}}, which has not been released. The version you get
+    from the install command is {{released_version}}.
+  # The screen-reader expansion of a table cell whose whole content is an em dash. Gate 9's
+  # null-marker exception covers the glyph; this covers what it means.
+  no_value: not measured
+  # Column names for an act-facts table that carries a comparison, and only for
+  # that case. A two-column facts table names its rows with `scope="row"` and
+  # needs no column header at all; a three-column one has two value columns
+  # whose cells would otherwise share one row header and be indistinguishable.
+  # Both headings are screen-reader only. The comparison column normally takes
+  # the name the page gives it, so the second of these is the fallback for a
+  # caller that supplies none.
+  facts_value_heading: measured value
+  facts_compare_heading: compared with
+  # The third state, and it is not a synonym for the second. `no_value` says a
+  # measurement was attempted and came back empty. This says nobody wrote the
+  # thing down. An instrument whose access line names no channel has an unstated
+  # requirement, not a measured absence of one, and a record the archive filed
+  # against no subject was still measured on something. Two cells rendered
+  # nothing at all rather than say the wrong one of these, which left a reader
+  # to guess which absence they were looking at.
+  not_stated: not stated
+  table_empty: No rows returned.
+  copy_code_aria: Copy this code block
+  # ---------------------------------------------------------------------------
+  # Component strings found missing by packet F2, which quoted each one from its
+  # contract rather than inventing it. Every literal below had been sitting in a
+  # contract's anatomy block or accessibility section with no key behind it.
+  # ---------------------------------------------------------------------------
+  # provenance-chip. The accessible name template and the record link.
+  provenance_aria: "{{display}}, {{observable}}, trust {{level}}. Open provenance."
+  provenance_record_link: Open the record
+  # code-block. Its own copy pair, so it does not borrow the install strip's.
+  code_output_label: Output
+  code_copy_label: copy
+  code_copied_label: copied
+  code_region_aria: "Code, {{name}}. Scrollable."
+  # figure-frame. The figure number prefix and the film transport.
+  figure_prefix: Fig.
+  film_play: Play
+  film_pause: Pause
+  # data-table. The visually hidden prefix on a reference row, without which
+  # the component's accessibility contract is unmet.
+  table_reference_prefix: "reference:"
+  # version-chip. The migration link, and the two direction words. The chip may
+  # not reuse install.prerelease_suffix: the strip states a package fact and the
+  # chip states a page fact, and they are allowed to diverge.
+  migration_link: Migration notes
+  version_unpublished_word: not yet published
+  version_behind_word: superseded
+  # Emitted when a page describes exactly the release the index serves. The
+  # chip used to render nothing in that case, which was right while 3.0.0 was
+  # unpublished and every page had a discrepancy to report. Now that the index
+  # serves 3.0.0 the discrepancy is gone on all 100 pages, so the version
+  # silently stopped being stated anywhere. This says it once, quietly.
+  version_current_word: the current release
+  # The claim disclosure's technical affordance. Machine identifiers live in a
+  # data attribute behind this control and never in visible text: a reader
+  # should not have to decode campaign.adjudication.ADJ-AVP to learn why a
+  # sentence can be believed. The loader prefers these keys the moment they
+  # exist, so adding them here is the whole change.
+  claim_technical_copy: Copy technical provenance
+  claim_technical_copied: Copied
+  claim_technical_unavailable: select to copy
+  bundle_heading: Reproduce this
+  bundle_note: Everything on this page regenerates from the bundle below.
+  expected_output: Expected output
+  not_reproduced: No independent reproduction recorded.
+  reproduced_by: Reproduced by {{who}} on {{when}}.
+
+errors:
+  not_found_title: That page is not here
+  not_found_body: >
+    The documentation moved from one host to another and every old path redirects. If you followed a
+    link from somewhere and landed here, the link is one this site does not know about.
+  not_found_action: Go to the documentation index
+
+footer:
+  privacy: >
+    No analytics, no tag manager, no fonts from a content delivery network, no session recording, and
+    no cookies. Nothing on this site is collected.
+  # This used to read "Every number on this site resolves to an evidence
+  # record". It rendered on 162 pages and it was not true: gate 5's ratchet
+  # defers 1,545 absorbed numerals, so the site was asserting a discipline
+  # stricter than the one it enforces. Found by opening a screenshot, not by a
+  # gate, which is the reason the rule about opening every capture exists.
+  built_note: Numbers carrying a dotted underline resolve to an evidence record. Follow one.
+  licence_note: MIT licensed. The library, this site and the figures are all in the repository.
+
+a11y:
+  figure_alt:
+    dispersion_scene: >
+      One grader's comparison energy enters a dispersing element from the left and separates into
+      labelled bands of different widths, ending at a detector plane. The widest band is the part
+      that corresponds to a consistent ordering. The narrower one beside it is the part that does
+      not. A third band is drawn at zero width, because that component was measured and found to be
+      absent.
+    attribution_vs_patching: >
+      A bar chart of twelve objective dimensions. Eight bars fall below the zero line and four rise
+      above it. The deepest bar, code correctness, reaches {{rho_worst}}.
+    run_timeline: >
+      A training run over {{step_count}} steps. The labelled hack rate rises from near zero to near
+      one around step {{transition_midpoint}}. A bright marker sits at step {{alarm_step}} where the
+      shipped signal alarms, and a dimmer marker at step {{comparator_step}} where the registered
+      comparator peaks.
+    trust_ladder: >
+      Four rungs in order: exploratory, calibrated, registered, adjudicated, each brighter than the
+      one before.

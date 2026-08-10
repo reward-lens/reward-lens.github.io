@@ -1,0 +1,66 @@
+---
+/**
+ * A record, in the record's own field names.
+ *
+ * Every row here is a field of a generated JSON file, printed under the name
+ * that file gives it. That is the same thing a provenance panel does with an
+ * evidence record's `stats`, and it is done for the same reason: a field
+ * renamed on the way to the page is a field a reader cannot check against the
+ * file it came from.
+ *
+ * It is used where a disclosure has to travel with a figure and no sentence
+ * exists for it. design/scene/EVIDENCE-VERDICTS.md §1 requires the site to say
+ * that the attributed set and the patched set are not the same set; the file's
+ * `meta` already says so, in three fields, and this renders them.
+ */
+interface Row {
+  /** The field's name in the generated file. Never a rewritten label. */
+  key: string;
+  value: string;
+}
+
+interface Props {
+  rows: Row[];
+  class?: string;
+}
+
+const { rows, class: extraClass = "" } = Astro.props;
+---
+
+<dl class:list={["record", extraClass]}>
+  {
+    rows.map((r) => (
+      <div class="record__row">
+        <dt class="record__key type-mono-sm">{r.key}</dt>
+        <dd class="record__value type-mono-sm" data-numeric>
+          {r.value}
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .record {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    min-width: 0;
+    border-block-start: var(--border-w) solid var(--line);
+    padding-block-start: var(--space-3);
+  }
+  .record__row {
+    display: grid;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .record__key {
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+    overflow-wrap: anywhere;
+  }
+  .record__value {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+</style>

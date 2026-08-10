@@ -1,0 +1,167 @@
+---
+/**
+ * One state of the instrument story: a heading, one or two paragraphs, an
+ * optional caveat, and at most one control.
+ *
+ * THIS IS THE WHOLE ARGUMENT AND THE SCENE IS AN ILLUSTRATION OF IT. Nothing
+ * here depends on the canvas existing, on scripting, or on the reader having
+ * arrived from the state above. A reader can stop anywhere, and every
+ * intermediate position is legible, which is why nothing is dimmed, collapsed
+ * or held back until a state becomes active. The active marker adds one filled
+ * tick to the rail and takes nothing away.
+ *
+ * `data-instrument-state` carries the frozen scene id from
+ * src/components/scene/types/truth.ts. The parent's observer reads these
+ * elements and publishes the active one; this component never listens to
+ * scroll, wheel or touch.
+ */
+interface Props {
+  /** The frozen scene state id: scorer, selection, update, response, run-boundary. */
+  state: string;
+  kicker: string;
+  heading: string;
+  body_1: string;
+  body_2?: string;
+  /** Rendered under the body, marked as a limit on the claim above it. */
+  caveat?: string;
+  /** Heading tag for the state's title. The parent's section heading, plus one. */
+  headingLevel?: 3 | 4;
+  /** Named slot the parent forwards a control into, when a state has one. */
+  hasControl?: boolean;
+}
+
+const {
+  state,
+  kicker,
+  heading,
+  body_1,
+  body_2,
+  caveat,
+  headingLevel = 3,
+  hasControl = false,
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h3" | "h4";
+const uid = `instrument-${state}`;
+const headingId = `${uid}-heading`;
+---
+
+<article
+  class="state"
+  id={uid}
+  data-instrument-state={state}
+  aria-labelledby={headingId}
+>
+  <span class="state__tick" aria-hidden="true"></span>
+  <p class="state__kicker type-mono-label">{kicker}</p>
+  <Heading class="state__heading type-h2" id={headingId}>{heading}</Heading>
+  <div class="state__body">
+    <p class="type-body">{body_1}</p>
+    {body_2 && <p class="type-body">{body_2}</p>}
+    {caveat && <p class="state__caveat type-body">{caveat}</p>}
+    {hasControl && (
+      <div class="state__control">
+        <slot />
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  /* The rail and its tick. The scene's own bench is a rail with ticks on it,
+     and the narrative column is the same rail seen from the reading side: one
+     hairline down the start edge, one tick per state, the reader's state
+     filled. It is a position indicator and not decoration, and the article is
+     complete without it, which is why the tick is aria-hidden and the kicker
+     beside it is real text. */
+  .state {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+    padding-inline-start: var(--space-6);
+    padding-block: var(--space-7);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+    /* A jumped-to state must not land under the sticky header. */
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+  }
+
+  /* The rail itself, drawn once per state so it is continuous down the column
+     without a wrapper that would take the states out of one another's flow. */
+  .state::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--border-w);
+    background: var(--line);
+  }
+
+  .state__tick {
+    position: absolute;
+    inset-inline-start: 0;
+    /* Level with the kicker's cap height rather than the box top. */
+    inset-block-start: calc(var(--space-7) + var(--space-1));
+    inline-size: var(--space-4);
+    block-size: var(--border-w);
+    background: var(--line-strong);
+    transition: background var(--dur-2) var(--curve-ui),
+      inline-size var(--dur-2) var(--curve-ui);
+  }
+
+  /* The reader's position. Colour is not carrying this on its own: the tick
+     also grows, and the state it marks is the one the heading is beside. */
+  .state[data-active] .state__tick {
+    inline-size: var(--space-6);
+    background: var(--ink);
+  }
+  .state[data-active]::before {
+    background: var(--line-strong);
+  }
+
+  .state__kicker {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+
+  .state__heading {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+
+  .state__body {
+    display: grid;
+    gap: var(--space-5);
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .state__body p {
+    margin: 0;
+  }
+
+  /* A caveat is a limit on the paragraph above it, not fine print. Same type
+     size as the body, one step down in ink, and marked by the rule this site
+     already uses for a scope line. */
+  .state__caveat {
+    color: var(--ink-2);
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-4);
+  }
+
+  .state__control {
+    min-width: 0;
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .state {
+      padding-inline-start: var(--space-7);
+    }
+    .state__tick {
+      inline-size: var(--space-5);
+    }
+    .state[data-active] .state__tick {
+      inline-size: var(--space-7);
+    }
+  }
+</style>

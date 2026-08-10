@@ -1,0 +1,19 @@
+{
+ "contentHash": "56b22fbd3445ee5c50a121df1202b264",
+ "humanSource": "The frozen study \"Does the process reward model verify or style-read\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:46e1500c4d39f9821c137ae0b00ac0da",
+  "campaign.adjudication.VERIF-PRM",
+  "study:campaign-verif-prm@v1#616bec72",
+  "spec:616bec72ae5ab5714b01adaef378aba9"
+ ],
+ "label": "Does the process reward model verify or style-read",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on qwen-prm, over processbench-full.",
+ "slug": "study-verif-prm",
+ "sourceUrl": "/evidence/46e1500c4d39f9821c137ae0b00ac0da/",
+ "statement": "The frozen study \"Does the process reward model verify or style-read\" was adjudicated refuted, over 2 registered predictions of which 1 held, 1 did not. methodological kill: the instrument failed on a real PRM, a works-ledger finding, not a scientific negative.",
+ "status": "refuted",
+ "subject": "qwen-prm, over processbench-full",
+ "type": "interpretation"
+}

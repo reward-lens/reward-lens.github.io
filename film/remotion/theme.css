@@ -1,0 +1,96 @@
+/* =============================================================================
+   The film's stylesheet is the site's stylesheet.
+
+   Both imports point at src/styles/, not at a copy. A palette change or a type
+   change lands in the film the next time it renders, with nobody remembering to
+   propagate it. That is the whole reason the timeline is a browser renderer.
+
+   The four faces are the four woff2 files the site self-hosts, loaded from
+   public/fonts by relative path so webpack emits the same bytes the site
+   serves. No fifth face, and no font ever fetched over the network.
+
+   Every composition is laid out at half its output size and rendered at scale 2
+   (see scripts/render.mjs). A 17px body in here is a 17px body on the site,
+   rasterised at 2x, which is what makes the film and the site one object rather
+   than two things with a shared palette.
+   ============================================================================= */
+
+@import "../../src/styles/tokens.css";
+@import "../../src/styles/type.css";
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../../public/fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../../public/fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../../public/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../../public/fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+
+.film {
+  position: absolute;
+  inset: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+/* The caption band. Burned into the frame, and emitted again as .vtt. It sits
+   on the ground rather than on a scrim, because a scrim behind film text is the
+   clearest available signal that the composition left no room for it. */
+.caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+  color: var(--ink);
+}
+
+.caption-quiet {
+  color: var(--ink-2);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.label {
+  color: var(--ink-3);
+}
+
+.rule {
+  background: var(--line);
+}
+
+.rule-strong {
+  background: var(--line-strong);
+}

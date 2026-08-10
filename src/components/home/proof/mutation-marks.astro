@@ -1,0 +1,142 @@
+---
+/**
+ * One mark per mutant, one row per scoring program.
+ *
+ * The audit mutates a scoring program in ways a competent engineer might, runs
+ * the original and the mutant over the same real answer pairs, and kills the
+ * mutant when the two disagree. A filled mark is a mutant the program noticed.
+ * A hollow one is a change to the measurement device that nothing detected.
+ *
+ * THE ENCODING IS FORM, NOT COLOUR. Filled against hollow carries the whole
+ * distinction, and the count on each row states it in text, so the figure loses
+ * nothing in greyscale and nothing to a reader who cannot see the marks at all.
+ * Colour on this site is spent on data with more than one category in it, and
+ * there is no third category here.
+ *
+ * The marks are hidden from assistive technology because they are entirely
+ * redundant with the count beside them; sixty announcements per row would be
+ * worse than useless.
+ *
+ * Rows stay in the generated file's order. Sorting by result would put the
+ * finding first and bury the fact that the same instrument reports very
+ * different numbers on the other subjects, which is exactly what makes a zero
+ * a finding rather than a broken harness.
+ */
+interface Row {
+  /** The card's own display name, from the generated file. */
+  name: string;
+  /** The generated file's field name for the count, rendered as its label. */
+  killedKey: string;
+  killed: number;
+  /** How many marks the row draws: one per competent mutant. */
+  competent: number;
+}
+
+interface Props {
+  rows: Row[];
+  class?: string;
+}
+
+const { rows, class: extraClass = "" } = Astro.props;
+---
+
+<ul class:list={["mutants", extraClass]}>
+  {
+    rows.map((row) => (
+      <li class="mutants__row">
+        <div class="mutants__head">
+          <p class="mutants__name type-mono-sm">{row.name}</p>
+          <p class="mutants__stat type-mono-sm">
+            <span class="mutants__key">{row.killedKey}</span>{" "}
+            <span class="mutants__value" data-numeric>
+              {row.killed}
+            </span>
+          </p>
+        </div>
+        <div class="mutants__marks" aria-hidden="true">
+          {Array.from({ length: row.competent }, (_unused, i) => (
+            <span
+              class="mutants__mark"
+              data-killed={i < row.killed ? "" : undefined}
+            />
+          ))}
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  /* Held to the caption measure. At the full frame width on a large screen the
+     subject's name and its count sat about a thousand pixels apart with sixty
+     marks between them, and a label that far from its value is a label a reader
+     has to re-find. At this width the sixty marks still fit on one line and the
+     four counts stay in a column that can be compared down. */
+  .mutants {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-inline-size: min(var(--measure-caption), 100%);
+    min-width: 0;
+  }
+
+  .mutants__row {
+    display: grid;
+    gap: var(--space-3);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .mutants__row:first-child {
+    padding-block-start: 0;
+    border-block-start: none;
+  }
+
+  .mutants__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .mutants__name {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .mutants__stat {
+    margin: 0;
+    white-space: nowrap;
+  }
+  .mutants__key {
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+  .mutants__value {
+    color: var(--ink);
+  }
+
+  .mutants__marks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  /* A hollow mark is a mutant that survived: the change went unnoticed. It is
+     drawn in the structural rule so it reads as an empty slot rather than as a
+     disabled control. */
+  .mutants__mark {
+    inline-size: var(--space-2);
+    block-size: var(--space-2);
+    flex: none;
+    border: var(--border-w) solid var(--line-strong);
+    border-radius: var(--radius-1);
+  }
+  .mutants__mark[data-killed] {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+</style>

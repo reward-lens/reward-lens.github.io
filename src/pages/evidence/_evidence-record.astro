@@ -1,0 +1,565 @@
+---
+/**
+ * evidence record  ·  design/components/evidence-record.md
+ *
+ * One measurement shown whole: what was observed, what came back, how
+ * uncertain it is, what it was measured on, what it cost, which commit made it
+ * and which pages render it. The bottom of every provenance chain on the site.
+ *
+ * WHAT THIS REPLACES. GROUND-TRUTH.md C-24: the page that shipped rendered
+ * `JSON.stringify(record, null, 1)` into a <pre> with tabindex="0" and no
+ * accessible name, 2,849 characters of raw store serialisation with the
+ * `__map__` and `__seq__` sentinels visible as though they were content, one
+ * heading in the whole page and no outline. `pages/evidence.md:106` calls for
+ * a reskin with "no structural change"; that instruction is wrong and this
+ * contract supersedes it.
+ *
+ * THREE RULES THIS COMPONENT EXISTS TO HOLD.
+ *  - No sentinel envelope key reaches the HTML. `unwrap` in ./_store.ts.
+ *  - A null is `copy.yaml:ui.no_value`, never a blank and never a zero. Every
+ *    uncertainty field on all 27 records is null and `method` is "none"; that
+ *    is a real state and it is said out loud.
+ *  - `trust` is an integer in the store. The rung word is what renders and
+ *    what a screen reader announces.
+ *
+ * FIELD LABELS ARE THE STORE'S OWN KEYS, VERBATIM. The anatomy in the contract
+ * prints prettier ones ("commit" for `git_sha`, "recorded" for `created_at`).
+ * copy.yaml carries the six section headings and no field labels, and
+ * HANDOFF.md §8 rule 1 forbids inventing one, so the key is the label. It is
+ * also greppable against the store, which is the same argument refusal-card
+ * makes for rendering the reason as its enum name.
+ *
+ * Nothing here moves, nothing expands, and there is no raw-JSON disclosure. A
+ * record is a document.
+ */
+import TrustBadge from "@components/base/trust-badge.astro";
+import RefusalCard from "@components/base/refusal-card.astro";
+import { copy } from "../../copy";
+import {
+  isoDay,
+  longDate,
+  num,
+  recordHref,
+  scalar,
+  storeRecord,
+  trustName,
+  unwrap,
+  type StoreRecord,
+} from "./_store";
+
+interface Props {
+  record: StoreRecord;
+  /** Route paths that render this record's number. Generated, never authored. */
+  renderedOn?: string[];
+  /** The card's public title, from cards.json. */
+  subjectTitle?: string | null;
+}
+
+const { record, renderedOn = [], subjectTitle = null } = Astro.props;
+const ev = copy.evidence as Record<string, string>;
+
+const value = unwrap(record.value) as Record<string, unknown> | null;
+const level = trustName(record.trust, `evidence record ${record.id}`);
+
+// A record with neither a value nor a refusal reason means the store is
+// malformed, not that the reading is empty. Fail the build naming the id.
+const refusalReason =
+  value && typeof value === "object" && typeof value.reason === "string"
+    ? value.reason
+    : "";
+if (!value && !refusalReason) {
+  throw new Error(
+    `evidence record ${record.id}: no value and no refusal reason. ` +
+      `components/evidence-record.md, Empty state: that combination means ` +
+      `src/data/claims-store/evidence.jsonl is malformed.`,
+  );
+}
+
+/* The reading, in one line, from the record rather than from prose. The
+   outcomes map is the adjudication's own verdict per frozen hypothesis. */
+const outcomes = (value?.outcomes ?? {}) as Record<string, string>;
+const outcomeEntries = Object.entries(outcomes);
+const status = typeof value?.status === "string" ? value.status : "";
+
+/* Every remaining map inside `value` becomes its own labelled group, in the
+   store's order. Nothing is dropped and nothing is renamed. */
+const scalarKeys: string[] = [];
+const mapGroups: { key: string; rows: [string, unknown][] }[] = [];
+for (const [k, v] of Object.entries(value ?? {})) {
+  if (k === "outcomes") continue;
+  if (v && typeof v === "object") {
+    const rows: [string, unknown][] = Array.isArray(v)
+      ? v.map((item, i) => [String(i), item] as [string, unknown])
+      : Object.entries(v as Record<string, unknown>);
+    mapGroups.push({ key: k, rows });
+  } else {
+    scalarKeys.push(k);
+  }
+}
+
+/* Every subject key, including the ones that are empty or null: an absent
+   field renders as copy.yaml:ui.no_value, never as a dropped row. The count
+   of rendered fields equals the count in the store, which is criterion 1. */
+const subjectRows = Object.entries(record.subject.extra ?? {});
+const subjectRest = Object.entries(record.subject).filter(
+  ([k]) => k !== "extra",
+);
+const listOrValue = (v: unknown): string =>
+  Array.isArray(v)
+    ? v.length === 0
+      ? ""
+      : v.map((x) => String(x)).join(", ")
+    : "";
+
+const uncertaintyRows = Object.entries(record.uncertainty ?? {});
+const costRows = Object.entries(record.provenance.cost ?? {});
+const provExtra = Object.entries(record.provenance.extra ?? {});
+/* A parent is a link only when the store carries it. The 27 records name 19
+   parents that are NOT among the 27, so every one of those was a link into a
+   route that does not exist: gate 10 reported 19 broken internal refs, one per
+   record, and a reader following the reverse binding downward met a 404. The
+   id still renders, because it is the store's own pointer and a reader can
+   grep the store for it; what goes is the promise that clicking it arrives
+   somewhere. The store is a shipped subset of a larger one, which is a fact
+   about the data and not a defect in this view. */
+const parents = record.provenance.parents ?? [];
+---
+
+<article class="rec" aria-labelledby="rec-observable">
+  <p class="rec__eyebrow type-mono-label">{ev.title}</p>
+  {/* THE PUBLIC TITLE LEADS AND THE STORE KEY DOES NOT.
+
+      This heading used to be `record.observable`, which on these 27 records is
+      `campaign.adjudication.<card>`: a machine key, the same shape on every
+      one of them, and on this route it also carries the card id that gate 7
+      bans everywhere else. So the most-linked page on the site — the one every
+      dotted number points at, the page whose whole job is to let a stranger
+      check a claim — opened with a string a stranger cannot read, cannot
+      search for and would not recognise.
+
+      The key is not hidden. It renders below, under its own label, in a block
+      that selects whole on a click, which is what someone who actually wants
+      it is trying to do. What changes is which of the two the page leads with.
+
+      `record.observable` still leads where no card names the record, because a
+      machine key beats no heading at all. */}
+  <h1 class="rec__observable type-h2" id="rec-observable">
+    {subjectTitle ?? record.observable}
+  </h1>
+
+  <div class="rec__key">
+    <span class="rec__key-label type-mono-label">{ev.record_key_heading}</span>
+    <code class="rec__key-value type-mono-sm" title={ev.record_key_hint}>
+      {record.observable}
+    </code>
+  </div>
+
+  <section class="rec__section" aria-labelledby="rec-h-value">
+    <h2 class="rec__h type-mono-label" id="rec-h-value">
+      {ev.record_value_heading}
+    </h2>
+    {
+      !value && refusalReason ? (
+        <RefusalCard
+          quantity={record.observable}
+          reason={refusalReason}
+          detail={status}
+          remedy={refusalReason}
+          as="h3"
+        />
+      ) : (
+        <div class="rec__reading">
+          <ul class="rec__outcomes">
+            {outcomeEntries.map(([hyp, outcome]) => (
+              <li class="rec__outcome">
+                <span class="rec__outcome-name type-mono-sm">{hyp}</span>
+                <span class="rec__outcome-value type-body">{outcome}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="rec__trust">
+            <TrustBadge level={level} form="chip" />
+          </p>
+        </div>
+      )
+    }
+    <dl class="rec__dl">
+      {
+        scalarKeys.map((k) => (
+          <div class="rec__pair">
+            <dt class="rec__dt type-mono-sm">{k}</dt>
+            <dd class="rec__dd type-mono-base">{scalar(value?.[k])}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="rec__section" aria-labelledby="rec-h-unc">
+    <h2 class="rec__h type-mono-label" id="rec-h-unc">
+      {ev.record_uncertainty_heading}
+    </h2>
+    <dl class="rec__dl">
+      {
+        uncertaintyRows.map(([k, v]) => (
+          <div class="rec__pair">
+            <dt class="rec__dt type-mono-sm">{k}</dt>
+            <dd class="rec__dd type-mono-base">{scalar(v)}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="rec__section" aria-labelledby="rec-h-subject">
+    <h2 class="rec__h type-mono-label" id="rec-h-subject">
+      {ev.record_subject_heading}
+    </h2>
+    <dl class="rec__dl">
+      {
+        subjectRows.map(([k, v]) => (
+          <div class="rec__pair">
+            <dt class="rec__dt type-mono-sm">{k}</dt>
+            <dd class="rec__dd type-mono-base">{scalar(v)}</dd>
+          </div>
+        ))
+      }
+      {
+        subjectRest.map(([k, v]) => (
+          <div class="rec__pair">
+            <dt class="rec__dt type-mono-sm">{k}</dt>
+            <dd class="rec__dd type-mono-base">
+              {listOrValue(v) || scalar(Array.isArray(v) ? null : v)}
+            </dd>
+          </div>
+        ))
+      }
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">gauge</dt>
+        <dd class="rec__dd type-mono-base">{scalar(record.gauge)}</dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">calibration</dt>
+        <dd class="rec__dd type-mono-base">{scalar(record.calibration)}</dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">observable_version</dt>
+        <dd class="rec__dd type-mono-base">{record.observable_version}</dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">trust</dt>
+        <dd class="rec__dd type-mono-base">{level}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="rec__section" aria-labelledby="rec-h-meas">
+    <h2 class="rec__h type-mono-label" id="rec-h-meas">
+      {ev.record_measurements_heading}
+    </h2>
+    {
+      mapGroups.map((g) => (
+        <div class="rec__group">
+          <h3 class="rec__h3 type-mono-sm">{g.key}</h3>
+          {g.rows.length === 0 ? (
+            <p class="rec__empty type-body-sm">{copy.ui.table_empty}</p>
+          ) : (
+            <dl class="rec__dl rec__dl--wide">
+              {g.rows.map(([mk, mv]) => (
+                <div class="rec__pair">
+                  <dt class="rec__dt type-mono-sm">{mk}</dt>
+                  <dd class="rec__dd type-mono-base">
+                    {typeof mv === "number" ? num(mv) : scalar(mv)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+      ))
+    }
+  </section>
+
+  <section class="rec__section" aria-labelledby="rec-h-prov">
+    <h2 class="rec__h type-mono-label" id="rec-h-prov">
+      {ev.record_provenance_heading}
+    </h2>
+    <dl class="rec__dl">
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">git_sha</dt>
+        <dd class="rec__dd type-mono-base rec__break">
+          {record.provenance.git_sha}
+        </dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">study</dt>
+        <dd class="rec__dd type-mono-base rec__break">
+          {record.provenance.study}
+        </dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">config_hash</dt>
+        <dd class="rec__dd type-mono-base rec__break">
+          {scalar(record.provenance.config_hash)}
+        </dd>
+      </div>
+      {
+        costRows.map(([k, v]) => (
+          <div class="rec__pair">
+            <dt class="rec__dt type-mono-sm">{k}</dt>
+            <dd class="rec__dd type-mono-base">{scalar(v)}</dd>
+          </div>
+        ))
+      }
+      {
+        provExtra.map(([k, v]) => (
+          <div class="rec__pair">
+            <dt class="rec__dt type-mono-sm">{k}</dt>
+            <dd class="rec__dd type-mono-base">{scalar(v)}</dd>
+          </div>
+        ))
+      }
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">seeds</dt>
+        <dd class="rec__dd type-mono-base">
+          {record.provenance.seeds.length === 0
+            ? copy.ui.no_value
+            : record.provenance.seeds.map((s) => String(s)).join(", ")}
+        </dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">oracle_calls</dt>
+        <dd class="rec__dd type-mono-base">
+          {record.provenance.oracle_calls.length === 0
+            ? copy.ui.no_value
+            : String(record.provenance.oracle_calls.length)}
+        </dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">created_at</dt>
+        <dd class="rec__dd type-mono-base">
+          <time datetime={isoDay(record.created_at)}>
+            {longDate(record.created_at)}
+          </time>
+        </dd>
+      </div>
+      <div class="rec__pair">
+        <dt class="rec__dt type-mono-sm">
+          parents<span class="visually-hidden">, {ev.record_derived_from}</span>
+        </dt>
+        <dd class="rec__dd type-mono-base">
+          {
+            parents.length === 0 ? (
+              copy.ui.no_value
+            ) : (
+              <ul class="rec__links">
+                {parents.map((p) => (
+                  <li>
+                    {storeRecord(p) ? (
+                      <a class="rec__break" href={recordHref(p)}>
+                        {p}
+                      </a>
+                    ) : (
+                      <span class="rec__break">{p}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="rec__section" aria-labelledby="rec-h-rendered">
+    <h2 class="rec__h type-mono-label" id="rec-h-rendered">
+      {ev.record_rendered_on_heading}
+    </h2>
+    {
+      renderedOn.length === 0 ? (
+        <p class="rec__empty type-body">{ev.record_rendered_on_none}</p>
+      ) : (
+        <ul class="rec__links type-mono-base">
+          {renderedOn.map((href) => (
+            <li>
+              <a href={href}>{href}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+
+  <p class="rec__id type-mono-sm">{record.id}</p>
+</article>
+
+<style>
+  /* The record body sits on --ground, which is the only surface --ink-3 is
+     permitted on alongside --surface-1. GROUND-TRUTH.md C-15. */
+  .rec {
+    min-width: 0;
+    max-width: min(var(--measure-caption), 100%);
+  }
+
+  .rec__eyebrow {
+    margin: 0 0 var(--space-2);
+    color: var(--ink-3);
+  }
+  .rec__observable {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: var(--ink);
+  }
+  /* The store key, demoted from the page heading. `user-select: all` is the
+     whole affordance: one click takes the key entire, with no script and no
+     button, which is what someone who wants a machine key is trying to do. */
+  .rec__key {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+    margin: var(--space-3) 0 0;
+    min-width: 0;
+  }
+  .rec__key-label {
+    color: var(--ink-3); /* ink3-ok: on --ground */
+    flex: none;
+  }
+  .rec__key-value {
+    color: var(--ink-2);
+    user-select: all;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  .rec__section {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .rec__h {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-3);
+  }
+  .rec__h3 {
+    margin: var(--space-4) 0 var(--space-2);
+    color: var(--ink-2);
+  }
+
+  .rec__reading {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    min-width: 0;
+  }
+  .rec__outcomes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    /* flex-start above shrink-wraps every child, so without this the list
+       sizes to its widest row instead of to the column. */
+    align-self: stretch;
+    min-width: 0;
+  }
+  /* Stacked by default, two columns at --bp-md, which is the same move
+     .rec__pair makes below. It used to be an unconditional
+     `minmax(0, 18rem) minmax(0, 1fr)`: 288px of first column inside a 350px
+     content box, so every record whose outcome value did not fit beside it
+     pushed the page out. Gate 19 counted 152 failures across 27 records at
+     320, 360 and 390, and the 390 shoot missed it because the one record shot
+     was among the five that fitted. */
+  .rec__outcome {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    align-items: baseline;
+    min-width: 0;
+  }
+  .rec__outcome-name {
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+  .rec__outcome-value {
+    color: var(--ink);
+  }
+  .rec__trust {
+    margin: 0;
+  }
+
+  /* Label above value below --bp-md, beside it above, which is the same move
+     the grader card makes so the two pages read as one system. */
+  .rec__dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .rec__pair {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .rec__dt {
+    margin: 0;
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+  .rec__dd {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .rec__break {
+    overflow-wrap: anywhere;
+  }
+
+  .rec__group {
+    min-width: 0;
+  }
+  .rec__empty {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .rec__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  .rec__id {
+    margin: var(--space-6) 0 0;
+    padding-top: var(--space-4);
+    border-top: var(--border-w) solid var(--line);
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .rec__outcome {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+    .rec__pair {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+      gap: var(--space-4);
+      align-items: baseline;
+    }
+  }
+
+  @media print {
+    .rec {
+      max-width: 100%;
+    }
+  }
+</style>

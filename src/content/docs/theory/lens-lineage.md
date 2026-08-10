@@ -2,8 +2,10 @@
 title: The lens lineage
 description: What family of methods does the reward lens belong to, and what does that family already know? Naming the ancestry is the fastest way to see both what the tool
 section: theory
-order: 68
+order: 97
 source: docs/content/theory/lens-lineage.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # The lens lineage

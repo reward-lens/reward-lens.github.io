@@ -1,0 +1,27 @@
+{
+ "comparator": "< 0",
+ "contentHash": "84db941eec9faff6741d71aa29a47b4b",
+ "humanSource": "The frozen study \"Same-recipe scale ladder with frozen 8B extrapolation\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:d746d48eef7a5630cecbd3e97a9d9cb8",
+  "campaign.adjudication.LADDER",
+  "study:campaign-ladder@v1#0023527a",
+  "spec:0023527a360de5b616a0aa5a7bb6c3cf",
+  "H-ladder-beats-flat"
+ ],
+ "label": "Same-recipe scale ladder with frozen 8B extrapolation",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "ladder_extrap_minus_flat_error",
+  "uncertainty": "confidence interval -0.5311824800459731 to 2.4359016583798008",
+  "unit": null,
+  "value": 0.6002275013086775
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-0.6b and skywork-v2-qwen3-1.7b and skywork-v2-qwen3-4b and skywork-v2-qwen3-8b, over rb2-full.",
+ "slug": "measured-ladder-ladder-extrap-minus-flat-error",
+ "sourceUrl": "/evidence/d746d48eef7a5630cecbd3e97a9d9cb8/",
+ "statement": "the extrapolation beats a no-trend (equal-to-4B) baseline.",
+ "status": "refuted",
+ "subject": "skywork-v2-qwen3-0.6b and skywork-v2-qwen3-1.7b and skywork-v2-qwen3-4b and skywork-v2-qwen3-8b, over rb2-full",
+ "type": "measured-result"
+}

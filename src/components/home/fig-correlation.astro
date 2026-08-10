@@ -1,0 +1,242 @@
+---
+/**
+ * Fig. 0.1  ·  design/pages/home.md §2, and the colour rule in its lines 59-62.
+ *
+ * Twelve objective dimensions, each carrying the rank correlation between what
+ * attribution assigns a component and what causal patching says it carries.
+ *
+ * THE FIGURE ENCODES SIGN AND NOTHING ELSE, which is the one thing the
+ * specification's own rendered specimen got wrong and recorded as a caught
+ * defect (DESIGN.md §13, packets/P3-homepage.md lines 38-41). Twelve bars
+ * against the six component tokens would make hue decorative and break the
+ * site's rule that colour is only ever data. So there are two colours and they
+ * are the two the site already uses for a sign: --written above the zero line
+ * where the two methods agree, --realized below it where they disagree.
+ * Identity is carried by position and by the axis label beside each bar. The
+ * six component tokens stay reserved for an actual component decomposition,
+ * which is the hero's figure and a different chart.
+ *
+ * NOTHING IS CLAMPED. The scale is the measured range and the deepest bar is
+ * the deepest measurement, drawn at full depth. A figure whose whole subject is
+ * two methods disagreeing cannot cap the disagreement.
+ *
+ * TWO COMPOSITIONS, NOT ONE SCALED DOWN.
+ * Above --bp-md the dimensions are columns: bars stand off a horizontal zero
+ * line, labels beneath. That does not survive 390px. Twelve columns in 350px is
+ * 29px each, which forces the labels to rotate, and a figure whose axis has to
+ * be read sideways on a phone is a figure that was designed once.
+ *
+ * So below --bp-md the axis turns: the dimensions become rows, the zero line
+ * becomes vertical, bars run left and right off it, and every label is
+ * left-aligned text at its natural reading angle. Same data, same encoding,
+ * same order, and the sign still reads instantly because negative now means
+ * "extends left" instead of "hangs down". One DOM serves both; only the
+ * stylesheet changes.
+ *
+ * WHERE THE ZERO LINE SITS. Not in the middle. It sits where zero actually
+ * falls in the measured range, so a pixel is the same amount of correlation
+ * above the line as below it. The range here is asymmetric, and centring the
+ * line would make four small positive bars look like the equals of eight large
+ * negative ones.
+ */
+import type { Dimension } from "./correlation";
+
+interface Props {
+  dimensions: Dimension[];
+  /** From copy.yaml:a11y.figure_alt.attribution_vs_patching, already filled. */
+  alt: string;
+}
+
+const { dimensions, alt } = Astro.props;
+
+const rhos = dimensions.map((d) => d.spearmanRho);
+const posMax = Math.max(0, ...rhos);
+const negMax = Math.abs(Math.min(0, ...rhos));
+const range = posMax + negMax;
+
+/* The zero line's position, as a fraction of the plot. `pos` is the share of
+   the plot above the line (or right of it, when the axis has turned). */
+const pos = range > 0 ? posMax / range : 0.5;
+
+/**
+ * The label a reader sees. A mechanical transform of the dimension's own key
+ * and not a string written here: the underscore becomes a space and nothing
+ * else changes. copy.yaml already writes "code correctness" for this dimension
+ * in home.mechanism.body_1, so the transform lands on the vocabulary the page
+ * is already using rather than inventing a second one.
+ */
+const label = (key: string): string => key.replace(/_/g, " ");
+---
+
+<div
+  class="corr"
+  role="img"
+  aria-label={alt}
+  style={`--pos:${pos.toFixed(6)}`}
+  data-fig-correlation
+>
+  <ol class="corr__list">
+    {
+      dimensions.map((d) => (
+        <li
+          class="corr__row"
+          data-sign={d.spearmanRho < 0 ? "neg" : "pos"}
+          style={`--f:${(Math.abs(d.spearmanRho) / range).toFixed(6)}`}
+        >
+          <span class="corr__track">
+            <span class="corr__bar" />
+          </span>
+          <span class="corr__label type-mono-sm">{label(d.key)}</span>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .corr {
+    min-width: 0;
+  }
+
+  .corr__list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 0;
+  }
+
+  /* THE TRACKS ARE FLUSH AND THE BARS ARE NARROWER THAN THEM.
+     The zero line is drawn on each track, so any gap between tracks would cut
+     it into twelve segments and the one rule the caption tells the reader to
+     read would be a dashed one. Separation comes from the bar being thinner
+     than the track it sits in, which is what separates bars in a bar chart
+     anyway. */
+  .corr__track {
+    position: relative;
+    display: block;
+    background: linear-gradient(var(--line-strong), var(--line-strong)) no-repeat;
+  }
+
+  .corr__bar {
+    position: absolute;
+    display: block;
+    background: var(--realized);
+  }
+  .corr__row[data-sign="pos"] .corr__bar {
+    background: var(--written);
+  }
+
+  .corr__label {
+    color: var(--ink-2);
+    min-width: 0;
+  }
+
+  /* --- below --bp-xl: the dimensions are ROWS ---------------------------
+     The axis has turned. Label first, at its natural reading angle, then a
+     horizontal track with the zero line standing in it. Negative extends
+     left, positive right.
+
+     WHY THE SWITCH IS AT --bp-xl AND NOT AT --bp-md, which is where the rest
+     of this page turns. tokens.css:132 names --bp-xl as the width at which the
+     twelve-column grid opens, and this figure is twelve columns. Below it the
+     longest dimension name does not fit in a twelfth of the figure at
+     --type-mono-sm, and the only ways to keep the columns are to break
+     "correctness" across two lines mid-word or to turn the labels on their
+     side. Both are a figure that was designed at one width and shipped at
+     three. The rows are not a fallback: at 768 and 1024 they are the better
+     reading of the same data, because the labels stay horizontal. */
+  @media (max-width: 74.9375rem) /* --bp-xl */ {
+    .corr__row {
+      display: grid;
+      grid-template-columns: minmax(0, 11ch) minmax(0, 1fr);
+      /* STRETCH, NOT CENTRE. A two-word name wraps and makes its row taller
+         than the rest; a fixed-height track in a taller row leaves a hole in
+         the zero rule exactly where the label is longest. Stretching the track
+         to whatever its row turns out to be keeps the rule continuous however
+         the labels wrap. */
+      align-items: stretch;
+      column-gap: var(--space-3);
+    }
+    .corr__label {
+      grid-column: 1;
+      grid-row: 1;
+      text-align: end;
+      overflow-wrap: anywhere;
+    }
+    .corr__track {
+      grid-column: 2;
+      grid-row: 1;
+      min-block-size: var(--space-6);
+      background-size: var(--border-w) 100%;
+      background-position: calc((1 - var(--pos)) * 100%) 0;
+    }
+    .corr__bar {
+      block-size: var(--space-3);
+      inset-block-start: 50%;
+      translate: 0 -50%;
+      inline-size: calc(var(--f) * 100%);
+    }
+    /* Negative runs left from the line, positive runs right from it. */
+    .corr__row[data-sign="neg"] .corr__bar {
+      inset-inline-end: calc(var(--pos) * 100%);
+    }
+    .corr__row[data-sign="pos"] .corr__bar {
+      inset-inline-start: calc((1 - var(--pos)) * 100%);
+    }
+  }
+
+  /* --- --bp-xl and up: the dimensions are COLUMNS ------------------------
+     Bars stand off a horizontal zero line, labels beneath at the width of
+     their own column. */
+  @media (min-width: 75rem) /* --bp-xl */ {
+    .corr__list {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      /* No column gap, so the zero rule is continuous. See the track's note. */
+      column-gap: 0;
+      align-items: end;
+      /* The plot's own height, plus the label row beneath it, which is sized
+         by its content. */
+      block-size: calc(var(--space-9) * 2);
+    }
+    .corr__row {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      row-gap: var(--space-3);
+      min-width: 0;
+      block-size: 100%;
+    }
+    .corr__track {
+      grid-row: 1;
+      block-size: 100%;
+      /* A horizontal rule at the zero position. */
+      background-size: 100% var(--border-w);
+      background-position: 0 calc(var(--pos) * 100%);
+    }
+    .corr__bar {
+      /* Narrower than its track and centred in it. A bar that fills its whole
+         column edge to edge stops reading as a bar and starts reading as a
+         band of colour, which is the encoding this figure does not use. */
+      inline-size: min(var(--space-6), 100%);
+      inset-inline-start: 50%;
+      translate: -50% 0;
+      block-size: calc(var(--f) * 100%);
+    }
+    /* Positive stands up off the line, negative hangs down from it. */
+    .corr__row[data-sign="pos"] .corr__bar {
+      inset-block-end: calc((1 - var(--pos)) * 100%);
+    }
+    .corr__row[data-sign="neg"] .corr__bar {
+      inset-block-start: calc(var(--pos) * 100%);
+    }
+    /* No mid-word breaking. A column is wide enough for the longest single
+       word at this width, so the only wrap is at the space in the one
+       two-word name, and "correctness" never becomes "correctnes / s". */
+    .corr__label {
+      grid-row: 2;
+      text-align: center;
+      overflow-wrap: normal;
+    }
+  }
+</style>

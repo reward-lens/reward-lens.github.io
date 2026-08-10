@@ -1,0 +1,19 @@
+{
+ "comparator": "== 1",
+ "contentHash": "4f4c4132c58297ceb5ff221efe825c29",
+ "humanSource": "The frozen study \"Tail index forecasts the best-of-k plateau on PPE\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:5cd71da5713f2b2fb77697318b842401",
+  "H-lowerquantile",
+  "study:campaign-ppe-bon@v1#7077cf84"
+ ],
+ "label": "Tail index forecasts the best-of-k plateau on PPE",
+ "limitation": "The study returned no value because an input it needs was not produced by the run that was supposed to produce it.",
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-8b and skywork-v2-llama31-8b and skywork-v2-qwen3-0.6b, over ppe-best-of-k and ppe-human.",
+ "slug": "open-ppe-bon-bon-lowerquantile-beats-mean",
+ "sourceUrl": "/evidence/5cd71da5713f2b2fb77697318b842401/",
+ "statement": "Registered prediction, not resolved: the lower-quantile best-of-n aggregation beats the mean against human labels, reproducing the PPE finding.",
+ "status": "unrun",
+ "subject": "skywork-v2-qwen3-8b and skywork-v2-llama31-8b and skywork-v2-qwen3-0.6b, over ppe-best-of-k and ppe-human",
+ "type": "open-hypothesis"
+}

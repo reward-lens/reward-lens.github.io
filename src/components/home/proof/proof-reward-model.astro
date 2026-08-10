@@ -1,0 +1,143 @@
+---
+/**
+ * Proof bench, first place: where a reward appears is not where it is caused.
+ *
+ * The artifact is complete. `src/data/intervention.json` carries twelve
+ * objective dimensions and sixty-four components with BOTH ranks on every one,
+ * so this may be drawn rather than only stated, and it is the strongest thing
+ * the site has. The figure is the one the act route already uses, with the same
+ * title, caption, scope and alternative text: one figure gets one set of words,
+ * and a second copy of them would be two strings to keep in agreement.
+ *
+ * TWO DISCLOSURES TRAVEL WITH IT (design/scene/EVIDENCE-VERDICTS.md §1).
+ * Sixty-five components were attributed and sixty-four patched, and the one
+ * that was not patched is the embedding. The margin renders the file's own meta
+ * rather than letting a reader infer the two sets are identical.
+ *
+ * These numbers carry a document and a line instead of an evidence id, because
+ * the measurement predates the evidence store (D-35). The citation renders at
+ * the weight a provenance chip gets rather than shrinking into a caption: a
+ * number whose provenance is a file and a line is not a number with worse
+ * provenance, and hiding that is the only way to get it wrong.
+ */
+import ProofExhibit from "./proof-exhibit.astro";
+import RecordBlock from "./record-block.astro";
+import FigureFrame from "@components/base/figure-frame.astro";
+import FigCorrelation from "../fig-correlation.astro";
+import { fill } from "@components/base/data";
+import { copy } from "../../../copy";
+import { rewardModel } from "./proof-data";
+
+interface Props {
+  /** Where "Inside a reward model" goes. */
+  href?: string;
+  /** Assigned by the page, sequential within it. */
+  figureNumber?: string;
+  headingLevel?: 3 | 4;
+  id?: string;
+}
+
+const {
+  href = "/see/reward-model/",
+  figureNumber = "1",
+  headingLevel = 3,
+  id = "proof-reward-model",
+} = Astro.props;
+
+const home = copy.home as Record<string, any>;
+const block = home.proof.reward_model;
+const figure = (copy.acts as Record<string, any>)?.figures?.attribution_vs_patching;
+const a11y = copy.a11y as unknown as { figure_alt: Record<string, string> };
+
+const data = rewardModel();
+
+/**
+ * The figure renders only with both halves present: the measurement and the
+ * words written for this encoding. A figure with an invented caption is worse
+ * than no figure, so the section keeps its prose and drops the picture.
+ */
+const drawable = Boolean(data && figure && a11y?.figure_alt?.attribution_vs_patching);
+
+const alt = drawable
+  ? fill(a11y.figure_alt.attribution_vs_patching, {
+      rho_worst: data!.sharpestRho,
+    })
+  : "";
+
+const record = data
+  ? [
+      { key: "subject", value: data.meta.subject },
+      { key: "dimensionCount", value: String(data.meta.dimensionCount) },
+      {
+        key: "attributedComponentCount",
+        value: String(data.meta.attributedComponentCount),
+      },
+      {
+        key: "patchedComponentCount",
+        value: String(data.meta.patchedComponentCount),
+      },
+      ...(data.setsDiffer
+        ? [
+            {
+              key: "unpatchedComponents",
+              value: data.meta.unpatchedComponents.join(", "),
+            },
+          ]
+        : []),
+      { key: "patchingMode", value: data.meta.patchingMode },
+    ]
+  : [];
+---
+
+<ProofExhibit
+  id={id}
+  heading={block.heading}
+  body={block.body}
+  link={block.link}
+  href={href}
+  headingLevel={headingLevel}
+>
+  {
+    data && (
+      <Fragment slot="margin">
+        <RecordBlock rows={record} />
+        <p class="cite type-body-sm">
+          <cite class="cite__doc">
+            {`${data.correlation.meanRhoSource.document}:${data.correlation.meanRhoSource.line}`}
+          </cite>
+        </p>
+      </Fragment>
+    )
+  }
+
+  {
+    drawable && (
+      <FigureFrame
+        slot="exhibit"
+        number={figureNumber}
+        title={figure.title}
+        caption={figure.caption}
+        scope={figure.scope}
+      >
+        <FigCorrelation dimensions={data!.correlation.dimensions} alt={alt} />
+      </FigureFrame>
+    )
+  }
+</ProofExhibit>
+
+<style>
+  /* D-35's citation, at the weight a provenance chip has rather than the
+     weight a footnote has: `font: inherit` under a dotted rule. */
+  .cite {
+    margin: 0;
+    min-width: 0;
+  }
+  .cite__doc {
+    font-style: normal;
+    color: var(--ink-2);
+    text-decoration: underline dotted var(--ink-3); /* ink3-ok: matches .prov on --ground */
+    text-decoration-thickness: var(--link-underline-thickness);
+    text-underline-offset: var(--link-underline-offset);
+    overflow-wrap: anywhere;
+  }
+</style>

@@ -1,0 +1,74 @@
+{
+ "bundles": [
+  {
+   "act": "grader",
+   "route": "/see/grader/",
+   "href": "/bundles/grader.zip",
+   "filename": "grader.zip",
+   "format": "zip",
+   "contents": [
+    "cards/is_equiv-log-only.txt",
+    "cards/is_equiv.txt",
+    "cards/swebench-log-only.txt",
+    "cards/swebench.txt",
+    "cards/verl_gsm8k-log-only.txt",
+    "cards/verl_gsm8k.txt",
+    "cards/verl_search_r1-log-only.txt",
+    "cards/verl_search_r1.txt",
+    "evidence.jsonl",
+    "refusals/is_equiv.json",
+    "refusals/swebench.json",
+    "refusals/verl_gsm8k.json",
+    "refusals/verl_search_r1.json",
+    "reproduce.py"
+   ],
+   "sizeBytes": 34620,
+   "sha256": "4cc0f432a37baf218b0e2b5cf5348f8dd1a6383ad4f60675746e15dabba62a30",
+   "commit": "d6e279680e68f2eeba97b7575056ae53fab51e20",
+   "command": "unzip grader.zip -d grader && python grader/reproduce.py",
+   "requirementsKey": "acts.grader.bundle_requirements",
+   "expectedOutput": "subject           access     read  refused  remedies  reasons\nis_equiv          full          5        8         8  3\nis_equiv          log_only      0       13        13  4\nswebench          full          5        8         8  2\nswebench          log_only      0       13        13  3\nverl_gsm8k        full          6        7         7  2\nverl_gsm8k        log_only      1       12        12  3\nverl_search_r1    full          6        7         7  2\nverl_search_r1    log_only      1       12        12  3\n\nfull       52 fields, 22 read, 30 refused\n             ABOVE_LOD_BELOW_LOQ      1\n             RECORD_INCOMPLETE        21\n             SUBSTRATE_MISMATCH       8\nlog_only   52 fields, 2 read, 50 refused\n             ABOVE_LOD_BELOW_LOQ      1\n             ACCESS_INSUFFICIENT      32\n             RECORD_INCOMPLETE        13\n             SUBSTRATE_MISMATCH       4\n\nstructured refusal records  30\nrefusals parsed at full access  30\nthe two agree               yes",
+   "reproducedBy": null
+  },
+  {
+   "act": "reward-model",
+   "route": "/see/reward-model/",
+   "href": "/bundles/reward-model.zip",
+   "filename": "reward-model.zip",
+   "format": "zip",
+   "contents": [
+    "attribution_per_pair.jsonl",
+    "golden.json",
+    "patching_per_pair.jsonl",
+    "reproduce.py"
+   ],
+   "sizeBytes": 298367,
+   "sha256": "ed9073f8c4343668fa4091a25fe62c6f5b18a642f78629ec3b087787b0bd6661",
+   "commit": "d6e279680e68f2eeba97b7575056ae53fab51e20",
+   "command": "unzip reward-model.zip -d reward-model && python reward-model/reproduce.py",
+   "requirementsKey": "acts.reward_model.bundle_requirements",
+   "expectedOutput": "pairs joined                360\ncomponents ranked both ways 64\ndimensions                  12\n\ndimension              recomputed  published   top attribution  moves\ncode_correctness       -0.441117  -0.441117   mlp_L31         7.0788%\nconfidence             -0.381206  -0.381206   mlp_L31         0.0000%\ncorrectness            +0.117822  +0.117822   mlp_L31        34.2073%\nfactuality             -0.258911  -0.258911   mlp_L31         2.3732%\nformatting             +0.076205  +0.076205   mlp_L31       235.2342%\nhelpfulness            -0.305981  -0.305981   mlp_L31         5.0162%\ninstruction_following  +0.015099  +0.015099   mlp_L31        18.1439%\nmath_correctness       +0.152893  +0.152893   mlp_L31        43.1881%\nrefusal_quality        -0.353836  -0.353836   mlp_L31         0.0000%\nsafety                 -0.289653  -0.289653   mlp_L31         4.0281%\nsycophancy             -0.334428  -0.334428   mlp_L31         0.0000%\nverbosity              -0.047506  -0.047506   mlp_L31        18.1041%\n\nlargest disagreement with the fixture  0.000000  (tolerance 0.01)\nwithin tolerance                       yes",
+   "reproducedBy": null
+  },
+  {
+   "act": "run",
+   "route": "/see/run/",
+   "href": "/bundles/run.zip",
+   "filename": "run.zip",
+   "format": "zip",
+   "contents": [
+    "PREDICTIONS-R3-R4.txt",
+    "aisi_lengths.npz",
+    "reproduce.py",
+    "run-series.json"
+   ],
+   "sizeBytes": 120253,
+   "sha256": "ba9b5eba3ac2161016b5bdcec24d2a39cd6a7dff496792805f3438f7dd3852ad",
+   "commit": "d6e279680e68f2eeba97b7575056ae53fab51e20",
+   "command": "unzip run.zip -d run && python run/reproduce.py",
+   "requirementsKey": "acts.run.bundle_requirements",
+   "expectedOutput": "rollouts in the table       25664\nrollouts in run-series.json 25664\ndistinct step indices       401  (1 to 401)\nrollouts per step           64\nstep count the site states  400\n\nseries formatOk    401 points   matches run-series.json: true\nseries hackRate    401 points   matches run-series.json: true\nseries realized    401 points   matches run-series.json: true\nseries written     401 points   matches run-series.json: true\n\n                       this fit    frozen ledger\ntransition midpoint    106.9368    106.0000\n10-to-90 width          23.9823     23.9000\nR2                      0.99555     0.99600\nfloor and ceiling      0.0022 to 0.9892\n\ndetector alarms, from the frozen ledger row in this bundle, not refitted here\n  variance_level         step 70     lead +1.504 widths\n  gradient_norm_cusum    no alarm  \n  variance_derivative    step 90     lead +0.668 widths  <- shipped\n  gradient_norm_peak     step 133    lead -1.129 widths",
+   "reproducedBy": null
+  }
+ ]
+}

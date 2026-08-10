@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.6",
+ "contentHash": "bc72318dfa262aa3f74097c85aa16ddb",
+ "humanSource": "The frozen study \"Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b",
+  "campaign.adjudication.CAPACITY-WELCH",
+  "study:campaign-capacity-welch@v1#9fc6a434",
+  "spec:9fc6a4346dcd4ba18e2d12391971c413",
+  "H-dark-kdeff"
+ ],
+ "label": "Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "dark_reward_kdeff_spearman",
+  "unit": null,
+  "value": -0.4061811972299616
+ },
+ "scope": "One frozen study, adjudicated once, on fleet and armorm, over rb2-full.",
+ "slug": "measured-capacity-welch-dark-reward-kdeff-spearman",
+ "sourceUrl": "/evidence/f9e6a003a5a1e0aa0fe3ff1eca0d9c7b/",
+ "statement": "dark reward grows with the criteria-to-effective-dimension ratio.",
+ "status": "refuted",
+ "subject": "fleet and armorm, over rb2-full",
+ "type": "measured-result"
+}

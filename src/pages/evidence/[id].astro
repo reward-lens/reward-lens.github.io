@@ -1,68 +1,129 @@
 ---
-import { readFileSync } from "node:fs";
+/**
+ * /evidence/<id>/  ·  27 record pages.
+ *
+ * The route, the store and the static paths are inherited and are real. The
+ * record *view* is not: what shipped was a JSON dump (GROUND-TRUTH.md C-24).
+ * `_evidence-record.astro` is the view `components/evidence-record.md`
+ * specifies.
+ *
+ * The card link points at /log/cards/<slug>/ and not at /campaign/<slug>/,
+ * which is what the page used to do. That path redirects under D-26, and a
+ * record page is the last place on the site that should reach its destination
+ * through a redirect.
+ */
 import Base from "@layouts/Base.astro";
-import PageHeader from "@components/PageHeader.astro";
+import EvidenceRecord from "./_evidence-record.astro";
+import Callout from "@components/base/callout.astro";
+import { records, bareId, type StoreRecord } from "./_store";
+import { correctionForCard } from "./_corrections";
+import cards from "@data/cards.json";
+import atlas from "@data/atlas.json";
+import { copy } from "../../copy";
 
 export function getStaticPaths() {
-  const lines = readFileSync(
-    new URL("src/data/claims-store/evidence.jsonl", `file://${process.cwd()}/`),
-    "utf-8",
-  )
-    .split("\n")
-    .filter(Boolean);
-  return lines.map((line) => {
-    const record = JSON.parse(line);
-    return {
-      params: { id: record.id.replace("ev:", "") },
-      props: { record },
-    };
-  });
+  return records.map((record) => ({
+    params: { id: bareId(record.id) },
+    props: { record },
+  }));
 }
 
-const { record } = Astro.props;
-const card = record.subject?.extra?.card ?? "";
-const slug = card.toLowerCase();
+const { record } = Astro.props as { record: StoreRecord };
+const ev = copy.evidence as Record<string, string>;
+
+const card = cards.find((c) => c.adjudication_ev === record.id);
+
+/* The reverse binding, and it is INCOMPLETE ON PURPOSE rather than finished.
+
+   `components/evidence-record.md` acceptance 5 asks for gate 5's sweep of the
+   rendered output. Gate 5 now exists (scripts/checks/provenance.mjs) and it
+   does tokenise every page, but it records only totals: it never emits which
+   evidence id was bound on which route, so there is nothing to read back. This
+   list is derived from cards.json instead: a record that is a card's
+   adjudication is rendered on that card's page and in the archive's ledger.
+
+   So it is generated rather than authored, which is the half of the contract
+   that holds, and it UNDER-REPORTS: any page outside this packet that binds
+   the same id is missing from it, and it will keep under-reporting until every
+   packet has landed and gate 5 emits a per-id index. What it never does is
+   claim a page that does not render the number. Escalated to P2, whose file
+   gate 5 is; recorded in the packet log rather than presented as complete. */
+const renderedOn = card ? [`/log/cards/${card.id}/`, "/log/"] : [];
+
+/* THE WITHDRAWAL, and the reason it is on this route and not only under /log/.
+
+   The store is frozen and one of its readings has since been recounted to
+   nothing. /log/cards/<slug>/ has always said so. This route did not, and this
+   route is the one the whole site points at when it says a number can be
+   checked — so a reader following `0.214` down from anywhere landed on
+   `confirmed` at `registered` trust with no word of the retraction on the page.
+
+   The verdict below is NOT rewritten. Both facts render: what the campaign
+   adjudicated, and what the recount found. See ./_corrections.ts. */
+const atlasCard = (atlas as { cards: { slug: string; evidenceId: string }[] }).cards.find(
+  (c) => c.evidenceId === record.id,
+);
+const correction = correctionForCard(atlasCard?.slug);
+const count = (n: number) => n.toLocaleString("en-US");
 ---
 
 <Base
-  title={`${record.id} · evidence · reward-lens`}
-  description={`The adjudication record for ${card}, shown whole.`}
+  title={`${record.observable} · ${ev.title} · reward-lens`}
+  description={card
+    ? `${card.title}. ${ev.heading}`
+    : `${record.observable}. ${ev.heading}`}
 >
-  <div class="rec-wrap">
-    <PageHeader
-      eyebrow="evidence record"
-      title={record.observable}
-      lede={`Adjudication record for ${card}, from the merged campaign store, shown whole.`}
+  <div class="wrap rec-page">
+    <nav class="rec-page__back type-body-sm" aria-label={ev.title}>
+      <a href="/evidence/">{ev.title}</a>
+      {card && <a href={`/log/cards/${card.id}/`}>{card.title}</a>}
+    </nav>
+    {
+      correction && (
+        <Callout variant="note" label={ev.withdrawn_label}>
+          <p>
+            <strong>{ev.withdrawn_heading}</strong> The record below is the frozen
+            adjudication and it still reads {correction.storedVerdict}. It is not
+            being edited: a store rewritten when a result becomes inconvenient is
+            not evidence.
+          </p>
+          <p>
+            A later recount found {count(correction.cyclicTriples)} cyclic triples
+            in {count(correction.triangles)} triangles, and
+            {" "}{count(correction.acyclicTournaments)} of {count(correction.tournaments)}
+            {" "}sampled tournaments acyclic. The adjudicated value sits
+            {" "}{correction.observedMinusFloor.toExponential(1)} above the floor
+            its own comparison design imposes, which is to say the reading
+            measured the floor rather than the quantity, and the frozen threshold
+            of {correction.threshold} could not have failed.
+          </p>
+          {atlasCard && (
+            <p>
+              <a href={`/log/cards/${atlasCard.slug}/`}>{ev.withdrawn_link}</a>
+            </p>
+          )}
+        </Callout>
+      )
+    }
+
+    <EvidenceRecord
+      record={record}
+      renderedOn={renderedOn}
+      subjectTitle={card?.title ?? null}
     />
-    <p class="rec-links">
-      <code>{record.id}</code> ·{" "}
-      <a href={`/campaign/${slug}/`}>the {card} card</a> ·{" "}
-      <a href="/evidence/">all shipped records</a>
-    </p>
-    <pre class="rec-json" tabindex="0"><code>{JSON.stringify(record, null, 1)}</code></pre>
   </div>
 </Base>
 
 <style>
-  .rec-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .rec-page {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
   }
-  .rec-links {
-    font-size: var(--text-sm);
+  .rec-page__back {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0 0 var(--space-5);
     color: var(--ink-2);
-    margin: 0 0 var(--sp-4);
-  }
-  .rec-json {
-    background: var(--bg-inset);
-    border: 1px solid var(--line);
-    border-radius: var(--r-card);
-    padding: var(--sp-4);
-    font-size: var(--text-xs);
-    line-height: 1.5;
-    color: var(--ink-2);
-    overflow-x: auto;
-    max-width: var(--measure-wide);
   }
 </style>

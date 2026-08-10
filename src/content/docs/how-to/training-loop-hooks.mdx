@@ -2,8 +2,10 @@
 title: Hook into a training loop
 description: How do you watch the reward model's geometry while a policy is being optimized against it?
 section: how-to
-order: 19
+order: 20
 source: docs/content/how-to/training-loop-hooks.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -76,4 +78,4 @@ except IntegrationUnavailableError as e:
 </Callout>
 So the workflow today is analysis on recorded rollouts and any loaded signal: score with `make_reward_fn`, track geometry with `GeometryLogger`, and record runs with the [rollout recorder](/docs/training-loops/rollout-recorder/) for after-the-fact drift analysis. Install the extra and the identical logging fires live from inside the trainer.
 
-See also: [framework integrations](/docs/training-loops/integrations/), [the rollout recorder](/docs/training-loops/rollout-recorder/), [`make_reward_fn`](/docs/reference/dynamics-loops/#reward_lens.loops.integrations.base.make_reward_fn), [`GeometryLogger`](/docs/reference/dynamics-loops/#reward_lens.loops.integrations.base.GeometryLogger).
+See also: [framework integrations](/docs/training-loops/integrations/), [the rollout recorder](/docs/training-loops/rollout-recorder/), [`make_reward_fn`](/docs/api/dynamics-loops/#reward_lens.loops.integrations.base.make_reward_fn), [`GeometryLogger`](/docs/api/dynamics-loops/#reward_lens.loops.integrations.base.GeometryLogger).

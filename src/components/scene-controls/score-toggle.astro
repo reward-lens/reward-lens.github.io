@@ -1,0 +1,127 @@
+---
+/**
+ * The score-component control, and the thing it is careful not to claim.
+ *
+ * WHAT IT WOULD HAVE BOUND TO, AND WHY IT DOES NOT. The project's
+ * reward-composition counterfactual reports that disabling one component of a
+ * composed reward moves a quarter of the rollouts and reverses two thousand
+ * signs. `design/scene/EVIDENCE-VERDICTS.md` §5 is binding here: that result
+ * exists in two prose cells of a build record, its computation runs at test
+ * time against a store outside both published repositories, and no per-rollout
+ * before-and-after array ships anywhere. It may be stated with its limitation
+ * and it may not become geometry or a control's displayed result.
+ *
+ * WHAT IT BINDS TO INSTEAD. The 200-step recorded run, which is complete and
+ * per-trajectory, and this control states that record's own result. The result
+ * is a negative and it is worth having: the run's score tree has exactly one
+ * leaf, so there is nothing to redistribute. Turning the component off does not
+ * shift the update toward another component, because there is no other
+ * component; it removes the score from all 1,600 rollouts and leaves no
+ * advantage defined at all.
+ *
+ * Every number below is computed at build time from
+ * `src/data/scene/payload/*.bin`. Both summaries are in the document, so the
+ * comparison is readable with scripting off and the control's effect on the
+ * prose is a hidden attribute rather than a rewrite.
+ */
+import { scoreComponentFacts, group } from "./facts";
+
+interface Props {
+  class?: string;
+}
+const { class: extraClass = "" } = Astro.props;
+const f = scoreComponentFacts();
+const id = "scene-score-toggle";
+const summaryId = "scene-score-summary";
+---
+
+<div class:list={["score", extraClass]}>
+  <div class="score__control">
+    <input
+      type="checkbox"
+      id={id}
+      checked
+      data-scene-score-toggle={f.leafName}
+      aria-describedby={summaryId}
+    />
+    <label for={id} class="score__label">
+      Score with <code>{f.leafName}</code>, this run's only reward component
+    </label>
+  </div>
+
+  {/*
+    The summary is the control's result and changing it is the reason the
+    control exists, so it announces itself. It is one small region beside the
+    control it belongs to, not a page-level live region: the only thing that
+    ever speaks through it is this checkbox.
+  */}
+  <div class="score__summary" id={summaryId} aria-live="polite">
+    <p class="type-body-sm" data-scene-score-summary="on">
+      The score tree has {f.leafCount} leaf. {group(f.scoredRolloutCount)} of {group(f.rolloutCount)} recorded
+      rollouts carry a value from it and on {group(f.abstainedRolloutCount)} the grader abstained. Of the
+      advantages the estimator then computed, {group(f.reinforcedCount)} are positive, {group(f.discouragedCount)}
+      are negative and {group(f.onAxisCount)} are exactly zero.
+    </p>
+    <p class="type-body-sm" data-scene-score-summary="off" hidden>
+      With the only leaf removed there is no score on any of the {group(f.rolloutCount)} rollouts, so no group
+      mean, no advantage and nothing reinforced. The count that changes is {group(f.scoredRolloutCount)} to 0.
+      That is this run's whole answer to the question: a reward with one component cannot show how a
+      reward divides between its components.
+    </p>
+    <p class="score__limit type-body-sm">
+      A separate experiment reports that disabling one component of a composed reward moves about a
+      quarter of the rollouts and reverses a few thousand signs. No per-rollout record of it ships with
+      this site, so it is stated here and is not drawn, encoded or recomputed by this control.
+    </p>
+  </div>
+</div>
+
+<style>
+  .score {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .score__control {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: baseline;
+    min-width: 0;
+  }
+  .score__control input {
+    accent-color: var(--control);
+    margin: 0;
+  }
+  .score__control input:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .score__label {
+    color: var(--ink);
+    cursor: pointer;
+    min-width: 0;
+  }
+  .score__label code {
+    font-family: var(--font-mono);
+    overflow-wrap: anywhere;
+  }
+
+  .score__summary {
+    display: grid;
+    gap: var(--space-3);
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-4);
+    min-width: 0;
+  }
+  .score__summary p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .score__summary p[hidden] {
+    display: none;
+  }
+  .score__limit {
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+</style>

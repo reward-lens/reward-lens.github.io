@@ -2,8 +2,10 @@
 title: The intervention algebra
 description: What can you actually do to a running reward model, and how do you keep the result honest?
 section: instruments
-order: 42
+order: 43
 source: docs/content/instruments/interventions.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -135,4 +137,4 @@ Every activation-level operation runs off the model's natural distribution, so a
 
 ## How much to trust it
 
-The operations themselves are exact and mechanical: strength-zero steering is bit-exact, directional ablation is idempotent to roughly $10^{-8}$, and the LEACE fit is closed-form. What is *trusted*, in the ladder sense, is the erasure certificate, and only when it passes: [`certify_erasure`](/docs/reference/interventions/#reward_lens.interventions.certify.certify_erasure) returns `CALIBRATED` Evidence on a held-out recovery at chance and `EXPLORATORY` otherwise, with an `INVARIANT` gauge because the recovery AUC is a scalar, not a cross-model geometric quantity. The rest of the algebra hands you precise causal numbers that are honest within a model and uncalibrated across models. For the observational side these interventions were built to confirm, start at [observational vs causal](/docs/concepts/observational-vs-causal/); for how a passing certificate climbs the ladder, [the trust ladder](/docs/discipline/trust-ladder/).
+The operations themselves are exact and mechanical: strength-zero steering is bit-exact, directional ablation is idempotent to roughly $10^{-8}$, and the LEACE fit is closed-form. What is *trusted*, in the ladder sense, is the erasure certificate, and only when it passes: [`certify_erasure`](/docs/api/interventions/#reward_lens.interventions.certify.certify_erasure) returns `CALIBRATED` Evidence on a held-out recovery at chance and `EXPLORATORY` otherwise, with an `INVARIANT` gauge because the recovery AUC is a scalar, not a cross-model geometric quantity. The rest of the algebra hands you precise causal numbers that are honest within a model and uncalibrated across models. For the observational side these interventions were built to confirm, start at [observational vs causal](/docs/concepts/observational-vs-causal/); for how a passing certificate climbs the ladder, [the trust ladder](/docs/discipline/trust-ladder/).

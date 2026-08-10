@@ -1,0 +1,201 @@
+---
+/**
+ * The API reference landing page, at /docs/api/.
+ *
+ * Intro prose is ported verbatim from the library's own
+ * docs/content/reference/index.md; the grid-cards block becomes a set of links
+ * to each subsystem page. Symbol pages are ./[group].astro.
+ *
+ * `import "katex/dist/katex.min.css"` was here. It is gone: mathematics
+ * renders to MathML at build time and the stylesheet and its 1,072,948 bytes
+ * of fonts have nothing to do. C-14 and C-28.
+ */
+import Docs from "@layouts/Docs.astro";
+import "@styles/docs-legacy.css";
+import proseData from "@data/api/_prose/index.json";
+import indexMeta from "@data/api/index.json";
+import catalogue from "@data/catalogue.json";
+import { copy } from "../../../copy";
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+const processor = await createMarkdownProcessor({
+  remarkPlugins: [remarkMath],
+  rehypePlugins: [[rehypeKatex, { strict: false, output: "mathml" }]],
+  gfm: true,
+  // The site's own Shiki configuration. Without it createMarkdownProcessor
+  // falls back to Shiki's built-in github-dark and emits a fixed dark code
+  // block with hard-coded hexes on both themes, which is where gate 14's
+  // `.line > span` finding on the stats page came from. Same pair as
+  // astro.config.mjs: two renderers with different code themes is how half a
+  // site ends up in a different palette.
+  shikiConfig: {
+    themes: { light: "github-light-high-contrast", dark: "github-dark-high-contrast" },
+    defaultColor: "light",
+  },
+});
+// See api/[group].astro: build_api_ref.py resolves the library's own
+// cross-links to /docs/reference/, which is where this route used to live.
+const md = async (s: string) =>
+  (await processor.render(s || "")).code.replace(/\/docs\/reference\//g, "/docs/api/");
+
+// The group descriptions are markdown, not text: they name types in backticks
+// ("The `Evidence` object", "The `RewardSignal` protocol"). They were passed to
+// set:html unprocessed, so thirteen group lines printed their own delimiters
+// and the `.ref-group__desc code` rule below had nothing to style. Rendered
+// inline, because a one-line description inside a list row is not a paragraph.
+const mdInline = async (s: string) =>
+  (await md(s)).replace(/^\s*<p>/, "").replace(/<\/p>\s*$/, "").trim();
+
+// Derived from the group id, not read from the generated index's `href`, which
+// still says /docs/reference/. That field is P1's; reported, not edited here.
+const groupOf = (href: string) => href.replace(/^.*\/([^/]+)\/$/, "$1");
+const hrefOf = (g: string) => `/docs/api/${g}/`;
+
+// The symbol count per group, from index.json's own `symbols` field. Section 1
+// of design/pages/docs-api.md asks for "a one-line description and a symbol
+// count each"; the count existed in the data and nothing rendered it.
+const symbolCount = new Map(
+  (indexMeta as any).groups.map((g: any) => [g.group, g.symbols as number]),
+);
+
+const rendered: any[] = [];
+for (const seg of (proseData as any).segments) {
+  if (seg.type === "prose")
+    rendered.push({ type: "prose", html: await md(seg.markdown) });
+  else if (seg.type === "cards")
+    rendered.push({
+      type: "groups",
+      groups: await Promise.all(
+        seg.cards.map(async (card: any) => {
+          const group = groupOf(card.href);
+          return {
+            title: card.title,
+            href: hrefOf(group),
+            desc: await mdInline(card.description),
+            symbols: symbolCount.get(group) ?? null,
+          };
+        }),
+      ),
+    });
+}
+
+const c = copy.docs as Record<string, string>;
+const desc = `${c.api_heading} ${c.api_intro}`.replace(/\s+/g, " ").trim().slice(0, 160);
+---
+
+<Docs
+  title={c.api_title}
+  description={desc}
+  current="/docs/api/"
+  libraryVersion={catalogue.provenance.libraryVersion}
+  section={indexMeta.title}
+>
+  <header class="ref-head">
+    <h1 class="ref-title type-display-2">{c.api_heading}</h1>
+    <p class="ref-intro type-body">{c.api_intro}</p>
+    <p class="ref-intro type-body">
+      {c.api_refusals_note}{" "}
+      <a href="/docs/refusals/">/docs/refusals/</a>
+    </p>
+  </header>
+
+  {
+    rendered.map((seg) =>
+      seg.type === "prose" ? (
+        <div class="docs-prose" set:html={seg.html} />
+      ) : (
+        /*
+          A list at body measure, not a grid of cards. design/pages/docs-api.md
+          section 1 asks for exactly that, and the same row already exists on
+          /docs/ as portal__section: a link, a count in the margin, a rule
+          under it. Two landing pages in one corpus that count things
+          differently are two systems (D-19).
+        */
+        <ul class="ref-groups">
+          {seg.groups.map((g: any) => (
+            <li class="ref-group">
+              <div class="ref-group__row">
+                <a class="ref-group__link type-body" href={g.href}>
+                  {g.title}
+                </a>
+                {g.symbols !== null && (
+                  <span
+                    class="ref-group__count type-mono-sm"
+                    data-source="src/data/api/index.json"
+                  >
+                    {g.symbols}
+                  </span>
+                )}
+              </div>
+              <p class="ref-group__desc type-body-sm" set:html={g.desc} />
+            </li>
+          ))}
+        </ul>
+      ),
+    )
+  }
+</Docs>
+
+<style>
+  .ref-head {
+    margin-block-end: var(--space-6);
+  }
+  .ref-title {
+    color: var(--ink);
+    margin: 0 0 var(--space-4);
+    max-inline-size: min(var(--measure-heading), 100%);
+  }
+  .ref-intro {
+    color: var(--ink-2);
+    margin: 0 0 var(--space-3);
+    max-inline-size: min(var(--measure-prose), 100%);
+  }
+  .ref-groups {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .ref-group {
+    padding-block: var(--space-3);
+    border-block-end: var(--border-w) solid var(--line);
+    max-inline-size: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .ref-group__row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .ref-group__link {
+    color: var(--ink);
+    font-weight: 600;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .ref-group__count {
+    margin-inline-start: auto;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .ref-group__desc {
+    /* --ink-2 on --ground. Nothing here paints a surface, which is what took
+       docs-legacy.css off gate 14's ratchet in the first place. */
+    color: var(--ink-2);
+    margin: var(--space-1) 0 0;
+    min-width: 0;
+  }
+</style>
+
+<style is:global>
+  .ref-group__desc code {
+    font-family: var(--font-mono);
+    background: var(--code-inline-bg);
+    border-radius: var(--radius-1);
+    padding-inline: var(--space-1);
+    overflow-wrap: anywhere;
+  }
+</style>

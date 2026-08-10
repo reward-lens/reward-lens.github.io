@@ -1,0 +1,171 @@
+---
+/**
+ * version-chip  ·  design/components/version-chip.md
+ *
+ * Says which version of the library a page or a sentence describes, whenever
+ * that is not the version a reader would get by running the install command.
+ *
+ * The direction is DERIVED and never passed. A page that can pass the
+ * direction in is a page that can pass the wrong one in, and the two
+ * directions are different facts: `behind` is a ported page describing an
+ * older version than the release, `unpublished` is this site describing work
+ * that is tagged and not on the package index. A page needs one or the other
+ * and never both.
+ *
+ * When describes equals released this used to emit zero DOM nodes, on the
+ * reasoning that the common case should be the quiet one. That held while
+ * 3.0.0 was unpublished and every page had a genuine discrepancy to report.
+ * The index accepted 3.0.0 on 2026-08-07, the discrepancy vanished on all 100
+ * pages at once, and the corpus silently stopped stating its version anywhere.
+ * It now says so in one line. Quiet is not the same as absent.
+ *
+ * The register is metrology, not warning. No triangle, no yellow fill, never
+ * dismissible, never animated, and never a single site-wide banner: a banner
+ * is dismissed once and then eighty-nine pages read as current.
+ */
+import { requireRelease, requireVersion, versionDirection, fill } from "./data";
+import type { Release } from "./data";
+import { ui } from "../../copy";
+
+interface Props {
+  /** From front matter (libraryVersion) or the page file. Never typed here. */
+  describes: string;
+  /** From data/release.json:latest, generated from the package index. */
+  released?: string;
+  /** The versions the index actually lists, used to derive the direction. */
+  published?: string[];
+  form?: "banner" | "inline";
+  href?: string | null;
+  class?: string;
+}
+
+const props = Astro.props;
+const release: Release | null =
+  props.released === undefined || props.published === undefined
+    ? requireRelease("version-chip")
+    : null;
+
+const {
+  describes,
+  released = release!.latest,
+  published = release!.releases.map((r) => r.version),
+  form = "banner",
+  href = null,
+  class: extraClass = "",
+} = props;
+
+requireVersion(describes, "version-chip", "describes");
+requireVersion(released, "version-chip", "released");
+
+// Derived, never passed. `behind` when the index has already published this
+// version and moved past it; `unpublished` when the index has never seen it.
+const direction = versionDirection(describes, released, published);
+
+const values = {
+  described_version: describes,
+  current_version: released,
+  released_version: released,
+  version: describes,
+};
+
+const bannerText =
+  direction === "behind"
+    ? fill(ui.stale_banner, values)
+    : direction === "none"
+      ? `${fill(ui.version_chip, values)}, ${ui.version_current_word}.`
+      : fill(ui.unpublished_banner, values);
+
+// The direction word is the chip's own, never install.prerelease_suffix: the
+// strip states a package fact and the chip states a page fact, and the two are
+// allowed to diverge (components/version-chip.md criterion 7).
+const directionWord =
+  direction === "behind"
+    ? ui.version_behind_word
+    : direction === "none"
+      ? ui.version_current_word
+      : ui.version_unpublished_word;
+
+// The hidden expansion the contract asks for: a screen reader hears
+// "Describes library 3.0.0, not yet published" rather than the bracketed
+// label read as punctuation.
+const inlineText = `${fill(ui.version_chip, values)}, ${directionWord}`;
+/**
+ * THE "NONE" CASE STOPPED BEING RARE, SO IT STOPPED BEING SILENT.
+ *
+ * This emitted zero nodes when the described version equalled the released
+ * one, which was correct while 3.0.0 sat unpublished: every page had a real
+ * discrepancy to report and a chip on all of them carried information.
+ *
+ * The package index accepted 3.0.0 on 2026-08-07 and the discrepancy vanished
+ * on all 100 documentation pages at once, so the corpus quietly stopped
+ * stating its version anywhere at all. Measured, not assumed: zero built docs
+ * pages contained the string. The contract asks every page to declare which
+ * library version it describes, so the banner now renders in the "none" case
+ * too, saying the version and that it is current. It stays one quiet line
+ * with no migration link, because there is nothing to migrate to.
+ */
+const visible = true;
+---
+{visible && (form === "banner" ? (
+  <div class:list={["version-chip", "version-chip--banner", "type-body-sm", extraClass]} data-direction={direction}>
+    <p class="version-chip__text">{bannerText}</p>
+    {href && (
+      <a class="version-chip__link" href={href}>{ui.migration_link} ›</a>
+    )}
+  </div>
+) : (
+  <span class:list={["version-chip", "version-chip--inline", "type-mono-sm", extraClass]} data-direction={direction}>
+    <span aria-hidden="true">&nbsp;[{describes}]</span>
+    <span class="visually-hidden">{inlineText}</span>
+  </span>
+))}
+
+<style>
+  /* --- banner ---
+     A <div> before the page's content. Not an <aside>, not role="status" and
+     not aria-live: it is static page content, present on first render, and a
+     live region would announce it out of order on every navigation. */
+  .version-chip--banner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+    background: var(--surface-1);
+    border-inline-start: var(--border-w-accent) solid var(--state-bounded);
+    padding: var(--space-4) var(--space-5);
+    color: var(--ink-2);
+    max-inline-size: min(var(--measure-prose), 100%);
+  }
+  .version-chip__text {
+    margin: 0;
+    min-width: 0;
+  }
+  .version-chip__link {
+    color: var(--ink);
+    align-self: flex-start;
+  }
+  .version-chip__link:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* --- inline ---
+     A bracketed mono label, no border and no fill. It stays in the same inline
+     formatting context as the phrase it qualifies, and the non-breaking space
+     in front of it keeps it from wrapping away on its own. */
+  .version-chip--inline {
+    /* ink3-ok: the inline form sits in prose on --ground or --surface-1, 5.25:1
+       and 4.85:1. The only fill in this file is the banner's --surface-1. */
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  /* Nothing moves. The banner never slides in, never fades in, and is never
+     dismissible. Its two sentences wrap and the link moves to its own line;
+     nothing truncates and nothing collapses. */
+  @media (max-width: 29.9375rem) /* --bp-sm */ {
+    .version-chip--banner {
+      padding: var(--space-3) var(--space-4);
+    }
+  }
+</style>

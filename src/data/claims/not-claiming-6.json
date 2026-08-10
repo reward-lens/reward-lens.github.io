@@ -1,0 +1,14 @@
+{
+ "contentHash": "6581d89c6983388bbb0f646a7250deab",
+ "humanSource": "The project's own statement of what it is not claiming, carried on the limits page.",
+ "immutableIds": [
+  "copy.yaml:limits.not_claiming[5]"
+ ],
+ "label": "Not linear-representation realism.",
+ "limitation": "Not linear-representation realism.",
+ "scope": "What is not being claimed.",
+ "slug": "not-claiming-6",
+ "sourceUrl": "/limits/",
+ "statement": "The portfolio is deliberately built so that most of it survives that hypothesis failing completely.",
+ "type": "limitation"
+}

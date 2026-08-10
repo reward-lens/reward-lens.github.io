@@ -1,0 +1,27 @@
+{
+ "comparator": "> 0",
+ "contentHash": "4867350509418d65a76d07db8c1a856c",
+ "humanSource": "The frozen study \"Value-convergence excess across the fleet beats the capability-matched null\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:0c80d9086ebb0ad9704b88a8eefb01fa",
+  "campaign.adjudication.ATLAS-VCE",
+  "study:campaign-atlas-vce@v1#2008bee7",
+  "spec:2008bee7d02b9461abfd6f12ff7b0ffe",
+  "H-vce"
+ ],
+ "label": "Value-convergence excess across the fleet beats the capability-matched null",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. the vce > 0 margin sits at the null center by construction: the point call passes under the null 0.48 of the time and its power at the threshold-alternative equals that rate; the alpha-exact p-value companion and the registered CI exclusion carry the card's evidence.",
+ "quantity": {
+  "name": "real_vce",
+  "uncertainty": "confidence interval -0.12281662932807336 to -0.009192229234832329",
+  "unit": null,
+  "value": -0.06987390356875109
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full and rb2-helpfulness-512.",
+ "slug": "measured-atlas-vce-real-vce",
+ "sourceUrl": "/evidence/0c80d9086ebb0ad9704b88a8eefb01fa/",
+ "statement": "value-convergence excess on real reward-model pairs beats the capability-matched random-utility null.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full and rb2-helpfulness-512",
+ "type": "measured-result"
+}

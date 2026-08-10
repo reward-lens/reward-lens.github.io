@@ -2,8 +2,10 @@
 title: Feature-reward alignment
 description: Of the interpretable features an SAE finds, which ones is the reward actually paying for?
 section: instruments
-order: 37
+order: 38
 source: docs/content/instruments/feature-alignment.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -95,4 +97,4 @@ It is also observational. A feature aligned with the reward is *correlated* with
 
 The number arrives at trust level **EXPLORATORY**, and with the untrained fallback it is below even that in spirit, a mechanics check rather than a measurement. With a trained SAE the arithmetic is exact, but no calibration provider is wired in this release, so no scorecard yet certifies that a high-alignment feature predicts behavior under optimization. Exploratory means unaudited, not wrong. Use the ranking to find candidate reward-relevant features to investigate; do not yet stake a claim on a single feature. The dependency install is the `[sae]` extra; the meaning of the trust level is [the trust ladder](/docs/discipline/trust-ladder/).
 
-Full signatures and return fields: [`FeatureRewardAlignment`](/docs/reference/measure/#reward_lens.measure.battery.feature.FeatureRewardAlignment).
+Full signatures and return fields: [`FeatureRewardAlignment`](/docs/api/measure/#reward_lens.measure.battery.feature.FeatureRewardAlignment).

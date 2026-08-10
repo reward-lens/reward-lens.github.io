@@ -2,8 +2,10 @@
 title: Prompt SNR
 description: On this axis, is the reward signal actually louder than its own noise?
 section: instruments
-order: 34
+order: 35
 source: docs/content/instruments/prompt-snr.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -81,4 +83,4 @@ It is also not a causal statement and not robust at small $n$. A high SNR on eig
 
 The number arrives at trust level **EXPLORATORY**. The ratio is a well-defined statistic, but no calibration provider is wired in this release, so no scorecard yet maps an SNR to a robustness guarantee. Exploratory means unaudited, not wrong. Use it to rank axes by reliability and to compare a model against itself and others, since the gauge is invariant; do not yet read a threshold as a promise. The route to a calibrated reading is [calibration and organisms](/docs/discipline/calibration-and-organisms/), and the meaning of the trust level is [the trust ladder](/docs/discipline/trust-ladder/).
 
-Full signatures and return fields: [`PromptSNR`](/docs/reference/measure/#reward_lens.measure.battery.snr.PromptSNR).
+Full signatures and return fields: [`PromptSNR`](/docs/api/measure/#reward_lens.measure.battery.snr.PromptSNR).

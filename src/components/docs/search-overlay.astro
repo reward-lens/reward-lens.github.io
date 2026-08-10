@@ -1,0 +1,602 @@
+---
+/**
+ * search-overlay  ·  design/components/search-overlay.md
+ *
+ * Find a page by a word you remember, instantly, offline, without leaving the
+ * page you are on.
+ *
+ * Two rulings the contract left to this packet, both stated here because they
+ * are the ones a later reader will want the reason for.
+ *
+ * 1. **Pagefind's JS API, not its Default UI.** The Default UI ships its own
+ *    stylesheet in its own visual language, and this is the one component
+ *    where that would be visible in a screenshot. Overriding it completely is
+ *    the other option and it means fighting a stylesheet on every release. The
+ *    JS API is also a quarter of the size: `pagefind.js` against
+ *    `pagefind-ui.js` at 119,987 bytes plus `pagefind-ui.css` at 14,482. Every
+ *    colour, length and duration below resolves to tokens.css.
+ *
+ * 2. **Nothing of Pagefind is loaded until the reader opens search.** The
+ *    import is dynamic and lives inside the open handler. A documentation page
+ *    that never opens search transfers zero Pagefind bytes; the index is 1.9 MB
+ *    across 191 files and `pagefind-ui.js` alone is larger than the whole
+ *    40 KB script budget for a documentation page.
+ *
+ * The trigger is absent, not disabled, with scripting off. Same rule as the
+ * theme toggle: a control that cannot act is worse than no control, and the
+ * documentation index and the sidebar are the fallback, both static.
+ *
+ * The result count is announced by the platform rather than by a string this
+ * site would have had to invent. Each option carries aria-setsize and
+ * aria-posinset, so a screen reader says "…, 1 of 7" when the selection lands,
+ * once per settled query. copy.yaml has no count string and HANDOFF.md rule 1
+ * forbids writing one.
+ */
+import { ui } from "../../copy";
+
+interface Props {
+  /** A Pagefind filter, e.g. restricting to /docs/. null searches the site. */
+  scope?: string | null;
+}
+
+const { scope = null } = Astro.props;
+---
+
+<div class="search" data-scope={scope}>
+  <button
+    class="search__trigger type-body-sm"
+    type="button"
+    data-search-open
+    aria-haspopup="dialog"
+  >
+    <span class="search__glyph" aria-hidden="true"></span>
+    <span>{ui.search_open}</span>
+  </button>
+
+  <dialog class="search__dialog" data-search-dialog aria-label={ui.search_open}>
+    <div class="search__panel">
+      <div class="search__field">
+        <label class="visually-hidden" for="search-input">
+          {ui.search_placeholder}
+        </label>
+        <input
+          id="search-input"
+          class="search__input type-body"
+          type="text"
+          role="combobox"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder={ui.search_placeholder}
+          aria-expanded="false"
+          aria-controls="search-results"
+          aria-autocomplete="list"
+          data-search-input
+        />
+        {/*
+          The contract draws a bracketed [Esc]. copy.yaml has no key naming a
+          keyboard key, so the control is a drawn cross with the accessible
+          name copy.yaml already carries for a close control. Escape is stated
+          to the reader in ui.search_hint below, which is the same contract in
+          the place the reader is looking.
+        */}
+        <button
+          class="search__close"
+          type="button"
+          data-search-close
+          aria-label={ui.provenance_close}
+        >
+          <span class="search__cross" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      {/*
+        tabindex="0" because this scrolls and the results inside it are not
+        focusable: the combobox pattern keeps focus in the input and moves the
+        selection with aria-activedescendant, so there is nothing in here for a
+        keyboard to land on. axe reported it as scrollable-region-focusable at
+        390 and 1440 in both themes. One extra tab stop inside a modal dialog
+        is the cost, and a scroll container a keyboard cannot reach is the
+        alternative.
+      */}
+      <div class="search__body" tabindex="0">
+        <p class="search__status type-body-sm" data-search-status role="status"></p>
+        <ul
+          id="search-results"
+          class="search__results"
+          role="listbox"
+          aria-label={ui.search_open}
+          data-search-results
+        >
+        </ul>
+      </div>
+
+      <p class="search__hint type-body-sm">{ui.search_hint}</p>
+    </div>
+  </dialog>
+</div>
+
+<script
+  is:inline
+  type="application/json"
+  data-search-copy
+  set:html={JSON.stringify({
+    noResults: ui.search_no_results,
+    loading: ui.loading,
+    error: ui.error_generic,
+    hint: ui.search_hint,
+  })}
+/>
+
+<script>
+  // Every string below arrives from copy.yaml through the JSON island above.
+  // Nothing user-facing is typed in this file.
+  const root = document.querySelector<HTMLElement>(".search");
+  const dialog = document.querySelector<HTMLDialogElement>("[data-search-dialog]");
+  const input = document.querySelector<HTMLInputElement>("[data-search-input]");
+  const list = document.querySelector<HTMLUListElement>("[data-search-results]");
+  const status = document.querySelector<HTMLElement>("[data-search-status]");
+  const openBtn = document.querySelector<HTMLButtonElement>("[data-search-open]");
+  const closeBtn = document.querySelector<HTMLButtonElement>("[data-search-close]");
+  const copyNode = document.querySelector<HTMLScriptElement>("[data-search-copy]");
+
+  if (root && dialog && input && list && status && openBtn && closeBtn && copyNode) {
+    const copy = JSON.parse(copyNode.textContent ?? "{}");
+    const scope = root.dataset.scope || null;
+
+    type Result = { url: string; title: string; excerpt: string; section: string };
+
+    let pagefind: any = null;
+    let loading: Promise<any> | null = null;
+    let selected = -1;
+    let options: HTMLLIElement[] = [];
+    let token = 0;
+
+    /** Loaded on first open and never on page load. The path is built at run
+     *  time so Vite leaves it alone: it is a post-build artifact of the
+     *  `pagefind --site dist` step, not a module in this graph. */
+    const load = () => {
+      if (pagefind) return Promise.resolve(pagefind);
+      if (!loading) {
+        const path = ["", "pagefind", "pagefind.js"].join("/");
+        loading = import(/* @vite-ignore */ path)
+          .then(async (m: any) => {
+            await m.init();
+            pagefind = m;
+            return m;
+          })
+          .catch(() => {
+            status.textContent = copy.error;
+            return null;
+          });
+      }
+      return loading;
+    };
+
+    const clear = () => {
+      list.replaceChildren();
+      options = [];
+      selected = -1;
+      input.removeAttribute("aria-activedescendant");
+      input.setAttribute("aria-expanded", "false");
+    };
+
+    const select = (i: number) => {
+      if (!options.length) return;
+      options[selected]?.setAttribute("aria-selected", "false");
+      selected = (i + options.length) % options.length;
+      const opt = options[selected];
+      opt.setAttribute("aria-selected", "true");
+      input.setAttribute("aria-activedescendant", opt.id);
+      opt.scrollIntoView({ block: "nearest" });
+    };
+
+    const draw = (found: Result[]) => {
+      clear();
+      if (!found.length) {
+        status.textContent = copy.noResults;
+        return;
+      }
+      status.textContent = "";
+
+      // Grouped by section, and the grouping is a stable partition rather than
+      // a sort: a section appears where its best result did, and inside a
+      // section the results keep Pagefind's relevance order. A plain "heading
+      // when the section changes" pass emitted the same heading three times
+      // when relevance interleaved two sections, which is what it did.
+      const order: string[] = [];
+      const bySection = new Map<string, Result[]>();
+      for (const r of found) {
+        const key = r.section ?? "";
+        if (!bySection.has(key)) {
+          bySection.set(key, []);
+          order.push(key);
+        }
+        bySection.get(key)!.push(r);
+      }
+      const results = order.flatMap((k) => bySection.get(k)!);
+
+      let lastSection = "";
+      results.forEach((r, i) => {
+        if (r.section && r.section !== lastSection) {
+          lastSection = r.section;
+          const head = document.createElement("li");
+          head.className = "search__section type-mono-label";
+          head.setAttribute("role", "presentation");
+          head.textContent = r.section;
+          list.append(head);
+        }
+        const li = document.createElement("li");
+        li.id = `search-result-${i}`;
+        li.className = "search__result";
+        li.setAttribute("role", "option");
+        li.setAttribute("aria-selected", "false");
+        // The count, announced by the platform rather than by a string.
+        li.setAttribute("aria-setsize", String(results.length));
+        li.setAttribute("aria-posinset", String(i + 1));
+        li.dataset.url = r.url;
+
+        const title = document.createElement("span");
+        title.className = "search__result-title type-body-sm";
+        title.textContent = r.title;
+        const excerpt = document.createElement("span");
+        excerpt.className = "search__result-excerpt type-body-sm";
+        excerpt.innerHTML = r.excerpt;
+
+        li.append(title, excerpt);
+        li.addEventListener("click", () => go(li));
+        li.addEventListener("mousemove", () => select(options.indexOf(li)));
+        list.append(li);
+        options.push(li);
+      });
+      input.setAttribute("aria-expanded", "true");
+      // First result selected, never auto-navigated.
+      select(0);
+    };
+
+    const go = (li: HTMLLIElement | undefined) => {
+      if (li?.dataset.url) window.location.href = li.dataset.url;
+    };
+
+    let timer: number | undefined;
+    const query = () => {
+      const q = input.value.trim();
+      const mine = ++token;
+      window.clearTimeout(timer);
+      if (!q) {
+        clear();
+        status.textContent = "";
+        return;
+      }
+      timer = window.setTimeout(async () => {
+        const pf = await load();
+        if (!pf || mine !== token) return;
+        status.textContent = copy.loading;
+        const search = await pf.search(q, scope ? { filters: { scope } } : undefined);
+        if (mine !== token) return;
+        const data = await Promise.all(search.results.slice(0, 20).map((r: any) => r.data()));
+        if (mine !== token) return;
+        draw(
+          data.map((d: any) => ({
+            url: d.url,
+            title: d.meta?.title ?? d.url,
+            excerpt: d.excerpt,
+            section: d.meta?.section ?? "",
+          })),
+        );
+      }, 140);
+    };
+
+    const open = () => {
+      if (dialog.open) return;
+      dialog.showModal();
+      input.focus();
+      void load();
+    };
+
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    openBtn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    input.addEventListener("input", query);
+
+    // Escape returns focus to the trigger. <dialog> handles the trap, the
+    // inert background and Escape itself; this is only the focus return.
+    dialog.addEventListener("close", () => {
+      openBtn.focus();
+    });
+    // Clicking the scrim closes. The panel stops the click reaching the
+    // dialog box, which is the element that fills the viewport.
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) close();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        select(selected + 1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        select(selected - 1);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        go(options[selected]);
+      } else if (e.key === "Escape") {
+        // <dialog> handles Escape natively, and <input type="search"> handles
+        // it FIRST: the browser's own cancel action clears the field and
+        // consumes the key, so the first Escape emptied the box and the second
+        // closed the overlay. Found by driving it, not by reading it. The
+        // input is type="text" now, and this closes on the first press either
+        // way, which is the contract ui.search_hint states to the reader.
+        e.preventDefault();
+        close();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      const t = e.target as HTMLElement | null;
+      const typing =
+        t &&
+        (t.tagName === "INPUT" ||
+          t.tagName === "TEXTAREA" ||
+          t.isContentEditable);
+      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !typing)) {
+        e.preventDefault();
+        open();
+      }
+    });
+  }
+</script>
+
+<style>
+  /* The trigger removes itself with scripting off, like every other control on
+     this site that cannot act without it. */
+  :global(:root:not([data-js])) .search {
+    display: none;
+  }
+
+  .search__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--space-6);
+    padding-inline: var(--space-3);
+    color: var(--ink-2);
+    background: var(--surface-1);
+    /* A focusable boundary is --line-control or nothing: it is the only rule
+       that reaches 3:1, and --surface-1 is one of the two fills it is
+       permitted against. */
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .search__trigger:hover {
+    color: var(--ink);
+  }
+  .search__trigger:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  /* A magnifier drawn from the current colour: a circle and a stroke. A glyph
+     would need a string, and an icon font would need a font. */
+  .search__glyph {
+    inline-size: var(--space-3);
+    block-size: var(--space-3);
+    border: var(--border-w-accent) solid currentColor;
+    border-radius: var(--radius-pill);
+    position: relative;
+    flex: none;
+  }
+  .search__glyph::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 100%;
+    inline-size: var(--space-2);
+    border-block-start: var(--border-w-accent) solid currentColor;
+    transform: rotate(45deg);
+    transform-origin: left center;
+  }
+  /* --- the dialog ------------------------------------------------------- */
+  .search__dialog {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    inline-size: 100%;
+    block-size: 100%;
+    color: var(--ink);
+    z-index: var(--z-overlay);
+  }
+  /* The contract asks for --scrim. THAT TOKEN DOES NOT EXIST in tokens.css,
+     which is frozen and single-owner, and rule 1 forbids inventing the value
+     it would hold. --ground is the page's own ground and is the honest
+     substitute: the page behind is covered rather than dimmed, which is a
+     weaker effect and not a wrong one. Raised once, in P5's completion note.
+     Not blurred either way: a blur is a filter over the whole page and costs a
+     compositor pass on every frame the dialog is open. */
+  .search__dialog::backdrop {
+    background: var(--ground);
+  }
+
+  .search__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    inline-size: min(56rem, 100% - 2 * var(--page-pad));
+    /* Offset from the top rather than centred, because results grow downward. */
+    margin: var(--space-8) auto;
+    max-block-size: calc(100dvh - 2 * var(--space-8));
+    background: var(--surface-2);
+    box-shadow: var(--shadow-overlay);
+    border-radius: var(--radius-2);
+    padding: var(--space-5);
+    min-width: 0;
+  }
+
+  .search__field {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    border-block-end: var(--border-w) solid var(--line-control);
+    padding-block-end: var(--space-3);
+    min-width: 0;
+  }
+  .search__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: var(--ink);
+    padding: 0;
+  }
+  .search__input::placeholder {
+    color: var(--ink-2);
+    opacity: 1;
+  }
+  .search__input:focus {
+    outline: none;
+  }
+  .search__field:focus-within {
+    border-block-end-color: var(--focus);
+  }
+  .search__close {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 48px, from the ramp. A touch target that cannot press Escape. */
+    inline-size: var(--space-7);
+    block-size: var(--space-7);
+    color: var(--ink-2);
+    background: transparent;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    cursor: pointer;
+  }
+  .search__close:hover {
+    color: var(--ink);
+  }
+  .search__close:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  /* A cross drawn from two rules in the current colour. */
+  .search__cross {
+    position: relative;
+    inline-size: var(--space-3);
+    block-size: var(--space-3);
+  }
+  .search__cross::before,
+  .search__cross::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline: 0;
+    border-block-start: var(--border-w-accent) solid currentColor;
+  }
+  .search__cross::before {
+    transform: rotate(45deg);
+  }
+  .search__cross::after {
+    transform: rotate(-45deg);
+  }
+
+  .search__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    min-width: 0;
+  }
+  .search__status {
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .search__status:empty {
+    display: none;
+  }
+  .search__results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .search__hint {
+    color: var(--ink-2);
+    margin: 0;
+    padding-block-start: var(--space-3);
+    border-block-start: var(--border-w) solid var(--line);
+  }
+
+  /* Below --bp-md, full screen. A centred dialog on a phone with a keyboard
+     open leaves no room for results. */
+  @media (max-width: 47.4375rem) /* --bp-md minus one pixel */ {
+    .search__panel {
+      inline-size: 100%;
+      margin: 0;
+      max-block-size: 100dvh;
+      block-size: 100dvh;
+      border-radius: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search__trigger {
+      transition: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* The result rows are created by script, so they never carry this
+     component's scope attribute and every scoped rule below missed them: the
+     rows rendered as unstyled flowing text and Pagefind's <mark> came through
+     in the browser's default yellow, which is the one colour on this site that
+     is not allowed to mean anything. Found in the overlay-open screenshot.
+
+     Everything here is prefixed with .search__dialog, which IS server-rendered,
+     so nothing leaks past the overlay. */
+  .search__dialog .search__section {
+    color: var(--ink-2);
+    margin-block: var(--space-4) var(--space-2);
+  }
+  .search__dialog .search__results > .search__section:first-child {
+    margin-block-start: 0;
+  }
+  .search__dialog .search__result {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border-inline-start: var(--border-w-accent) solid transparent;
+    cursor: pointer;
+    min-width: 0;
+  }
+  /* Fill plus an inset leading rule. Not colour alone. */
+  .search__dialog .search__result[aria-selected="true"] {
+    background: var(--surface-3);
+    border-inline-start-color: var(--ink);
+  }
+  .search__dialog .search__result-title {
+    color: var(--ink);
+    font-weight: 600;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .search__dialog .search__result-excerpt {
+    color: var(--ink-2);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  /* Weight and ink, never a highlighter. Colour on this site is data. */
+  .search__dialog mark {
+    background: transparent;
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>

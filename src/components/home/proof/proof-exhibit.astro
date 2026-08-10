@@ -1,0 +1,164 @@
+---
+/**
+ * One place on the bench: one idea, the record it rests on, the exhibit, and
+ * the link that takes it further.
+ *
+ * The three exhibits share this layout and nothing else. They are deliberately
+ * different objects: one is a figure over a complete per-component artifact,
+ * one has no artifact at all and draws nothing, and one is a count of what an
+ * audit noticed. Three identical cards would have made them look like three
+ * features of a product rather than three findings of different strengths.
+ *
+ * SOURCE ORDER IS THE PHONE ORDER, AND THE PHONE ORDER IS THE RIGHT ONE.
+ * Heading, then the idea, then the record it rests on, then the exhibit, then
+ * the link. The first pass at this put the record column first in the DOM,
+ * which is what the margin track does elsewhere on the site, and on a phone
+ * that opened the section with five rows of `fingerprint` and `graderCalls`
+ * before the reader had met the heading. At --bp-md and up the record moves
+ * into the margin column beside the body by grid placement; the reading order
+ * does not change with the viewport.
+ */
+interface Props {
+  /** Anchor and heading id root. */
+  id: string;
+  heading: string;
+  body: string;
+  /** The link text. From copy.yaml, never composed here. */
+  link: string;
+  href: string;
+  headingLevel?: 3 | 4;
+  class?: string;
+}
+
+const {
+  id,
+  heading,
+  body,
+  link,
+  href,
+  headingLevel = 3,
+  class: extraClass = "",
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h3" | "h4";
+const headingId = `${id}-heading`;
+const hasMargin = Astro.slots.has("margin");
+const hasExhibit = Astro.slots.has("exhibit");
+---
+
+<section
+  class:list={["exhibit", extraClass]}
+  id={id}
+  aria-labelledby={headingId}
+  data-margin={hasMargin ? "true" : undefined}
+  data-exhibit={hasExhibit ? "true" : undefined}
+>
+  <div class="exhibit__body">
+    <Heading class="exhibit__heading type-h2" id={headingId}>{heading}</Heading>
+    <p class="type-body">{body}</p>
+  </div>
+
+  {
+    hasMargin && (
+      <div class="exhibit__margin">
+        <slot name="margin" />
+      </div>
+    )
+  }
+
+  {
+    hasExhibit && (
+      <div class="exhibit__figure">
+        <slot name="exhibit" />
+      </div>
+    )
+  }
+
+  <p class="exhibit__more type-body">
+    <a href={href}>{link}</a>
+  </p>
+</section>
+
+<style>
+  .exhibit {
+    display: grid;
+    gap: var(--space-5);
+    padding-block-start: var(--space-7);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+  }
+
+  .exhibit__body {
+    display: grid;
+    gap: var(--space-5);
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .exhibit__body p {
+    margin: 0;
+  }
+  .exhibit__heading {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+
+  .exhibit__margin {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .exhibit__figure {
+    min-width: 0;
+  }
+
+  .exhibit__more {
+    margin: 0;
+  }
+  /* A link tabbed to must not land under the sticky header. */
+  .exhibit__more a {
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+  }
+
+  /* The doc grid the rest of this site uses: a margin column carrying subject,
+     scope and source, and the body beside it. Below --bp-md there is one
+     column and the same order. */
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .exhibit {
+      grid-template-columns: var(--grid-margin-col) minmax(0, 1fr);
+      column-gap: var(--grid-margin-gap);
+      align-items: start;
+    }
+    /* Explicit placement, because the reading order and the visual order are
+       not the same here and leaving that to auto-flow would make the layout an
+       accident of which slots a caller filled. */
+    .exhibit__body {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .exhibit__margin {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    /* The exhibit spans the whole grid: a figure squeezed into the prose
+       measure is a figure designed once. */
+    .exhibit__figure {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    /* Row 3 when there is a figure above it, row 2 when there is not, so an
+       exhibit that draws nothing does not carry an empty row's gap. */
+    .exhibit[data-exhibit] .exhibit__more {
+      grid-column: 2;
+      grid-row: 3;
+    }
+    .exhibit:not([data-exhibit]) .exhibit__more {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+</style>

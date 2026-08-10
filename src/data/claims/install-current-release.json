@@ -1,0 +1,16 @@
+{
+ "artifact": "pip install reward-lens",
+ "contentHash": "48f13325233f3512c1b01801ab28a86a",
+ "humanSource": "The package index itself, read by the release generator at build time and never from the project's own version file.",
+ "immutableIds": [
+  "src/data/release.json",
+  "reward-lens==3.0.0"
+ ],
+ "label": "pip install reward-lens",
+ "limitation": "This project is early. One person built it, and no result on this site has been independently reproduced. Everything below is what that means concretely.",
+ "scope": "Python 3.10 or newer. The base install needs no GPU, no model download and neither Torch nor Transformers.",
+ "slug": "install-current-release",
+ "sourceUrl": "https://pypi.org/project/reward-lens/",
+ "statement": "Running the install command gets version 3.0.0 from the package index, which was published on 7 August 2026.",
+ "type": "software-capability"
+}

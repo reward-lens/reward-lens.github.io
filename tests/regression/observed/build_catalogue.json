@@ -1,0 +1,50 @@
+{
+ "generator": "build_catalogue",
+ "source": "scripts/build_catalogue.py",
+ "values": {
+  "banned_terms": 399,
+  "banned_terms_by_family": {
+   "campaign card": 27,
+   "errata": 61,
+   "experiment": 10,
+   "hypothesis": 66,
+   "instrument": 95,
+   "kill criterion": 25,
+   "prediction": 18,
+   "project codename": 6,
+   "science": 36,
+   "theorem": 14,
+   "work package": 47
+  },
+  "estimators": 64,
+  "instruments": 95,
+  "library_version": "3.0.0",
+  "open_quantities": 147,
+  "quantities": 190,
+  "refusal_reason_names": [
+   "ACCESS_INSUFFICIENT",
+   "RECORD_INCOMPLETE",
+   "SUBSTRATE_MISMATCH",
+   "PHASE_MISMATCH",
+   "ENVELOPE_VIOLATED",
+   "BELOW_LOD",
+   "ABOVE_LOD_BELOW_LOQ",
+   "ESS_BELOW_FLOOR",
+   "NO_MATCHED_CONTROL",
+   "GAUGE_MISMATCH",
+   "UNIT_MISMATCH",
+   "REFERENCE_UNCERTIFIED",
+   "LABEL_QUALITY_UNKNOWN",
+   "PLAN_NOT_CLOSED",
+   "BUDGET_EXCEEDED",
+   "VOID",
+   "QUANTITY_UNDEFINED"
+  ],
+  "refusal_reasons": 17,
+  "refusal_reasons_sorted_by_remedy": 3,
+  "series": 14,
+  "trust_levels": 4,
+  "wedge_instruments": 51,
+  "wedge_quantities": 112
+ }
+}

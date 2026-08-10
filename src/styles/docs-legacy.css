@@ -1,229 +1,480 @@
-/* Styles for the rl-* markup the docs corpus carries (chips, tier keys,
-   trust dots, grid cards). Ported from the original docs stylesheet so the
-   26 pages using this markup render as authored; colors come from the docs
-   palette pipeline (docs/diagrams/palette.json), the same source as the
-   shipped diagram SVGs, so chips and figures on a page stay one language. */
+/* =============================================================================
+   THE DOCUMENTATION CORPUS
 
-:root {
-  --rl-tier-observational: #0d9488;
-  --rl-tier-causal: #b45309;
-  --rl-tier-vulnerability: #be123c;
-  --rl-trust-exploratory: #94a3b8;
-  --rl-trust-calibrated: #3b82f6;
-  --rl-trust-registered: #7c3aed;
-  --rl-trust-adjudicated: #15803d;
-  --rl-gauge: #0891b2;
-  --rl-accent: #e85d2c;
+   Two jobs, both of them about markup this site does not author.
+
+   1. Prose typography for the eighty-four ported pages. The port rewrites
+      delimiters, admonitions, figures and links and passes everything else
+      through byte-identical, so the corpus arrives as plain markdown elements
+      with no classes on them. They are styled by selector here rather than by
+      a role class on each node, which is why this file writes
+      `var(--type-body-size)` in a few places: it is applying a type role to
+      markup it cannot add a class to. D-28's rule is that a role is one class
+      and never a composite custom property, and every declaration below takes
+      all four sub-tokens together, which is what the class does.
+
+   2. The `rl-*` chip, key and card markup the corpus carries inline. That
+      markup is authored in the library's own pages and this site cannot change
+      it, so the classes stay and their treatment moves onto this palette.
+
+   What changed, and it is the whole reason this file was rewritten. The old
+   version carried its own nine-colour palette in hex, lifted from the library's
+   diagram pipeline, and painted white text on it. That produced 131 of the
+   608 lines on gate 14's ratchet, every one of them a contrast failure, and it
+   also broke the site's own rule that colour is data and nothing else.
+
+   Now: a chip is a border and a label. The four trust rungs keep their colour,
+   because a trust level IS data, and they carry it the way trust-badge.astro
+   already does, on the marker and the border with the text at --ink. Every
+   other chip is structural and takes no hue at all. The instrument tier
+   (observational, causal, vulnerability) is named in its own text, so nothing
+   is lost by not colouring it, and the reader who is colour-blind gains a page
+   they can read.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Prose
+   -------------------------------------------------------------------------- */
+.docs-prose {
+  color: var(--ink);
+  max-inline-size: min(var(--measure-prose), 100%);
+  min-width: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-  --rl-tier-observational: #2dd4bf;
-  --rl-tier-causal: #f59e0b;
-  --rl-tier-vulnerability: #fb7185;
-  --rl-trust-exploratory: #64748b;
-  --rl-trust-calibrated: #60a5fa;
-  --rl-trust-registered: #a78bfa;
-  --rl-trust-adjudicated: #22c55e;
-  --rl-gauge: #22d3ee;
-  --rl-accent: #fb8c5a;
-}
+.docs-prose > * {
+  min-width: 0;
 }
 
-:root[data-theme="dark"] {
-  --rl-tier-observational: #2dd4bf;
-  --rl-tier-causal: #f59e0b;
-  --rl-tier-vulnerability: #fb7185;
-  --rl-trust-exploratory: #64748b;
-  --rl-trust-calibrated: #60a5fa;
-  --rl-trust-registered: #a78bfa;
-  --rl-trust-adjudicated: #22c55e;
-  --rl-gauge: #22d3ee;
-  --rl-accent: #fb8c5a;
+.docs-prose h1 {
+  font-family: var(--font-sans);
+  font-size: var(--type-display-2-size);
+  line-height: var(--type-display-2-lh);
+  letter-spacing: var(--type-display-2-track);
+  font-weight: var(--type-display-2-weight);
+  color: var(--ink);
+  max-inline-size: min(var(--measure-heading), 100%);
+  margin: 0 0 var(--space-5);
 }
 
-:root[data-theme="light"] {
-  --rl-tier-observational: #0d9488;
-  --rl-tier-causal: #b45309;
-  --rl-tier-vulnerability: #be123c;
-  --rl-trust-exploratory: #94a3b8;
-  --rl-trust-calibrated: #3b82f6;
-  --rl-trust-registered: #7c3aed;
-  --rl-trust-adjudicated: #15803d;
-  --rl-gauge: #0891b2;
-  --rl-accent: #e85d2c;
+.docs-prose h2 {
+  font-family: var(--font-sans);
+  font-size: var(--type-h2-size);
+  line-height: var(--type-h2-lh);
+  letter-spacing: var(--type-h2-track);
+  font-weight: var(--type-h2-weight);
+  color: var(--ink);
+  max-inline-size: min(var(--measure-heading), 100%);
+  margin: var(--space-7) 0 var(--space-3);
+  padding-block-end: var(--space-2);
+  border-block-end: var(--border-w) solid var(--line);
 }
 
+.docs-prose h3,
+.docs-prose h4 {
+  font-family: var(--font-sans);
+  font-size: var(--type-h3-size);
+  line-height: var(--type-h3-lh);
+  letter-spacing: var(--type-h3-track);
+  font-weight: var(--type-h3-weight);
+  color: var(--ink);
+  max-inline-size: min(var(--measure-heading), 100%);
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+.docs-prose p,
+.docs-prose ul,
+.docs-prose ol {
+  margin-block: var(--space-4);
+}
+
+.docs-prose ul,
+.docs-prose ol {
+  padding-inline-start: var(--space-5);
+}
+
+.docs-prose li {
+  margin-block: var(--space-1);
+}
+
+.docs-prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm-size);
+  line-height: var(--type-mono-sm-lh);
+  letter-spacing: var(--type-mono-sm-track);
+  font-weight: var(--type-mono-sm-weight, 400); /* DESIGN.md §6.2 */
+  background: var(--code-inline-bg);
+  border-radius: var(--radius-1);
+  padding-inline: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.docs-prose pre {
+  background: var(--code-bg);
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-2);
+  padding: var(--space-4);
+  overflow-x: auto;
+  max-inline-size: 100%;
+  min-width: 0;
+}
+
+.docs-prose pre code {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm-size);
+  line-height: var(--type-mono-base-lh);
+  letter-spacing: var(--type-mono-sm-track);
+  font-weight: var(--type-mono-sm-weight, 400); /* DESIGN.md §6.2 */
+}
+
+.docs-prose blockquote {
+  margin: var(--space-5) 0;
+  padding-inline-start: var(--space-4);
+  border-inline-start: var(--border-w-accent) solid var(--line-strong);
+  color: var(--ink-2);
+}
+
+.docs-prose hr {
+  border: 0;
+  border-block-start: var(--border-w) solid var(--line);
+  margin-block: var(--space-7);
+}
+
+/* A wide table scrolls inside its own container and the page body never
+   scrolls horizontally. HANDOFF.md trap 2.
+
+   That was the comment and it was not the behaviour. There is no container:
+   the port emits GFM pipe tables, so a ported table is a bare <table> that is a
+   direct child of .docs-prose, and `inline-size: max-content` on it with
+   nothing to scroll inside pushed the page sideways on 23 routes. Gate 19
+   counted 138 of its 198 failures here, at every width, including 1920.
+
+   `overflow` does not apply to a table box: it applies to block, flex and grid
+   containers, and `display: table` is none of those, so `overflow-x: auto` on
+   the table computes to `visible` and the browser reports it as such. What it
+   did instead was make `max-inline-size` bite, which compresses a table down to
+   its MIN-CONTENT width and no further. That closed 110 of the 138 and left the
+   tables whose min-content is wider than a phone: /docs/instruments/ still ran
+   to 497px inside a 280px column.
+
+   So `display: block`, which does make the table a scroll container, and the
+   two things it costs are paid for below rather than accepted:
+
+     · thead and tbody stay aligned, because consecutive proper table children
+       share one anonymous table box. Measured on /docs/instruments/grader-card/
+       at 390 and 1440: identical column offsets before and after.
+     · `display: block` drops the table's own semantics in Safari with
+       VoiceOver. Docs.astro restores the roles and adds tabindex to the ones
+       that actually scroll, because a scroll container a keyboard cannot reach
+       is the defect this rule would otherwise trade for. */
+.docs-prose table {
+  display: block;
+  overflow-x: auto;
+  max-inline-size: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--type-body-sm-size);
+  line-height: var(--type-body-sm-lh);
+  letter-spacing: var(--type-body-sm-track);
+  font-weight: var(--type-body-sm-weight, 400); /* DESIGN.md §6.2 */
+  border-collapse: collapse;
+  /* max-content, not 100%: at 100% a label column wraps to three lines inside
+     a container that is already scrolling. */
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
+
+.docs-prose th,
+.docs-prose td {
+  border: var(--border-w) solid var(--line);
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  vertical-align: top;
+}
+
+.docs-prose th {
+  background: var(--surface-2);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.docs-prose img,
+.docs-prose svg {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+/* Mathematics renders to MathML at build time: no KaTeX stylesheet, no KaTeX
+   fonts, nothing to lay out here. See astro.config.mjs for the ruling.
+
+   NO overflow on inline maths. It was `overflow-x: auto`, which makes every
+   one of the eleven inline expressions on a page a scrollable region, and axe
+   reported all eleven as `scrollable-region-focusable` at four widths in both
+   themes. Inline maths in this corpus is a symbol or two and belongs in the
+   line, not in a box. Display maths does get a scroll container, and the
+   layout marks it focusable when it actually scrolls. The v3 corpus contains
+   none today, measured in dist/, and the rule is here so the first one the
+   library writes does not push the page sideways. */
+.docs-prose .katex {
+  max-inline-size: 100%;
+}
+
+/* Display mathematics scrolls. The rule used to be on `.katex-display`, which
+   is a class the HTML renderer emits and the MathML renderer does not: with
+   `output: "mathml"` KaTeX emits `<span class="katex"><math display="block">`
+   and nothing carries that class. The corpus has 21 display expressions across
+   15 pages, so the rule was not dormant, it was missing, and gate 19 counted it
+   at 320, 360 and 390 on nine routes.
+
+   The overflow goes on the `math` box itself. `.katex` around it is an inline
+   box, and `max-inline-size` does nothing on one. */
+.docs-prose math[display="block"] {
+  display: block;
+  overflow-x: auto;
+  /* Explicit, and it is the whole reason this rule has three lines. When one
+     axis is not `visible` the other computes to `auto`, so `overflow-x: auto`
+     alone made every display expression a VERTICAL scroll container too, and
+     MathML line boxes run about 2px past their content box: scrollHeight 43
+     against clientHeight 41 on /docs/training-loops/tilt-susceptibility/. axe
+     reported scrollable-region-focusable on all 30 of them, on a region that
+     scrolls two pixels and has nothing in it to reach. The padding pays for
+     those two pixels so `hidden` clips nothing. */
+  overflow-y: hidden;
+  padding-block: var(--space-1);
+  max-inline-size: 100%;
+}
+
+/* An expression written inline that is in fact a display expression.
+   `/docs/instruments/credit/` carries one 400px wide in a 280px column and
+   `/docs/instruments/heritability/` one at 301px, and MathML does not line
+   break, so both pushed the page sideways: gate 19's last 8 failures after the
+   wrap policy landed, at 320, 360 and 390 in both themes.
+
+   The selector is the narrowest one that describes the case: an expression that
+   is the ONLY thing in its paragraph is already a display expression in
+   everything but the delimiter the author typed. Scrolling `.katex` in general
+   was measured and rejected: `display: inline-block` on every inline
+   expression changes the baseline of the line box that holds it, and it moved
+   /docs/theory/bradley-terry/ by 137px at 320 to fix a page it is not on. With
+   this selector the only paragraphs that move are the ones that hold nothing
+   else, which is the same thing the display rule above already does to them.
+
+   `overflow-y: hidden` and the padding for the same reason as the display rule
+   directly above: one axis not `visible` makes the other `auto`, and MathML
+   line boxes run about 2px past their content box, so without this every one of
+   these becomes a vertical scroll container with nothing in it to reach. */
+.docs-prose p > .katex:only-child {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: var(--space-1);
+  max-inline-size: 100%;
+}
+
+/* Kept: an HTML-rendered display expression, if the renderer is ever switched
+   back, still scrolls rather than pushing the page sideways. */
+.docs-prose .katex-display {
+  display: block;
+  overflow-x: auto;
+  max-inline-size: 100%;
+}
+
+/* -----------------------------------------------------------------------------
+   The rl-* markup the corpus carries inline
+   -------------------------------------------------------------------------- */
 .rl-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: var(--space-2);
   align-items: center;
-  margin: 0.15rem 0 0.7rem;
+  margin-block: var(--space-2) var(--space-4);
+  min-width: 0;
 }
 
 .rl-chip {
   display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  padding: 0.14em 0.62em;
-  border-radius: var(--r-pill);
-  border: 1px solid currentColor;
-  font-family: var(--font-ui);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  line-height: 1.55;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-
-.rl-chip .rl-chip__k {
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  opacity: 0.65;
-}
-
-.rl-chip--obs {
-  color: var(--rl-tier-observational);
-}
-.rl-chip--causal {
-  color: var(--rl-tier-causal);
-}
-.rl-chip--vuln {
-  color: var(--rl-tier-vulnerability);
-}
-.rl-chip--gauge {
-  color: var(--rl-gauge);
-}
-.rl-chip--works {
+  align-items: baseline;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  border: var(--border-w) solid var(--line-strong);
   color: var(--ink-2);
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm-size);
+  line-height: var(--type-mono-base-lh);
+  letter-spacing: var(--type-mono-sm-track);
+  font-weight: var(--type-mono-sm-weight, 400); /* DESIGN.md §6.2 */
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.rl-chip--fill,
+/* The key half of a two-part chip ("access RECORD"). It used to be the same
+   colour at 65% opacity, which is how a 4.5:1 pair becomes a 3:1 one without
+   anybody writing a colour down. It is --ink-3 now, which is legible on the
+   ground this chip sits on and is not legible on a fill, which is why this
+   file gives chips no fill. */
+.rl-chip .rl-chip__k {
+  color: var(--ink-3); /* ink3-ok: a chip has no fill, so this is on --ground at 5.25:1, and no chip in the corpus sits in a table cell */
+}
+
+/* The four trust rungs are the only coloured chips, because a trust level is
+   data. Colour sits on the border and on the dot, never under the text, which
+   is the ruling trust-badge.astro already carries: --trust-1 as text on a
+   raised surface does not clear AA body. */
 .rl-chip--exploratory,
 .rl-chip--calibrated,
 .rl-chip--registered,
 .rl-chip--adjudicated {
-  border-color: transparent;
-  color: #fff;
+  color: var(--ink);
 }
+
+.rl-chip--exploratory::before,
+.rl-chip--calibrated::before,
+.rl-chip--registered::before,
+.rl-chip--adjudicated::before {
+  content: "";
+  /* 6px, the same optical size as the trust-badge marker, so the corpus's
+     chips and the site's own read as one family. */
+  inline-size: calc(var(--space-1) * 1.5);
+  block-size: calc(var(--space-1) * 1.5);
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  align-self: center;
+  flex: none;
+}
+
 .rl-chip--exploratory {
-  background: var(--rl-trust-exploratory);
+  border-color: var(--trust-1);
+}
+.rl-chip--exploratory::before {
+  background: var(--trust-1);
 }
 .rl-chip--calibrated {
-  background: var(--rl-trust-calibrated);
+  border-color: var(--trust-2);
+}
+.rl-chip--calibrated::before {
+  background: var(--trust-2);
 }
 .rl-chip--registered {
-  background: var(--rl-trust-registered);
+  border-color: var(--trust-3);
+}
+.rl-chip--registered::before {
+  background: var(--trust-3);
 }
 .rl-chip--adjudicated {
-  background: var(--rl-trust-adjudicated);
+  border-color: var(--trust-4);
+}
+.rl-chip--adjudicated::before {
+  background: var(--trust-4);
+}
+
+/* `--fill` was the modifier that painted a chip and put white text on it.
+   Nothing paints now, so it has nothing to say, and it stays as a selector
+   only because it is in the ported markup. */
+.rl-chip--fill {
+  background: transparent;
+}
+
+/* The instrument tier. It is named in the chip's own text, so it needs no hue,
+   and the tier is a classification rather than a measurement. */
+.rl-chip--obs,
+.rl-chip--causal,
+.rl-chip--vuln,
+.rl-chip--gauge,
+.rl-chip--works {
+  color: var(--ink-2);
+  border-color: var(--line-strong);
 }
 
 .rl-badge {
   display: inline-block;
-  padding: 0.12em 0.6em;
-  border-radius: var(--r-pill);
-  font-family: var(--font-ui);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #fff;
-}
-.rl-badge--observational {
-  background: var(--rl-tier-observational);
-}
-.rl-badge--causal {
-  background: var(--rl-tier-causal);
-}
-.rl-badge--vulnerability {
-  background: var(--rl-tier-vulnerability);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  border: var(--border-w) solid var(--line-strong);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-label-size);
+  line-height: var(--type-mono-label-lh);
+  letter-spacing: var(--type-mono-label-track);
+  font-weight: var(--type-mono-label-weight);
+  text-transform: var(--type-mono-label-transform);
 }
 
 .rl-readout {
-  border-left: 3px solid var(--rl-accent);
-  padding: 0.2rem 0 0.2rem 0.9rem;
-  margin: 0.6rem 0 1.2rem;
+  border-inline-start: var(--border-w-accent) solid var(--line-strong);
+  padding: var(--space-1) 0 var(--space-1) var(--space-4);
+  margin: var(--space-3) 0 var(--space-5);
   color: var(--ink-2);
-  font-size: var(--text-sm);
+  min-width: 0;
 }
 
 .rl-key {
-  font-size: var(--text-sm);
   color: var(--ink-2);
-}
-.rl-key .rl-dot {
-  display: inline-block;
-  width: 0.7em;
-  height: 0.7em;
-  border-radius: 50%;
-  margin-right: 0.25em;
-  vertical-align: middle;
-}
-.rl-dot--observational {
-  background: var(--rl-tier-observational);
-}
-.rl-dot--causal {
-  background: var(--rl-tier-causal);
-}
-.rl-dot--vulnerability {
-  background: var(--rl-tier-vulnerability);
+  min-width: 0;
 }
 
+.rl-key .rl-dot {
+  display: inline-block;
+  inline-size: calc(var(--space-1) * 1.5);
+  block-size: calc(var(--space-1) * 1.5);
+  border-radius: var(--radius-pill);
+  margin-inline-end: var(--space-1);
+  vertical-align: middle;
+  background: var(--ink-3); /* ink3-ok: a 6px dot is non-text, 3:1 under WCAG 1.4.11, and this is 5.25:1 on --ground */
+}
+
+/* The trust word in running prose. Its dot carries the rung; the word itself
+   stays at reading contrast. */
 .rl-trust {
   display: inline-flex;
   align-items: center;
-  gap: 0.3em;
+  gap: var(--space-1);
+  color: var(--ink);
   font-weight: 600;
 }
+
 .rl-trust::before {
   content: "";
-  width: 0.6em;
-  height: 0.6em;
-  border-radius: 50%;
-  background: currentColor;
-}
-.rl-trust--exploratory {
-  color: var(--rl-trust-exploratory);
-}
-.rl-trust--calibrated {
-  color: var(--rl-trust-calibrated);
-}
-.rl-trust--registered {
-  color: var(--rl-trust-registered);
-}
-.rl-trust--adjudicated {
-  color: var(--rl-trust-adjudicated);
+  inline-size: calc(var(--space-1) * 1.5);
+  block-size: calc(var(--space-1) * 1.5);
+  border-radius: var(--radius-pill);
+  background: var(--ink-3); /* ink3-ok: non-text, 5.25:1 on --ground */
+  flex: none;
 }
 
-/* Landing galleries: the "grid cards" markup passes through the port. */
-.prose .grid.cards > ul {
+.rl-trust--exploratory::before {
+  background: var(--trust-1);
+}
+.rl-trust--calibrated::before {
+  background: var(--trust-2);
+}
+.rl-trust--registered::before {
+  background: var(--trust-3);
+}
+.rl-trust--adjudicated::before {
+  background: var(--trust-4);
+}
+
+/* Landing galleries: the MkDocs "grid cards" markup passes through the port. */
+.docs-prose .grid.cards > ul {
   list-style: none;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: var(--space-3);
 }
-.prose .grid.cards > ul > li {
-  border: 1px solid var(--line);
-  border-radius: var(--r-card);
-  background: var(--bg-raised);
-  padding: var(--sp-3) var(--sp-4);
+
+.docs-prose .grid.cards > ul > li {
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-2);
+  background: var(--surface-1);
+  padding: var(--space-3) var(--space-4);
   margin: 0;
+  min-width: 0;
 }
-.prose .grid.cards.rl-obs > ul > li {
-  border-left: 3px solid var(--rl-tier-observational);
-}
-.prose .grid.cards.rl-cau > ul > li {
-  border-left: 3px solid var(--rl-tier-causal);
-}
-.prose .grid.cards.rl-vul > ul > li {
-  border-left: 3px solid var(--rl-tier-vulnerability);
+
+/* The three tier modifiers on a card gallery. A leading rule rather than a
+   fill, and it is the tier the page itself names in its heading. */
+.docs-prose .grid.cards.rl-obs > ul > li,
+.docs-prose .grid.cards.rl-cau > ul > li,
+.docs-prose .grid.cards.rl-vul > ul > li {
+  border-inline-start: var(--border-w-accent) solid var(--line-strong);
 }

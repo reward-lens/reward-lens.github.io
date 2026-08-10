@@ -1,0 +1,1194 @@
+{
+ "counts": {
+  "open": 147,
+  "claimedByAnInstrument": 109,
+  "unclaimed": 38
+ },
+ "targets": [
+  {
+   "quantity": "artifact.distillation_delta",
+   "wouldClose": "K1 The distillation gap, work package W6.3",
+   "instrument": "K1",
+   "instrumentName": "The distillation gap",
+   "workPackage": "W6.3",
+   "claimed": true
+  },
+  {
+   "quantity": "baseline.best_score",
+   "wouldClose": "M3 Dumb-baseline bank, work package W3.7",
+   "instrument": "M3",
+   "instrumentName": "Dumb-baseline bank",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "baseline.margin",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "calibration.transfer_t32",
+   "wouldClose": "K2 Planted-to-real transfer coefficient, work package W6.6",
+   "instrument": "K2",
+   "instrumentName": "Planted-to-real transfer coefficient",
+   "workPackage": "W6.6",
+   "claimed": true
+  },
+  {
+   "quantity": "credit.localiser_quality",
+   "wouldClose": "G4 Localiser scoring, done validly",
+   "instrument": "G4",
+   "instrumentName": "Localiser scoring, done validly",
+   "workPackage": null,
+   "claimed": true
+  },
+  {
+   "quantity": "credit.successor_representation",
+   "wouldClose": "G5 Successor representation",
+   "instrument": "G5",
+   "instrumentName": "Successor representation",
+   "workPackage": null,
+   "claimed": true
+  },
+  {
+   "quantity": "env.flakiness",
+   "wouldClose": "A7 Environment flakiness, work package W3.2",
+   "instrument": "A7",
+   "instrumentName": "Environment flakiness",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.allfail_fraction",
+   "wouldClose": "E2 Degenerate and all-fail group fraction, work package W3.5",
+   "instrument": "E2",
+   "instrumentName": "Degenerate and all-fail group fraction",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.amplifier_safety",
+   "wouldClose": "E4 Amplifier safety, work package W3.5",
+   "instrument": "E4",
+   "instrumentName": "Amplifier safety",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.clip_fraction_effect",
+   "wouldClose": "E5 Clip and mask accounting, work package W3.5",
+   "instrument": "E5",
+   "instrumentName": "Clip and mask accounting",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.degenerate_fraction",
+   "wouldClose": "E2 Degenerate and all-fail group fraction, work package W3.5",
+   "instrument": "E2",
+   "instrumentName": "Degenerate and all-fail group fraction",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.noise_attribution",
+   "wouldClose": "E3 Signal-versus-noise share of the gradient, and its attribution, work package W3.5",
+   "instrument": "E3",
+   "instrumentName": "Signal-versus-noise share of the gradient, and its attribution",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.noise_share",
+   "wouldClose": "E3 Signal-versus-noise share of the gradient, and its attribution, work package W3.5",
+   "instrument": "E3",
+   "instrumentName": "Signal-versus-noise share of the gradient, and its attribution",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "estimator.spec",
+   "wouldClose": "E1 Estimator specification, recorded, work package W3.5",
+   "instrument": "E1",
+   "instrumentName": "Estimator specification, recorded",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "exploit.transfer_matrix",
+   "wouldClose": "I7 Exploit transfer graph",
+   "instrument": "I7",
+   "instrumentName": "Exploit transfer graph",
+   "workPackage": null,
+   "claimed": true
+  },
+  {
+   "quantity": "frontier.concomitant_bon",
+   "wouldClose": "N4 Surrogate conditions and the concomitant of best-of-n, work package W3.8",
+   "instrument": "N4",
+   "instrumentName": "Surrogate conditions and the concomitant of best-of-n",
+   "workPackage": "W3.8",
+   "claimed": true
+  },
+  {
+   "quantity": "frontier.gold_vs_kl",
+   "wouldClose": "N1 The reward-versus-gold frontier, work package W3.8",
+   "instrument": "N1",
+   "instrumentName": "The reward-versus-gold frontier",
+   "workPackage": "W3.8",
+   "claimed": true
+  },
+  {
+   "quantity": "frontier.prentice_checklist",
+   "wouldClose": "N4 Surrogate conditions and the concomitant of best-of-n, work package W3.8",
+   "instrument": "N4",
+   "instrumentName": "Surrogate conditions and the concomitant of best-of-n",
+   "workPackage": "W3.8",
+   "claimed": true
+  },
+  {
+   "quantity": "frontier.tail_index",
+   "wouldClose": "N3 Reward tail index, work package W3.8",
+   "instrument": "N3",
+   "instrumentName": "Reward tail index",
+   "workPackage": "W3.8",
+   "claimed": true
+  },
+  {
+   "quantity": "frontier.visibility_horizon",
+   "wouldClose": "N2 The visibility horizon, work package W3.8",
+   "instrument": "N2",
+   "instrumentName": "The visibility horizon",
+   "workPackage": "W3.8",
+   "claimed": true
+  },
+  {
+   "quantity": "gate.bunching_elasticity",
+   "wouldClose": "I2 Bunching elasticity, work package W4.5",
+   "instrument": "I2",
+   "instrumentName": "Bunching elasticity",
+   "workPackage": "W4.5",
+   "claimed": true
+  },
+  {
+   "quantity": "gate.deadzone_fraction",
+   "wouldClose": "I3 Gradient dead-zone fraction, work package W4.5",
+   "instrument": "I3",
+   "instrumentName": "Gradient dead-zone fraction",
+   "workPackage": "W4.5",
+   "claimed": true
+  },
+  {
+   "quantity": "gate.mccrary_statistic",
+   "wouldClose": "I1 Density discontinuity at a reward gate, work package W4.5",
+   "instrument": "I1",
+   "instrumentName": "Density discontinuity at a reward gate",
+   "workPackage": "W4.5",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.abstention_rate",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.allocation",
+   "wouldClose": "A5 Decision study: optimal allocation, work package W3.2",
+   "instrument": "A5",
+   "instrumentName": "Decision study: optimal allocation",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.attenuation",
+   "wouldClose": "A3 Attenuation factor, work package W3.2",
+   "instrument": "A3",
+   "instrumentName": "Attenuation factor",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.blackwell_order",
+   "wouldClose": "A4 Blackwell order and deficiency, work package W3.2",
+   "instrument": "A4",
+   "instrumentName": "Blackwell order and deficiency",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.card",
+   "wouldClose": "D7 The grader card, work package W3.4",
+   "instrument": "D7",
+   "instrumentName": "The grader card",
+   "workPackage": "W3.4",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.circuit_overlap",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.component_attribution",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.component_patch_effect",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.composition",
+   "wouldClose": "B3 Composition tree and counterfactual composition, work package W3.3",
+   "instrument": "B3",
+   "instrumentName": "Composition tree and counterfactual composition",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.concept_dose_slope",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.contested_axis",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.counterfactual_score",
+   "wouldClose": "B3 Composition tree and counterfactual composition, work package W3.3",
+   "instrument": "B3",
+   "instrumentName": "Composition tree and counterfactual composition",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.coverage_disparity",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.criterion_coherence",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.crystallization_depth",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.curl_mass",
+   "wouldClose": "B1 Curl mass and the harmonic split, work package W3.3",
+   "instrument": "B1",
+   "instrumentName": "Curl mass and the harmonic split",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.dark_fraction",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.design_balance",
+   "wouldClose": "A2 Variance components and gauge R&R, work package W3.2",
+   "instrument": "A2",
+   "instrumentName": "Variance components and gauge R&R",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.distortion_index",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.effective_group_size",
+   "wouldClose": "A1 Effective group size, work package W3.2",
+   "instrument": "A1",
+   "instrumentName": "Effective group size",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.eval_awareness",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.feature_alignment",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.flip_rate",
+   "wouldClose": "A6 Grader stochasticity profile, work package W3.2",
+   "instrument": "A6",
+   "instrumentName": "Grader stochasticity profile",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.grr_percent",
+   "wouldClose": "A2 Variance components and gauge R&R, work package W3.2",
+   "instrument": "A2",
+   "instrumentName": "Variance components and gauge R&R",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.harmonic_mass",
+   "wouldClose": "B1 Curl mass and the harmonic split, work package W3.3",
+   "instrument": "B1",
+   "instrumentName": "Curl mass and the harmonic split",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.induced_variance",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.knowledge_utilization",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.legibility_frontier",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.ndc",
+   "wouldClose": "A2 Variance components and gauge R&R, work package W3.2",
+   "instrument": "A2",
+   "instrumentName": "Variance components and gauge R&R",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.null_reach",
+   "wouldClose": "B3 Composition tree and counterfactual composition, work package W3.3",
+   "instrument": "B3",
+   "instrumentName": "Composition tree and counterfactual composition",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.objective_geometry",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.path_effect",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.prompt_snr",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.receipt_reliance",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.robustness_snr",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.score_distribution",
+   "wouldClose": "A6 Grader stochasticity profile, work package W3.2",
+   "instrument": "A6",
+   "instrumentName": "Grader stochasticity profile",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.score_sigma",
+   "wouldClose": "A6 Grader stochasticity profile, work package W3.2",
+   "instrument": "A6",
+   "instrumentName": "Grader stochasticity profile",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.sep_distance",
+   "wouldClose": "B5 Scalar-representability bound, work package W3.3",
+   "instrument": "B5",
+   "instrumentName": "Scalar-representability bound",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.silent_zero_rate",
+   "wouldClose": "B4 Silent-zero and abstention rate, work package W3.3",
+   "instrument": "B4",
+   "instrumentName": "Silent-zero and abstention rate",
+   "workPackage": "W3.3",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.skepticism",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.style_share",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.surface_bias_d",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.tail_index",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.term_conflict",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.value_convergence_excess",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "grader.variance_components",
+   "wouldClose": "A2 Variance components and gauge R&R, work package W3.2",
+   "instrument": "A2",
+   "instrumentName": "Variance components and gauge R&R",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "grader.verification_score",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "instrument.effect",
+   "wouldClose": "M2 Instrument effect, work package W3.7",
+   "instrument": "M2",
+   "instrumentName": "Instrument effect",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "instrument.error_correlation",
+   "wouldClose": "M9 Incremental validity, work package W3.7",
+   "instrument": "M9",
+   "instrumentName": "Incremental validity",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "instrument.incremental_validity",
+   "wouldClose": "M9 Incremental validity, work package W3.7",
+   "instrument": "M9",
+   "instrumentName": "Incremental validity",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "instrument.interp_coverage",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "instrument.recovery_auc",
+   "wouldClose": "C3 Instrument recovery AUC, work package W5.5",
+   "instrument": "C3",
+   "instrumentName": "Instrument recovery AUC",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "instrument.shelf_life",
+   "wouldClose": "K3 Shelf life of a readout, work package W6.8",
+   "instrument": "K3",
+   "instrumentName": "Shelf life of a readout",
+   "workPackage": "W6.8",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.acute_effect",
+   "wouldClose": "C5 Acute versus chronic intervention, work package W5.5",
+   "instrument": "C5",
+   "instrumentName": "Acute versus chronic intervention",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.att_staggered",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "intervention.chronic_effect",
+   "wouldClose": "C5 Acute versus chronic intervention, work package W5.5",
+   "instrument": "C5",
+   "instrumentName": "Acute versus chronic intervention",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.dissociation",
+   "wouldClose": "C7 Double dissociation, work package W5.5",
+   "instrument": "C7",
+   "instrumentName": "Double dissociation",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.ec50",
+   "wouldClose": "C4 Erasure, with the head-to-head that is now mandatory, work package W5.5",
+   "instrument": "C4",
+   "instrumentName": "Erasure, with the head-to-head that is now mandatory",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.emax",
+   "wouldClose": "C4 Erasure, with the head-to-head that is now mandatory, work package W5.5",
+   "instrument": "C4",
+   "instrumentName": "Erasure, with the head-to-head that is now mandatory",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.erasure_cost",
+   "wouldClose": "C4 Erasure, with the head-to-head that is now mandatory, work package W5.5",
+   "instrument": "C4",
+   "instrumentName": "Erasure, with the head-to-head that is now mandatory",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.hill_n",
+   "wouldClose": "C4 Erasure, with the head-to-head that is now mandatory, work package W5.5",
+   "instrument": "C4",
+   "instrumentName": "Erasure, with the head-to-head that is now mandatory",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.rescue_fraction",
+   "wouldClose": "C6 Rescue, work package W5.5",
+   "instrument": "C6",
+   "instrumentName": "Rescue",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "intervention.therapeutic_index",
+   "wouldClose": "C4 Erasure, with the head-to-head that is now mandatory, work package W5.5",
+   "instrument": "C4",
+   "instrumentName": "Erasure, with the head-to-head that is now mandatory",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "judge.commitment_position",
+   "wouldClose": "C8 Jacobian-corrected verdict direction, work package W5.5",
+   "instrument": "C8",
+   "instrumentName": "Jacobian-corrected verdict direction",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "judge.verdict_direction",
+   "wouldClose": "C8 Jacobian-corrected verdict direction, work package W5.5",
+   "instrument": "C8",
+   "instrumentName": "Jacobian-corrected verdict direction",
+   "workPackage": "W5.5",
+   "claimed": true
+  },
+  {
+   "quantity": "labels.corrupt_success_rate",
+   "wouldClose": "L3 Two-sided verifier error, work package W3.6",
+   "instrument": "L3",
+   "instrumentName": "Two-sided verifier error",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "labels.error_rate",
+   "wouldClose": "L2 Label error rate and the ceiling it implies, work package W3.6",
+   "instrument": "L2",
+   "instrumentName": "Label error rate and the ceiling it implies",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "labels.false_success_rate",
+   "wouldClose": "L3 Two-sided verifier error, work package W3.6",
+   "instrument": "L3",
+   "instrumentName": "Two-sided verifier error",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "labels.fs_signal_locality",
+   "wouldClose": "L4 The distributed-tell question, which is a free white-box experiment, work package W3.6",
+   "instrument": "L4",
+   "instrumentName": "The distributed-tell question, which is a free white-box experiment",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "labels.position_prior",
+   "wouldClose": "L5 Position-stratified null for localisation, work package W3.6",
+   "instrument": "L5",
+   "instrumentName": "Position-stratified null for localisation",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "labels.score_ceiling",
+   "wouldClose": "L2 Label error rate and the ceiling it implies, work package W3.6",
+   "instrument": "L2",
+   "instrumentName": "Label error rate and the ceiling it implies",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "ladder.rung_disagreement",
+   "wouldClose": "M11 Rung disagreement, published, work package W3.7",
+   "instrument": "M11",
+   "instrumentName": "Rung disagreement, published",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.arl0",
+   "wouldClose": "J2 ARL-designed alarms, work package W4.7",
+   "instrument": "J2",
+   "instrumentName": "ARL-designed alarms",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.check_standard_drift",
+   "wouldClose": "J5 Check standard, work package W4.7",
+   "instrument": "J5",
+   "instrumentName": "Check standard",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.confidence_sequence",
+   "wouldClose": "J1 E-values and confidence sequences, work package W4.7",
+   "instrument": "J1",
+   "instrumentName": "E-values and confidence sequences",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.conjunction_alarm",
+   "wouldClose": "J3 Conjunction detectors, work package W4.7",
+   "instrument": "J3",
+   "instrumentName": "Conjunction detectors",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.degradation_curve",
+   "wouldClose": "I4 Monitor degradation under pressure, work package W6.5",
+   "instrument": "I4",
+   "instrumentName": "Monitor degradation under pressure",
+   "workPackage": "W6.5",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.detection_delay",
+   "wouldClose": "J2 ARL-designed alarms, work package W4.7",
+   "instrument": "J2",
+   "instrumentName": "ARL-designed alarms",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.evalue",
+   "wouldClose": "J1 E-values and confidence sequences, work package W4.7",
+   "instrument": "J1",
+   "instrumentName": "E-values and confidence sequences",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.half_life",
+   "wouldClose": "I4 Monitor degradation under pressure, work package W6.5",
+   "instrument": "I4",
+   "instrumentName": "Monitor degradation under pressure",
+   "workPackage": "W6.5",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.operating_point",
+   "wouldClose": "J4 Operating point from an asymmetric loss, work package W4.7",
+   "instrument": "J4",
+   "instrumentName": "Operating point from an asymmetric loss",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "monitor.ppv_curve",
+   "wouldClose": "J4 Operating point from an asymmetric loss, work package W4.7",
+   "instrument": "J4",
+   "instrumentName": "Operating point from an asymmetric loss",
+   "workPackage": "W4.7",
+   "claimed": true
+  },
+  {
+   "quantity": "placebo.effect_ratio",
+   "wouldClose": "M4 Semantic placebo, work package W3.7",
+   "instrument": "M4",
+   "instrumentName": "Semantic placebo",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "policy.train_infer_logprob_mismatch",
+   "wouldClose": "E6 Train-inference logprob mismatch, work package W3.5",
+   "instrument": "E6",
+   "instrumentName": "Train-inference logprob mismatch",
+   "workPackage": "W3.5",
+   "claimed": true
+  },
+  {
+   "quantity": "policy.update_sparsity_vs_staleness",
+   "wouldClose": "K4 Sparsity under staleness, work package W6.7",
+   "instrument": "K4",
+   "instrumentName": "Sparsity under staleness",
+   "workPackage": "W6.7",
+   "claimed": true
+  },
+  {
+   "quantity": "reference.u_characterisation",
+   "wouldClose": "L1 Reference-material certificate, work package W3.6",
+   "instrument": "L1",
+   "instrumentName": "Reference-material certificate",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "reference.u_homogeneity",
+   "wouldClose": "L1 Reference-material certificate, work package W3.6",
+   "instrument": "L1",
+   "instrumentName": "Reference-material certificate",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "reference.u_stability",
+   "wouldClose": "L1 Reference-material certificate, work package W3.6",
+   "instrument": "L1",
+   "instrumentName": "Reference-material certificate",
+   "workPackage": "W3.6",
+   "claimed": true
+  },
+  {
+   "quantity": "reward.component_congruity",
+   "wouldClose": "N8 Noise and angle, per component, work package W3.9",
+   "instrument": "N8",
+   "instrumentName": "Noise and angle, per component",
+   "workPackage": "W3.9",
+   "claimed": true
+  },
+  {
+   "quantity": "reward.equal_compensation_ratio",
+   "wouldClose": "N6 The equal-compensation table, work package W3.9",
+   "instrument": "N6",
+   "instrumentName": "The equal-compensation table",
+   "workPackage": "W3.9",
+   "claimed": true
+  },
+  {
+   "quantity": "reward.optimal_weights",
+   "wouldClose": "N5 Optimal component weights, work package W3.9",
+   "instrument": "N5",
+   "instrumentName": "Optimal component weights",
+   "workPackage": "W3.9",
+   "claimed": true
+  },
+  {
+   "quantity": "reward.sorting_cutoff",
+   "wouldClose": "N7 The sorting cutoff, work package W3.9",
+   "instrument": "N7",
+   "instrumentName": "The sorting cutoff",
+   "workPackage": "W3.9",
+   "claimed": true
+  },
+  {
+   "quantity": "run.compaction_events",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "run.cot_faithfulness_under_kl",
+   "wouldClose": "I6 Obfuscation pressure on the monitored channel",
+   "instrument": "I6",
+   "instrumentName": "Obfuscation pressure on the monitored channel",
+   "workPackage": null,
+   "claimed": true
+  },
+  {
+   "quantity": "run.curriculum_response",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "run.group_shape_factor",
+   "wouldClose": "A1 Effective group size, work package W3.2",
+   "instrument": "A1",
+   "instrumentName": "Effective group size",
+   "workPackage": "W3.2",
+   "claimed": true
+  },
+  {
+   "quantity": "run.importance_ess",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "run.mask_signature",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "run.max_staleness",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "run.variance_derivative",
+   "wouldClose": "I5 The derivative of within-group reward variance, work package W4.5",
+   "instrument": "I5",
+   "instrumentName": "The derivative of within-group reward variance",
+   "workPackage": "W4.5",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.G_conditioning",
+   "wouldClose": "C1 The susceptibility triple, work package W5.3",
+   "instrument": "C1",
+   "instrumentName": "The susceptibility triple",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.autonomy",
+   "wouldClose": "C2 Heritability and autonomy, work package W5.3",
+   "instrument": "C2",
+   "instrumentName": "Heritability and autonomy",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.covector",
+   "wouldClose": "F5 The selection covector and spectrum, work package W5.2",
+   "instrument": "F5",
+   "instrumentName": "The selection covector and spectrum",
+   "workPackage": "W5.2",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.differential_S",
+   "wouldClose": "C1 The susceptibility triple, work package W5.3",
+   "instrument": "C1",
+   "instrumentName": "The susceptibility triple",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.dimensionality",
+   "wouldClose": "F5 The selection covector and spectrum, work package W5.2",
+   "instrument": "F5",
+   "instrumentName": "The selection covector and spectrum",
+   "workPackage": "W5.2",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.evolvability",
+   "wouldClose": "C2 Heritability and autonomy, work package W5.3",
+   "instrument": "C2",
+   "instrumentName": "Heritability and autonomy",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.gradient_beta",
+   "wouldClose": "C1 The susceptibility triple, work package W5.3",
+   "instrument": "C1",
+   "instrumentName": "The susceptibility triple",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.heritability_h2",
+   "wouldClose": "C2 Heritability and autonomy, work package W5.3",
+   "instrument": "C2",
+   "instrumentName": "Heritability and autonomy",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.response_Gbeta",
+   "wouldClose": "C1 The susceptibility triple, work package W5.3",
+   "instrument": "C1",
+   "instrumentName": "The susceptibility triple",
+   "workPackage": "W5.3",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.spectrum",
+   "wouldClose": "F5 The selection covector and spectrum, work package W5.2",
+   "instrument": "F5",
+   "instrumentName": "The selection covector and spectrum",
+   "workPackage": "W5.2",
+   "claimed": true
+  },
+  {
+   "quantity": "selection.stable_rank",
+   "wouldClose": "F5 The selection covector and spectrum, work package W5.2",
+   "instrument": "F5",
+   "instrumentName": "The selection covector and spectrum",
+   "workPackage": "W5.2",
+   "claimed": true
+  },
+  {
+   "quantity": "study.mde",
+   "wouldClose": "M10 Power and minimum detectable effect, work package W3.7",
+   "instrument": "M10",
+   "instrumentName": "Power and minimum detectable effect",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "study.pooled_effect",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "study.power",
+   "wouldClose": "M5 Matched positive control, work package W3.7",
+   "instrument": "M5",
+   "instrumentName": "Matched positive control",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "study.prediction_interval_ratio",
+   "wouldClose": "no catalogue instrument claims it",
+   "instrument": null,
+   "instrumentName": null,
+   "workPackage": null,
+   "claimed": false
+  },
+  {
+   "quantity": "study.resolution_ratio",
+   "wouldClose": "M10 Power and minimum detectable effect, work package W3.7",
+   "instrument": "M10",
+   "instrumentName": "Power and minimum detectable effect",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "study.tau2",
+   "wouldClose": "M8 Interlaboratory comparison, work package W3.7",
+   "instrument": "M8",
+   "instrumentName": "Interlaboratory comparison",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "substrate.lod",
+   "wouldClose": "M1 Substrate noise floor, LOD and LOQ, work package W3.7",
+   "instrument": "M1",
+   "instrumentName": "Substrate noise floor, LOD and LOQ",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "substrate.loq",
+   "wouldClose": "M1 Substrate noise floor, LOD and LOQ, work package W3.7",
+   "instrument": "M1",
+   "instrumentName": "Substrate noise floor, LOD and LOQ",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "substrate.noise_floor",
+   "wouldClose": "M1 Substrate noise floor, LOD and LOQ, work package W3.7",
+   "instrument": "M1",
+   "instrumentName": "Substrate noise floor, LOD and LOQ",
+   "workPackage": "W3.7",
+   "claimed": true
+  },
+  {
+   "quantity": "verifier.false_positive_rate",
+   "wouldClose": "D5 False-positive fuzzing, work package W3.4/W6.4",
+   "instrument": "D5",
+   "instrumentName": "False-positive fuzzing",
+   "workPackage": "W3.4/W6.4",
+   "claimed": true
+  },
+  {
+   "quantity": "verifier.fp_catalogue",
+   "wouldClose": "D5 False-positive fuzzing, work package W3.4/W6.4",
+   "instrument": "D5",
+   "instrumentName": "False-positive fuzzing",
+   "workPackage": "W3.4/W6.4",
+   "claimed": true
+  },
+  {
+   "quantity": "verifier.metamorphic_violations",
+   "wouldClose": "D3 Metamorphic violations, work package W3.4",
+   "instrument": "D3",
+   "instrumentName": "Metamorphic violations",
+   "workPackage": "W3.4",
+   "claimed": true
+  },
+  {
+   "quantity": "verifier.sobol_ST",
+   "wouldClose": "D4 Sensitivity indices, work package W3.4",
+   "instrument": "D4",
+   "instrumentName": "Sensitivity indices",
+   "workPackage": "W3.4",
+   "claimed": true
+  }
+ ],
+ "provenance": {
+  "generatedBy": "scripts/build_catalogue.py",
+  "libraryVersion": "3.0.0",
+  "librarySource": "reward-lens/src/reward_lens",
+  "quantitySource": "reward-lens/spec/QUANTITIES.json",
+  "skippedModules": [
+   "reward_lens.sae"
+  ]
+ }
+}

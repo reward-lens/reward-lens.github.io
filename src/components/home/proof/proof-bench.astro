@@ -1,0 +1,95 @@
+---
+/**
+ * The proof bench: three places where the ordinary training story loses
+ * information, each with enough room to teach one idea.
+ *
+ * Not a feature grid. The three are different objects and they are meant to
+ * look it: a figure over a complete per-component artifact, a paragraph with no
+ * figure because the artifact does not exist, and a count of what an audit
+ * noticed. A reader who scans this should come away knowing which of the three
+ * the site can show them and which it can only tell them, without being told
+ * that in a sentence.
+ *
+ * Each ends with the one link that takes it further.
+ */
+import ProofRewardModel from "./proof-reward-model.astro";
+import ProofTraining from "./proof-training.astro";
+import ProofGrader from "./proof-grader.astro";
+import { copy } from "../../../copy";
+
+interface Props {
+  /** The section's own heading tag. The exhibits sit one level below it. */
+  headingLevel?: 2 | 3;
+  id?: string;
+  /** Per-exhibit link targets, so the page owns its own routing. */
+  rewardModelHref?: string;
+  trainingHref?: string;
+  graderHref?: string;
+  /** Figure numbers, assigned by the page and sequential within it. */
+  rewardModelFigure?: string;
+  graderFigure?: string;
+  class?: string;
+}
+
+const {
+  headingLevel = 2,
+  id = "proof-bench",
+  rewardModelHref,
+  trainingHref,
+  graderHref,
+  rewardModelFigure,
+  graderFigure,
+  class: extraClass = "",
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const exhibitLevel = (headingLevel + 1) as 3 | 4;
+const headingId = `${id}-heading`;
+
+const home = copy.home as Record<string, any>;
+const proof = home.proof;
+---
+
+<section class:list={["bench", extraClass]} id={id} aria-labelledby={headingId}>
+  <header class="bench__intro">
+    <p class="bench__label type-mono-label">{proof.section_label}</p>
+    <Heading class="bench__headline type-display-2" id={headingId}>
+      {proof.section_headline}
+    </Heading>
+  </header>
+
+  <ProofRewardModel
+    headingLevel={exhibitLevel}
+    href={rewardModelHref}
+    figureNumber={rewardModelFigure}
+  />
+  <ProofTraining headingLevel={exhibitLevel} href={trainingHref} />
+  <ProofGrader
+    headingLevel={exhibitLevel}
+    href={graderHref}
+    figureNumber={graderFigure}
+  />
+</section>
+
+<style>
+  .bench {
+    display: grid;
+    gap: var(--space-7);
+    min-width: 0;
+  }
+  .bench__intro {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .bench__label {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+  .bench__headline {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-prose), 100%);
+    text-wrap: balance;
+  }
+</style>

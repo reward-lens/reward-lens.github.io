@@ -1,0 +1,146 @@
+---
+/**
+ * Why the readings above can be believed, and then it stops.
+ *
+ * Compact and downstream, by design. A reader who does not yet know what the
+ * tool does has no reason to care how carefully it does it, so this comes after
+ * the bench and it is two cards rather than a wall of abstractions.
+ *
+ * THE PAIR IS THE ARGUMENT, AND IT IS THE SAME QUANTITY TWICE. One field of one
+ * real card, read at one access level and declined at another. The reading
+ * carries the sentence the instrument printed and the trust level the gates
+ * computed for it. The refusal carries the reason, the input that was missing
+ * and a remedy written as an instruction. Showing two different quantities
+ * would have let a reader believe the refusal was about something the library
+ * cannot do; showing one makes the point that a measured zero and a missing
+ * measurement are never allowed to look the same.
+ *
+ * Both are read out of `src/data/grader-cards.json`. Nothing on either card is
+ * an example.
+ */
+import ReadingReceipt from "./reading-receipt.astro";
+import RefusalCard from "@components/base/refusal-card.astro";
+import { copy } from "../../../copy";
+import { grader } from "../proof/proof-data";
+
+interface Props {
+  /** The section's own heading tag. The two cards sit one level below it. */
+  headingLevel?: 2 | 3;
+  id?: string;
+  class?: string;
+}
+
+const {
+  headingLevel = 2,
+  id = "trust",
+  class: extraClass = "",
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const cardLevel = (`h${headingLevel + 1}` as "h3" | "h4");
+const headingId = `${id}-heading`;
+
+const home = copy.home as Record<string, any>;
+const trust = home.trust;
+
+const data = grader();
+const receipt = data?.receipt ?? null;
+const refusal = data?.refusal ?? null;
+---
+
+<section class:list={["trust", extraClass]} id={id} aria-labelledby={headingId}>
+  <div class="trust__lede">
+    <Heading class="trust__heading type-h2" id={headingId}>
+      {trust.heading}
+    </Heading>
+    <p class="type-body">{trust.body}</p>
+  </div>
+
+  {
+    (receipt || refusal) && (
+      <div class="trust__pair">
+        {receipt && (
+          <div class="trust__slot">
+            <p class="trust__access type-mono-label">
+              {receipt.card.displayName} · {receipt.access}
+            </p>
+            <ReadingReceipt
+              quantity={receipt.field.name}
+              headline={receipt.field.headline!}
+              supporting={receipt.field.supporting}
+              trust={receipt.field.trust}
+              as={cardLevel}
+            />
+          </div>
+        )}
+        {refusal && (
+          <div class="trust__slot">
+            <p class="trust__access type-mono-label">
+              {refusal.card.displayName} · {refusal.access}
+            </p>
+            <RefusalCard
+              quantity={refusal.field.name}
+              reason={refusal.field.reason!}
+              detail={refusal.field.detail!}
+              remedy={refusal.field.remedy!}
+              bound={refusal.field.bound}
+              as={cardLevel}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .trust {
+    display: grid;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+
+  .trust__lede {
+    display: grid;
+    gap: var(--space-4);
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .trust__lede p {
+    margin: 0;
+    color: var(--ink);
+  }
+  .trust__heading {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+
+  .trust__pair {
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
+    min-width: 0;
+  }
+  /* Two cards side by side only where both keep a readable measure. */
+  @media (min-width: 64rem) /* --bp-lg */ {
+    .trust__pair {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .trust__slot {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    min-width: 0;
+  }
+
+  /* Which card and which access level produced the thing below it. Both are
+     data: the card's own display name and the access state the file names. */
+  .trust__access {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+    overflow-wrap: anywhere;
+  }
+</style>

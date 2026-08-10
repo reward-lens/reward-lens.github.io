@@ -2,8 +2,10 @@
 title: Reward lens and crystallization
 description: At which layer does the reward model actually decide the winner?
 section: instruments
-order: 31
+order: 32
 source: docs/content/instruments/lens-crystallization.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -119,4 +121,4 @@ Use the lens as triage. If the margin forms in the last three layers, that is wh
 
 The number arrives at trust level **EXPLORATORY**, and it will stay there until a scorecard exists. The projection itself is exact arithmetic, but "exact" is not "calibrated": no calibration provider is wired in this release, so nothing has yet certified that a crystallization fraction of $0.93$ means on your model what it meant on the organisms where the instrument was validated. Exploratory means unaudited, not wrong. Read the fraction as a strong, reproducible descriptive statistic, compare it freely across models because the gauge is invariant, and do not yet stake a safety claim on it. The path from here to a calibrated number runs through [calibration and organisms](/docs/discipline/calibration-and-organisms/); the ladder it climbs is [the trust ladder](/docs/discipline/trust-ladder/).
 
-Full signatures and return fields: [`LensCrystallization`](/docs/reference/measure/#reward_lens.measure.battery.lens.LensCrystallization). The concept in depth: [crystallization depth](/docs/concepts/crystallization/).
+Full signatures and return fields: [`LensCrystallization`](/docs/api/measure/#reward_lens.measure.battery.lens.LensCrystallization). The concept in depth: [crystallization depth](/docs/concepts/crystallization/).

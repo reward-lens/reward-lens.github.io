@@ -1,0 +1,331 @@
+---
+/**
+ * bundle-panel  ·  components/bundle-panel.md
+ *
+ * Every act ends with "do it yourself", and the difference between that being a
+ * promise and being a fact is whether the reader can see the artifact, its
+ * size, its checksum and the commit that produced it before deciding to
+ * download anything. A "Download" button is a request for trust. A panel
+ * stating that the bundle is 33.8 KB, contains these fourteen files, was
+ * generated at this commit, and has never been reproduced by anyone outside
+ * this project, is an offer of evidence.
+ *
+ * THE REPRODUCTION STATUS LINE IS THE MOST IMPORTANT ROW AND IT IS NEGATIVE ON
+ * ALL THREE INSTANCES. `reproducedBy` is null in every record in bundles.json,
+ * so every panel renders `ui.not_reproduced`. Omitting that line when it is
+ * negative is the contract's second "Incorrect", and no colour or iconography
+ * carries reproduction status in either direction: a reproduced bundle is not
+ * green and an unreproduced one is not amber.
+ *
+ * WHERE THE NUMBERS COME FROM, AND HOW THEY CITE. `sizeBytes`, `sha256` and
+ * `contents` are derived from the artifact at build time by P1's generator
+ * (D-08), and bundles.json carries no evidenceId and no source. It cannot: the
+ * subject of the citation IS the artifact, and there is no record about a zip
+ * file beyond the zip file. So the size and the commit cite the artifact
+ * itself through act-source, with a null line, which is the case act-source
+ * already documents for a binary with no lines. The hash and the expected
+ * output are in <code> and <pre>, which gate 5 exempts structurally as quoted
+ * output rather than as claims.
+ *
+ * THE PANEL VERIFIES ITS OWN MANIFEST. Acceptance criterion 1 wants a mismatch
+ * between the manifest and the artifact to fail the build naming the file. The
+ * generator derives the values, so the check that is left to do here is the one
+ * the generator cannot do for a page: that the file the href points at is
+ * actually in public/, and that its size on disk is the size being rendered. A
+ * panel that advertises 120,253 bytes of a file that is not there is exactly
+ * the defect the contract's `Error` row describes.
+ *
+ * NO SCRIPT. The hash is selectable text and the download is a link. The
+ * contract permits a copy control on the scripted path; it is not built,
+ * because copy controls remove themselves under :root:not([data-js]) (WAVE-0
+ * ruling 4) and a selectable <code> already yields the full value, which is
+ * criterion 4. Stated in the packet report rather than left as a silent gap.
+ */
+import ActSource from "@components/acts/act-source.astro";
+import { ui } from "../../copy";
+import { statSync } from "node:fs";
+import { join } from "node:path";
+
+export interface Bundle {
+  act: string;
+  route: string;
+  href: string;
+  filename: string;
+  format: string;
+  contents: string[];
+  sizeBytes: number;
+  sha256: string;
+  commit: string;
+  command: string;
+  requirementsKey: string;
+  expectedOutput: string;
+  reproducedBy: { who: string; when: string } | null;
+}
+
+interface Props {
+  bundle: Bundle;
+  /** From copy.yaml, resolved by the route from `requirementsKey`. */
+  requirements: string;
+  class?: string;
+}
+
+const { bundle, requirements, class: extraClass = "" } = Astro.props;
+
+if (!bundle.expectedOutput || !bundle.expectedOutput.trim()) {
+  throw new Error(
+    `bundle-panel ${bundle.filename}: no expectedOutput. A reproduction path ` +
+      `with no stated expected result is not reproducible, and the contract ` +
+      `fails the build on it rather than rendering a panel that cannot rot ` +
+      `visibly (components/bundle-panel.md, Empty).`,
+  );
+}
+
+/* Criterion 1, the half a page can check: the artifact exists and is the size
+   the manifest claims. A hash mismatch is the generator's to catch, because
+   only the generator reads the bytes; a size mismatch is the cheap proxy for
+   the same drift and it costs one stat. */
+const onDisk = join(process.cwd(), "public", bundle.href.replace(/^\//, ""));
+let actualBytes: number;
+try {
+  actualBytes = statSync(onDisk).size;
+} catch {
+  throw new Error(
+    `bundle-panel ${bundle.filename}: public${bundle.href} does not exist. ` +
+      `The panel states a size, a hash and a contents list for an artifact a ` +
+      `reader is about to download, and it does not state them about a file ` +
+      `that is not there.`,
+  );
+}
+if (actualBytes !== bundle.sizeBytes) {
+  throw new Error(
+    `bundle-panel ${bundle.filename}: the manifest says ${bundle.sizeBytes} ` +
+      `bytes and public${bundle.href} is ${actualBytes}. D-08: derived from ` +
+      `the artifact, never asserted. Regenerate the manifest.`,
+  );
+}
+
+/* The largest sensible unit, from the artifact's own byte count. Binary units,
+   because a zip on disk is measured the way the filesystem measures it. */
+const UNITS = [
+  { suffix: "MB", scale: 1024 * 1024 },
+  { suffix: "KB", scale: 1024 },
+  { suffix: "bytes", scale: 1 },
+];
+const unit = UNITS.find((u) => bundle.sizeBytes >= u.scale) ?? UNITS[2];
+const sizeDisplay =
+  unit.scale === 1
+    ? `${bundle.sizeBytes} ${unit.suffix}`
+    : `${(bundle.sizeBytes / unit.scale).toFixed(1)} ${unit.suffix}`;
+
+/* The artifact is its own citation. No line: a zip has no lines, and citing
+   "line 1" of one would be a precision the artifact does not have. */
+const ARTIFACT = { document: `public${bundle.href}`, line: null };
+
+const shortCommit = bundle.commit.slice(0, 7);
+const uid = `bundle-${bundle.act}`;
+
+/* The download link's accessible name carries the size and the format, so a
+   screen-reader user knows what they are about to fetch before activating it
+   (criterion 5). It is copy.yaml's own string with two data values after it,
+   comma separated. No sentence is written here. */
+const downloadAria = `${ui.download_data}, ${bundle.filename}, ${sizeDisplay}`;
+
+const rows: { label: string; kind: "text" | "cited" | "code"; value: string }[] = [
+  { label: "contents", kind: "text", value: bundle.contents.join(", ") },
+  { label: "size", kind: "cited", value: sizeDisplay },
+  { label: "sha256", kind: "code", value: bundle.sha256 },
+  { label: "commit", kind: "cited", value: shortCommit },
+  { label: "needs", kind: "text", value: requirements },
+];
+---
+
+<section class:list={["bp", extraClass]} aria-labelledby={`${uid}-h`} data-bundle-panel>
+  <h3 class="bp__heading type-mono-label" id={`${uid}-h`}>{ui.bundle_heading}</h3>
+  <p class="bp__note type-body">{ui.bundle_note}</p>
+
+  <dl class="bp__rows">
+    {
+      rows.map((row) => (
+        <div class="bp__row">
+          <dt class="bp__label type-mono-label">{row.label}</dt>
+          <dd class="bp__value type-body-sm">
+            {row.kind === "cited" ? (
+              <ActSource
+                display={row.value}
+                document={ARTIFACT.document}
+                line={ARTIFACT.line}
+                label={row.label}
+              />
+            ) : row.kind === "code" ? (
+              <code class="bp__hash type-mono-sm">{row.value}</code>
+            ) : (
+              row.value
+            )}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <p class="bp__get">
+    <a class="bp__download type-body" href={bundle.href} download aria-label={downloadAria}>
+      {ui.download_data}
+    </a>
+  </p>
+
+  <div class="bp__expected">
+    <h4 class="bp__sub type-mono-label" id={`${uid}-eo`}>{ui.expected_output}</h4>
+    {/* In a <pre>, labelled, and scrollable inside its own container so a wide
+        line of fixture output never scrolls the page (HANDOFF.md trap 2). */}
+    <div class="bp__scroll" role="group" aria-labelledby={`${uid}-eo`} tabindex="0">
+      <pre class="bp__pre type-mono-sm"><code>{bundle.expectedOutput}</code></pre>
+    </div>
+  </div>
+
+  {/* The most credible thing on the panel. Plain text in reading order, never
+      an icon, never colour, and never omitted because it is negative. */}
+  <p class="bp__status type-body-sm">
+    {
+      bundle.reproducedBy
+        ? ui.reproduced_by
+            .replace("{{who}}", bundle.reproducedBy.who)
+            .replace("{{when}}", bundle.reproducedBy.when)
+        : ui.not_reproduced
+    }
+  </p>
+</section>
+
+<style>
+  .bp {
+    margin-block-start: var(--space-6);
+    padding: var(--space-5);
+    background: var(--surface-1);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-2);
+    min-width: 0;
+  }
+
+  .bp__heading {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .bp__note {
+    margin: var(--space-4) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink);
+  }
+
+  .bp__rows {
+    margin: var(--space-5) 0 0;
+    min-width: 0;
+  }
+
+  /* Label above value below --bp-sm, label beside value above it. A dl of
+     stacked pairs rather than a table: five rows of metadata is not tabular
+     data, and a table here would take a caption it does not have. */
+  .bp__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    padding-block: var(--space-3);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+
+  .bp__row:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .bp__label {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: label on --surface-1, 4.85:1 (C-15) */
+  }
+
+  .bp__value {
+    margin: 0;
+    color: var(--ink);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* A truncated hash that cannot be recovered is worse than a wrapped one, so
+     it wraps rather than taking an ellipsis. The full value is in the DOM and
+     selectable, which is criterion 4 without a script. */
+  .bp__hash {
+    background: var(--code-inline-bg);
+    border-radius: var(--radius-1);
+    padding: 0 var(--space-2);
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  .bp__get {
+    margin: var(--space-5) 0 0;
+  }
+
+  .bp__download {
+    color: var(--ink);
+  }
+
+  .bp__expected {
+    margin-block-start: var(--space-5);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+
+  .bp__sub {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-2);
+  }
+
+  .bp__scroll {
+    overflow-x: auto;
+    min-width: 0;
+    background: var(--code-bg);
+    border-radius: var(--radius-2);
+  }
+
+  .bp__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .bp__pre {
+    margin: 0;
+    padding: var(--space-4);
+    color: var(--ink-2);
+    white-space: pre;
+  }
+
+  /* No colour, in either direction. The fact is the sentence. */
+  .bp__status {
+    margin: var(--space-5) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 30rem) /* --bp-sm */ {
+    .bp__row {
+      grid-template-columns: var(--grid-margin-col) minmax(0, 1fr);
+      column-gap: var(--grid-margin-gap);
+      gap: var(--space-2) var(--grid-margin-gap);
+    }
+  }
+
+  @media print {
+    /* The hash, the URL and the expected output print in full: a panel whose
+       whole value is being checkable is worthless as a screenshot. */
+    .bp__scroll {
+      overflow-x: visible;
+    }
+    .bp__pre {
+      white-space: pre-wrap;
+    }
+    .bp__download::after {
+      content: " (" attr(href) ")";
+    }
+  }
+</style>

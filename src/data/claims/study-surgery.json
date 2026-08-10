@@ -1,0 +1,18 @@
+{
+ "contentHash": "411b6ab628766306d0d5a96a30b0d053",
+ "humanSource": "The frozen study \"Certified erasure removes the exploit without benchmark loss\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:41058731abf1d0b1590d4f2286e8771c",
+  "campaign.adjudication.SURGERY",
+  "study:campaign-surgery@v1#98769c52",
+  "spec:98769c52f2669fc0e08b554b07393a0b"
+ ],
+ "label": "Certified erasure removes the exploit without benchmark loss",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on hackfore-flagged, over hack-probes and rb2-full.",
+ "slug": "study-surgery",
+ "sourceUrl": "/evidence/41058731abf1d0b1590d4f2286e8771c/",
+ "statement": "The frozen study \"Certified erasure removes the exploit without benchmark loss\" was adjudicated mixed, over 2 registered predictions of which 1 held, 1 did not.",
+ "subject": "hackfore-flagged, over hack-probes and rb2-full",
+ "type": "interpretation"
+}

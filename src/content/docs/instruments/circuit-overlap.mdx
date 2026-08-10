@@ -2,8 +2,10 @@
 title: Circuit overlap
 description: Do two reward models decide with the same components, or just reach the same verdict?
 section: instruments
-order: 36
+order: 37
 source: docs/content/instruments/circuit-overlap.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -99,4 +101,4 @@ And it is observational twice over. Shared components are shared *labels*, not p
 
 The number arrives at trust level **EXPLORATORY**. Jaccard is exact and the invariance is real, so this is one of the few cross-model numbers you can compare without a frame. But no calibration provider is wired in this release, so no scorecard yet relates an overlap to a transfer rate for exploits or interventions. Exploratory means unaudited, not wrong. Use it to see how much deciding machinery two models share; do not yet read a given overlap as a guarantee that a failure carries between them. The trust level and what would lift it are covered in [the trust ladder](/docs/discipline/trust-ladder/).
 
-Full signatures and return fields: [`CircuitJaccard`](/docs/reference/measure/#reward_lens.measure.battery.circuit.CircuitJaccard). For the full cross-model workflow, including the covariant comparisons that do need a frame, see [compare two reward models](/docs/how-to/compare-two-models/).
+Full signatures and return fields: [`CircuitJaccard`](/docs/api/measure/#reward_lens.measure.battery.circuit.CircuitJaccard). For the full cross-model workflow, including the covariant comparisons that do need a frame, see [compare two reward models](/docs/how-to/compare-two-models/).

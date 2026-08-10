@@ -1,0 +1,19 @@
+{
+ "comparator": "== 1",
+ "contentHash": "17619e7ef1d94e690704b46310ad3485",
+ "humanSource": "The frozen study \"The two-fine-tunes gauge result, settled\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:0b9b34f7e2af83d3b0ca32a60791a859",
+  "H-localize",
+  "study:campaign-gauge-e19@v1#ea289522"
+ ],
+ "label": "The two-fine-tunes gauge result, settled",
+ "limitation": "The study returned no value because its registered subject could not be read when the study ran.",
+ "scope": "One frozen study, adjudicated once, on skywork-v01 and skywork-v02, over rb2-helpfulness-512.",
+ "slug": "open-gauge-e19-residual-concept-matches-top-behavioral-delta",
+ "sourceUrl": "/evidence/0b9b34f7e2af83d3b0ca32a60791a859/",
+ "statement": "Registered prediction, not resolved: the top residual-angle concept matches the largest behavioral delta (formality).",
+ "status": "unrun",
+ "subject": "skywork-v01 and skywork-v02, over rb2-helpfulness-512",
+ "type": "open-hypothesis"
+}

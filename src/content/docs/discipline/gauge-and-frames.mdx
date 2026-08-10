@@ -2,8 +2,10 @@
 title: Gauge and frames
 description: Two reward models, both fine-tuned from the same base, both trained on similar preference data. You would expect their reward directions to point roughly the
 section: discipline
-order: 60
+order: 86
 source: docs/content/discipline/gauge-and-frames.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -50,6 +52,6 @@ effective_angle(w_r_a, w_r_b, None)
 
 Every measurement carries a [gauge status](/docs/discipline/anatomy-of-evidence/). A quantity marked `covariant`, a direction or an angle or a subspace overlap, means something only relative to a frame. The runner reads that status, and if you try to compare a covariant quantity across models without fixing the frame, it stops. This is the one place the library would rather raise an exception than hand you a plausible number, because a plausible cross-model number is the most dangerous kind: it looks like a finding, and the $0.005$ shows exactly how wrong it can be.
 
-The E19 result that produced that $0.005$ was, in the first version, an anomaly nobody could explain. It is not an anomaly. It is what a covariant quantity looks like when you forget to fix the gauge, and the gate exists so the next person cannot make the same mistake without the library objecting.
+The result that produced that $0.005$ was, in the first version, an anomaly nobody could explain. It is not an anomaly. It is what a covariant quantity looks like when you forget to fix the gauge, and the gate exists so the next person cannot make the same mistake without the library objecting.
 
 For the theory behind identifiability and the STARC construction, see [identifiability and gauge](/docs/theory/identifiability/). For comparing two real models step by step, the [how-to](/docs/how-to/compare-two-models/) does it end to end.

@@ -1,0 +1,159 @@
+{
+ "counts": {
+  "reasons": 17,
+  "sorted": 3,
+  "unsorted": 14
+ },
+ "reasons": [
+  {
+   "name": "ACCESS_INSUFFICIENT",
+   "meaning": "No estimator for this quantity works at the access you have. Silent degradation to a worse one is how a number becomes uninterpretable, so nothing was computed.",
+   "whatToDo": "Ask what the cheaper rung would cost. Every quantity has a ladder, and the refusal carries the rung that would work and what it needs, so `what_would_it_take` turns this into a shopping list: one more checkpoint, or logprobs on the sampling policy, or permission to call the grader twice on the same input. If none of that is available, the quantity is out of reach on this run and the honest move is to say so in the write-up rather than substitute something adjacent.",
+   "remedy": {
+    "remedy": "get more access, or drop a rung and accept its stated bias",
+    "answerable": "here",
+    "answerableLabel": "where you are standing"
+   }
+  },
+  {
+   "name": "RECORD_INCOMPLETE",
+   "meaning": "Your access is sufficient and the record does not carry the field this estimator reads. Nothing more can be recovered from this record; the fix is upstream, where it was written.",
+   "whatToDo": "Do not go looking for more access; it will not help. The field was never written, so nothing you do to this record recovers it. Fix it upstream: turn on the dump in whatever produced the run, or record the missing field on the next run. The refusal names both the field and what it is missing from, so \"no `logprobs_sampling` on 412 of 512 trajectories\" tells you whether this is a configuration problem or a partial write.",
+   "remedy": {
+    "remedy": "write the field and run again",
+    "answerable": "upstream",
+    "answerableLabel": "upstream, where the record was produced"
+   }
+  },
+  {
+   "name": "SUBSTRATE_MISMATCH",
+   "meaning": "This instrument does not apply to this kind of grader. A program has no activations; that is a category error rather than a hard case.",
+   "whatToDo": "Nothing to fix. You asked a question that does not apply to this kind of grader, most often an activation question of a program. Reach for the instrument built for this substrate: the capability report lists them, and for a program the verifier series answers the structural questions the white-box series answers for a network.",
+   "remedy": null
+  },
+  {
+   "name": "PHASE_MISMATCH",
+   "meaning": "This is an in-run question and the run is over, or a pre-run question and it has started.",
+   "whatToDo": "Either the run is over and you asked an in-run question, or it has not started and you asked a post-run one. If the run is over, the question has to be answered from the record, and the instrument that does that is a different one. If it has not started, this is the moment to record what the in-run instrument will need, because a phase you have passed cannot be revisited.",
+   "remedy": null
+  },
+  {
+   "name": "ENVELOPE_VIOLATED",
+   "meaning": "The estimator's assumptions do not hold on this run. An instrument that is available and invalid is worse than one that is unavailable.",
+   "whatToDo": "Read which condition failed and what its statistic was; the refusal carries both. Then pick one of three: restrict the analysis to a window where the condition holds, switch to a rung whose envelope does not require it, or accept that the quantity is not estimable on this run. An instrument that is available and invalid is worse than one that is unavailable, so the option that is not on the list is running it anyway.",
+   "remedy": null
+  },
+  {
+   "name": "BELOW_LOD",
+   "meaning": "The effect is smaller than the measurement substrate's disagreement with itself, so it is not attributable to the thing being measured.",
+   "whatToDo": "The effect is smaller than the measurement's disagreement with itself, so there is nothing here to interpret in either direction. This is not a negative result and must not be written up as one. To go further you need a smaller limit of detection: more replicates, a lower-variance readout, or a stimulus set that separates the conditions more sharply. The refusal carries the limit, so you can compute how much more.",
+   "remedy": null
+  },
+  {
+   "name": "ABOVE_LOD_BELOW_LOQ",
+   "meaning": "Detected but not quantifiable. A bound is returned; a point estimate would be false precision.",
+   "whatToDo": "Use the bound. It is real, it is in `partial`, and an upper bound is a usable answer for most decisions a point estimate would have been used for. Report it as a bound and say so. If the decision genuinely needs the point estimate, the limit of quantification tells you how much more data would get you there.",
+   "remedy": null
+  },
+  {
+   "name": "ESS_BELOW_FLOOR",
+   "meaning": "The importance weights have degenerated, so this is past the visibility horizon and any number would be a guess wearing an interval.",
+   "whatToDo": "The importance weights have degenerated, so you are extrapolating past the point where the data constrains anything. Shorten the extrapolation: ask for the quantity at a smaller distance from the sampling policy, where the effective sample size is still above the floor. Widening the interval instead is the mistake this refusal exists to prevent, because past the horizon the interval is not wide, it is undefined.",
+   "remedy": null
+  },
+  {
+   "name": "NO_MATCHED_CONTROL",
+   "meaning": "A null with no identically-powered positive control cannot be distinguished from an underpowered experiment.",
+   "whatToDo": "You asked for a null and there is no positive control at the same power, so a real absence and an underpowered experiment look identical. Run the matched positive control from `stats/baselines`: it is a case where the effect is known to exist, at the same n and the same readout. If the control also comes back null, the experiment is underpowered and the number of samples that would fix it is a power calculation away.",
+   "remedy": null
+  },
+  {
+   "name": "GAUGE_MISMATCH",
+   "meaning": "A covariant quantity was compared across frames with no shared basis, so the difference would be a coordinate artifact.",
+   "whatToDo": "You compared a covariant quantity across two frames with no shared basis, which makes the difference a coordinate artifact rather than a finding. Fit a shared frame and compare in it, or compare an invariant of the two quantities instead. Comparing raw coordinates across models is the specific error this gate exists to catch, and it produces numbers that look reasonable, which is why it needs a gate rather than a warning.",
+   "remedy": null
+  },
+  {
+   "name": "UNIT_MISMATCH",
+   "meaning": "Two quantities in incompatible units were compared. The conversion factor is a property of the data, not of the unit, so this is not converted silently.",
+   "whatToDo": "Two quantities in incompatible units met, most often per-token against per-sequence. Decide which unit the question is actually in and get both sides into it, which needs data the comparison did not have: how many tokens, or how many sequences. The library will not do that conversion for you, because the factor is a property of your data rather than of the unit.",
+   "remedy": null
+  },
+  {
+   "name": "REFERENCE_UNCERTIFIED",
+   "meaning": "The reference material carries no uncertainty of its own. You cannot calibrate against an uncalibrated ruler.",
+   "whatToDo": "The reference material you calibrated against has no uncertainty of its own, so the calibrated number would inherit an error nobody has measured. Either certify the reference, which means measuring its own uncertainty and recording it, or use a certified one. If neither is possible, report the reading as uncalibrated and let it sit at the trust level that implies.",
+   "remedy": null
+  },
+  {
+   "name": "LABEL_QUALITY_UNKNOWN",
+   "meaning": "The labels have no measured error rate, so scoring against them measures the labels.",
+   "whatToDo": "Scoring against labels whose error rate nobody measured measures the labels. Get a measured error rate: a doubly-labelled subset is usually enough, and the label metrology series exists to turn one into an error rate with an interval. Until then any score against these labels is bounded above by their quality and the bound is unknown.",
+   "remedy": null
+  },
+  {
+   "name": "PLAN_NOT_CLOSED",
+   "meaning": "A registered prediction names a metric that no arc in this plan produces. Found before anything ran.",
+   "whatToDo": "A registered prediction names a metric that no arc in this plan produces, so the prediction could never have been graded. Either add the arc that produces the metric or change the prediction to one the plan answers. This fires before anything runs, which is the only useful time for it to fire.",
+   "remedy": null
+  },
+  {
+   "name": "BUDGET_EXCEEDED",
+   "meaning": "The costed plan exceeds the declared budget.",
+   "whatToDo": "The costed plan is more expensive than the budget you declared. Cut the plan, raise the budget deliberately, or drop to a cheaper rung and accept its bias, which the ladder states. The one thing not to do is run it and find out, because a plan that runs out of budget half way produces an arc nobody can interpret.",
+   "remedy": null
+  },
+  {
+   "name": "VOID",
+   "meaning": "The run is not readable, which is different from a negative result.",
+   "whatToDo": "The run is not readable, which is a different thing from a negative result and must never be written up as one. Find out why: a truncated write, a missing manifest, a schema the reader does not recognise. A void run contributes nothing in either direction, and counting it as evidence of no effect is how a broken pipeline becomes a published null.",
+   "remedy": null
+  },
+  {
+   "name": "QUANTITY_UNDEFINED",
+   "meaning": "This quantity is not defined for this object, so there is nothing here to measure at any access and from any record. The remedy names the question that does apply instead.",
+   "whatToDo": "Nothing to fix and nothing to buy: this question does not apply to this object, so no amount of access and no rewriting of the record will produce an answer. The commonest case is asking a mean-centred estimator for its amplification, when the amplification is a property of dividing by the group standard deviation and this estimator does not do that. Read the remedy, which names the question that **does** apply to what you have, and ask that one instead. If the named alternative is not the question you wanted, the honest conclusion is that the thing you wanted to know is not a property of this object, which is worth writing down rather than working around.",
+   "remedy": {
+    "remedy": "ask the question that does apply",
+    "answerable": "nowhere",
+    "answerableLabel": "nowhere"
+   }
+  }
+ ],
+ "remedySort": {
+  "question": "where is the remedy answerable?",
+  "note": "The mapping exists for three reasons and for no others. The library assigns no group to the other fourteen, so neither does this file.",
+  "locations": [
+   "here",
+   "upstream",
+   "nowhere"
+  ]
+ },
+ "trustLadder": [
+  {
+   "rung": 0,
+   "name": "exploratory"
+  },
+  {
+   "rung": 1,
+   "name": "calibrated"
+  },
+  {
+   "rung": 2,
+   "name": "registered"
+  },
+  {
+   "rung": 3,
+   "name": "adjudicated"
+  }
+ ],
+ "provenance": {
+  "generatedBy": "scripts/build_catalogue.py",
+  "libraryVersion": "3.0.0",
+  "librarySource": "reward-lens/src/reward_lens",
+  "quantitySource": "reward-lens/spec/QUANTITIES.json",
+  "skippedModules": [
+   "reward_lens.sae"
+  ]
+ }
+}

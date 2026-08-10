@@ -2,8 +2,11 @@
 title: Conflict matrix
 description: When you push the reward up on one axis, does another axis fight you?
 section: instruments
-order: 35
+order: 36
 source: docs/content/instruments/conflict-matrix.md
+libraryVersion: 3.0.0
+staleMarkers:
+- '1.0'
 ---
 
 <div class="rl-chips">
@@ -96,4 +99,4 @@ Two more are statistical. The term-directions are fit from a limited set of pair
 
 The number arrives at trust level **EXPLORATORY**. The cosine is well-defined, but no calibration provider is wired in this release, so no scorecard yet ties a conflict cosine to an observed training pathology. Exploratory means unaudited, not wrong. Read the matrix as a map of where a reward's goals agree and disagree in its own geometry; do not carry a raw cosine across models, and do not yet promise that a negative entry will bite under optimization. The organism that would calibrate this, a rubric generator with a known number of planted directions and exact cosines, is described in [calibration and organisms](/docs/discipline/calibration-and-organisms/).
 
-Full signatures and return fields: [`ConflictMatrix`](/docs/reference/measure/#reward_lens.measure.battery.conflict.ConflictMatrix). Why a raw cosine needs a frame before it can cross models: [gauge and frames](/docs/discipline/gauge-and-frames/).
+Full signatures and return fields: [`ConflictMatrix`](/docs/api/measure/#reward_lens.measure.battery.conflict.ConflictMatrix). Why a raw cosine needs a frame before it can cross models: [gauge and frames](/docs/discipline/gauge-and-frames/).

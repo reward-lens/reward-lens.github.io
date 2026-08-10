@@ -1,0 +1,19 @@
+{
+ "contentHash": "099009ac842b73107d2d04647d504c5c",
+ "humanSource": "The frozen study \"The Goodhart hump located from a base-policy tail index\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:02a1669641150750737afc8291255bf9",
+  "campaign.adjudication.HUMP",
+  "study:campaign-hump@v1#ec094a50",
+  "spec:ec094a501eddd55553e7007466395ee3"
+ ],
+ "label": "The Goodhart hump located from a base-policy tail index",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on policy-qwen25-1.5b and skywork-v2-qwen3-0.6b and skywork-v2-llama31-8b, over hump-prompts and ppe-human.",
+ "slug": "study-hump",
+ "sourceUrl": "/evidence/02a1669641150750737afc8291255bf9/",
+ "statement": "The frozen study \"The Goodhart hump located from a base-policy tail index\" was adjudicated inconclusive, over 2 registered predictions of which 2 returned no value.",
+ "status": "unrun",
+ "subject": "policy-qwen25-1.5b and skywork-v2-qwen3-0.6b and skywork-v2-llama31-8b, over hump-prompts and ppe-human",
+ "type": "interpretation"
+}

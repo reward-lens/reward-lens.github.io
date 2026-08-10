@@ -1,0 +1,361 @@
+---
+/**
+ * refusal-card  ·  design/components/refusal-card.md
+ *
+ * A reading the library declined to produce, rendered so that it reads as an
+ * instrument being careful rather than as an error.
+ *
+ * THE THING MOST LIKELY TO BE BUILT WRONG. A refusal is a success in this
+ * library's semantics. It is blue, never red. There is no warning triangle, no
+ * amber fill, no "show refusals" toggle, and refusals are never sorted below
+ * the readings. Styling a refusal as a failure inverts the site's whole
+ * argument, and this is the component where that happens.
+ *
+ * The card sits on --surface-1 at the same elevation as a figure, and the
+ * remedy gets a labelled section of its own, because a remedy written as an
+ * instruction is what distinguishes this from a stack trace. At full density
+ * the remedy is never collapsed: hiding it turns the card into an error list.
+ *
+ * A refused field is denser than a filled one and it should look that way.
+ */
+import { requireRefusalReason, requireRemedy, refusalCopy, uniqueId } from "./data";
+import type { EvidenceRecord } from "./data";
+import ProvenanceChip from "./provenance-chip.astro";
+
+interface Props {
+  /** The field name as the library renders it. Never invented. */
+  quantity: string;
+  /** One of the seventeen. Rendered as the enum name, which is greppable. */
+  reason: string;
+  detail: string;
+  remedy: string;
+  /** Present only for ABOVE_LOD_BELOW_LOQ. Switches the accent to bounded. */
+  bound?: number | string | null;
+  statistics?: Record<string, string | number>;
+  evidenceId?: string | null;
+  record?: EvidenceRecord;
+  density?: "full" | "row";
+  /**
+   * Heading level for the quantity name, so a page keeps one outline.
+   *
+   * "h5" ADDED, AND THE REASON IS A REAL FIVE-DEEP OUTLINE, NOT A CONVENIENCE.
+   * On `/see/grader/` part 3 the nesting is: h1 the page, h2 the part, h3 the
+   * access state, h4 the subject card, h5 the field. Every one of those is a
+   * real level. The access-state h3 names its section through
+   * `aria-labelledby` and is required on the no-JavaScript path, where both
+   * states render at once and each needs a name. The subject h4 is the program
+   * under audit. So the field lands at five and there is nothing above it to
+   * remove.
+   *
+   * THE BETTER FIX IS A CONTRACT CHANGE AND IT IS ESCALATED, NOT MADE HERE.
+   * Inside `grader-card` this card sits in a `<dl>` whose read fields name
+   * themselves with a `<dt>` and emit no heading at all. Two branches of one
+   * field list therefore disagree about whether a field name is a heading. The
+   * right resolution is probably a headingless `density="row"`, where the card
+   * is named by the `<dt>` beside it exactly as its read sibling is. That
+   * changes this component's contract, so the build lead decides it; widening
+   * the union is additive, breaks no existing caller, and describes the outline
+   * that is actually rendered.
+   */
+  as?: "h2" | "h3" | "h4" | "h5";
+  class?: string;
+}
+
+const {
+  quantity,
+  reason,
+  detail,
+  remedy,
+  bound = null,
+  statistics = {},
+  evidenceId = null,
+  record = {},
+  density = "full",
+  as: Heading = "h3",
+  class: extraClass = "",
+} = Astro.props;
+
+// Mirrors the library's own __post_init__ guard. A refusal with no remedy is a
+// tool that looks broken instead of a tool that looks careful, so it is a build
+// failure and not a visual state (criterion 1). A chip showing a reason outside
+// the seventeen fails the build too (criterion 2).
+requireRemedy(remedy, quantity);
+requireRefusalReason(reason, quantity);
+
+const bounded = bound !== null && bound !== undefined && bound !== "";
+
+// Derived, never passed. The state string is the non-colour carrier of the
+// reading's outcome, which is what makes the greyscale criterion pass, so it
+// is not a prop a page can supply wrongly: a bound present means the quantity
+// was detected and not quantified, and its absence means the reading was
+// declined outright.
+const stateLabel = bounded
+  ? refusalCopy.state_labels.bounded
+  : refusalCopy.state_labels.refusal;
+
+// Page-unique, not quantity-unique. `/see/grader/` renders eight cards for the
+// same quantity across four subjects and two access states; before this every
+// one of those eight disclosure buttons pointed `aria-controls` at the first
+// card's remedy panel, and every one of those eight articles took its
+// accessible name from the first card's heading.
+const uid = uniqueId(
+  `refusal-${quantity.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`,
+  Astro.url.pathname,
+);
+const quantityId = `${uid}-quantity`;
+const panelId = `${uid}-remedy`;
+---
+
+<article
+  class:list={[
+    "refusal",
+    `refusal--${density}`,
+    bounded && "refusal--bounded",
+    extraClass,
+  ]}
+  aria-labelledby={quantityId}
+>
+  <div class="refusal__head">
+    <Heading class="refusal__quantity type-h3" id={quantityId}>
+      {
+        evidenceId ? (
+          <ProvenanceChip
+            evidenceId={evidenceId}
+            display={quantity}
+            record={{ ...record, stats: { ...record.stats, ...statistics } }}
+          />
+        ) : (
+          quantity
+        )
+      }
+    </Heading>
+    <span
+      class="refusal__reason type-mono-label"
+      aria-label={`${refusalCopy.reason_aria_prefix} ${reason}`}>{reason}</span
+    >
+    <span class="refusal__state type-body-sm">{stateLabel}</span>
+  </div>
+
+  <p class="refusal__detail type-body">{detail}</p>
+
+  {
+    bounded && (
+      <p class="refusal__bound type-body-sm">
+        {refusalCopy.card_labels.bound}: <span class="refusal__bound-value type-mono-base">{bound}</span>
+      </p>
+    )
+  }
+
+  <div class="refusal__remedy" data-remedy>
+    {
+      density === "row" ? (
+        <button
+          type="button"
+          class="refusal__disclosure type-mono-label"
+          aria-expanded="true"
+          aria-controls={panelId}
+          data-remedy-toggle
+        >
+          {refusalCopy.card_labels.remedy}
+        </button>
+      ) : (
+        <p class="refusal__remedy-label type-mono-label">
+          {refusalCopy.card_labels.remedy}
+        </p>
+      )
+    }
+    <p class="refusal__remedy-body type-body" id={panelId} data-remedy-panel>
+      {remedy}
+    </p>
+  </div>
+</article>
+
+<script>
+  // The remedy is server-rendered open, so with scripting off it is visible and
+  // the disclosure is hidden by CSS. The disclosure only becomes a disclosure
+  // once there is something to disclose with.
+  for (const toggle of document.querySelectorAll<HTMLButtonElement>(
+    "[data-remedy-toggle]",
+  )) {
+    const panel = toggle.parentElement?.querySelector<HTMLElement>(
+      "[data-remedy-panel]",
+    );
+    if (!panel) continue;
+    toggle.setAttribute("aria-expanded", "false");
+    panel.hidden = true;
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", open ? "false" : "true");
+      panel.hidden = open;
+    });
+  }
+</script>
+
+<style>
+  .refusal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    background: var(--surface-1);
+    /* tokens.css:208 calls --line-strong "a card or figure boundary". */
+    border: var(--border-w) solid var(--line-strong);
+    /* The accent is a shape as well as a colour, which is what keeps the card
+       readable in greyscale and in print. */
+    border-inline-start: var(--border-w-accent) solid var(--state-refusal);
+    border-radius: var(--radius-2);
+    padding: var(--space-5);
+  }
+  .refusal--bounded {
+    border-inline-start-color: var(--state-bounded);
+  }
+
+  .refusal__head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    min-width: 0;
+  }
+  .refusal__quantity {
+    color: var(--ink);
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* A bordered text label, not a coloured pill. The enum name is what a reader
+     will grep for, so the visible chip keeps it; the accessible name expands
+     it, because ABOVE_LOD_BELOW_LOQ read aloud is not useful. */
+  .refusal__reason {
+    color: var(--state-refusal);
+    border: var(--border-w) solid var(--state-refusal);
+    border-radius: var(--radius-1);
+    padding: var(--space-1) var(--space-2);
+    flex: none;
+    align-self: center;
+  }
+  .refusal--bounded .refusal__reason {
+    color: var(--state-bounded);
+    border-color: var(--state-bounded);
+  }
+
+  .refusal__state {
+    color: var(--ink-2);
+    min-width: 0;
+  }
+
+  .refusal__detail {
+    color: var(--ink);
+    margin: 0;
+    max-inline-size: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+
+  .refusal__bound {
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .refusal__bound-value {
+    color: var(--ink);
+  }
+
+  /* The dashed rule from the anatomy. Decorative separation inside a card, so
+     --line rather than --line-strong. */
+  .refusal__remedy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+    border-block-start: var(--border-w) dashed var(--line);
+    padding-block-start: var(--space-4);
+  }
+  .refusal__remedy-label {
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .refusal__remedy-body {
+    color: var(--ink);
+    margin: 0;
+    max-inline-size: min(var(--measure-prose), 100%);
+    /* At 360 the remedy wraps and never breaks a word. */
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+  }
+
+  /* --- density="row": the compact form inside a grader card's field list --- */
+  .refusal--row {
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+  }
+  .refusal--row .refusal__detail,
+  .refusal--row .refusal__remedy-body {
+    /* Re-applies the type-body-sm role's own sub-tokens. A media query and a
+       density switch cannot swap a class (DECISIONS.md D-28), and every value
+       here is that role's token. */
+    font-size: var(--type-body-sm-size);
+    line-height: var(--type-body-sm-lh);
+    letter-spacing: var(--type-body-sm-track);
+    font-weight: var(--type-body-sm-weight, 400);
+  }
+  .refusal--row .refusal__remedy {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .refusal__disclosure {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: flex-start;
+    /* WCAG 2.2 AA 2.5.8 wants 24x24. The mono-label role's line box plus
+       --space-1 of padding lands at 21, three short, on every control on this
+       site drawn to this pattern. --space-5 IS 24px, so the floor is a token
+       and not a literal, and the padding still decides the width. */
+    min-block-size: var(--space-5);
+    justify-content: center;
+
+    color: var(--ink-2);
+    background: transparent;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .refusal__disclosure:hover {
+    color: var(--ink);
+  }
+  .refusal__disclosure:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .refusal__disclosure::after {
+    content: "›";
+    rotate: 90deg;
+  }
+  .refusal__disclosure[aria-expanded="false"]::after {
+    rotate: 0deg;
+  }
+  /* No scripting, no disclosure: the remedy is already open. */
+  :global(:root:not([data-js])) .refusal__disclosure {
+    display: none;
+  }
+
+  /* Motion: the remedy disclosure only. Nothing else in this component moves.
+     tokens.css collapses the duration under reduced motion, so it appears
+     instantly there without a second rule. */
+  .refusal--row .refusal__remedy-body {
+    animation: refusal-remedy-in var(--dur-3) var(--curve-enter);
+  }
+  @keyframes refusal-remedy-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

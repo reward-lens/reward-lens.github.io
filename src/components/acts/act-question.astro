@@ -1,0 +1,44 @@
+---
+/**
+ * act-question  ·  part 1 of every act
+ *
+ * One sentence a practitioner would actually ask, before any setup. All three
+ * page files give it the same acceptance: it renders above the fold at
+ * 1440x900 and at 390x844, and nothing competes with it in that first viewport
+ * except the page header (pages/see-reward-model.md:34, see-run.md:26,
+ * see-grader.md:36).
+ *
+ * It is a paragraph and not a heading. It is the act's opening statement, the
+ * <h1> above it already names the act, and a second heading in the first
+ * viewport is the thing that would compete. Weight comes from type-h2 and the
+ * heading measure, not from a level.
+ *
+ * The one thing to resist, named in pages/see-reward-model.md:30: opening with
+ * a figure. The number means nothing until the reader has the question, and a
+ * figure above the question turns the page into a result being defended rather
+ * than a question being answered. This component renders no figure and no
+ * number, and that is the point of it existing rather than being three
+ * paragraphs.
+ */
+interface Props {
+  /** From copy.yaml:acts.<act>.question. Never typed into a route. */
+  question: string;
+  class?: string;
+}
+
+const { question, class: extraClass = "" } = Astro.props;
+---
+
+<p class:list={["act-q", "type-h2", extraClass]}>{question}</p>
+
+<style>
+  .act-q {
+    margin: 0;
+    /* Wider than --measure-heading: this is a sentence to read, not a title to
+       break at a chosen point. --measure-prose at h2 size runs long, so the
+       caption measure is the one that holds it to three or four lines. */
+    max-width: min(var(--measure-caption), 100%);
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+</style>

@@ -2,8 +2,10 @@
 title: Patch grid
 description: Which components, if you reached in and changed them, would actually move the reward?
 section: instruments
-order: 39
+order: 40
 source: docs/content/instruments/patch-grid.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -107,6 +109,6 @@ It is also more expensive than reading. Attribution is one or two forward passes
 
 ## How much to trust it
 
-The grid returns [`Evidence`](/docs/reference/core/#reward_lens.core.evidence.Evidence) at `EXPLORATORY`, because no calibration scorecard is wired for it yet: it is a sharp, honest measurement of a causal effect, not a validated detector with a known false-positive rate. The gauge is `INVARIANT`, so the effects are comparable across components of the same model without a frame. What you may say from it is precise and bounded: "patching this component moves the margin by this much on these pairs." What you may not say is that the effect generalizes off these pairs, or that a component attribution ranked highly is therefore causal. That last substitution is the single most common overclaim in reward-model interpretability, and it is exactly the one this instrument exists to stop.
+The grid returns [`Evidence`](/docs/api/core/#reward_lens.core.evidence.Evidence) at `EXPLORATORY`, because no calibration scorecard is wired for it yet: it is a sharp, honest measurement of a causal effect, not a validated detector with a known false-positive rate. The gauge is `INVARIANT`, so the effects are comparable across components of the same model without a frame. What you may say from it is precise and bounded: "patching this component moves the margin by this much on these pairs." What you may not say is that the effect generalizes off these pairs, or that a component attribution ranked highly is therefore causal. That last substitution is the single most common overclaim in reward-model interpretability, and it is exactly the one this instrument exists to stop.
 
 Its two-hop companion, which asks not *whether* a head matters but *through which path*, is [path effects](/docs/instruments/path-effects/).

@@ -2,8 +2,10 @@
 title: Framework integrations
 description: How does reward-lens ride inside a TRL, OpenRLHF, or veRL run instead of analyzing it afterward?
 section: training-loops
-order: 48
+order: 73
 source: docs/content/training-loops/integrations.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -15,7 +17,7 @@ Through two framework-agnostic pieces that run today and one thin binding per fr
 
 ## The reward path is one call
 
-Every one of these frameworks ultimately calls a function that turns a batch of prompts and responses into a list of scalar rewards. [`make_reward_fn`](/docs/reference/dynamics-loops/#reward_lens.loops.integrations.base.make_reward_fn) wraps any signal into exactly that shape, and it needs only the signal, no framework:
+Every one of these frameworks ultimately calls a function that turns a batch of prompts and responses into a list of scalar rewards. [`make_reward_fn`](/docs/api/dynamics-loops/#reward_lens.loops.integrations.base.make_reward_fn) wraps any signal into exactly that shape, and it needs only the signal, no framework:
 
 ```python
 from reward_lens.signals import from_tiny
@@ -38,7 +40,7 @@ Plain floats, the contract a PPO or GRPO reward hook expects. This is the real r
 
 ## The logging shape is one object
 
-The other half is the geometry log. A [`GeometryLogger`](/docs/reference/dynamics-loops/#reward_lens.loops.integrations.base.GeometryLogger) holds a fixed probe and, on the logging steps, records the model's scores on that probe, the reward-direction norm, and the concept doses against a feature bank. It runs on the tiny model with no framework installed, as the [training-loops overview](/docs/training-loops/) shows end to end. Because both the reward function and the logger are proven this way, the science of a run is independent of which trainer produced it.
+The other half is the geometry log. A [`GeometryLogger`](/docs/api/dynamics-loops/#reward_lens.loops.integrations.base.GeometryLogger) holds a fixed probe and, on the logging steps, records the model's scores on that probe, the reward-direction norm, and the concept doses against a feature bank. It runs on the tiny model with no framework installed, as the [training-loops overview](/docs/training-loops/) shows end to end. Because both the reward function and the logger are proven this way, the science of a run is independent of which trainer produced it.
 
 ## The three bindings
 

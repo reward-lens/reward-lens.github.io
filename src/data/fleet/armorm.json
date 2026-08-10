@@ -60,7 +60,7 @@
   {
    "observable": "campaign.bias.battery",
    "version": "1.0",
-   "value_repr": "{name: str, vector: ndarray, labels: list, meta: {effect: str}}",
+   "value_repr": "VectorPayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -70,12 +70,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:1522fde991b4966e8901aa10ed8f32ec"
+   "evidence_id": "ev:1522fde991b4966e8901aa10ed8f32ec",
+   "name": "armorm bias battery"
   },
   {
    "observable": "campaign.capture",
    "version": "1.0",
-   "value_repr": "{store_key: str, roster_key: str, slice_name: str, sites: list}",
+   "value_repr": "CaptureManifest",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -85,12 +86,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:6ac19be8a6ba4bfda22068fce464dc04"
+   "evidence_id": "ev:6ac19be8a6ba4bfda22068fce464dc04",
+   "name": null
   },
   {
    "observable": "campaign.capture.fp32",
    "version": "1.0",
-   "value_repr": "{store_key: str, roster_key: str, slice_name: str, sites: list}",
+   "value_repr": "CaptureManifest",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -100,12 +102,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:a89d64641a5c030f590b8812e07a136f"
+   "evidence_id": "ev:a89d64641a5c030f590b8812e07a136f",
+   "name": null
   },
   {
    "observable": "campaign.conformance",
    "version": "1.0",
-   "value_repr": "{name: str, columns: list, rows: list, meta: {tol: 0.05, summary: str}}",
+   "value_repr": "TablePayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -115,12 +118,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:71c8aadb6f3ce129a355c8c42bea2cb1"
+   "evidence_id": "ev:71c8aadb6f3ce129a355c8c42bea2cb1",
+   "name": "armorm adapter conformance"
   },
   {
    "observable": "campaign.features.internal",
    "version": "1.0",
-   "value_repr": "{item_ids: list, names: list, matrix: ndarray, meta: {site_order: list, contested_correlation: 0.6042, kui_star: str, n_layers: 31}}",
+   "value_repr": "FeatureMatrix",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -130,12 +134,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:134b0ab596d6cd5cf7458c2e0f78114e"
+   "evidence_id": "ev:134b0ab596d6cd5cf7458c2e0f78114e",
+   "name": null
   },
   {
    "observable": "campaign.features.internal",
    "version": "1.0",
-   "value_repr": "{item_ids: list, names: list, matrix: ndarray, meta: {excluded: list}}",
+   "value_repr": "FeatureMatrix",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -145,12 +150,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:ad11b8508d76984c3bb20acb9c16a56d"
+   "evidence_id": "ev:ad11b8508d76984c3bb20acb9c16a56d",
+   "name": null
   },
   {
    "observable": "campaign.heartbeat",
    "version": "1.0",
-   "value_repr": "{arc: str, gpu: str, roster_key: str, seq_per_s: 0}",
+   "value_repr": "Heartbeat",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -160,12 +166,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:a43cba3cf5051a7f8cfbb6eb63ec3bc8"
+   "evidence_id": "ev:a43cba3cf5051a7f8cfbb6eb63ec3bc8",
+   "name": null
   },
   {
    "observable": "campaign.heartbeat",
    "version": "1.0",
-   "value_repr": "{arc: str, gpu: str, roster_key: str, seq_per_s: 0}",
+   "value_repr": "Heartbeat",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -175,12 +182,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:6565def62ed2f3bc34946a357a0ffc25"
+   "evidence_id": "ev:6565def62ed2f3bc34946a357a0ffc25",
+   "name": null
   },
   {
    "observable": "campaign.heartbeat",
    "version": "1.0",
-   "value_repr": "{arc: str, gpu: str, roster_key: str, seq_per_s: 0}",
+   "value_repr": "Heartbeat",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -190,12 +198,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:0441ef16109d34f43eeeca95d302da3d"
+   "evidence_id": "ev:0441ef16109d34f43eeeca95d302da3d",
+   "name": null
   },
   {
    "observable": "campaign.heartbeat",
    "version": "1.0",
-   "value_repr": "{arc: str, gpu: str, roster_key: str, seq_per_s: 0}",
+   "value_repr": "Heartbeat",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -205,12 +214,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:972b32474fdc4e231780dcf7ae1323df"
+   "evidence_id": "ev:972b32474fdc4e231780dcf7ae1323df",
+   "name": null
   },
   {
    "observable": "campaign.index.table",
    "version": "1.0",
-   "value_repr": "{name: str, columns: list, rows: list, meta: {roster_key: str, slice: str}}",
+   "value_repr": "TablePayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -220,12 +230,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:62a02ee1aba0a2e8c88d25b1fae5bc5e"
+   "evidence_id": "ev:62a02ee1aba0a2e8c88d25b1fae5bc5e",
+   "name": "armorm index table (rb2-full)"
   },
   {
    "observable": "campaign.index.table",
    "version": "1.0",
-   "value_repr": "{name: str, columns: list, rows: list, meta: {star: str, control: str}}",
+   "value_repr": "TablePayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -235,12 +246,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:1b2b57dff58a79f304a9201702709aa3"
+   "evidence_id": "ev:1b2b57dff58a79f304a9201702709aa3",
+   "name": "armorm kui inputs"
   },
   {
    "observable": "campaign.lens.trajectory",
    "version": "1.0",
-   "value_repr": "{name: str, vector: ndarray, labels: list, meta: {}}",
+   "value_repr": "VectorPayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -250,12 +262,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:2454d0d97e82b6def5f10ef494352508"
+   "evidence_id": "ev:2454d0d97e82b6def5f10ef494352508",
+   "name": "armorm lens trajectory"
   },
   {
    "observable": "campaign.rb2.category_accuracy",
    "version": "1.0",
-   "value_repr": "{name: str, columns: list, rows: list, meta: {excluded_calibration_rows: 200, exclusion: str}}",
+   "value_repr": "TablePayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -265,12 +278,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:04205b7122ed98bcec1d1dc34d374c64"
+   "evidence_id": "ev:04205b7122ed98bcec1d1dc34d374c64",
+   "name": "armorm rb2 category accuracy"
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 0, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -280,12 +294,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:5578c82a7af9af1b8744fad11f748fe4"
+   "evidence_id": "ev:5578c82a7af9af1b8744fad11f748fe4",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 1, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -295,12 +310,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:872ef109fcc750bcacfee75e7d0bb1d1"
+   "evidence_id": "ev:872ef109fcc750bcacfee75e7d0bb1d1",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 2, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -310,12 +326,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:2fd912b8851b4b959a423fa1daf8f209"
+   "evidence_id": "ev:2fd912b8851b4b959a423fa1daf8f209",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 3, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -325,12 +342,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:0929fcc493e5590f6214e6d59f265e44"
+   "evidence_id": "ev:0929fcc493e5590f6214e6d59f265e44",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 4, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -340,12 +358,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:91a7b8637f1fe46facd3620a34e2dd79"
+   "evidence_id": "ev:91a7b8637f1fe46facd3620a34e2dd79",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 5, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -355,12 +374,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:2581c9f2cdf4e19633a6c5864f2d7352"
+   "evidence_id": "ev:2581c9f2cdf4e19633a6c5864f2d7352",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 6, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -370,12 +390,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:fe8840f5d97572baa592b3b50b84d65e"
+   "evidence_id": "ev:fe8840f5d97572baa592b3b50b84d65e",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 7, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -385,12 +406,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:e1c2f3fd92c7f6a1570c2bf949cb2cd8"
+   "evidence_id": "ev:e1c2f3fd92c7f6a1570c2bf949cb2cd8",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 8, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -400,12 +422,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:b6aef5d2f239e873dde530c5ae6da176"
+   "evidence_id": "ev:b6aef5d2f239e873dde530c5ae6da176",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 9, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -415,12 +438,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:d03e23b65057a123fda8dc654aa30b7b"
+   "evidence_id": "ev:d03e23b65057a123fda8dc654aa30b7b",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 10, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -430,12 +454,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:e598fd37c7247a037df82e86d6403131"
+   "evidence_id": "ev:e598fd37c7247a037df82e86d6403131",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 11, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -445,12 +470,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:1068c04f710b1da1960071c2c7ec4023"
+   "evidence_id": "ev:1068c04f710b1da1960071c2c7ec4023",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 12, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -460,12 +486,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:5c1b1fb63fe9fb7b18b5b4cf0699a0a7"
+   "evidence_id": "ev:5c1b1fb63fe9fb7b18b5b4cf0699a0a7",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 13, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -475,12 +502,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:087ea97c9f8cd38638d8612b565fdd96"
+   "evidence_id": "ev:087ea97c9f8cd38638d8612b565fdd96",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 14, n_total: 7052}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -490,12 +518,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:0a592891d398eed27f2024eb3e2f2236"
+   "evidence_id": "ev:0a592891d398eed27f2024eb3e2f2236",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {armorm_readout: str, subsets: list}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -505,12 +534,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:4678d7523faa1364b30e384d4cb04f39"
+   "evidence_id": "ev:4678d7523faa1364b30e384d4cb04f39",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 0, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -520,12 +550,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:d77c5f370b8302242f412477ec750b3c"
+   "evidence_id": "ev:d77c5f370b8302242f412477ec750b3c",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 1, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -535,12 +566,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:54751a6181c9b0e2cc5a2361b247c747"
+   "evidence_id": "ev:54751a6181c9b0e2cc5a2361b247c747",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 2, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -550,12 +582,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:833414b0ac246a8eb938a8cb0971998a"
+   "evidence_id": "ev:833414b0ac246a8eb938a8cb0971998a",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 3, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -565,12 +598,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:d22bc22b7228f22e2348c343a1c6e9fc"
+   "evidence_id": "ev:d22bc22b7228f22e2348c343a1c6e9fc",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 4, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -580,12 +614,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:b5c0ba79719cc078bcf6dc02f929c02e"
+   "evidence_id": "ev:b5c0ba79719cc078bcf6dc02f929c02e",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 5, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -595,12 +630,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:0140eb826d6bafd00361e615d3dfa3e0"
+   "evidence_id": "ev:0140eb826d6bafd00361e615d3dfa3e0",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 6, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -610,12 +646,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:fb3664ca6d9fe547ba84a948162e2d71"
+   "evidence_id": "ev:fb3664ca6d9fe547ba84a948162e2d71",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 7, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -625,12 +662,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:c7b7ac3f1c6879bfefe1c2b9380c389d"
+   "evidence_id": "ev:c7b7ac3f1c6879bfefe1c2b9380c389d",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 8, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -640,12 +678,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:6f720266667f20ba755648a0b1ad33bf"
+   "evidence_id": "ev:6f720266667f20ba755648a0b1ad33bf",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 9, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -655,12 +694,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:96bf26877fa6c4d8ab4426a5e5b317e9"
+   "evidence_id": "ev:96bf26877fa6c4d8ab4426a5e5b317e9",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 10, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -670,12 +710,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:4b2c8caf6fab43233fe922536e608a24"
+   "evidence_id": "ev:4b2c8caf6fab43233fe922536e608a24",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 11, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -685,12 +726,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:9f571890efa38dadbd47ad377aa755d7"
+   "evidence_id": "ev:9f571890efa38dadbd47ad377aa755d7",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 12, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -700,12 +742,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:6e80cb71e84d2065748f31203f74145e"
+   "evidence_id": "ev:6e80cb71e84d2065748f31203f74145e",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 13, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -715,12 +758,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:68baf4937177b239c53099dcde8c137b"
+   "evidence_id": "ev:68baf4937177b239c53099dcde8c137b",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 14, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -730,12 +774,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:e7b8d3b9544d6e59115d1dc9b871b314"
+   "evidence_id": "ev:e7b8d3b9544d6e59115d1dc9b871b314",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 15, n_total: 7962}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -745,12 +790,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:b15f0a720b3a70a4d0e7720e787e5aa2"
+   "evidence_id": "ev:b15f0a720b3a70a4d0e7720e787e5aa2",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {armorm_readout: str, tiers: list, columns: list}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -760,12 +806,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:15e3fd9036231c89c43f1ea9a25b2e49"
+   "evidence_id": "ev:15e3fd9036231c89c43f1ea9a25b2e49",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 0, n_total: 168}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -775,12 +822,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:68162492c4602b4a863f53b9ed545f05"
+   "evidence_id": "ev:68162492c4602b4a863f53b9ed545f05",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {armorm_readout: str, columns: list, axes: list}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -790,12 +838,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:d396ece331a9179526ea0a31a5cf5040"
+   "evidence_id": "ev:d396ece331a9179526ea0a31a5cf5040",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 0, n_total: 216}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -805,12 +854,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:aa4c32d837812279a69ebed4cc242a83"
+   "evidence_id": "ev:aa4c32d837812279a69ebed4cc242a83",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {armorm_readout: str, columns: list, families: list}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -820,12 +870,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:26c0a55001f8ee1499d3647223d4687d"
+   "evidence_id": "ev:26c0a55001f8ee1499d3647223d4687d",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 0, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -835,12 +886,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:70562979149336cd00074507e022d0d3"
+   "evidence_id": "ev:70562979149336cd00074507e022d0d3",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 1, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -850,12 +902,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:c16ff8f47990710878e335a187fca216"
+   "evidence_id": "ev:c16ff8f47990710878e335a187fca216",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 2, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -865,12 +918,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:0888c3f9bea513dca50ccd4968d5e580"
+   "evidence_id": "ev:0888c3f9bea513dca50ccd4968d5e580",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 3, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -880,12 +934,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:34f2bcf7817f208635555370c5eda12c"
+   "evidence_id": "ev:34f2bcf7817f208635555370c5eda12c",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 4, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -895,12 +950,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:d77c48855e041f80eb9d6048d04c81ab"
+   "evidence_id": "ev:d77c48855e041f80eb9d6048d04c81ab",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 5, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -910,12 +966,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:2ab8e097a5d2f25b10eacc335715ba54"
+   "evidence_id": "ev:2ab8e097a5d2f25b10eacc335715ba54",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 6, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -925,12 +982,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:97be1a32dc3787fb049efc3a9b128454"
+   "evidence_id": "ev:97be1a32dc3787fb049efc3a9b128454",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 7, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -940,12 +998,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:627bf7d2885388e75b12df307a066119"
+   "evidence_id": "ev:627bf7d2885388e75b12df307a066119",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 8, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -955,12 +1014,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:0da67a99f99c11cf6bc0d70d2bdb4aec"
+   "evidence_id": "ev:0da67a99f99c11cf6bc0d70d2bdb4aec",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {partial: 1, part: 9, n_total: 4800}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -970,12 +1030,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:2e59a24075a064cada13fa8b6c037343"
+   "evidence_id": "ev:2e59a24075a064cada13fa8b6c037343",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {armorm_readout: str, columns: list}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -985,12 +1046,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:982935a877a7f2f10f6de41fc59d639e"
+   "evidence_id": "ev:982935a877a7f2f10f6de41fc59d639e",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {columns: list, derived_from: str, derivation: str, indexed_rows: 200}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -1000,12 +1062,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:ca98a57b2f66e97a1005dd333934c125"
+   "evidence_id": "ev:ca98a57b2f66e97a1005dd333934c125",
+   "name": null
   },
   {
    "observable": "campaign.scores",
    "version": "1.0",
-   "value_repr": "{item_ids: list, scores: ndarray, layout: str, meta: {columns: list, derived_from: str, derivation: str, indexed_rows: 512}}",
+   "value_repr": "ScoreBank",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -1015,12 +1078,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:cb74616d827872576ba943fecd920b06"
+   "evidence_id": "ev:cb74616d827872576ba943fecd920b06",
+   "name": null
   },
   {
    "observable": "campaign.subspace",
    "version": "1.0",
-   "value_repr": "{name: str, matrix: ndarray, row_labels: list, col_labels: list}",
+   "value_repr": "MatrixPayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -1030,12 +1094,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:f81b0e3b47f4bf5fc3a60de3129488ad"
+   "evidence_id": "ev:f81b0e3b47f4bf5fc3a60de3129488ad",
+   "name": "armorm criterion directions"
   },
   {
    "observable": "campaign.subspace",
    "version": "1.0",
-   "value_repr": "{name: str, matrix: ndarray, row_labels: list, col_labels: list}",
+   "value_repr": "MatrixPayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -1045,12 +1110,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:81f7240c81badc1604f2a026b6d1201e"
+   "evidence_id": "ev:81f7240c81badc1604f2a026b6d1201e",
+   "name": "armorm reward subspace (shared item space)"
   },
   {
    "observable": "campaign.subspace",
    "version": "1.0",
-   "value_repr": "{name: str, matrix: ndarray, row_labels: list, col_labels: list}",
+   "value_repr": "MatrixPayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -1060,12 +1126,13 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:aac87977990b9ecdb27c3ea8e973bc94"
+   "evidence_id": "ev:aac87977990b9ecdb27c3ea8e973bc94",
+   "name": "armorm capability subspace (shared item space)"
   },
   {
    "observable": "campaign.w_r",
    "version": "1.0",
-   "value_repr": "{name: str, vector: ndarray, labels: list, meta: {readout: str, site: str}}",
+   "value_repr": "VectorPayload",
    "trust": "EXPLORATORY",
    "gauge": "invariant",
    "calibrated": false,
@@ -1075,7 +1142,8 @@
    ],
    "n_effective": null,
    "readout": null,
-   "evidence_id": "ev:8fe5142b7c583885ac8c2d5ecc14b6d7"
+   "evidence_id": "ev:8fe5142b7c583885ac8c2d5ecc14b6d7",
+   "name": "armorm reward direction"
   }
  ]
 }

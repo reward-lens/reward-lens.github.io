@@ -1,0 +1,19 @@
+{
+ "contentHash": "eacbbfce285d75dc0dbd5d77546e1cb0",
+ "humanSource": "The frozen study \"Susceptibility chi predicts best-of-n feature drift on a real bank\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:c978e3958769ecf93dcf079771a3aedb",
+  "campaign.adjudication.CHI-DRIFT",
+  "study:campaign-chi-drift@v1#1c12042d",
+  "spec:1c12042d2eeb93b23ff9cf27b6433125"
+ ],
+ "label": "Susceptibility chi predicts best-of-n feature drift on a real bank",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. split-bank estimator: chi and drift read disjoint prompt halves, so the null re-centers at zero, but the correlation's exchangeable unit is k = 6 features and the null still passes the frozen 0.3 threshold 0.28 of the time; the registered CI exclusion carries size control and only orderings near the synthetic calibration (0.958) clear the 0.91 MDE.",
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-8b and skywork-v2-llama31-8b, over ultrafeedback-bank.",
+ "slug": "study-chi-drift",
+ "sourceUrl": "/evidence/c978e3958769ecf93dcf079771a3aedb/",
+ "statement": "The frozen study \"Susceptibility chi predicts best-of-n feature drift on a real bank\" was adjudicated confirmed, over 2 registered predictions of which 2 held.",
+ "status": "supported",
+ "subject": "skywork-v2-qwen3-8b and skywork-v2-llama31-8b, over ultrafeedback-bank",
+ "type": "interpretation"
+}

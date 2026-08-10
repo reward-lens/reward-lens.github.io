@@ -58,7 +58,9 @@
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--ink-3);
+  /* The board paints --bg-raised, where --ink-3 is 4.29:1: AA-large, not
+     AA-body. GROUND-TRUTH.md C-15, DECISIONS.md D-29. */
+  color: var(--ink-2);
   border-bottom: 1px solid var(--line-strong);
   padding: var(--sp-2) var(--sp-3);
   white-space: nowrap;
@@ -97,7 +99,8 @@
   display: block;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--ink-3);
+  /* Same surface, same rule as .hboard-table th above. */
+  color: var(--ink-2);
 }
 
 .hboard-statement {
@@ -116,7 +119,8 @@
   display: block;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--ink-3);
+  /* Same surface, same rule as .hboard-table th above. */
+  color: var(--ink-2);
 }
 
 .hboard-outcome {

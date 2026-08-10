@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "46c22c578c8522b3141c83a1e786f613",
+ "humanSource": "The frozen study \"Verdict before critique on a real generative judge\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:e7fd3fee89a0c56cf4465212601d0d26",
+  "campaign.adjudication.JUDGE-VBC",
+  "study:campaign-judge-vbc@v1#a8172c8c",
+  "spec:a8172c8c8f19fef678f524a80564dadc"
+ ],
+ "label": "Verdict before critique on a real generative judge",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one.",
+ "quantity": {
+  "name": "flip_rate",
+  "unit": null,
+  "value": 0.822
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-critic, over judge-pairs-1000.",
+ "slug": "measured-judge-vbc-flip-rate",
+ "sourceUrl": "/evidence/e7fd3fee89a0c56cf4465212601d0d26/",
+ "statement": "A supporting measurement from the frozen study \"Verdict before critique on a real generative judge\", with no prediction registered against it in advance.",
+ "subject": "skywork-critic, over judge-pairs-1000",
+ "type": "measured-result"
+}

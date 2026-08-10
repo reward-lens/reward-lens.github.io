@@ -1,47 +1,53 @@
 ---
+/**
+ * Every page of the ported corpus. Eighty-four of them.
+ *
+ * The prose is the library's, unchanged: scripts/port_docs.py rewrites
+ * delimiters, admonitions, figures and links and passes everything else
+ * through byte-identical. This route adds the frame and nothing else, which is
+ * the property that lets the corpus be repointed at a new library version
+ * without a site change.
+ */
 import { getCollection, render } from "astro:content";
 import Docs from "@layouts/Docs.astro";
-import Prose from "@components/Prose.astro";
+import "@styles/docs-legacy.css";
 import docsNav from "@data/docs-nav.json";
+import type { NavItem } from "@components/docs/types";
 
 export async function getStaticPaths() {
-  // The docs landing (/docs/) is the portal page (src/pages/docs/index.astro),
-  // not a collection entry; everything else renders from the ported corpus.
   const entries = await getCollection("docs");
-  return entries
-    .filter((entry) => entry.id !== "index")
-    .map((entry) => ({
-      params: { slug: entry.id },
-      props: { entry },
-    }));
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 
-const flat: { title: string; href: string }[] = [];
-const walk = (items: any[]) => {
-  for (const item of items) {
-    if (item.href) flat.push({ title: item.title, href: item.href });
-    if (item.children) walk(item.children);
-  }
+const current = `/docs/${entry.id}/`;
+
+// The Pagefind section name, taken from the top-level nav group this page sits
+// under. It is the library's own nav title, so the search overlay groups
+// results by the same names the sidebar uses and nothing is written twice.
+const nav = docsNav as NavItem[];
+const sectionOf = (): string => {
+  const inside = (item: NavItem): boolean =>
+    item.href === current || (item.children ?? []).some(inside);
+  return nav.find(inside)?.title ?? "";
 };
-walk(docsNav as any[]);
-const current = `/docs/${entry.id === "index" ? "" : entry.id + "/"}`;
-const idx = flat.findIndex((f) => f.href === current);
-const prev = idx > 0 ? flat[idx - 1] : undefined;
-const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : undefined;
 ---
 
 <Docs
   title={entry.data.title}
   description={entry.data.description}
-  nav={docsNav as any[]}
   current={current}
-  prev={prev}
-  next={next}
+  libraryVersion={entry.data.libraryVersion}
+  staleMarkers={entry.data.staleMarkers}
+  headings={headings}
+  section={sectionOf()}
 >
-  <Prose>
+  <div class="docs-prose">
     <Content />
-  </Prose>
+  </div>
 </Docs>

@@ -4,6 +4,8 @@ description: You want the causal patch effects, but a full sweep is blowing up y
 section: how-to
 order: 13
 source: docs/content/how-to/patching-memory.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -69,4 +71,4 @@ The head-granularity result is recorded from committed artifacts: on Skywork-v0.
 
 For a single named component you do not need the grid at all. The [intervention algebra](/docs/instruments/interventions/) exposes `ComponentPatch`, one forward pair for one site, which is the smallest causal question you can ask.
 
-See also: [the patch grid instrument](/docs/instruments/patch-grid/), [`PatchGrid`](/docs/reference/measure/#reward_lens.measure.battery.patch.PatchGrid).
+See also: [the patch grid instrument](/docs/instruments/patch-grid/), [`PatchGrid`](/docs/api/measure/#reward_lens.measure.battery.patch.PatchGrid).

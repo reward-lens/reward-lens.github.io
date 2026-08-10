@@ -1,0 +1,26 @@
+{
+ "comparator": "> -0.01",
+ "contentHash": "e7db7620ef4e5520e64b01b34c9d61c6",
+ "humanSource": "The frozen study \"Certified erasure removes the exploit without benchmark loss\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:41058731abf1d0b1590d4f2286e8771c",
+  "campaign.adjudication.SURGERY",
+  "study:campaign-surgery@v1#98769c52",
+  "spec:98769c52f2669fc0e08b554b07393a0b",
+  "H-retain"
+ ],
+ "label": "Certified erasure removes the exploit without benchmark loss",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "rb2_accuracy_delta_after_erasure",
+  "unit": null,
+  "value": -0.39875212705615426
+ },
+ "scope": "One frozen study, adjudicated once, on hackfore-flagged, over hack-probes and rb2-full.",
+ "slug": "measured-surgery-rb2-accuracy-delta-after-erasure",
+ "sourceUrl": "/evidence/41058731abf1d0b1590d4f2286e8771c/",
+ "statement": "benchmark accuracy is retained through the erasure.",
+ "status": "refuted",
+ "subject": "hackfore-flagged, over hack-probes and rb2-full",
+ "type": "measured-result"
+}

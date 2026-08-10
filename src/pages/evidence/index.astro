@@ -1,96 +1,566 @@
 ---
+/**
+ * /evidence/  ·  the explorer.
+ *
+ * The reason every other page on the site can be trusted: a reader who follows
+ * a dotted underline from any number arrives at the whole record rather than a
+ * citation.
+ *
+ * A READER FINDS A RECORD BY WHAT THEY REMEMBER ABOUT IT, NEVER BY ITS KEY.
+ * `copy.yaml:evidence.explorer_hint` says so and the page used not to do it:
+ * the second column of every row was `campaign.adjudication`, which is the same
+ * string on all 27 rows, is a machine identifier, and is the one thing a reader
+ * cannot possibly remember. It is gone. What is left is what differs between
+ * records: what was claimed, which area of the work it belongs to, how it came
+ * out, and how strong the evidence behind it is.
+ *
+ * THE ROWS ARE FILTERED, NOT GROUPED. Grouping by result stood in for a filter
+ * set while `copy.yaml:evidence` carried no `filter_*` key, because a group
+ * heading is a value in the data and a fieldset legend is a string somebody has
+ * to write. `evidence.filter_result` and `evidence.filter_subject` are those
+ * strings, so the list is flat, every row states its own result, and the two
+ * facets that differ between records are real controls.
+ *
+ * THE FILTERS ARE CSS, NOT JAVASCRIPT, exactly as /atlas/'s are: radio inputs
+ * plus attribute selectors, keyboard operable for free, and working with
+ * scripting off. Every option and count is derived from the rows, so a value no
+ * record carries is never offered. The empty state is CSS too: the 44
+ * combinations of a result and a subject that no record satisfies are computed
+ * here and each gets a rule that reveals `evidence.explorer_empty`, which had
+ * been sitting in copy.yaml unused since it was written.
+ *
+ * TWO FACETS THE PAGE SPEC ASKS FOR THAT ARE NOT HERE, AND IT IS A DATA FACT
+ * RATHER THAN A CHOICE. All 27 records carry the same observable family
+ * (`campaign.adjudication.<card>`, one per card, which is also a machine
+ * identifier D-40 keeps off this index) and the same payload kind, gauge and
+ * evidence strength. A filter on either would offer one option, exclude
+ * nothing, and tell a reader the opposite of the truth about how varied the
+ * store is. Reported in the packet log with the counts.
+ *
+ * THE ID IS LAST. `pages/evidence.md` §2: the id is how the machine finds a
+ * record and it is the last thing a reader knows. So the public name of the
+ * claim leads and the id is the last element of the row, in mono at --ink-3.
+ *
+ * THE INDEX IS NOT COVERED BY D-40 AND MUST STAY CLEAN. D-40 extends gate 7's
+ * allowance to /evidence/<id>/ and to nothing else, in the strong form: "the
+ * index must stay clean, which is a stronger check than it had, because the
+ * index is generated from the same store and would otherwise inherit the
+ * exemption by proximity." Three of the 27 card titles trip the terminology
+ * lock; `scripts/build_atlas.mjs` substitutes each one using a word from that
+ * same card's own fields, and the record page keeps every title whole.
+ */
 import Base from "@layouts/Base.astro";
 import PageHeader from "@components/PageHeader.astro";
-import evidenceIndex from "@data/evidence-index.json";
+import TrustBadge from "@components/base/trust-badge.astro";
+import atlas from "@data/atlas.json";
+import { fill } from "@components/base/data";
+import { copy } from "../../copy";
+import { allowEntries, coverage } from "./_coverage";
+import { bareId, records, recordHref, trustName } from "./_store";
+import { correctedSlugs } from "./_corrections";
 
-const records = Object.entries(evidenceIndex).map(([id, meta]) => ({
-  id,
-  ...(meta as { card: string; slug: string; observable: string }),
-}));
+const ev = copy.evidence as Record<string, string>;
+
+/* One card per record, by the record the card was resolved on. `title` is the
+   public title from atlas.json, which is the card's own title except on the
+   three that trip the lock. */
+const cardByEvidence = new Map(atlas.cards.map((c) => [c.evidenceId, c]));
+
+/* Which readings the archive has since recounted. See ./_corrections.ts: the
+   store is frozen and the verdicts here stay as the store gave them, so a
+   withdrawn reading is still filed under `confirmed`. Without a marker the
+   grouping is the only thing a scanning reader takes away from this list. */
+const corrected = correctedSlugs();
+
+const rows = records.map((r) => {
+  const card = cardByEvidence.get(r.id);
+  if (!card) {
+    throw new Error(
+      `/evidence/: the store record ${r.id} has no card in src/data/atlas.json. ` +
+        `The index renders the card's public title and there is no fallback: ` +
+        `falling back to the observable would put campaign.adjudication back ` +
+        `on this page, which is the defect D-40 rules against.`,
+    );
+  }
+  return {
+    id: r.id,
+    href: recordHref(r.id),
+    title: card.title,
+    subject: card.subject,
+    verdict: card.verdict,
+    claims: card.hypotheses,
+    trust: trustName(r.trust, "/evidence/"),
+    withdrawn: corrected.has(card.slug),
+  };
+});
+
+/* Listed in the order the archive's own summary uses, and every record is
+   listed: dropping the inconclusive ones would be selection, on the page where
+   selection would be least defensible. The order is the result order because a
+   reader scanning an unfiltered list still meets the confirmed ones first. */
+const verdictOrder = ["confirmed", "refuted", "mixed", "inconclusive"];
+
+const unordered = rows.filter((r) => !verdictOrder.includes(r.verdict));
+if (unordered.length > 0) {
+  throw new Error(
+    `/evidence/: ${unordered.length} record(s) carry a verdict outside ` +
+      `${verdictOrder.join(", ")}: ${[...new Set(unordered.map((r) => r.verdict))].join(", ")}. ` +
+      `The result filter is built from this list, so an unlisted verdict would ` +
+      `be a row no option can reach on a page whose whole claim is that nothing ` +
+      `was selected out of it.`,
+  );
+}
+
+const ordered = verdictOrder.flatMap((verdict) =>
+  rows.filter((r) => r.verdict === verdict),
+);
+
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+/* The two facets, counted from the rows. A value no record carries cannot be
+   offered, which is the property that keeps a filter from producing a view
+   with nothing in it by itself. */
+const subjectValues = [...new Set(rows.flatMap((r) => r.subject))].sort();
+
+const filterGroups = [
+  {
+    name: "result",
+    legend: ev.filter_result,
+    options: verdictOrder
+      .map((verdict) => ({
+        id: `re-${slug(verdict)}`,
+        value: slug(verdict),
+        label: verdict,
+        count: rows.filter((r) => r.verdict === verdict).length,
+      }))
+      .filter((o) => o.count > 0),
+  },
+  {
+    name: "subject",
+    legend: ev.filter_subject,
+    options: subjectValues.map((subject) => ({
+      id: `su-${slug(subject)}`,
+      value: slug(subject),
+      label: subject,
+      count: rows.filter((r) => r.subject.includes(subject)).length,
+    })),
+  },
+];
+
+/* One rule per selectable value, generated rather than typed, so a card filed
+   against a new subject tomorrow does not need a hand-written CSS line that
+   nobody adds. */
+const filterCss = filterGroups
+  .flatMap((g) =>
+    g.options.map(
+      (o) =>
+        `.ev .ev__filters:has(#${o.id}:checked) ~ .ev__explorer .ev__row:not([data-${g.name}~="${o.value}"]) { display: none }`,
+    ),
+  )
+  .join("\n");
+
+/* The empty state, computed rather than guessed. A single filter can never
+   empty the list, because every option was counted off the rows; a result and
+   a subject together can, and these are exactly the pairs that do. */
+const emptyPairs = filterGroups[0].options.flatMap((result) =>
+  filterGroups[1].options
+    .filter(
+      (subject) =>
+        rows.filter(
+          (r) => slug(r.verdict) === result.value && r.subject.map(slug).includes(subject.value),
+        ).length === 0,
+    )
+    .map((subject) => [result, subject] as const),
+);
+const emptyCss = emptyPairs
+  .map(
+    ([result, subject]) =>
+      `.ev .ev__filters:has(#${result.id}:checked):has(#${subject.id}:checked) ~ .ev__explorer .ev__empty { display: block }`,
+  )
+  .join("\n");
+
+/* Section 3. All three numbers come from gate 5: the first two from its own
+   printed sweep, the third from the length of its own allow-list. See
+   _coverage.ts for why none of them is counted here. */
+const coverageBody = fill(ev.coverage_body, {
+  numbers_total: String(coverage.total),
+  numbers_bound: String(coverage.bound),
+  numbers_unresolved: String(coverage.unresolved),
+  numbers_deferred: String(coverage.deferred),
+  numbers_ported: String(coverage.ported),
+  numbers_context: String(coverage.contextAllowed),
+  numbers_allowlisted: String(coverage.allowlisted),
+});
 ---
 
-<Base
-  title="Evidence · reward-lens"
-  description="The adjudication records this site cites as receipts, shown whole."
->
-  <div class="ev-wrap">
-    <PageHeader
-      eyebrow="receipts"
-      title="Evidence records"
-      lede="Every campaign number on this site cites an evidence id. The records behind those citations are here, whole."
-    />
+<Base title={`${ev.title} · reward-lens`} description={ev.intro}>
+  <div class="wrap ev">
+    <PageHeader eyebrow={ev.title} title={ev.heading} lede={ev.intro} />
 
-    <div class="ev-prose">
-      <p>
-        An evidence id names one record in the campaign's append-only store.
-        The records cited as receipts on this site are the 27 adjudication
-        records, one per card: each holds the frozen thresholds and
-        comparators, the observed metrics, the per-hypothesis outcomes, and
-        any fired kill criteria. All 27 ship with this site and resolve
-        below.
-      </p>
-      <p>
-        The full merged store holds 1,363 records; the rest are measurement
-        payloads (activation captures, score banks, matrices) with sidecar
-        arrays that total hundreds of megabytes, so they are not hosted here.
-        Their ids still appear on the Atlas pages as provenance, and the
-        <a
-          href="https://github.com/reward-lens/reward-lens.github.io/blob/main/src/data/provenance.json"
-          >provenance manifest</a
-        > records the hash of every projection this site was built from.
-      </p>
-    </div>
+    <section class="ev__section" aria-labelledby="ev-explorer">
+      <h2 class="type-h3" id="ev-explorer">{ev.explorer_heading}</h2>
+      <p class="ev__hint type-body measure">{ev.explorer_hint}</p>
 
-    <ul class="ev-list">
-      {
-        records.map((r) => (
-          <li>
-            <a href={`/evidence/${r.id.replace("ev:", "")}/`}>
-              <code>{r.id}</code>
-            </a>
-            <span class="ev-list-meta">
-              {r.observable} · <a href={`/campaign/${r.slug}/`}>{r.card}</a>
-            </span>
-          </li>
-        ))
-      }
-    </ul>
+      <form class="ev__filters" method="get" action="/evidence/">
+        {
+          filterGroups.map((g) => (
+            <fieldset class="ev__group">
+              <legend class="ev__legend type-mono-label">{g.legend}</legend>
+              <div class="ev__options">
+                <span class="ev__opt">
+                  <input
+                    type="radio"
+                    name={g.name}
+                    id={`${g.name}-all`}
+                    value=""
+                    checked
+                    class="ev__radio"
+                  />
+                  <label class="ev__label type-body-sm" for={`${g.name}-all`}>
+                    {rows.length}
+                  </label>
+                </span>
+                {g.options.map((o) => (
+                  <span class="ev__opt">
+                    <input
+                      type="radio"
+                      name={g.name}
+                      id={o.id}
+                      value={o.value}
+                      class="ev__radio"
+                    />
+                    <label class="ev__label type-body-sm" for={o.id}>
+                      {o.label} · {o.count}
+                    </label>
+                  </span>
+                ))}
+              </div>
+            </fieldset>
+          ))
+        }
+        {/* Revealed by the script below and by nothing else. A field that
+            filters rows cannot do anything with scripting off, and one that
+            sits there inert is worse than one that is absent: the CSS filters
+            and all 27 rows work either way. */}
+        <div class="ev__search" data-search hidden>
+          <label class="ev__legend type-mono-label" for="ev-search">
+            {ev.search_label}
+          </label>
+          <input class="ev__input type-body-sm" id="ev-search" type="search" />
+        </div>
+      </form>
+
+      <div class="ev__explorer">
+        <ol class="ev__list">
+          {
+            ordered.map((r) => (
+              <li
+                class="ev__row"
+                data-result={slug(r.verdict)}
+                data-subject={r.subject.map(slug).join(" ")}
+              >
+                <a class="ev__name type-body" href={r.href}>
+                  {r.title}
+                </a>
+                {/* One of the 27 cards names no subject. It used to render an
+                    empty cell, because the only word available was
+                    `ui.no_value`, "not measured", and that is a different and
+                    stronger claim: the record was measured, and what is missing
+                    is the archive's note of what it was measured on. */}
+                <span class="ev__area type-mono-sm">
+                  {r.subject.length > 0 ? r.subject.join(", ") : copy.ui.not_stated}
+                </span>
+                <span class="ev__meta">
+                  <span class="ev__result type-mono-label">{r.verdict}</span>
+                  {/* A withdrawn reading still states the result the store gave
+                      it, because that is what the store gave it and this list is
+                      of the store. The marker is what stops `confirmed` from
+                      being the only thing a scanning reader takes away. The
+                      record page carries the recount. */}
+                  {r.withdrawn && (
+                    <span class="ev__withdrawn type-mono-label">{ev.withdrawn_label}</span>
+                  )}
+                  <TrustBadge level={r.trust} form="chip" />
+                </span>
+                <span class="ev__id type-mono-sm">{bareId(r.id)}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="ev__empty type-body measure">{ev.explorer_empty}</p>
+      </div>
+    </section>
+
+    <section class="ev__section" aria-labelledby="ev-coverage">
+      <h2 class="type-h3" id="ev-coverage">{ev.coverage_heading}</h2>
+      <p class="ev__hint type-body measure">{coverageBody}</p>
+      <p class="ev__note type-body-sm measure">{ev.coverage_note}</p>
+
+      <dl class="ev__allow">
+        {
+          allowEntries.map((e) => (
+            <div class="ev__allow-row" data-deferred={e.deferred ? "" : null}>
+              <dt class="ev__allow-subject type-mono-sm">{e.subject}</dt>
+              <dd class="ev__allow-reason type-body-sm">{e.reason}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
   </div>
 </Base>
 
+<style is:global set:html={`${filterCss}\n${emptyCss}`}></style>
+
+<script>
+  /* The free-text field over the 27 rows. It is progressive enhancement and
+     nothing else: the field is hidden in the markup and this reveals it, so a
+     reader with scripting off never meets a control that cannot work. The CSS
+     filters and the full list are unaffected either way.
+
+     `getClientRects()` rather than a class of our own, because a row can be
+     hidden by the radio filters' generated CSS as well as by this, and the
+     empty state has to be true of the two together. */
+  const explorer = document.querySelector<HTMLElement>(".ev__explorer");
+  const search = document.querySelector<HTMLElement>("[data-search]");
+  const input = document.querySelector<HTMLInputElement>("#ev-search");
+
+  if (explorer && search && input) {
+    search.hidden = false;
+    const rows = [...explorer.querySelectorAll<HTMLElement>(".ev__row")];
+    const apply = () => {
+      const q = input.value.trim().toLowerCase();
+      for (const row of rows) {
+        row.hidden = q.length > 0 && !(row.textContent ?? "").toLowerCase().includes(q);
+      }
+      const visible = rows.some((row) => row.getClientRects().length > 0);
+      explorer.toggleAttribute("data-none", !visible);
+    };
+    input.addEventListener("input", apply);
+    /* A browser restoring a typed value on back-navigation would otherwise
+       show every row under a field that says it is filtering. */
+    apply();
+  }
+</script>
+
 <style>
-  .ev-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .ev {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
   }
-  .ev-prose {
-    max-width: var(--measure-prose);
+
+  /* The same control shape /atlas/ uses, so the two catalogue routes read as
+     one system: the input stays in the accessibility tree and stays focusable,
+     the label is the visible target and carries the focus ring. */
+  .ev__filters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-5);
+    min-width: 0;
+  }
+  .ev__group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .ev__legend {
+    display: block;
+    padding: 0;
+    margin-bottom: var(--space-2);
+    color: var(--ink-3);
+  }
+  .ev__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .ev__opt {
+    display: inline-flex;
+    min-width: 0;
+  }
+  .ev__radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ev__label {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-pill);
     color: var(--ink-2);
-    line-height: 1.7;
-    margin-bottom: var(--sp-8);
+    cursor: pointer;
+    overflow-wrap: anywhere;
   }
-  .ev-list {
+  .ev__radio:checked + .ev__label {
+    border-color: var(--ink-2);
+    color: var(--ink);
+  }
+  .ev__radio:focus-visible + .ev__label {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .ev__search {
+    min-width: 0;
+  }
+  .ev__input {
+    inline-size: 100%;
+    max-inline-size: min(var(--measure-caption), 100%);
+    padding: var(--space-2) var(--space-3);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    background: var(--ground);
+    color: var(--ink);
+    min-width: 0;
+  }
+  .ev__input:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .ev__explorer {
+    min-width: 0;
+  }
+  /* Revealed by the generated rules above for a result and subject pair no
+     record satisfies, and by the script for a search that matches nothing. */
+  .ev__empty {
+    display: none;
+    margin: var(--space-5) 0 0;
+    color: var(--ink-2);
+  }
+  .ev__explorer[data-none] .ev__empty {
+    display: block;
+  }
+  .ev__section {
+    margin-top: var(--space-6);
+  }
+  .ev__section h2 {
+    margin: 0 0 var(--space-2);
+    color: var(--ink);
+  }
+  .ev__hint {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-2);
+  }
+  .ev__note {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-3);
+  }
+
+  /* The allow-list, published rather than summarised. One row per entry, the
+     pattern or route in mono and its own stated reason beside it. A deferred
+     route is marked by a rule in the margin rather than by colour: colour on
+     this site is only ever data, and this distinction is structural. */
+  .ev__allow {
+    margin: 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .ev__allow-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0 var(--space-3) var(--space-3);
+    border-bottom: var(--border-w) solid var(--line);
+    /* Transparent on a permanent entry so the two kinds of row keep the same
+       column positions; a marker that shifts the grid reads as two tables. */
+    border-inline-start: var(--border-w) solid transparent;
+    min-width: 0;
+  }
+  .ev__allow-row[data-deferred] {
+    border-inline-start-color: var(--line-strong);
+  }
+  .ev__allow-subject {
+    margin: 0;
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .ev__allow-reason {
+    margin: 0;
+    color: var(--ink-3);
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+
+  .ev__list {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
   }
-  .ev-list li {
+  /* The row: public name, then observable, then the reading's state, then the
+     id. Below --bp-md it stacks in that same order, so the id stays last at
+     every width. */
+  .ev__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .ev__name {
+    color: var(--ink);
+    min-width: 0;
+  }
+  .ev__area {
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .ev__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-4);
-    align-items: baseline;
-    border-bottom: 1px solid var(--line);
-    padding: var(--sp-2) 0;
-    font-size: var(--text-sm);
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+    min-width: 0;
   }
-  .ev-list code {
-    font-size: var(--text-xs);
+  /* The verdict word, which used to be a group heading. Same weight as the
+     rest of the row: this is a value the archive recorded, not a judgement the
+     page is making about the record. */
+  .ev__result {
+    color: var(--ink-2);
   }
-  .ev-list-meta {
+  /* Carries the refusal colour and a border, so it reads as a marker in
+     greyscale and in forced colours, not as a colour alone. */
+  .ev__withdrawn {
+    flex: none;
+    padding: 0 var(--space-2);
+    border: var(--border-w) solid var(--state-refusal, var(--line-strong));
+    border-radius: var(--radius-1);
+    color: var(--state-refusal, var(--ink));
+    white-space: nowrap;
+  }
+
+  /* --ink-3 on --ground only. GROUND-TRUTH.md C-15. */
+  .ev__id {
     color: var(--ink-3);
-    font-size: var(--text-xs);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .ev__row {
+      grid-template-columns:
+        minmax(0, 1.4fr) minmax(0, 1.2fr) minmax(0, auto)
+        minmax(0, auto);
+      align-items: baseline;
+    }
+    /* --bp-md and not --bp-xl: no provenance chip on these rows, so the
+       hidden-panel overflow the ledger rows work around does not apply. */
+    .ev__allow-row {
+      grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
   }
 </style>

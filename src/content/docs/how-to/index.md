@@ -4,6 +4,8 @@ description: You know the job and you want the exact calls. Each recipe is one p
 section: how-to
 order: 6
 source: docs/content/how-to/index.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # How-to guides
@@ -67,6 +69,10 @@ If you want to understand why the calls are shaped the way they are, the [instru
 -   __[Effective sample size of an eval set](/docs/how-to/effective-sample-size/)__
 
     Thirty rows from six seeds are not thirty data points. Count what the data actually earned.
+
+-   __[Effective group size of a GRPO group](/docs/how-to/effective-group-size/)__
+
+    Sixteen rollouts is not sixteen independent observations once the grader disagrees with itself.
 
 -   __[Calibrate a detector on an organism](/docs/how-to/calibrate-on-an-organism/)__
 

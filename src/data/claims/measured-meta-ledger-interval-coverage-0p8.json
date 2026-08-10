@@ -1,0 +1,26 @@
+{
+ "comparator": ">= 0.6",
+ "contentHash": "5aa4f1ad7617d44f4a8e8975e5bd15c6",
+ "humanSource": "The frozen study \"The campaign scores its own calibration\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:3990df7af1488c08ad62786d879b0b0f",
+  "campaign.adjudication.META-LEDGER",
+  "study:campaign-meta-ledger@v1#b8659763",
+  "spec:b8659763ad1e9bf0ca0fa9a1c98fc29b",
+  "H-coverage"
+ ],
+ "label": "The campaign scores its own calibration",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "interval_coverage_0p8",
+  "unit": null,
+  "value": 0.75
+ },
+ "scope": "One frozen study, adjudicated once, on the campaign's own record, rather than a model or a dataset.",
+ "slug": "measured-meta-ledger-interval-coverage-0p8",
+ "sourceUrl": "/evidence/3990df7af1488c08ad62786d879b0b0f/",
+ "statement": "the nominal-0.8 prediction intervals cover the observed values near their nominal rate.",
+ "status": "supported",
+ "subject": "the campaign's own record, rather than a model or a dataset",
+ "type": "measured-result"
+}

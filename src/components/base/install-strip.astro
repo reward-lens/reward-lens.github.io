@@ -1,0 +1,388 @@
+---
+/**
+ * install-strip  ·  design/components/install-strip.md
+ *
+ * The primary conversion action, and the site's version honesty in the same
+ * object. The project's published package is a version behind the work the
+ * site describes, so the version row is part of the component rather than a
+ * footnote: making the fact structural turns a liability into a demonstration.
+ *
+ * This is the one surface on the site carrying BOTH a border and a shadow.
+ * DESIGN.md §8 states the exception and scopes it to this component, because
+ * it is the only element that is literally in the beam. It is not a pattern to
+ * copy onto cards.
+ *
+ * The whole strip is one button. The copy control inside it is a label, not a
+ * second tab stop, which is why tab reaches the strip exactly once.
+ *
+ * PROGRESSIVE ENHANCEMENT, and why. The contract's no-JavaScript state is "the
+ * command is selectable text; the version row renders; the copy control is
+ * absent." So the server renders a plain element with selectable text and no
+ * role, and the script promotes it to role="button" with the aria-label from
+ * copy.yaml. Rendering role="button" unconditionally would leave a control
+ * that announces itself as actionable and does nothing.
+ *
+ * The `$` prompt glyph is --ink-2 and not --ink-3. --ink-3 on --surface-2 is
+ * 4.29:1 (GROUND-TRUTH.md C-15), which is AA-large and not AA-body on a 15px
+ * glyph; --ink-2 is 6.76:1 on the same fill and still subordinate to the
+ * command. This was built as a reported deviation and the contract has since
+ * been corrected to --ink-2, so it is no longer one.
+ */
+import { install, requireRelease, fill, uniqueId } from "./data";
+import type { Release } from "./data";
+
+interface Props {
+  command?: string;
+  /** From data/release.json:latest. Generated from the package index. */
+  version?: string;
+  /**
+   * From data/release.json:unpublished, the field renamed from `rc` at build
+   * time. null hides the second half of the version row.
+   */
+  preRelease?: string | null;
+  changelogHref?: string | null;
+  size?: "lead" | "inline";
+  class?: string;
+}
+
+// The version is never typed into a page. When it is not passed, it is read
+// from generated data, and a missing file fails the build rather than
+// rendering a placeholder ("Version row", and the release schema's own note).
+const props = Astro.props;
+const release: Release | null =
+  props.version === undefined || props.preRelease === undefined
+    ? requireRelease("install-strip")
+    : null;
+
+const {
+  command = install.command,
+  version = release!.latest,
+  preRelease = release!.unpublished,
+  changelogHref = release?.changelogUrl ?? null,
+  size = "lead",
+  class: extraClass = "",
+} = props;
+
+const versionAria = fill(install.version_aria, {
+  released_version: version,
+  prerelease_version: preRelease ?? version,
+});
+
+// Size and version are not an identity: the homepage renders this strip twice
+// at size="lead" on the same version, once in the hero and once in the
+// handoff. Both then claimed `install-lead-300-live`, and the handoff strip's
+// copy confirmation was announced through the hero's live region, at the other
+// end of the page from the button the reader had just pressed.
+const uid = uniqueId(
+  `install-${size}-${version.replace(/[^0-9a-z]/gi, "")}`,
+  Astro.url.pathname,
+);
+const ariaId = `${uid}-version-note`;
+const liveId = `${uid}-live`;
+---
+
+<div class:list={["install-strip", `install-strip--${size}`, extraClass]}>
+  <div
+    class="install-strip__surface"
+    data-install-strip
+    data-command={command}
+    data-aria={install.aria}
+    data-copied-announce={install.copied_announce}
+    data-live-target={liveId}
+  >
+    <span class="install-strip__prompt" aria-hidden="true">$</span>
+    <code
+      class:list={[
+        "install-strip__command",
+        size === "lead" ? "type-mono-lg" : "type-mono-base",
+      ]}>{command}</code
+    >
+    <span class="install-strip__copy" data-copy-control>
+      <span class="install-strip__swap">
+        <span class="install-strip__label type-mono-label" data-label="idle"
+          >{install.copy_label}</span
+        >
+        <span class="install-strip__label type-mono-label" data-label="done"
+          >{install.copied_label}</span
+        >
+      </span>
+      <span class="install-strip__manual type-mono-label"
+        >{install.copy_unavailable}</span
+      >
+    </span>
+  </div>
+
+  <p class="install-strip__version type-body-sm" aria-describedby={ariaId}>
+    {install.version_prefix}{" "}<span class="install-strip__number">{version}</span
+    >{
+      preRelease && (
+        <>
+          <span aria-hidden="true"> · </span>
+          {changelogHref ? (
+            <a href={changelogHref} class="install-strip__unpublished">
+              {preRelease} {install.prerelease_suffix} ›
+            </a>
+          ) : (
+            <span class="install-strip__unpublished">
+              {preRelease} {install.prerelease_suffix}
+            </span>
+          )}
+        </>
+      )
+    }
+  </p>
+  <span class="visually-hidden" id={ariaId}>{versionAria}</span>
+  <span class="visually-hidden" id={liveId} aria-live="polite" data-live-region
+  ></span>
+</div>
+
+<script>
+  // 1400ms, from components/install-strip.md: "the label swaps to `copied` at
+  // --beam for 1400ms, then reverts". Longer than every --dur token, because
+  // this is a dwell and not an animation.
+  const REVERT_AFTER = 1400;
+
+  for (const strip of document.querySelectorAll<HTMLElement>(
+    "[data-install-strip]",
+  )) {
+    const command = strip.dataset.command ?? "";
+    const live = document.getElementById(strip.dataset.liveTarget ?? "");
+    const code = strip.querySelector("code");
+    const canCopy = Boolean(navigator.clipboard?.writeText);
+
+    // Promoted to a control only now, so that with scripting off it is what
+    // the contract says it is: selectable text with no copy affordance.
+    strip.setAttribute("role", "button");
+    strip.setAttribute("tabindex", "0");
+    strip.setAttribute("aria-label", strip.dataset.aria ?? "");
+    strip.dataset.state = canCopy ? "idle" : "manual";
+
+    let timer: number | undefined;
+
+    const selectAll = () => {
+      if (!code) return;
+      const range = document.createRange();
+      range.selectNodeContents(code);
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    };
+
+    const activate = async () => {
+      if (!canCopy) {
+        // No error is shown. The control became a select-all affordance.
+        selectAll();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(command);
+      } catch {
+        strip.dataset.state = "manual";
+        selectAll();
+        return;
+      }
+      strip.dataset.state = "done";
+      if (live) live.textContent = strip.dataset.copiedAnnounce ?? "";
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        strip.dataset.state = "idle";
+        if (live) live.textContent = "";
+      }, REVERT_AFTER);
+    };
+
+    strip.addEventListener("click", () => void activate());
+    strip.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        void activate();
+      }
+    });
+  }
+</script>
+
+<style>
+  .install-strip {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    inline-size: 100%;
+    max-inline-size: min(var(--measure-command), 100%);
+    min-width: 0;
+  }
+
+  /* --- the strip itself ---
+     --surface-2, one step above the section ground so it reads as raised, with
+     the --line-control border. GROUND-TRUTH.md C-15: --line-control is 3.02
+     against --ground, which is the boundary that identifies this control, and
+     this component is the one stated place a --line-control edge sits on a
+     --surface-2 fill. */
+  .install-strip__surface {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-2);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    transition: border-color var(--dur-1) var(--curve-ui);
+  }
+  :global(:root[data-js]) .install-strip__surface {
+    cursor: pointer;
+  }
+  .install-strip__surface:hover {
+    border-color: var(--focus);
+  }
+  .install-strip__surface:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* The lead size receives the scene light: a top-edge highlight at
+     --beam-wash plus --shadow-raised. The border and the shadow together are
+     the stated exception in DESIGN.md §8 and are scoped to this rule. */
+  .install-strip--lead .install-strip__surface {
+    box-shadow:
+      inset 0 var(--border-w) 0 var(--beam-wash),
+      var(--shadow-raised);
+  }
+
+  .install-strip__prompt {
+    /* The contract says --ink-3. On --surface-2 that is 4.29:1, below AA-body.
+       --ink-2 is 6.76:1 on the same fill and still clearly subordinate to the
+       command. Reported as a contract correction. */
+    color: var(--ink-2);
+    flex: none;
+    user-select: none;
+  }
+
+  .install-strip__command {
+    color: var(--beam); /* 15.45:1 on --surface-2 */
+    /* Never wraps and never scrolls. If it would overflow, the type steps
+       down one notch first, below. */
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  /* --- the copy control ---
+     Not focusable. The strip is the control; a second tab stop inside it would
+     make tab reach the same action twice. Both labels occupy one grid cell so
+     the control's width is the wider of them and the command never reflows
+     when the label changes. */
+  .install-strip__copy {
+    display: flex;
+    flex: none;
+    align-items: center;
+    padding-inline-start: var(--space-4);
+    border-inline-start: var(--border-w) solid var(--line-strong);
+    color: var(--ink-2);
+  }
+  .install-strip__swap {
+    display: grid;
+    align-items: center;
+    justify-items: end;
+  }
+  .install-strip__label {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+  }
+  .install-strip__label[data-label="done"] {
+    visibility: hidden;
+    color: var(--beam);
+  }
+  .install-strip__surface[data-state="done"] .install-strip__label[data-label="idle"] {
+    visibility: hidden;
+  }
+  .install-strip__surface[data-state="done"] .install-strip__label[data-label="done"] {
+    visibility: visible;
+  }
+
+  /* The select-all affordance replaces the control rather than sharing its
+     fixed width: `select to copy` is much wider than `copy` and holding the
+     idle control at that width would push the command. */
+  .install-strip__manual {
+    display: none;
+    white-space: nowrap;
+  }
+  .install-strip__surface[data-state="manual"] .install-strip__swap {
+    display: none;
+  }
+  .install-strip__surface[data-state="manual"] .install-strip__manual {
+    display: inline;
+  }
+
+  /* No scripting, no copy control. The command stays selectable text. */
+  :global(:root:not([data-js])) .install-strip__copy {
+    display: none;
+  }
+
+  /* --- the version row, outside the button ---
+     Read as part of the surrounding text, not as part of the button label. */
+  .install-strip__version {
+    /* ink3-ok: the version row sits outside the --surface-2 box, on the page
+       ground, where --ink-3 is 5.25:1. The only raised fill in this file is
+       the strip, whose text is --beam and --ink-2. */
+    color: var(--ink-3); /* ink3-ok: outside the strip, on the page ground, 5.25:1 */
+    margin: 0;
+    min-width: 0;
+  }
+  .install-strip__number,
+  .install-strip__unpublished {
+    color: var(--ink-2);
+  }
+  .install-strip__unpublished:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* --- below --bp-sm ---
+     The lead size steps down one notch and the copy control moves onto its own
+     full-width row beneath the command. The four declarations below re-apply
+     the type-mono-base role's own sub-tokens; it is a role switch, not a size,
+     and a media query cannot swap a class (DECISIONS.md D-28). */
+  @media (max-width: 29.9375rem) /* --bp-sm */ {
+    .install-strip--lead .install-strip__command {
+      font-size: var(--type-mono-base-size);
+      line-height: var(--type-mono-base-lh);
+      letter-spacing: var(--type-mono-base-track);
+      font-weight: var(--type-mono-base-weight, 400);
+    }
+    .install-strip__surface {
+      flex-wrap: wrap;
+    }
+    .install-strip__copy {
+      inline-size: 100%;
+      justify-items: start;
+      padding-inline-start: 0;
+      padding-block-start: var(--space-3);
+      border-inline-start: 0;
+      border-block-start: var(--border-w) solid var(--line-strong);
+    }
+  }
+
+  /* --- THE EMPTY HALF STOPS SWALLOWING CLICKS ----------------------------
+     This element is a subgrid over the stage's rows 2 to 4 and row 3 is `1fr`,
+     so its own box runs from the surface at 503 to 899 at 1440. Everything
+     below the version row is empty, and it sits at `--z-content` over the hero
+     slot pinned at `--z-scene`: an invisible sheet across the whole floor.
+     Playwright's report, verbatim: "<div class=install-strip
+     install-strip--lead hero__strip> intercepts pointer events". Every scene
+     state control was keyboard reachable and none was clickable, at any width,
+     which no screenshot could show.
+
+     The hit target goes back to the two parts that are actually drawn. The
+     surface carries the copy control and the version row the changelog link, so
+     neither loses anything, and no layout, colour or size changes.
+
+     Found by the fallback packet, which shipped it from StillLayer.astro
+     because this file was another packet's, and said to move it here on merge.
+     This is that move. */
+  .install-strip {
+    pointer-events: none;
+  }
+  .install-strip__surface,
+  .install-strip__version {
+    pointer-events: auto;
+  }
+</style>

@@ -2,8 +2,10 @@
 title: Ensembles and distributions
 description: You score with several reward models, or one that predicts a distribution. Is that still one signal?
 section: models-and-signals
-order: 29
+order: 30
 source: docs/content/models-and-signals/ensembles.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -71,4 +73,4 @@ A composite prefix curve requires the members to tokenize identically, the commo
 
 ## Reference
 
-[`SignalEnsemble`](/docs/reference/signals/#reward_lens.signals.ensemble.SignalEnsemble), [`DistributionalSignal`](/docs/reference/signals/#reward_lens.signals.ensemble.DistributionalSignal).
+[`SignalEnsemble`](/docs/api/signals/#reward_lens.signals.ensemble.SignalEnsemble), [`DistributionalSignal`](/docs/api/signals/#reward_lens.signals.ensemble.DistributionalSignal).

@@ -2,8 +2,11 @@
 title: Path effects
 description: A head matters, but through which route does its influence reach the reward?
 section: instruments
-order: 40
+order: 41
 source: docs/content/instruments/path-effects.md
+libraryVersion: 3.0.0
+staleMarkers:
+- '1.0'
 ---
 import Callout from "@components/Callout.astro";
 
@@ -74,4 +77,4 @@ A path effect is only interpretable once you already suspect a specific route. S
 
 ## How much to trust it
 
-`PathEffect` returns [`Evidence`](/docs/reference/core/#reward_lens.core.evidence.Evidence) at `EXPLORATORY` with an `INVARIANT` gauge: a reward difference along the fixed direction $w_r$, comparable across paths of the same model without a frame, but not calibrated against an answer key. No calibration provider is wired in this release, so the measurement defaults to `EXPLORATORY` and is exploratory by construction until a scorecard on organisms exists. The claim it licenses is exact and local, "this share of the margin travels the sender-to-receiver path on these pairs," and nothing wider. For the ranking of *which* heads matter before you trace their routes, start at the [patch grid](/docs/instruments/patch-grid/); for why a causal ranking can disagree so sharply with an attribution ranking, [observational vs causal](/docs/concepts/observational-vs-causal/).
+`PathEffect` returns [`Evidence`](/docs/api/core/#reward_lens.core.evidence.Evidence) at `EXPLORATORY` with an `INVARIANT` gauge: a reward difference along the fixed direction $w_r$, comparable across paths of the same model without a frame, but not calibrated against an answer key. No calibration provider is wired in this release, so the measurement defaults to `EXPLORATORY` and is exploratory by construction until a scorecard on organisms exists. The claim it licenses is exact and local, "this share of the margin travels the sender-to-receiver path on these pairs," and nothing wider. For the ranking of *which* heads matter before you trace their routes, start at the [patch grid](/docs/instruments/patch-grid/); for why a causal ranking can disagree so sharply with an attribution ranking, [observational vs causal](/docs/concepts/observational-vs-causal/).

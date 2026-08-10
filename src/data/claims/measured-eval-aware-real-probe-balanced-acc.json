@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.6",
+ "contentHash": "e617770c4a215e0c8f32c13c19b5c8c9",
+ "humanSource": "The frozen study \"The RM knows it is being tested, and steering along that direction inflates reward\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:54fb272fd011c8ca07a4959f553341ab",
+  "campaign.adjudication.EVAL-AWARE",
+  "study:campaign-eval-aware@v1#3671c68e",
+  "spec:3671c68e023554a042cd340ae8dded8e",
+  "H-aware-probe"
+ ],
+ "label": "The RM knows it is being tested, and steering along that direction inflates reward",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "real_probe_balanced_acc",
+  "unit": null,
+  "value": 0.7932499999999999
+ },
+ "scope": "One frozen study, adjudicated once, on evalaware-rms, over evalaware-paired and wildchat-organic and arena-organic.",
+ "slug": "measured-eval-aware-real-probe-balanced-acc",
+ "sourceUrl": "/evidence/54fb272fd011c8ca07a4959f553341ab/",
+ "statement": "a benchmark-versus-organic direction is decodable.",
+ "status": "supported",
+ "subject": "evalaware-rms, over evalaware-paired and wildchat-organic and arena-organic",
+ "type": "measured-result"
+}

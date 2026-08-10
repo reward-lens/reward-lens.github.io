@@ -1,0 +1,1007 @@
+{
+ "version": 1,
+ "generatedBy": "scripts/build_scene_data.mjs",
+ "generatedAt": "2026-08-10T18:26:29Z",
+ "cases": [
+  {
+   "id": "scorer-score-tree",
+   "state": "scorer",
+   "plateKind": "RECORDED SCORE TREE",
+   "publicLabel": "Reference GRPO run, one grader leaf, 1,600 rollouts",
+   "truthMode": "measured",
+   "subject": "A 200-step GRPO run on a tiny test policy, scored by a single length reward function and recorded turn by turn.",
+   "source": {
+    "repositoryPath": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+    "artifact": "the run record's step, group and trajectory tables, in two shards of 100 steps"
+   },
+   "scope": "200 recorded steps, 2 groups of 4 rollouts each, 1,600 rollouts in total. One grader, called once for the whole batch. Immediate update credit only: the trajectories are two turns long and the record holds no tool call.",
+   "caveat": "This run's score tree has exactly one leaf, so the spectrum here shows what a decomposition looks like when there is nothing to decompose. It establishes nothing about how a reward built from several components divides between them. On 200 of the 1,600 rollouts the grader abstained, and an abstention is an absent value rather than a low score.",
+   "encodings": [
+    {
+     "visualProperty": "ScoreBand.count",
+     "quantity": "scores.leafCount",
+     "transform": "one spectral band per leaf of the score tree. The tree on this run has one leaf, so the count is one and the spectrum is one band wide.",
+     "unit": null,
+     "domain": [
+      1,
+      1
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "ScoreBand.axialOffset",
+     "quantity": "rewards/length_reward/mean",
+     "transform": "the band's displacement along the detector face is a linear map from the recorded per-step mean of the leaf onto the face's height, using the domain below as the endpoints. No offset is applied and no value is clamped.",
+     "unit": "reward",
+     "domain": [
+      1.014286,
+      1.622857
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    },
+    {
+     "visualProperty": "ScoreBand.angularWidth",
+     "quantity": "rewards/length_reward/std",
+     "transform": "the band's angular width is a linear map from the recorded per-step standard deviation of the leaf across the 8 rollouts of that step, with zero mapping to zero width. Width is a spread and never a magnitude.",
+     "unit": "reward",
+     "domain": [
+      0.068034,
+      0.836933
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    },
+    {
+     "visualProperty": "ScorePoint.radialPosition",
+     "quantity": "scores.leaf.value",
+     "transform": "one point per rollout, placed along the band by a linear map from the leaf's recorded value onto the band's length using the domain below. A rollout whose leaf is absent carries a non-finite value and is not placed.",
+     "unit": "reward",
+     "domain": [
+      0.62,
+      3.36
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded rollouts, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn rollouts by tier: high 1,600, mid 800, low 400. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 1600,
+      "outputCount": 400
+     }
+    },
+    {
+     "visualProperty": "ScorePoint.absent",
+     "quantity": "scores.leaf.abstained",
+     "transform": "one where the grader abstained on that rollout and the leaf carries no value, zero otherwise. An absent point is drawn as a gap in the band rather than as a value at zero.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded rollouts, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn rollouts by tier: high 1,600, mid 800, low 400. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 1600,
+      "outputCount": 400
+     }
+    }
+   ],
+   "contentHash": "cea46dd7295b21110d38d0ebdbbece28170800f8bdc0c808b9fd10b8404742f4"
+  },
+  {
+   "id": "scorer-verifier-is-equiv",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "MATH equivalence checker, MATH-500 gold answers, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "subject": "hendrycks/math is_equiv, entry point is_equiv, 152 source lines",
+   "source": {
+    "repositoryPath": "src/data/grader-cards.json",
+    "artifact": "the audit card for is_equiv, with its full-access and log-only readings"
+   },
+   "scope": "60 competent mutants over 2,400 grader calls on MATH-500 gold answers, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "Zero of 60 is an absence of detection on this one subject. It is not a population estimate and it is not a general defect rate for verifiers. Metamorphic violations are counted against this card's own denominator of 378 applicable pairs; a differently defined count of the same name exists elsewhere and is not mixed with this one.",
+   "encodings": [
+    {
+     "visualProperty": "MutantRow.tickCount",
+     "quantity": "competentMutants",
+     "transform": "one tick along the detector face per competent mutant. A mutant is competent when it changed the grader's behaviour on at least one input, so the row's length is the population that could have been caught.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MutantRow.litTickCount",
+     "quantity": "killedMutants",
+     "transform": "the first killedMutants ticks of the row are lit and the rest stay dark. Ticks are not reordered, so an empty row reads as an empty row rather than as a short one.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.readCount",
+     "quantity": "access.full.readCount",
+     "transform": "the number of card fields that returned a reading with full access to the grader, drawn as that many filled cells in the upper gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.refusedCount",
+     "quantity": "access.full.refusedCount",
+     "transform": "the number of card fields that refused with full access, drawn as that many struck cells in the upper gate. A refusal is drawn, never omitted.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.readCount",
+     "quantity": "access.log_only.readCount",
+     "transform": "the same count for a reader who has only the training log, drawn as filled cells in the lower gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.refusedCount",
+     "quantity": "access.log_only.refusedCount",
+     "transform": "the same refusal count for a log-only reader, drawn as struck cells in the lower gate. The difference between the two gates is the point of the pair.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MetamorphicBar.violationCount",
+     "quantity": "metamorphicViolations",
+     "transform": "the filled length of a bar whose full length is metamorphicApplicablePairs. Both numbers are drawn, so the bar cannot be read as a rate without its denominator.",
+     "unit": null,
+     "domain": [
+      0,
+      378
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MetamorphicBar.pairCount",
+     "quantity": "metamorphicApplicablePairs",
+     "transform": "the full length of the bar, in applicable pairs. This card's own denominator; no other count of pairs is used with these violations.",
+     "unit": null,
+     "domain": [
+      0,
+      378
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "8f2a2b9ef228a1cfb4b8381bde1ac14caf95d4ac0fa6186acaca6158c78aa936"
+  },
+  {
+   "id": "scorer-verifier-swebench",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "SWE-bench test-report grader, SWE-bench Lite gold test lists, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "subject": "SWE-bench grading.py get_eval_tests_report, entry point get_eval_tests_report, 295 source lines",
+   "source": {
+    "repositoryPath": "src/data/grader-cards.json",
+    "artifact": "the audit card for swebench, with its full-access and log-only readings"
+   },
+   "scope": "60 competent mutants over 2,400 grader calls on SWE-bench Lite gold test lists, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "2 of 60 is a reading on this one subject and this one corpus. It is not a population estimate. No metamorphic relation applied to this subject, so no violation bar is drawn.",
+   "encodings": [
+    {
+     "visualProperty": "MutantRow.tickCount",
+     "quantity": "competentMutants",
+     "transform": "one tick along the detector face per competent mutant. A mutant is competent when it changed the grader's behaviour on at least one input, so the row's length is the population that could have been caught.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MutantRow.litTickCount",
+     "quantity": "killedMutants",
+     "transform": "the first killedMutants ticks of the row are lit and the rest stay dark. Ticks are not reordered, so an empty row reads as an empty row rather than as a short one.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.readCount",
+     "quantity": "access.full.readCount",
+     "transform": "the number of card fields that returned a reading with full access to the grader, drawn as that many filled cells in the upper gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.refusedCount",
+     "quantity": "access.full.refusedCount",
+     "transform": "the number of card fields that refused with full access, drawn as that many struck cells in the upper gate. A refusal is drawn, never omitted.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.readCount",
+     "quantity": "access.log_only.readCount",
+     "transform": "the same count for a reader who has only the training log, drawn as filled cells in the lower gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.refusedCount",
+     "quantity": "access.log_only.refusedCount",
+     "transform": "the same refusal count for a log-only reader, drawn as struck cells in the lower gate. The difference between the two gates is the point of the pair.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "bca5c56e6deb8bb6dc9ceea524d5a481ed164efd74a45f27cb0cf1503fdb8f90"
+  },
+  {
+   "id": "scorer-verifier-verl-gsm8k",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "GSM8K answer grader, GSM8K test split, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "subject": "verl reward_score/gsm8k.py compute_score, entry point compute_score, 72 source lines",
+   "source": {
+    "repositoryPath": "src/data/grader-cards.json",
+    "artifact": "the audit card for verl_gsm8k, with its full-access and log-only readings"
+   },
+   "scope": "60 competent mutants over 2,400 grader calls on GSM8K test split, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "24 of 60 is a reading on this one subject and this one corpus. It is not a population estimate. Metamorphic violations are counted against this card's own denominator of 430 applicable pairs; a differently defined count of the same name exists elsewhere and is not mixed with this one.",
+   "encodings": [
+    {
+     "visualProperty": "MutantRow.tickCount",
+     "quantity": "competentMutants",
+     "transform": "one tick along the detector face per competent mutant. A mutant is competent when it changed the grader's behaviour on at least one input, so the row's length is the population that could have been caught.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MutantRow.litTickCount",
+     "quantity": "killedMutants",
+     "transform": "the first killedMutants ticks of the row are lit and the rest stay dark. Ticks are not reordered, so an empty row reads as an empty row rather than as a short one.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.readCount",
+     "quantity": "access.full.readCount",
+     "transform": "the number of card fields that returned a reading with full access to the grader, drawn as that many filled cells in the upper gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.refusedCount",
+     "quantity": "access.full.refusedCount",
+     "transform": "the number of card fields that refused with full access, drawn as that many struck cells in the upper gate. A refusal is drawn, never omitted.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.readCount",
+     "quantity": "access.log_only.readCount",
+     "transform": "the same count for a reader who has only the training log, drawn as filled cells in the lower gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.refusedCount",
+     "quantity": "access.log_only.refusedCount",
+     "transform": "the same refusal count for a log-only reader, drawn as struck cells in the lower gate. The difference between the two gates is the point of the pair.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MetamorphicBar.violationCount",
+     "quantity": "metamorphicViolations",
+     "transform": "the filled length of a bar whose full length is metamorphicApplicablePairs. Both numbers are drawn, so the bar cannot be read as a rate without its denominator.",
+     "unit": null,
+     "domain": [
+      0,
+      430
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MetamorphicBar.pairCount",
+     "quantity": "metamorphicApplicablePairs",
+     "transform": "the full length of the bar, in applicable pairs. This card's own denominator; no other count of pairs is used with these violations.",
+     "unit": null,
+     "domain": [
+      0,
+      430
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "7ffe8307c434dcc2b9d57a2eccb0792552dc352e8d54628b1eab001292f33ef5"
+  },
+  {
+   "id": "scorer-verifier-verl-search-r1",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "Open-domain QA exact-match grader, NQ-Open validation split, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "subject": "verl reward_score/search_r1_like_qa_em.py compute_score, entry point compute_score, 156 source lines",
+   "source": {
+    "repositoryPath": "src/data/grader-cards.json",
+    "artifact": "the audit card for verl_search_r1, with its full-access and log-only readings"
+   },
+   "scope": "60 competent mutants over 2,400 grader calls on NQ-Open validation split, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "26 of 60 is a reading on this one subject and this one corpus. It is not a population estimate. Metamorphic violations are counted against this card's own denominator of 362 applicable pairs; a differently defined count of the same name exists elsewhere and is not mixed with this one.",
+   "encodings": [
+    {
+     "visualProperty": "MutantRow.tickCount",
+     "quantity": "competentMutants",
+     "transform": "one tick along the detector face per competent mutant. A mutant is competent when it changed the grader's behaviour on at least one input, so the row's length is the population that could have been caught.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MutantRow.litTickCount",
+     "quantity": "killedMutants",
+     "transform": "the first killedMutants ticks of the row are lit and the rest stay dark. Ticks are not reordered, so an empty row reads as an empty row rather than as a short one.",
+     "unit": null,
+     "domain": [
+      0,
+      60
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.readCount",
+     "quantity": "access.full.readCount",
+     "transform": "the number of card fields that returned a reading with full access to the grader, drawn as that many filled cells in the upper gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateFull.refusedCount",
+     "quantity": "access.full.refusedCount",
+     "transform": "the number of card fields that refused with full access, drawn as that many struck cells in the upper gate. A refusal is drawn, never omitted.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.readCount",
+     "quantity": "access.log_only.readCount",
+     "transform": "the same count for a reader who has only the training log, drawn as filled cells in the lower gate.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "AccessGateLogOnly.refusedCount",
+     "quantity": "access.log_only.refusedCount",
+     "transform": "the same refusal count for a log-only reader, drawn as struck cells in the lower gate. The difference between the two gates is the point of the pair.",
+     "unit": null,
+     "domain": [
+      0,
+      13
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MetamorphicBar.violationCount",
+     "quantity": "metamorphicViolations",
+     "transform": "the filled length of a bar whose full length is metamorphicApplicablePairs. Both numbers are drawn, so the bar cannot be read as a rate without its denominator.",
+     "unit": null,
+     "domain": [
+      0,
+      362
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "MetamorphicBar.pairCount",
+     "quantity": "metamorphicApplicablePairs",
+     "transform": "the full length of the bar, in applicable pairs. This card's own denominator; no other count of pairs is used with these violations.",
+     "unit": null,
+     "domain": [
+      0,
+      362
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "6ba1aa308f315061a6de199466c480473e88e8a324f1275d11b7324bc51edd16"
+  },
+  {
+   "id": "scorer-attribution-patching",
+   "state": "scorer",
+   "plateKind": "INTERVENTION FIXTURE",
+   "publicLabel": "Skywork-Reward-Llama-3.1-8B-v0.2, 12 dimensions, 64 components, two localizers",
+   "truthMode": "measured",
+   "subject": "Skywork/Skywork-Reward-Llama-3.1-8B-v0.2, attribution rank against activation-patching rank, 30 preference pairs per dimension",
+   "source": {
+    "repositoryPath": "src/data/intervention.json",
+    "artifact": "the per-component attribution and patching table, both ranks on every component of every dimension"
+   },
+   "scope": "12 dimensions, 30 pairs each, patching in noising mode, null threshold 0.02.",
+   "caveat": "The attributed set holds 65 components and the patched set holds 64; the embed is attributed and not patched, and the 64 drawn here are the ones both localizers cover. This is a disagreement measured on one reward model. On another model in the same fixture the same correlation is near zero, which is why it is not stated as a general result about attribution.",
+   "encodings": [
+    {
+     "visualProperty": "RankLadder.attributionPosition",
+     "quantity": "attributionRank",
+     "transform": "the component's position on the left rail, as rank 1 at the top through rank 64 at the bottom, evenly spaced. Ranks are drawn as ranks; the underlying magnitudes drive opacity instead.",
+     "unit": null,
+     "domain": [
+      1,
+      64
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded components, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn components by tier: high 768, mid 384, low 192. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 768,
+      "outputCount": 192
+     }
+    },
+    {
+     "visualProperty": "RankLadder.patchPosition",
+     "quantity": "patchRank",
+     "transform": "the same component's position on the right rail, from the patching localizer's own ranking, on the same scale. The link between the two rails is the disagreement.",
+     "unit": null,
+     "domain": [
+      1,
+      64
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded components, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn components by tier: high 768, mid 384, low 192. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 768,
+      "outputCount": 192
+     }
+    },
+    {
+     "visualProperty": "RankLink.opacity",
+     "quantity": "attributionValue",
+     "transform": "the link's opacity is the component's attribution magnitude divided by the largest magnitude in the same dimension, so opacity is a within-dimension share and never a cross-model comparison.",
+     "unit": null,
+     "domain": [
+      0.000123,
+      4.818906
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded components, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn components by tier: high 768, mid 384, low 192. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 768,
+      "outputCount": 192
+     }
+    },
+    {
+     "visualProperty": "RankLink.width",
+     "quantity": "patchFractionOfMargin",
+     "transform": "the link's width is a linear map from the patching effect expressed as a fraction of the pair margin, over the domain below. The largest recorded movement is 7.710553 of the margin and it is drawn at full width rather than clamped, because a truncated outlier would hide the result.",
+     "unit": null,
+     "domain": [
+      0,
+      7.710553
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded components, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn components by tier: high 768, mid 384, low 192. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 768,
+      "outputCount": 192
+     }
+    },
+    {
+     "visualProperty": "DisagreementArc.signedExtent",
+     "quantity": "spearmanRho",
+     "transform": "one arc per dimension, its signed extent a linear map from the recorded rank correlation between the two localizers over the full correlation range. Negative arcs open downward, so a disagreement is legible as a direction.",
+     "unit": null,
+     "domain": [
+      -1,
+      1
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "DimensionRow.sampleCount",
+     "quantity": "pairCount",
+     "transform": "the number of preference pairs behind that dimension's correlation, drawn as that many tick marks on the row's gutter.",
+     "unit": null,
+     "domain": [
+      30,
+      30
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "NullBand.halfWidth",
+     "quantity": "nullThreshold",
+     "transform": "a band centred on zero effect, its half width the recorded null threshold in the same units as the patching fraction. A movement inside the band is drawn inside the band.",
+     "unit": null,
+     "domain": [
+      0,
+      0.02
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "4eb514880c5bb6172a44787c5880f2427144e0e6ffe3451147cc865c3b33f2c7"
+  },
+  {
+   "id": "selection-advantages",
+   "state": "selection",
+   "plateKind": "RECORDED SELECTION",
+   "publicLabel": "Reference GRPO step, 8 rollouts in 2 groups, real advantages",
+   "truthMode": "measured",
+   "subject": "The same 200-step GRPO run, read at the rollout level: every advantage the estimator computed and the record stored.",
+   "source": {
+    "repositoryPath": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+    "artifact": "the trajectory table's advantage column and the group table's mean and standard deviation"
+   },
+   "scope": "1,600 rollouts across 200 recorded steps. Advantage here is the group-centred, group-standard-deviation-normalised value this estimator computes, not a general definition of advantage.",
+   "caveat": "Nothing here is per token. The per-token advantage column is empty on all 1,600 rollouts and the recorded token count is zero throughout, so this record supports no per-position geometry and none is drawn. 220 rays sit on the axis because zero is what was recorded for them, which for 200 of them means the grader abstained rather than that the rollout was average.",
+   "encodings": [
+    {
+     "visualProperty": "RolloutRay.lateralOffset",
+     "quantity": "advantage",
+     "transform": "the ray's signed displacement from the optical axis is a linear map from the rollout's recorded advantage onto the fan's half height, using the domain below as the endpoints and zero mapping to the axis. Sign is preserved and nothing is clamped: the domain is the record's own extent.",
+     "unit": null,
+     "domain": [
+      -1.49161,
+      1.493695
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded rollouts, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn rollouts by tier: high 1,600, mid 800, low 400. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 1600,
+      "outputCount": 400
+     }
+    },
+    {
+     "visualProperty": "RolloutRay.stepOrdinal",
+     "quantity": "step_index",
+     "transform": "which recorded step the ray belongs to, used to place it in depth. Read from the record rather than inferred from position in the file, so a reordered shard cannot silently renumber the run.",
+     "unit": null,
+     "domain": [
+      0,
+      199
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded rollouts, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn rollouts by tier: high 1,600, mid 800, low 400. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 1600,
+      "outputCount": 400
+     }
+    },
+    {
+     "visualProperty": "RolloutRay.groupOrdinal",
+     "quantity": "group_ordinal",
+     "transform": "which of that step's groups the rollout came from, in the order the record lists them, used to split the fan into 2 bundles per step. Not derived from a fixed rollout count per group.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded rollouts, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn rollouts by tier: high 1,600, mid 800, low 400. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 1600,
+      "outputCount": 400
+     }
+    },
+    {
+     "visualProperty": "GroupBracket.centre",
+     "quantity": "group.mean",
+     "transform": "the bracket's centre line is a linear map from the group's recorded mean score onto the same axis the rays are placed on. The advantage a ray carries is that ray's score measured against this line.",
+     "unit": "reward",
+     "domain": [
+      0.86,
+      2.013333
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded groups, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn groups by tier: high 400, mid 200, low 100. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 400,
+      "outputCount": 100
+     }
+    },
+    {
+     "visualProperty": "GroupBracket.halfSpan",
+     "quantity": "group.std",
+     "transform": "the bracket's half span is a linear map from the group's recorded score standard deviation, which is the same quantity the estimator divides by. A group with no spread draws no bracket, which is what a degenerate group looks like.",
+     "unit": "reward",
+     "domain": [
+      0.009428,
+      1.019063
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded groups, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn groups by tier: high 400, mid 200, low 100. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 400,
+      "outputCount": 100
+     }
+    },
+    {
+     "visualProperty": "GroupBracket.rayCount",
+     "quantity": "group.k",
+     "transform": "how many rays the bracket spans, read from the group's recorded size rather than assumed constant.",
+     "unit": null,
+     "domain": [
+      4,
+      4
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "69159e1488fefaf7a66245dcd2f430dd13e64290320fd485428632f60df997db"
+  },
+  {
+   "id": "update-step",
+   "state": "update",
+   "plateKind": "RECORDED UPDATE",
+   "publicLabel": "Reference GRPO step, 8 rollouts, immediate credit",
+   "truthMode": "measured",
+   "subject": "The same GRPO run at the optimizer step: the clipped gradient norm, the policy entropy, and the batch reward with its spread, as the trainer logged them.",
+   "source": {
+    "repositoryPath": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+    "artifact": "the step table and its optimizer payload"
+   },
+   "scope": "200 recorded optimizer steps, one update per step, 8 rollouts per update. Immediate update credit only, never long-run causal credit: the trajectories are two turns long and there is no tool call in the record.",
+   "caveat": "No per-rollout gradient is stored anywhere in this record, so the share of gradient mass that cancels within a step cannot be drawn from it. The project reports residual figures for immediate credit from a separate experiment; those exist as prose and as test assertions with no persisted array behind them, so they are stated in the text and are not encoded in any geometry here.",
+   "encodings": [
+    {
+     "visualProperty": "UpdateVector.length",
+     "quantity": "grad_norm_clipped",
+     "transform": "the length of the single vector leaving the update stage is a linear map from the step's recorded clipped gradient norm over the domain below. It is the size of the step the optimizer took, not the size of any one rollout's contribution.",
+     "unit": null,
+     "domain": [
+      0.253293,
+      0.441912
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    },
+    {
+     "visualProperty": "UpdateVector.contributorCount",
+     "quantity": "n_trajectories",
+     "transform": "how many rollouts entered that step, read from the step record. It sets how many incoming rays converge on the vector and nothing else; their individual contributions are not recorded.",
+     "unit": null,
+     "domain": [
+      8,
+      8
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    },
+    {
+     "visualProperty": "EntropyTrace.y",
+     "quantity": "entropy",
+     "transform": "a trace whose height is a linear map from the recorded policy entropy over the domain below. The domain is narrow on this run and the trace is close to flat, which is the measurement rather than a rendering choice.",
+     "unit": "nats",
+     "domain": [
+      11.9294,
+      11.929406
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    },
+    {
+     "visualProperty": "RewardTrace.y",
+     "quantity": "reward",
+     "transform": "a trace whose height is a linear map from the step's recorded mean reward over the domain below.",
+     "unit": "reward",
+     "domain": [
+      1.014286,
+      1.622857
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    },
+    {
+     "visualProperty": "RewardTrace.bandHalfWidth",
+     "quantity": "reward_std",
+     "transform": "the half width of the band around the reward trace is a linear map from the step's recorded reward standard deviation, on the same scale as the trace's own axis, so the band and the line are readable together.",
+     "unit": "reward",
+     "domain": [
+      0.068034,
+      0.836933
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 200, mid 100, low 50. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 200,
+      "outputCount": 50
+     }
+    }
+   ],
+   "contentHash": "28a7d041cad9be31f8c12374cba507d0a488584a64b2f57b9c6ca778660019a3"
+  },
+  {
+   "id": "response-unresolved",
+   "state": "response",
+   "plateKind": "NO MEASUREMENT",
+   "publicLabel": "Policy response, nothing recorded",
+   "truthMode": "schematic",
+   "subject": "How the policy moves in response to an update. This project has not measured it at a scale where the answer could have come out either way, and this construction says so rather than standing in for it.",
+   "source": {
+    "repositoryPath": "reward-lens-assay/FINDINGS.md",
+    "artifact": "the project's own findings record, which states the detection floor, declines the flattering verdict, and names the four budget terms it could not compute"
+   },
+   "scope": "A construction. It carries no recorded quantity, no run, and no number from any measurement. Nothing in it may be read off.",
+   "caveat": "The negative is the content. A response geometry drawn here would be an invention, and three times in this build's history a central visual claim turned out to have no measured instance behind it. The figures in the caption come from the project's own reconciliation report and are prose: they are stated, cited, and never encoded as a width, a count or a distance.",
+   "encodings": [],
+   "contentHash": "edbc662fac2e74d28e01b76353e6e108ded588b12253e0661bebf35bc44322cd"
+  },
+  {
+   "id": "run-boundary-series",
+   "state": "run-boundary",
+   "plateKind": "PUBLIC TRAINING SERIES",
+   "publicLabel": "Public reward-hacking run, 25,664 labelled rollouts, one scalar-series warning result",
+   "truthMode": "measured",
+   "subject": "ai-safety-institute/reward-hacking-olmo3.1-32b-kl0.0-seed2, a published reward-hacking training run, read one rollout at a time and averaged within each recorded step.",
+   "source": {
+    "repositoryPath": "src/data/run-series.json",
+    "artifact": "the per-step means of the published rollout table, with the fitted transition and the four evaluated detectors"
+   },
+   "scope": "25,664 rollouts, 64 at every recorded step index, one run, one model, one seed. The detector rows come from the study's frozen prediction ledger because the published table carries no optimizer telemetry and the gradient comparator cannot be recomputed from it.",
+   "caveat": "Two records of this same run disagree on its length: the frozen ledger says 400 steps and the published rollout table carries 401 distinct step indices. The figure draws 401 points and the site does not assert which record is right. The earliest alarm here is not the best detector: the signal that fires first is the one the study rejected, at a surrogate false-alarm rate of 60.7%. One run does not establish a detection rate.",
+   "encodings": [
+    {
+     "visualProperty": "Trace.x",
+     "quantity": "steps",
+     "transform": "position along the time axis, a linear map from the step index recorded on each rollout onto the rail's length. The index is the one the published table carries on every row; it is not reconstructed from file ordering.",
+     "unit": "training steps",
+     "domain": [
+      1,
+      401
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 401, mid 201, low 101. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 401,
+      "outputCount": 101
+     }
+    },
+    {
+     "visualProperty": "Trace.written.y",
+     "quantity": "series.written",
+     "transform": "height of the first trace, a linear map from the per-step mean of the labelled pass column over the 64 rollouts recorded at that step, with the unit interval mapped to the trace field's height.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 401, mid 201, low 101. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 401,
+      "outputCount": 101
+     }
+    },
+    {
+     "visualProperty": "Trace.realized.y",
+     "quantity": "series.realized",
+     "transform": "height of the second trace, the same per-step mean over the same 64 rollouts of the realized-objective column, on the same axis as the first.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 401, mid 201, low 101. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 401,
+      "outputCount": 101
+     }
+    },
+    {
+     "visualProperty": "Trace.formatOk.y",
+     "quantity": "series.formatOk",
+     "transform": "height of the third trace, the per-step mean of the format-compliance column, on the same axis.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 401, mid 201, low 101. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 401,
+      "outputCount": 101
+     }
+    },
+    {
+     "visualProperty": "EpisodeInsert.height",
+     "quantity": "perEpisode.meanCompletionCharacters",
+     "transform": "the height of the length insert, a linear map from the per-step mean completion length in characters over the domain below. Characters, because the published table records no token count and converting one into the other would be a number with no measurement behind it.",
+     "unit": "characters",
+     "domain": [
+      273.922,
+      6662.797
+     ],
+     "clamp": false,
+     "downsample": {
+      "method": "uniform stride over the recorded steps, first and last kept, no randomness; the seed below is zero and unused, and is recorded only because the contract has a field for it. Drawn steps by tier: high 401, mid 201, low 101. The counts below are the most reduced tier.",
+      "seed": 0,
+      "inputCount": 401,
+      "outputCount": 101
+     }
+    },
+    {
+     "visualProperty": "TransitionBand.centreStep",
+     "quantity": "transition.midpoint",
+     "transform": "the centre of the transition band, placed on the time axis by the same map as Trace.x, from the recorded midpoint of the logistic fit to the labelled series.",
+     "unit": "training steps",
+     "domain": [
+      1,
+      401
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "TransitionBand.widthSteps",
+     "quantity": "transition.width1090",
+     "transform": "the band's full width in steps, from the recorded ten-to-ninety width of the same fit, converted to world units by the same steps-per-unit factor as Trace.x. The band is an extent and is never drawn as a line.",
+     "unit": "training steps",
+     "domain": [
+      0,
+      400
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "DetectorMarker.step",
+     "quantity": "detectors.alarmStep",
+     "transform": "one marker per detector, at the step it alarmed, placed by the same map as Trace.x. Detectors stay in the evaluation order the artifact lists them in and are never sorted by how early they fired. A detector with no alarm step carries a non-finite value and draws no marker.",
+     "unit": "training steps",
+     "domain": [
+      1,
+      401
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "DetectorMarker.surrogateRate",
+     "quantity": "detectors.surrogateRate",
+     "transform": "the marker's dimness, a linear map from the detector's false-alarm rate on order-destroyed surrogates of the same series, over the unit interval. The earliest marker is the dimmest, which is the result.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false
+    },
+    {
+     "visualProperty": "DetectorMarker.promoted",
+     "quantity": "detectors.shipped",
+     "transform": "one for the single detector the study promoted, zero for the ones it rejected. The rejected markers are drawn, not omitted.",
+     "unit": null,
+     "domain": [
+      0,
+      1
+     ],
+     "clamp": false
+    }
+   ],
+   "contentHash": "9ce1d10a7b4fd83d6029ad8ca6977899c4b601a0433dbb1316dac4445f08d303"
+  }
+ ]
+}

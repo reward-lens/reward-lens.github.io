@@ -4,6 +4,8 @@ description: You want a reward for each reasoning step, not one scalar for the w
 section: how-to
 order: 10
 source: docs/content/how-to/process-reward-model.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # Score with a process reward model
@@ -45,4 +47,4 @@ A delimited solution reports `step_detection` as `None`: nothing fell back. A on
 
 For a real step-trained checkpoint, `ProcessRM.from_sequence_classifier(model, tokenizer, delimiter="\n")` reads the scalar head into a `step_ends` readout; the mechanics are identical to the tiny path.
 
-See also: [Process reward models](/docs/models-and-signals/process-rms/). API: [`ProcessRM`](/docs/reference/signals/#reward_lens.signals.process.ProcessRM).
+See also: [Process reward models](/docs/models-and-signals/process-rms/). API: [`ProcessRM`](/docs/api/signals/#reward_lens.signals.process.ProcessRM).

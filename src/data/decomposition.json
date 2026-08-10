@@ -1,0 +1,92 @@
+{
+ "note": "Three bands, and the count is the decomposition's rather than the renderer's. tokens.css defines six component colours because a decomposition shows at most six at once; this one has three, so --comp-4 through --comp-6 stay unused. Padding to six would be the same defect as a hand-set count.",
+ "excludesNote": "The record also carries intransitive_mass, which is NOT a fourth part: it is curl + harmonic, and hodge.py:441-442 says it is 'reported only beside its two parts, never instead of them'. A band for it would double-count the whole intransitive half of the flow. It is carried below as a derived total, outside `bands`, so nothing can render it as one.",
+ "subject": "one grader's comparison flow over two public preference datasets",
+ "quantityStoreLabel": "TOPO-HODGE result",
+ "unit": "1 [share of total comparison energy]",
+ "fanDegrees": 24.0,
+ "angleRule": "Bands are laid end to end across the fan in the order the decomposition derives them. exitAngle is the centre of each band's own share measured from the fan's axis, and angularWidth is its share of the fan. Every division is by the measured total and never by a band's own share, so a band of any magnitude down to and including exactly zero yields a finite angle and the fan cannot collapse. The harmonic band's share is 2.4e-31: its angularWidth is 5.8e-30 degrees and its exitAngle sits at the fan's outer edge. Nothing is floored, clamped or dropped, the values are emitted at full float64 precision, and belowFloat64Epsilon marks the band as smaller than the arithmetic that produced it can resolve.",
+ "bands": [
+  {
+   "index": 0,
+   "part": "gradient",
+   "componentToken": "--comp-1",
+   "magnitude": 0.7860238686226744,
+   "share": 0.7860238686226744,
+   "exitAngle": -2.5677135765279075,
+   "angularWidth": 18.864572846944185,
+   "belowFloat64Epsilon": false
+  },
+  {
+   "index": 1,
+   "part": "curl",
+   "componentToken": "--comp-2",
+   "magnitude": 0.2139761313773256,
+   "share": 0.2139761313773256,
+   "exitAngle": 9.432286423472092,
+   "angularWidth": 5.135427153055814,
+   "belowFloat64Epsilon": false
+  },
+  {
+   "index": 2,
+   "part": "harmonic",
+   "componentToken": "--comp-3",
+   "magnitude": 2.425774958668703e-31,
+   "share": 2.425774958668703e-31,
+   "exitAngle": 12.0,
+   "angularWidth": 5.821859900804887e-30,
+   "belowFloat64Epsilon": true
+  }
+ ],
+ "derivedTotals": {
+  "note": "Reported by the record and deliberately not a band. See excludesNote.",
+  "intransitiveMass": 0.2139761313773256
+ },
+ "closure": {
+  "note": "Closure is a precondition of these numbers existing, not a residual reported beside them. hodge.py:558-566 asserts orthogonality, reconstruction and that the masses sum to 1 before returning, and hodge_split escalates a sparse solve to a dense one rather than returning a decomposition it cannot certify. So there is no conservation error to render here: a split that did not close would have raised instead of reaching this file.",
+  "structuralTolerance": 1e-08,
+  "toleranceSource": "reward_lens/measure/composition/hodge.py:96",
+  "massesSumTo": 1.0,
+  "assertedBy": "reward_lens/measure/composition/hodge.py:558-566"
+ },
+ "perDataset": {
+  "note": "TWO DECOMPOSITIONS, NOT SIX PARTS. nectar and ultrafeedback are separate subjects, each with its own three-way split, and concatenating them to reach six bands would be inventing a decomposition nobody measured. Held outside `bands` so a renderer cannot reach them as ones.",
+  "evidenceId": null,
+  "source": {
+   "document": "campaign-results/runs/campaign/evidence.jsonl",
+   "line": 1349
+  },
+  "observable": "campaign.result.TOPO-HODGE",
+  "tournamentsEach": 5000,
+  "datasetCount": 2,
+  "datasets": {
+   "nectar": {
+    "masses": {
+     "gradient": 0.7619047619047619,
+     "curl": 0.23809523809523814,
+     "harmonic": 2.5341569630146716e-31
+    },
+    "tournaments": 5000.0,
+    "edges": 105000.0
+   },
+   "ultrafeedback": {
+    "masses": {
+     "gradient": 0.8868040908910024,
+     "curl": 0.11319590910899757,
+     "harmonic": 1.9729073373416815e-31
+    },
+    "tournaments": 5000.0,
+    "edges": 25129.0
+   }
+  }
+ },
+ "evidenceId": "ev:844ad06a5aeb1d89c21c13c19a28cbd2",
+ "observable": "campaign.adjudication.TOPO-HODGE",
+ "trust": "registered",
+ "trustRung": 2,
+ "provenance": {
+  "generatedBy": "scripts/build_data.py",
+  "sourceCommit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "createdAt": "2026-07-19T18:18:05.615308+00:00"
+ }
+}

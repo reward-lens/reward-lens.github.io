@@ -1,0 +1,130 @@
+---
+/**
+ * Where the live room mounts, over the hand-authored one.
+ *
+ * The slot this sits in is zero-height and centred on the optical axis by the
+ * hero's grid, so this element cannot take its size from the flow: it is
+ * positioned out from that line in both directions. That is what keeps the
+ * canvas's axis and the install strip's surface on the same line at every
+ * width, which is the alignment the whole first viewport is built around.
+ *
+ * The canvas is `pointer-events: none`. Every interaction on this site is a DOM
+ * control, so the canvas never needs to be a hit target, and making it one
+ * would put a transparent sheet over the headline and the install command.
+ */
+import SceneMount from "./core/SceneMount";
+import StillLayer from "./fallback/StillLayer.astro";
+
+/**
+ * THE BOX IS SYMMETRIC ABOUT THE AXIS, AND IT HAS TO BE.
+ *
+ * The camera looks at the world origin, and a perspective camera puts whatever
+ * it looks at in the exact centre of its frame. So world y = 0 lands on the
+ * canvas's own centre line no matter how the camera is elevated or angled. The
+ * DOM optical axis is this element's containing line, so the only way the two
+ * coincide is for the box to extend the same distance above it as below.
+ *
+ * Measured before this was symmetric: the canvas centre sat at y 494 while the
+ * hand-authored room put the axis at 534, a 40px disagreement against gate
+ * 20's 8px tolerance.
+ */
+interface Props {
+  /** Half the room's height, in CSS pixels. Above and below the axis alike. */
+  half?: number;
+}
+const { half = 420 } = Astro.props;
+const above = half;
+const below = half;
+
+/**
+ * THE KILL SWITCH.  ·  DECISIONS.md D-18, SCENE.md §10
+ *
+ * `PUBLIC_SCENE=off` removes the island at build time. Not hidden, not mounted
+ * and told to do nothing: never rendered, so Three and the whole scene chunk
+ * leave the bundle with it. D-17 adopted the scene conditionally and the
+ * condition was that the site is finished without it, which is only a real
+ * condition if the switch is exercised rather than written down; gate 18 builds
+ * this way on every CI run and puts gates 14 and 16 on the result.
+ *
+ * It is a switch for an emergency deployment and for an environment nobody
+ * anticipated. It is not a way to finish the scene by not having one.
+ */
+const sceneEnabled = import.meta.env.PUBLIC_SCENE !== "off";
+---
+
+{/*
+  The still, and the canvas, in that order.
+
+  The still layer is a SIBLING of the host rather than a child of it, and that
+  is structural rather than tidy. `.scene-host` is `display: none` under
+  prefers-reduced-motion, which is right for a canvas and exactly wrong for the
+  still: reduced motion is the first path the still exists to serve. A still
+  inside the host would have been suppressed by the one condition that most
+  needs it, and it would have reported a rect of zeros to gate 20 while doing
+  so, which is the failure that looks like agreement.
+*/}
+<StillLayer half={half} />
+
+<div
+  class="scene-host"
+  data-scene-host
+  style={`--scene-above:${above}px;--scene-below:${below}px`}
+  aria-hidden="true"
+>
+  {/*
+    `client:idle`, not `client:visible`, and the reason is measured rather than
+    stylistic. Astro renders an island into an `astro-island` element that is
+    `display: contents`, and this component returns null until it has decided a
+    tier, so during server rendering the island generates no box at all. An
+    IntersectionObserver on a zero-area element never reports it as
+    intersecting, so `client:visible` left the canvas permanently unmounted:
+    the host was in the DOM at 1440x760 and no tier was ever published.
+
+    Idle is also the honest directive for this particular island. The room is
+    in the first viewport on every visit, so "wait until it scrolls into view"
+    describes nothing; what is actually wanted is "do not compete with first
+    paint", which is what idle means. Islands further down the page that really
+    can go unseen still use visibility.
+  */}
+  {sceneEnabled && <SceneMount client:idle />}
+</div>
+
+<style>
+  .scene-host {
+    position: absolute;
+    inset-inline: 0;
+    /* Measured from the axis, which is this element's containing line. */
+    inset-block-start: calc(var(--scene-above) * -1);
+    block-size: calc(var(--scene-above) + var(--scene-below));
+    pointer-events: none;
+    /* Behind the type and the install strip, in front of nothing. */
+    z-index: var(--z-scene);
+    /* Until the renderer has drawn, this contributes nothing visible and the
+       authored room below it is what the reader sees. */
+    opacity: 0;
+    transition: opacity var(--dur-3, 320ms) var(--ease-out, ease-out);
+  }
+
+  :global(html[data-scene-ready="true"]) .scene-host {
+    opacity: 1;
+  }
+
+  /* A reader who asked for less motion is served the authored composition and
+     the canvas never mounts, so this is belt and braces rather than the
+     mechanism. The mechanism is in tier.ts. */
+  @media (prefers-reduced-motion: reduce) {
+    .scene-host {
+      display: none;
+    }
+  }
+
+  .scene-host :global(.instrument-scene) {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .scene-host :global(canvas) {
+    display: block;
+    inline-size: 100% !important;
+    block-size: 100% !important;
+  }
+</style>

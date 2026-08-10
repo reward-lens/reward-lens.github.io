@@ -1,0 +1,14 @@
+{
+ "artifact": "design/copy.yaml trust_ladder",
+ "contentHash": "5e2ac5c29dd76e187b8275f288ca2142",
+ "humanSource": "Quoted from the library documentation, discipline/trust-ladder and caveats.",
+ "immutableIds": [
+  "copy.yaml:trust_ladder.levels.exploratory"
+ ],
+ "label": "exploratory",
+ "limitation": "The ladder is a ceiling on overclaiming, not a source of truth, and it is worth being exact about its limits, because a discipline that oversells itself is just a new way to be wrong.",
+ "scope": "The level is never set by a caller. It is computed from whether the evidence carries a calibration reference, whether it was produced under a frozen study, and whether it survived its kill criteria. There is no setter and no back door. If you want a higher rung, you have to make a truer fact.",
+ "slug": "rung-exploratory",
+ "statement": "The starting position. A number produced by a tool that has never been scored against a case with a known answer. Most measurements live here, and that is fine, as long as you quote them as hypotheses.",
+ "type": "definition"
+}

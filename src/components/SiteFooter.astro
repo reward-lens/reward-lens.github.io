@@ -1,4 +1,14 @@
 ---
+// NOT IMPORTED BY ANYTHING. The footer that renders is `site-footer.astro`,
+// from `layouts/Base.astro`, which reads its four groups from copy.yaml. This
+// is the v1 footer, kept rather than deleted for the reason given at the top of
+// SiteHeader.astro.
+//
+// Two things were removed from it. The link to `/campaign/method/` is gone:
+// that route is a redirect stub under D-26, and a redirect exists to keep an
+// old URL working, not to advertise it. The sentence it sat inside claimed
+// every number on the site traces to an evidence record, which is a claim about
+// gate 5 that belongs where gate 5's result is shown, not under a link.
 ---
 
 <footer class="site-footer">
@@ -20,10 +30,6 @@
         >MIT license</a
       >
     </nav>
-    <p class="footer-claims">
-      Every number on this site traces to an evidence record.
-      <a href="/campaign/method/">How that is enforced.</a>
-    </p>
   </div>
 </footer>
 
@@ -69,13 +75,6 @@
   }
   .footer-links a:hover {
     color: var(--ink);
-    text-decoration: underline;
-  }
-  .footer-claims {
-    margin: 0;
-    color: var(--ink-3);
-  }
-  .footer-claims a {
     text-decoration: underline;
   }
 </style>

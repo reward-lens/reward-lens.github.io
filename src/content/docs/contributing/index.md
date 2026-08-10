@@ -2,8 +2,11 @@
 title: Contributing
 description: What does the library need most? A reward model it cannot open yet. Every instrument here works the moment your grader satisfies one protocol, so a new adapter
 section: contributing
-order: 87
+order: 116
 source: docs/content/contributing/index.md
+libraryVersion: 3.0.0
+staleMarkers:
+- '1.0'
 ---
 
 # Contributing
@@ -32,7 +35,7 @@ print(report.passed)      # True
 print(report.n_passed)    # 7
 ```
 
-If that passes on your adapter, the whole battery of instruments works on it unchanged. The [write-an-adapter how-to](/docs/how-to/write-an-adapter/) walks through a full adapter end to end, and [models and signals](/docs/models-and-signals/) covers the eight substrates the protocol already speaks. The protocol itself is in the [signals reference](/docs/reference/signals/).
+If that passes on your adapter, the whole battery of instruments works on it unchanged. The [write-an-adapter how-to](/docs/how-to/write-an-adapter/) walks through a full adapter end to end, and [models and signals](/docs/models-and-signals/) covers the eight substrates the protocol already speaks. The protocol itself is in the [signals reference](/docs/api/signals/).
 
 ## What the project values
 
@@ -65,7 +68,7 @@ Confirm the environment works before you change anything by running the suite:
 pytest
 ```
 
-If that passes, you have a working checkout of `reward-lens` 2.0.1.
+If that passes, you have a working checkout. The version it corresponds to is the one named in the banner at the top of this page, which is generated from the release record rather than typed here, so it cannot go stale the way a number written into this sentence would.
 
 ## Working on a change
 
@@ -100,8 +103,8 @@ If `reward-lens` helped your work, please cite it:
     title  = {reward-lens: An Instrument for the Science of Reward Misspecification},
     author = {Nadaf, Mohammed Suhail B},
     year   = {2026},
-    url    = {https://github.com/suhailnadaf509/reward-lens},
+    url    = {https://github.com/reward-lens/reward-lens},
 }
 ```
 
-`reward-lens` 2.0.1 is released under the MIT license. If you are porting an existing 1.0 workflow, [coming from 1.0](/docs/migration/) maps every primitive to its new home.
+`reward-lens` is released under the MIT license. If you are porting an existing 1.0 workflow, [coming from 1.0](/docs/migration/) maps every primitive to its new home.

@@ -1,0 +1,777 @@
+---
+/**
+ * The API reference, one page per kernel subsystem, at /docs/api/<group>/.
+ *
+ * It used to live at /docs/reference/. copy.yaml's footer names /docs/api/ and
+ * copy.yaml is the frozen owner of every user-facing string, so the route
+ * follows the copy. scripts/port_docs.py renames the segment in one function,
+ * so the sidebar tree and the redirect map move together and cannot disagree.
+ *
+ * The authored prose is ported verbatim from the library's own
+ * docs/content/reference/<group>.md and interleaved with symbol documentation
+ * extracted statically by scripts/build_api_ref.py. Nothing here is
+ * hand-written about the symbols.
+ *
+ * Two things this rewrite closes, both live in production before it:
+ *
+ *  - `import "katex/dist/katex.min.css"` was here and in the index page and
+ *    nowhere else, so this was one of the fourteen pages that loaded 30,188
+ *    bytes of KaTeX CSS and pulled in 1,072,948 bytes of KaTeX fonts while 57
+ *    other pages rendered the same markup with none of it. Mathematics now
+ *    renders to MathML at build time and neither file exists. C-14 and C-28.
+ *  - 284 lines of gate 14's ratchet, every one of them --ink-3 on a raised
+ *    surface. The symbol card no longer paints a surface at all, so the
+ *    dimmest ink on it is measured against --ground.
+ */
+import Docs from "@layouts/Docs.astro";
+import "@styles/docs-legacy.css";
+import indexMeta from "@data/api/index.json";
+import catalogue from "@data/catalogue.json";
+import { fill } from "@components/base/data";
+import { ui, copy } from "../../../copy";
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+const groupFiles = import.meta.glob("../../../data/api/*.json", { eager: true });
+const proseFiles = import.meta.glob("../../../data/api/_prose/*.json", {
+  eager: true,
+});
+
+export function getStaticPaths() {
+  // The group list is the generated index's own, so a group added or dropped
+  // upstream moves this route without an edit here.
+  return indexMeta.groups.map((g: any) => ({ params: { group: g.group } }));
+}
+
+const { group } = Astro.params;
+const symData: any = (groupFiles[`../../../data/api/${group}.json`] as any).default;
+const proseData: any = (proseFiles[`../../../data/api/_prose/${group}.json`] as any).default;
+const symbols: Record<string, any> = symData.symbols;
+const order: string[] = symData.order;
+
+// The route is derived from the group id rather than read from the generated
+// index's `href`, which still says /docs/reference/. That field is P1's and
+// nothing consumes it; reported rather than edited from here.
+const hrefOf = (g: string) => `/docs/api/${g}/`;
+const current = hrefOf(group as string);
+
+// The same markdown pipeline the site uses. `output: "mathml"` mirrors
+// astro.config.mjs: two renderers with different maths settings is how half a
+// site ends up styled.
+const processor = await createMarkdownProcessor({
+  remarkPlugins: [remarkMath],
+  rehypePlugins: [[rehypeKatex, { strict: false, output: "mathml" }]],
+  gfm: true,
+  // The site's own Shiki configuration. Without it createMarkdownProcessor
+  // falls back to Shiki's built-in github-dark and emits a fixed dark code
+  // block with hard-coded hexes on both themes, which is where gate 14's
+  // `.line > span` finding on the stats page came from. Same pair as
+  // astro.config.mjs: two renderers with different code themes is how half a
+  // site ends up in a different palette.
+  shikiConfig: {
+    themes: { light: "github-light-high-contrast", dark: "github-dark-high-contrast" },
+    defaultColor: "light",
+  },
+});
+// The library's own reference prose cross-links sibling pages, and
+// scripts/build_api_ref.py resolves those to /docs/reference/, which is where
+// this route used to live. Rewritten here rather than in the generator, which
+// is P1's; the same one-line map is in api/index.astro and both are reported.
+const REFERENCE_TO_API = /\/docs\/reference\//g;
+const md = async (s: string) =>
+  (await processor.render(s || "")).code.replace(REFERENCE_TO_API, "/docs/api/");
+const mdInline = async (s: string) => {
+  const html = (await md(s)).trim();
+  const m = html.match(/^<p>([\s\S]*)<\/p>$/);
+  return m ? m[1] : html;
+};
+
+async function renderSymbol(sym: any) {
+  const r: any = { ...sym };
+  r.textHtml = sym.text ? await md(sym.text) : null;
+  r.paramsR = [];
+  for (const p of sym.params || [])
+    r.paramsR.push({ ...p, descHtml: await mdInline(p.description) });
+  r.returnsR = [];
+  for (const x of sym.returns || [])
+    r.returnsR.push({ ...x, descHtml: await mdInline(x.description) });
+  r.raisesR = [];
+  for (const x of sym.raises || [])
+    r.raisesR.push({ ...x, descHtml: await mdInline(x.description) });
+  r.admR = [];
+  for (const a of sym.admonitions || [])
+    r.admR.push({ title: a.title, textHtml: await md(a.text) });
+  if (sym.members) {
+    r.membersR = {
+      enum_members: sym.members.enum_members || [],
+      fields: [] as any[],
+      properties: [] as any[],
+      methods: [] as any[],
+    };
+    for (const f of sym.members.fields)
+      r.membersR.fields.push({
+        ...f,
+        descHtml: f.description ? await mdInline(f.description) : "",
+      });
+    for (const p of sym.members.properties)
+      r.membersR.properties.push({
+        ...p,
+        descHtml: p.description ? await mdInline(p.description) : "",
+      });
+    for (const m0 of sym.members.methods)
+      r.membersR.methods.push({
+        ...m0,
+        textHtml: m0.text ? await mdInline(m0.text) : "",
+      });
+  }
+  return r;
+}
+
+const segs: any[] = [];
+for (const seg of proseData.segments) {
+  if (seg.type === "prose")
+    segs.push({ type: "prose", html: await md(seg.markdown) });
+  else if (seg.type === "symbol") {
+    const sym = symbols[seg.path];
+    segs.push({
+      type: "symbol",
+      path: seg.path,
+      sym: sym ? await renderSymbol(sym) : null,
+    });
+  }
+}
+
+const kindLabel: Record<string, string> = {
+  class: "class",
+  function: "func",
+  method: "method",
+  attribute: "attr",
+  unresolved: "?",
+};
+
+// The contents rail's symbol form. It is the same component the prose pages
+// use, so a reader gets one rail with one behaviour across the corpus, rather
+// than the wrap-flow chip strip this page used to carry.
+const symbolEntries = order.map((p) => ({
+  path: p,
+  name: symbols[p]?.name || p,
+  kind: kindLabel[symbols[p]?.kind] || symbols[p]?.kind || "",
+}));
+
+const c = copy.docs as Record<string, string>;
+const desc = `${symData.title}. ${c.api_intro}`.replace(/\s+/g, " ").trim().slice(0, 160);
+---
+
+<Docs
+  title={`${symData.title} · ${c.api_title}`}
+  description={desc}
+  current={current}
+  libraryVersion={catalogue.provenance.libraryVersion}
+  symbols={symbolEntries}
+  railForm="symbols"
+  section={indexMeta.title}
+>
+  <header class="ref-head">
+    <p class="ref-eyebrow type-mono-label">{c.api_title}</p>
+    <h1 class="ref-title type-display-2">{symData.title}</h1>
+  </header>
+
+  {
+    segs.map((seg) =>
+      seg.type === "prose" ? (
+        <div class="docs-prose">
+          <Fragment set:html={seg.html} />
+        </div>
+      ) : seg.sym ? (
+        <section class="sym" id={seg.sym.path}>
+          <div class="sym-head">
+            <a class="sym-anchor" href={`#${seg.sym.path}`} aria-label="Permalink to this symbol">
+              #
+            </a>
+            <span class={`sym-kind sym-kind-${seg.sym.kind}`}>
+              {kindLabel[seg.sym.kind] || seg.sym.kind}
+            </span>
+            <h2 class="sym-name">{seg.sym.name}</h2>
+            {seg.sym.source && (
+              <a class="sym-src" href={seg.sym.source.url} target="_blank" rel="noreferrer">
+                Source
+              </a>
+            )}
+          </div>
+
+          <p class="sym-path">
+            <code>{seg.sym.path}</code>
+            {seg.sym.lazy_via && (
+              <span class="sym-lazy">
+                {" · also "}
+                <code>{seg.sym.lazy_via}</code>
+              </span>
+            )}
+          </p>
+
+          {seg.sym.decorators && seg.sym.decorators.length > 0 && (
+            <p class="sym-deco">{seg.sym.decorators.map((d: string) => `@${d}`).join("  ")}</p>
+          )}
+          {seg.sym.bases && seg.sym.bases.length > 0 && (
+            <p class="sym-bases">Bases: {seg.sym.bases.join(", ")}</p>
+          )}
+
+          {seg.sym.signature && (
+            <pre class="sym-sig" tabindex="0" role="group" aria-label={fill(ui.code_region_aria, { name: seg.sym.name })}><code>{seg.sym.signature}</code></pre>
+          )}
+          {seg.sym.kind === "attribute" &&
+            seg.sym.attribute &&
+            (seg.sym.attribute.value || seg.sym.attribute.annotation) && (
+              <pre class="sym-sig" tabindex="0" role="group" aria-label={fill(ui.code_region_aria, { name: seg.sym.name })}><code>{seg.sym.name}{seg.sym.attribute.annotation ? ": " + seg.sym.attribute.annotation : ""}{seg.sym.attribute.value ? " = " + seg.sym.attribute.value : ""}</code></pre>
+            )}
+
+          {seg.sym.textHtml ? (
+            <div class="sym-doc" set:html={seg.sym.textHtml} />
+          ) : (
+            <p class="sym-nodoc">
+              No docstring. See the <a href={seg.sym.source?.url}>source</a> for detail.
+            </p>
+          )}
+
+          {seg.sym.paramsR && seg.sym.paramsR.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Parameters</p>
+              <div class="tscroll" role="group" tabindex="0" aria-label={seg.sym.name}>
+                <table class="symtable">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Default</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.paramsR.map((p: any) => (
+                      <tr>
+                        <td><code>{p.name}</code></td>
+                        <td>{p.annotation ? <code>{p.annotation}</code> : ""}</td>
+                        <td>
+                          {p.default != null ? (
+                            <code>{p.default}</code>
+                          ) : (
+                            <span class="muted">required</span>
+                          )}
+                        </td>
+                        <td class="desc" set:html={p.descHtml} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {seg.sym.returnsR && seg.sym.returnsR.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Returns</p>
+              <div class="tscroll" role="group" tabindex="0" aria-label={seg.sym.name}>
+                <table class="symtable">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.returnsR.map((x: any) => (
+                      <tr>
+                        <td>{x.annotation ? <code>{x.annotation}</code> : ""}</td>
+                        <td class="desc" set:html={x.descHtml} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {seg.sym.raisesR && seg.sym.raisesR.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Raises</p>
+              <div class="tscroll" role="group" tabindex="0" aria-label={seg.sym.name}>
+                <table class="symtable">
+                  <thead>
+                    <tr>
+                      <th>Exception</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.raisesR.map((x: any) => (
+                      <tr>
+                        <td>{x.annotation ? <code>{x.annotation}</code> : ""}</td>
+                        <td class="desc" set:html={x.descHtml} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.enum_members.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Members</p>
+              <div class="tscroll" role="group" tabindex="0" aria-label={seg.sym.name}>
+                <table class="symtable">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.membersR.enum_members.map((e: any) => (
+                      <tr>
+                        <td><code>{e.name}</code></td>
+                        <td>{e.value != null ? <code>{e.value}</code> : ""}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.fields.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Attributes</p>
+              <div class="tscroll" role="group" tabindex="0" aria-label={seg.sym.name}>
+                <table class="symtable">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Default</th>
+                      {seg.sym.membersR.fields.some((f: any) => f.descHtml) && <th>Description</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seg.sym.membersR.fields.map((f: any) => (
+                      <tr>
+                        <td><code>{f.name}</code></td>
+                        <td>{f.annotation ? <code>{f.annotation}</code> : ""}</td>
+                        <td>{f.value != null ? <code>{f.value}</code> : ""}</td>
+                        {seg.sym.membersR.fields.some((g: any) => g.descHtml) && (
+                          <td class="desc" set:html={f.descHtml} />
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.properties.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Properties</p>
+              <ul class="sym-proplist">
+                {seg.sym.membersR.properties.map((p: any) => (
+                  <li>
+                    <code class="sym-mono">
+                      {p.name}
+                      {p.annotation ? `: ${p.annotation}` : ""}
+                    </code>
+                    {p.descHtml && <span class="sym-propdesc" set:html={": " + p.descHtml} />}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {seg.sym.membersR && seg.sym.membersR.methods.length > 0 && (
+            <div class="sym-sub">
+              <p class="sym-sub-h">Methods</p>
+              <div class="sym-methods">
+                {seg.sym.membersR.methods.map((m: any) => (
+                  <div class="sym-method">
+                    <div class="sym-method-head">
+                      <pre class="sym-msig" tabindex="0" role="group" aria-label={fill(ui.code_region_aria, { name: m.name })}><code>{m.signature}</code></pre>
+                      {m.source && (
+                        <a class="sym-src small" href={m.source.url} target="_blank" rel="noreferrer">
+                          src
+                        </a>
+                      )}
+                    </div>
+                    {m.textHtml && <div class="sym-mdoc" set:html={m.textHtml} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {seg.sym.admR &&
+            seg.sym.admR.map((a: any) => (
+              <aside class="sym-adm">
+                <p class="sym-adm-t">{a.title}</p>
+                <div class="sym-adm-b" set:html={a.textHtml} />
+              </aside>
+            ))}
+
+          {seg.sym.examples &&
+            seg.sym.examples.map((ex: string) => (
+              <div class="sym-sub">
+                <p class="sym-sub-h">Example</p>
+                <pre class="sym-ex" tabindex="0" role="group" aria-label={fill(ui.code_region_aria, { name: seg.sym.name })}><code>{ex}</code></pre>
+              </div>
+            ))}
+        </section>
+      ) : (
+        <p class="sym-missing">Symbol not found: <code>{seg.path}</code></p>
+      )
+    )
+  }
+</Docs>
+
+<style>
+  .ref-head {
+    margin-block-end: var(--space-6);
+  }
+  .ref-eyebrow {
+    /* The eyebrow sits on --ground at 5.25:1. The only raised fill in this
+       file is .symtable th, whose text is --ink. */
+    color: var(--ink-3); /* ink3-ok: on --ground, not on .symtable th */
+    margin: 0 0 var(--space-2);
+  }
+  .ref-title {
+    color: var(--ink);
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* --- one symbol -------------------------------------------------------
+     A leading rule and space, not a card. The old version painted every symbol
+     --surface-2 and then set four of its own labels in --ink-3 on top, which is
+     4.29:1 and where 284 of gate 14's 608 ratchet lines came from. Nothing here
+     paints a surface, so the dimmest ink on the page is measured against
+     --ground at 5.25:1. */
+  .sym {
+    border-inline-start: var(--border-w) solid var(--line);
+    padding-inline-start: var(--space-4);
+    margin-block: var(--space-7);
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+    min-width: 0;
+  }
+  .sym-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .sym-anchor {
+    color: var(--ink-3); /* ink3-ok: on --ground beside the symbol name */
+    text-decoration: none;
+    font-family: var(--font-mono);
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--curve-ui);
+  }
+  .sym:hover .sym-anchor,
+  .sym-anchor:focus-visible {
+    opacity: 1;
+  }
+  .sym-anchor:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .sym-kind {
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-label-size);
+    line-height: var(--type-mono-label-lh);
+    letter-spacing: var(--type-mono-label-track);
+    font-weight: var(--type-mono-label-weight);
+    text-transform: var(--type-mono-label-transform);
+    color: var(--ink-2);
+    border: var(--border-w) solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    padding-inline: var(--space-2);
+  }
+  .sym-name {
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-lg-size);
+    line-height: var(--type-mono-lg-lh);
+    letter-spacing: var(--type-mono-lg-track);
+    font-weight: var(--type-mono-lg-weight);
+    color: var(--ink);
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .sym-src {
+    margin-inline-start: auto;
+    font-family: var(--font-sans);
+    font-size: var(--type-body-sm-size);
+    line-height: var(--type-body-sm-lh);
+    letter-spacing: var(--type-body-sm-track);
+    font-weight: var(--type-body-sm-weight, 400); /* DESIGN.md §6.2 */
+    color: var(--ink-2);
+    text-decoration: none;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding-inline: var(--space-2);
+  }
+  .sym-src:hover {
+    color: var(--ink);
+  }
+  .sym-src:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .sym-path,
+  .sym-deco,
+  .sym-bases {
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-sm-size);
+    line-height: var(--type-mono-sm-lh);
+    letter-spacing: var(--type-mono-sm-track);
+    font-weight: var(--type-mono-sm-weight, 400); /* DESIGN.md §6.2 */
+    /* --ink-2, not --ink-3. This is the exact declaration gate 14 caught: a
+       full import path is reading material, not a label. */
+    color: var(--ink-2);
+    margin: var(--space-2) 0 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .sym-path code,
+  .sym-lazy code {
+    color: var(--ink-2);
+  }
+
+  .sym-sig,
+  .sym-msig,
+  .sym-ex {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    min-width: 0;
+    background: var(--code-bg);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    padding: var(--space-3);
+    margin: var(--space-3) 0;
+  }
+  .sym-sig:focus-visible,
+  .sym-msig:focus-visible,
+  .sym-ex:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .sym-sig code,
+  .sym-msig code,
+  .sym-ex code {
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-sm-size);
+    line-height: var(--type-mono-base-lh);
+    letter-spacing: var(--type-mono-sm-track);
+    font-weight: var(--type-mono-sm-weight, 400); /* DESIGN.md §6.2 */
+    color: var(--ink);
+    white-space: pre;
+  }
+
+  .sym-nodoc,
+  .sym-missing {
+    color: var(--ink-2);
+    margin: var(--space-3) 0;
+  }
+
+  .sym-sub {
+    margin-block-start: var(--space-4);
+    min-width: 0;
+  }
+  .sym-sub-h {
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-label-size);
+    line-height: var(--type-mono-label-lh);
+    letter-spacing: var(--type-mono-label-track);
+    font-weight: var(--type-mono-label-weight);
+    text-transform: var(--type-mono-label-transform);
+    color: var(--ink-2);
+    margin: 0 0 var(--space-2);
+  }
+
+  /* Every table scrolls inside its own container. role="group" and not
+     role="region": a landmark per table pollutes the rotor, and group keeps
+     the name and the keyboard scrolling without one. */
+  .tscroll {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    min-width: 0;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+  }
+  .tscroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .symtable {
+    font-family: var(--font-sans);
+    font-size: var(--type-body-sm-size);
+    line-height: var(--type-body-sm-lh);
+    letter-spacing: var(--type-body-sm-track);
+    font-weight: var(--type-body-sm-weight, 400); /* DESIGN.md §6.2 */
+    border-collapse: collapse;
+    /* max-content, not 100%: a name column wraps to three lines otherwise,
+       inside a container that is already scrolling. */
+    inline-size: max-content;
+    min-inline-size: 100%;
+  }
+  .symtable th,
+  .symtable td {
+    text-align: start;
+    vertical-align: top;
+    padding: var(--space-2) var(--space-3);
+    border-block-end: var(--border-w) solid var(--line);
+  }
+  .symtable th {
+    color: var(--ink);
+    font-weight: 600;
+    background: var(--surface-2);
+  }
+  .symtable tr:last-child td {
+    border-block-end: 0;
+  }
+  .symtable code {
+    font-family: var(--font-mono);
+    overflow-wrap: anywhere;
+  }
+  .symtable .muted {
+    color: var(--ink-2);
+  }
+
+  .sym-proplist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sym-proplist li {
+    margin: var(--space-1) 0;
+    color: var(--ink-2);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .sym-mono {
+    font-family: var(--font-mono);
+    color: var(--ink);
+  }
+
+  .sym-methods {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .sym-method {
+    border-inline-start: var(--border-w) solid var(--line);
+    padding-inline-start: var(--space-3);
+    min-width: 0;
+  }
+  .sym-method-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .sym-msig {
+    flex: 1 1 auto;
+    margin: 0;
+  }
+
+  /* An admonition inside a docstring. Same register as callout.astro: one
+     leading rule and a label, no fill and no icon, because a page with four
+     coloured boxes is a page nobody reads any of them on. */
+  .sym-adm {
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-4);
+    margin: var(--space-3) 0;
+    min-width: 0;
+  }
+  .sym-adm-t {
+    font-family: var(--font-mono);
+    font-size: var(--type-mono-label-size);
+    line-height: var(--type-mono-label-lh);
+    letter-spacing: var(--type-mono-label-track);
+    font-weight: var(--type-mono-label-weight);
+    text-transform: var(--type-mono-label-transform);
+    color: var(--ink-2);
+    margin: 0 0 var(--space-1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sym-anchor {
+      transition: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Rendered markdown inside a symbol card. These are the library's own
+     docstrings, so the surface has to take arbitrary prose. */
+  .sym-doc,
+  .sym-mdoc,
+  .sym-adm-b {
+    color: var(--ink-2);
+    min-width: 0;
+  }
+  .sym-doc {
+    max-inline-size: min(var(--measure-prose), 100%);
+    margin-block-start: var(--space-3);
+  }
+  .sym-doc p,
+  .sym-mdoc p,
+  .sym-adm-b p {
+    margin-block: var(--space-2);
+  }
+  .sym-doc p:first-child,
+  .sym-mdoc p:first-child,
+  .sym-adm-b p:first-child {
+    margin-block-start: 0;
+  }
+  .sym-doc p:last-child,
+  .sym-mdoc p:last-child,
+  .sym-adm-b p:last-child {
+    margin-block-end: 0;
+  }
+  .sym-doc code,
+  .sym-mdoc code,
+  .sym-adm-b code,
+  .symtable .desc code {
+    font-family: var(--font-mono);
+    background: var(--code-inline-bg);
+    border-radius: var(--radius-1);
+    padding-inline: var(--space-1);
+    overflow-wrap: anywhere;
+  }
+  .sym-doc ul,
+  .sym-doc ol,
+  .sym-mdoc ul,
+  .sym-mdoc ol {
+    padding-inline-start: var(--space-5);
+    margin-block: var(--space-2);
+  }
+  .sym-doc pre,
+  .sym-mdoc pre {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    background: var(--code-bg);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-2);
+    padding: var(--space-3);
+    /* --ink, not the --ink-2 the docstring surface sets. A fenced block inside
+       a docstring is reading material on a raised fill, and Shiki emits a bare
+       <span> for an unhighlighted token, so it takes whatever the surrounding
+       prose colour is. That is the last of gate 14's P5 lines: .line > span on
+       the stats reference page, in the light theme. */
+    color: var(--ink);
+  }
+  .symtable .desc p {
+    margin: 0;
+  }
+</style>

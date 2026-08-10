@@ -39,6 +39,10 @@ SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(SITE, "src/data/api")
 PROSE_OUT = os.path.join(OUT, "_prose")
 
+# The change detector's recording half. See tests/regression/observe.py.
+sys.path.insert(0, os.path.join(SITE, "tests", "regression"))
+from observe import Observations  # noqa: E402
+
 PIN = "bceb2986ab54a9fcd8d39e3550f4b089e90cd7d6"
 BLOB = f"https://github.com/reward-lens/reward-lens/blob/{PIN}"
 
@@ -604,7 +608,7 @@ def main() -> int:
         open(os.path.join(OUT, "index.json"), "w"), indent=2,
     )
 
-    # --- assertions + report ---------------------------------------------- #
+    # --- invariants + report ----------------------------------------------- #
     directive_set = set(all_directives)
     missing = directive_set - covered_paths
     print("=" * 60)
@@ -627,9 +631,26 @@ def main() -> int:
         print("no symbols with poor griffe output")
     print("-" * 60)
 
-    assert len(all_directives) == 152, f"expected 152 directives, found {len(all_directives)}"
+    # Structural: every directive the prose names must resolve to a symbol.
+    # This one carries no measurement and it stays, because an unresolved
+    # directive renders a reference page with a hole in it.
     assert not missing, f"UNCOVERED directives: {sorted(missing)}"
-    print("ASSERTIONS PASSED: all 152 directives covered, none unresolved.")
+
+    # The directive count was `assert len(all_directives) == 152`. It measures
+    # the size of the v2 reference corpus, so DECISIONS.md D-04 moves it the
+    # moment the pipeline repoints at the assay tree. Recorded, and compared by
+    # tests/regression/known-values.test.mjs after generation.
+    obs = Observations("build_api_ref", "scripts/build_api_ref.py")
+    obs.record("directives", len(all_directives))
+    obs.record("unique_directive_paths", len(directive_set))
+    obs.record("symbols_rendered", len(covered_paths))
+    obs.record("groups", len(index_meta))
+    obs.record("symbols_by_group", {g: c["symbols"] for g, c in sorted(per_group_counts.items())})
+    obs.record("poor_griffe_output", len(poor))
+    obs.record("source_tree", "/".join(CLEAN.rstrip("/").split("/")[-1:]))
+    obs.write()
+    print(f"all directives resolved; {len(obs.values)} measurements recorded to {obs.path()}")
+    print("compare them: node --test tests/regression/known-values.test.mjs")
     return 0
 
 

@@ -1,0 +1,161 @@
+{
+  "_what_this_is": "Written by scripts/og_render.mjs. Gate 13 reads it to assert that every preview image's text resolves to a live string in design/copy.yaml or to a field in generated data. An image whose recorded text no longer matches its source is an image advertising something the site stopped saying.",
+  "generatedAt": "2026-08-07T23:31:37.542Z",
+  "palette": {
+    "ground": "#080b0a",
+    "surface2": "#1d2220",
+    "line": "#282d2b",
+    "lineStrong": "#414845",
+    "ink": "#e2e7e5",
+    "ink2": "#a3a9a7",
+    "beam": "#fcfaf4"
+  },
+  "images": {
+    "default.png": {
+      "text": "You wrote a reward function. Your policy optimized something else.",
+      "source": "design/copy.yaml:home.hero.headline_a + home.hero.headline_b",
+      "sha256_16": "1794bdb60db280b1"
+    },
+    "campaign.png": {
+      "text": "Instruments for the gap between the reward you wrote down and the objective your policy moved toward.",
+      "source": "design/copy.yaml:meta.tagline",
+      "sha256_16": "4384bde2063d3707",
+      "note": "ESCALATION, C-18: copy.yaml has no top-level key for /log/, so this route's own preview text does not exist and a packet may not invent one. The site tagline is a real published string and stands in until the build lead writes the /log/ copy. The previous text typed five numbers into a sentence, which rule 2 forbids outright."
+    },
+    "campaign-err-rb2.png": {
+      "text": "Error anticipation on RewardBench 2",
+      "source": "src/data/cards.json#err-rb2.title",
+      "sha256_16": "91995e1fc63fd32a"
+    },
+    "campaign-forecast-cat.png": {
+      "text": "Benchmark forecasting from internals plus a 200-pair slice",
+      "source": "src/data/cards.json#forecast-cat.title",
+      "sha256_16": "19478af59e446ce7"
+    },
+    "campaign-style-rmb.png": {
+      "text": "Bias battery predicts RM-Bench Hard ranking",
+      "source": "src/data/cards.json#style-rmb.title",
+      "sha256_16": "e23ca206e819f069"
+    },
+    "campaign-ppe-bon.png": {
+      "text": "Tail index forecasts the best-of-k plateau on PPE",
+      "source": "src/data/cards.json#ppe-bon.title",
+      "sha256_16": "06cf9477852ac13c"
+    },
+    "campaign-ladder.png": {
+      "text": "Same-recipe scale ladder with frozen 8B extrapolation",
+      "source": "src/data/cards.json#ladder.title",
+      "sha256_16": "0d406eb9ea9980ea"
+    },
+    "campaign-chi-drift.png": {
+      "text": "Susceptibility chi predicts best-of-n feature drift on a real bank",
+      "source": "src/data/cards.json#chi-drift.title",
+      "sha256_16": "ad20cbf931af27be"
+    },
+    "campaign-hump.png": {
+      "text": "The Goodhart hump located from a base-policy tail index",
+      "source": "src/data/cards.json#hump.title",
+      "sha256_16": "c5080c52b7e1acdb"
+    },
+    "campaign-gauge-e19.png": {
+      "text": "The two-fine-tunes gauge result, settled",
+      "source": "src/data/cards.json#gauge-e19.title",
+      "sha256_16": "b3adf8866f494188"
+    },
+    "campaign-gauge-xfam.png": {
+      "text": "Canonical cross-family angles predict pairwise disagreement",
+      "source": "src/data/cards.json#gauge-xfam.title",
+      "sha256_16": "3c5f6e9d856a15f8"
+    },
+    "campaign-hack-fore.png": {
+      "text": "Weights-derived indices flag the exploitable hack family before any attack",
+      "source": "src/data/cards.json#hack-fore.title",
+      "sha256_16": "169c5c0981b64085"
+    },
+    "campaign-surgery.png": {
+      "text": "Certified erasure removes the exploit without benchmark loss",
+      "source": "src/data/cards.json#surgery.title",
+      "sha256_16": "2ea9fe1f41dd7e98"
+    },
+    "campaign-verif-prm.png": {
+      "text": "Does the process reward model verify or style-read",
+      "source": "src/data/cards.json#verif-prm.title",
+      "sha256_16": "3295daeea0afec85"
+    },
+    "campaign-judge-vbc.png": {
+      "text": "Verdict before critique on a real generative judge",
+      "source": "src/data/cards.json#judge-vbc.title",
+      "sha256_16": "1e4417a0d6825e78"
+    },
+    "campaign-values-contest.png": {
+      "text": "Contested-direction loading predicts human rater disagreement",
+      "source": "src/data/cards.json#values-contest.title",
+      "sha256_16": "2f2f293bf88b657c"
+    },
+    "campaign-forensic-receipt.png": {
+      "text": "Skepticism and receipt reliance predict who rewards fabricated receipts",
+      "source": "src/data/cards.json#forensic-receipt.title",
+      "sha256_16": "3b56bfbc2b330ea5"
+    },
+    "campaign-atlas-vce.png": {
+      "text": "Value-convergence excess across the fleet beats the capability-matched null",
+      "source": "src/data/cards.json#atlas-vce.title",
+      "sha256_16": "44c5f22c2c09f5dd"
+    },
+    "campaign-fact-kui.png": {
+      "text": "The fleet decodes a property it does not price",
+      "source": "src/data/cards.json#fact-kui.title",
+      "sha256_16": "98f253627379835c"
+    },
+    "campaign-capacity-welch.png": {
+      "text": "Dark reward tracks the criteria-to-dimension ratio; ArmoRM respects the Welch floor",
+      "source": "src/data/cards.json#capacity-welch.title",
+      "sha256_16": "c3d67e112a0e9170"
+    },
+    "campaign-eval-aware.png": {
+      "text": "The RM knows it is being tested, and steering along that direction inflates reward",
+      "source": "src/data/cards.json#eval-aware.title",
+      "sha256_16": "13ae25eea3e66983"
+    },
+    "campaign-topo-hodge.png": {
+      "text": "Intransitive preference mass no scalar reward can represent",
+      "source": "src/data/cards.json#topo-hodge.title",
+      "sha256_16": "51ff0002f4c596c5"
+    },
+    "campaign-emb-lora.png": {
+      "text": "Surface biases enter the reward direction before quality features",
+      "source": "src/data/cards.json#emb-lora.title",
+      "sha256_16": "b494ad2738ead6f1"
+    },
+    "campaign-cal-transfer.png": {
+      "text": "Instrument calibration transfers from CPU toy trunks to a real 0.6B trunk",
+      "source": "src/data/cards.json#cal-transfer.title",
+      "sha256_16": "7aedf2a3215138cf"
+    },
+    "campaign-adj-avp.png": {
+      "text": "Attribution versus patching, adjudicated against planted ground truth",
+      "source": "src/data/cards.json#adj-avp.title",
+      "sha256_16": "339985902b84df60"
+    },
+    "campaign-conf-partial.png": {
+      "text": "Do the indices carry information beyond size, accuracy, and lineage",
+      "source": "src/data/cards.json#conf-partial.title",
+      "sha256_16": "34dcc3684f6fc5d8"
+    },
+    "campaign-meta-ledger.png": {
+      "text": "The campaign scores its own calibration",
+      "source": "src/data/cards.json#meta-ledger.title",
+      "sha256_16": "ed1c5eb8508500a0"
+    },
+    "campaign-t3-decomp.png": {
+      "text": "A legibility frontier leaves a tacit residual",
+      "source": "src/data/cards.json#t3-decomp.title",
+      "sha256_16": "8dbe7ecaefc0aea1"
+    },
+    "campaign-t3-field.png": {
+      "text": "The reward Hessian's flat subspace overlaps the flagged hackable direction",
+      "source": "src/data/cards.json#t3-field.title",
+      "sha256_16": "743a0d33e8f9a985"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+ "contentHash": "2f10dbed4e23777b636362cf3a85c2cc",
+ "humanSource": "The project's own statement of what it is not claiming, carried on the limits page.",
+ "immutableIds": [
+  "copy.yaml:limits.not_claiming[2]"
+ ],
+ "label": "Not that nobody predicts reward hacking.",
+ "limitation": "Not that nobody predicts reward hacking.",
+ "scope": "What is not being claimed.",
+ "slug": "not-claiming-3",
+ "sourceUrl": "/limits/",
+ "statement": "At least four methods do, one of which detects a latent propensity persisting while the behaviour is suppressed.",
+ "type": "limitation"
+}

@@ -1,5 +1,17 @@
 ---
-// PrevNext: two quiet cards at the foot of an article for moving between pages.
+/**
+ * The two links at the foot of a documentation page for moving through the
+ * corpus in the order the library's own nav puts it in.
+ *
+ * Rewritten on the new palette. `.pn-dir` at --ink-3 on a --bg-raised card was
+ * 4.29:1, which is AA-large and not AA-body, and it is 170 of the 608 lines on
+ * gate 14's ratchet: two selectors on eighty-five pages. The fix is not a
+ * brighter ink, it is no raised surface. The cards are a rule and space now,
+ * so the dimmest ink on them is measured against --ground at 5.25:1.
+ *
+ * The two direction words come from copy.yaml, which they did not before.
+ */
+import { ui } from "../copy";
 
 interface Link {
   title: string;
@@ -15,73 +27,91 @@ const { prev, next } = Astro.props;
 
 {
   (prev || next) && (
-    <nav class="prevnext" aria-label="Pagination">
+    /* A <div>, not a <nav>. A landmark needs an accessible name, copy.yaml
+       has none for pagination, and a second landmark carrying the sidebar's
+       name is the exact ambiguity docs-sidebar.md exists to avoid. Two links
+       at the foot of an article are links in the article's flow; rel="prev"
+       and rel="next" carry the relationship a landmark would not have said. */
+    <div class="pn">
       {prev ? (
-        <a class="pn-card pn-prev" href={prev.href} rel="prev">
-          <span class="pn-dir">Previous</span>
-          <span class="pn-title">{prev.title}</span>
+        <a class="pn__card pn__card--prev" href={prev.href} rel="prev">
+          <span class="pn__dir type-mono-label">{ui.prev}</span>
+          <span class="pn__title type-body">{prev.title}</span>
         </a>
       ) : (
-        <span class="pn-spacer" />
+        <span class="pn__spacer" />
       )}
       {next ? (
-        <a class="pn-card pn-next" href={next.href} rel="next">
-          <span class="pn-dir">Next</span>
-          <span class="pn-title">{next.title}</span>
+        <a class="pn__card pn__card--next" href={next.href} rel="next">
+          <span class="pn__dir type-mono-label">{ui.next}</span>
+          <span class="pn__title type-body">{next.title}</span>
         </a>
       ) : (
-        <span class="pn-spacer" />
+        <span class="pn__spacer" />
       )}
-    </nav>
+    </div>
   )
 }
 
 <style>
-  .prevnext {
+  .pn {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--sp-4);
-    margin-top: var(--sp-12);
-    padding-top: var(--sp-6);
-    border-top: 1px solid var(--line);
+    gap: var(--space-4);
+    margin-block-start: var(--space-7);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-w) solid var(--line);
+    min-width: 0;
   }
-  .pn-card {
+  .pn__card {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-1);
-    padding: var(--sp-3) var(--sp-4);
-    border: 1px solid var(--line);
-    border-radius: var(--r-card);
-    background: var(--bg-raised);
+    gap: var(--space-1);
+    padding: var(--space-3) 0;
     text-decoration: none;
-    transition: border-color 150ms ease;
+    min-width: 0;
   }
-  .pn-card:hover {
-    border-color: var(--line-strong);
+  .pn__card--prev {
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-3);
   }
-  .pn-next {
-    text-align: right;
+  .pn__card--next {
+    text-align: end;
+    border-inline-end: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-end: var(--space-3);
   }
-  .pn-dir {
-    font-size: var(--text-xs);
+  .pn__card:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .pn__dir {
+    /* --ink-3 is permitted here and it was not before: this component paints
+       no surface, so the label sits on --ground at 5.25:1. */
     color: var(--ink-3);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
-  .pn-title {
+  .pn__title {
     color: var(--ink);
     font-weight: 600;
-    font-size: var(--text-sm);
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
-  .pn-spacer {
+  .pn__card:hover .pn__title {
+    text-decoration-line: underline;
+  }
+  .pn__spacer {
     display: block;
   }
-  @media (max-width: 600px) {
-    .prevnext {
+
+  @media (max-width: 47.4375rem) /* --bp-md minus one pixel */ {
+    .pn {
       grid-template-columns: 1fr;
     }
-    .pn-next {
-      text-align: left;
+    .pn__card--next {
+      text-align: start;
+      border-inline-end: 0;
+      padding-inline-end: 0;
+      border-inline-start: var(--border-w-accent) solid var(--line-strong);
+      padding-inline-start: var(--space-3);
     }
   }
 </style>

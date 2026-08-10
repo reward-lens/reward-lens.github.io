@@ -1,0 +1,19 @@
+{
+ "contentHash": "be11f6236c4f49359d175841a6dbb10c",
+ "humanSource": "The frozen study \"Value-convergence excess across the fleet beats the capability-matched null\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:0c80d9086ebb0ad9704b88a8eefb01fa",
+  "campaign.adjudication.ATLAS-VCE",
+  "study:campaign-atlas-vce@v1#2008bee7",
+  "spec:2008bee7d02b9461abfd6f12ff7b0ffe"
+ ],
+ "label": "Value-convergence excess across the fleet beats the capability-matched null",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. the vce > 0 margin sits at the null center by construction: the point call passes under the null 0.48 of the time and its power at the threshold-alternative equals that rate; the alpha-exact p-value companion and the registered CI exclusion carry the card's evidence.",
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full and rb2-helpfulness-512.",
+ "slug": "study-atlas-vce",
+ "sourceUrl": "/evidence/0c80d9086ebb0ad9704b88a8eefb01fa/",
+ "statement": "The frozen study \"Value-convergence excess across the fleet beats the capability-matched null\" was adjudicated refuted, over 2 registered predictions of which 1 held, 1 did not. convergence is fully explained by shared capability structure.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full and rb2-helpfulness-512",
+ "type": "interpretation"
+}

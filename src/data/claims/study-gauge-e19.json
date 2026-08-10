@@ -1,0 +1,19 @@
+{
+ "contentHash": "5c9f37b27b83bd9535c8abb5726e298c",
+ "humanSource": "The frozen study \"The two-fine-tunes gauge result, settled\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:0b9b34f7e2af83d3b0ca32a60791a859",
+  "campaign.adjudication.GAUGE-E19",
+  "study:campaign-gauge-e19@v1#ea289522",
+  "spec:ea2895223ef2f6d73b9b384be75a37c7"
+ ],
+ "label": "The two-fine-tunes gauge result, settled",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on skywork-v01 and skywork-v02, over rb2-helpfulness-512.",
+ "slug": "study-gauge-e19",
+ "sourceUrl": "/evidence/0b9b34f7e2af83d3b0ca32a60791a859/",
+ "statement": "The frozen study \"The two-fine-tunes gauge result, settled\" was adjudicated inconclusive, over 3 registered predictions of which 3 returned no value.",
+ "status": "unrun",
+ "subject": "skywork-v01 and skywork-v02, over rb2-helpfulness-512",
+ "type": "interpretation"
+}

@@ -1,0 +1,178 @@
+---
+/**
+ * The source plate: what the instrument is showing, and where it came from.
+ *
+ * One plate per case, all of them in the document, one not hidden. That is the
+ * only arrangement in which the whole record is readable with scripting off,
+ * and it makes the change on a subject switch a single attribute rather than a
+ * fetch, a re-render or a live-region announcement. The plate is context, not
+ * an event: it carries no `aria-live`, because a plate that announced itself
+ * every time the reader crossed a scroll boundary would talk over the prose it
+ * is supposed to be supporting.
+ *
+ * Every field is read from `src/data/scene/manifest.json`. Nothing here is
+ * typed by hand, including the caveat, which is the field the truth contract
+ * exists to keep attached to the number.
+ */
+import { caseById, captionFor } from "./facts";
+
+interface Props {
+  /** Case ids, in the order the movement can reach them. */
+  cases: readonly string[];
+  /** Which one is visible before any control is touched. */
+  active: string;
+  /**
+   * Which half of the plate to render.
+   *
+   * The plate is split because it is long. Rendered whole, directly under the
+   * viewport, its scope and caveat pushed the legend past the bottom of a
+   * sticky column on a 900px screen, so the movement's one affordance was never
+   * visible. Found by opening the capture, not by reading the markup. The head
+   * names the subject, the legend follows it, and the record's scope and limits
+   * sit underneath where a reader goes looking for them.
+   */
+  part?: "head" | "detail";
+  class?: string;
+}
+
+const { cases, active, part = "head", class: extraClass = "" } = Astro.props;
+const plates = cases.map((id) => ({ id, sceneCase: caseById(id), caption: captionFor(id) }));
+
+/** A repository path is prose here, not a link: the repository is not published. */
+const sourceLine = (sceneCase: ReturnType<typeof caseById>) => {
+  const s = sceneCase.source;
+  if (s.publicUrl) return s.publicUrl;
+  if (s.repositoryPath) return s.repositoryPath;
+  return "";
+};
+---
+
+<div class:list={["plate", extraClass]} data-scene-plate>
+  {
+    plates.map(({ id, sceneCase, caption }) => (
+      <article class="plate__case" data-scene-case={id} hidden={id !== active}>
+        {
+          part === "head" ? (
+            <>
+              <p class="plate__kind type-mono-label">
+                {sceneCase.plateKind}
+                <span class="plate__mode" data-truth-mode={sceneCase.truthMode}>
+                  {sceneCase.truthMode}
+                </span>
+              </p>
+              <p class="plate__subject type-body-sm">{sceneCase.publicLabel}</p>
+            </>
+          ) : (
+            <dl class="plate__rows type-body-sm">
+              {caption && (
+                <div class="plate__row">
+                  <dt>Reading</dt>
+                  <dd>{caption}</dd>
+                </div>
+              )}
+              <div class="plate__row">
+                <dt>Source</dt>
+                <dd>
+                  <code>{sourceLine(sceneCase)}</code>
+                </dd>
+              </div>
+              {sceneCase.source.artifact && (
+                <div class="plate__row">
+                  <dt>Artifact</dt>
+                  <dd>{sceneCase.source.artifact}</dd>
+                </div>
+              )}
+              <div class="plate__row">
+                <dt>Scope</dt>
+                <dd>{sceneCase.scope}</dd>
+              </div>
+              <div class="plate__row plate__row--caveat">
+                <dt>Does not establish</dt>
+                <dd>{sceneCase.caveat}</dd>
+              </div>
+            </dl>
+          )
+        }
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .plate {
+    min-width: 0;
+  }
+  .plate__case {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  /* `hidden` has to beat `display: grid`, and a bare attribute selector does
+     not. This is the one place in the packet that needs the specificity. */
+  .plate__case[hidden] {
+    display: none;
+  }
+
+  .plate__kind {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: baseline;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+
+  /* The truth mode is a word, not a colour. A reader who cannot separate the
+     four hues still reads "schematic" and knows nothing may be measured off
+     the construction beside it. */
+  .plate__mode {
+    border: var(--border-w) solid var(--line);
+    padding-inline: var(--space-2);
+    color: var(--ink-2);
+  }
+  .plate__mode[data-truth-mode="schematic"] {
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+
+  .plate__subject {
+    margin: 0;
+    color: var(--ink);
+  }
+  .plate__caption {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .plate__rows {
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .plate__row {
+    display: grid;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .plate__row dt {
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+    font-family: var(--font-mono);
+    font-size: var(--type-body-sm-size);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .plate__row dd {
+    margin: 0;
+    color: var(--ink-2);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .plate__row code {
+    font-family: var(--font-mono);
+    overflow-wrap: anywhere;
+  }
+  .plate__row--caveat dd {
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-3);
+  }
+</style>

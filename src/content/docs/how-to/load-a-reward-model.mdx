@@ -4,6 +4,8 @@ description: You have a model and tokenizer in memory. How do you point reward-l
 section: how-to
 order: 7
 source: docs/content/how-to/load-a-reward-model.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -74,4 +76,4 @@ load_signal("Skywork/Skywork-Reward-Llama-3.1-8B-v0.2")
 `load_signal(hub_id, allow_download=True)` downloads the weights, sniffs the loading convention, and delegates to `wrap_hf_model`. The 8B and 27B campaign models need fp32 head precision and do not fit an 8 GB GPU. On adequate hardware the call is the same; the two ungated paths above never touch the network.
 
 </Callout>
-See also: [Classifier reward models](/docs/models-and-signals/classifier-rms/), [Write an adapter](/docs/how-to/write-an-adapter/). API: [`wrap_hf_model`](/docs/reference/signals/#reward_lens.signals.loaders.wrap_hf_model), [`from_tiny`](/docs/reference/signals/#reward_lens.signals.loaders.from_tiny), [`load_signal`](/docs/reference/signals/#reward_lens.signals.loaders.load_signal).
+See also: [Classifier reward models](/docs/models-and-signals/classifier-rms/), [Write an adapter](/docs/how-to/write-an-adapter/). API: [`wrap_hf_model`](/docs/api/signals/#reward_lens.signals.loaders.wrap_hf_model), [`from_tiny`](/docs/api/signals/#reward_lens.signals.loaders.from_tiny), [`load_signal`](/docs/api/signals/#reward_lens.signals.loaders.load_signal).

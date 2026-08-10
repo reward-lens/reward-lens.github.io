@@ -1,0 +1,695 @@
+---
+/**
+ * The still layer: five states, in the room, for every session that does not
+ * get the canvas.  ·  DECISIONS.md D-18, D-22, D-24, SCENE.md §9, §10
+ *
+ * WHAT THIS IS. The third fidelity of D-24's one composition. It occupies the
+ * same box as the canvas, over the hand-authored room, and it draws the
+ * measured dispersion the room cannot: the room's fan is schematic because the
+ * subject behind it was withdrawn, and this one is generated from the scene
+ * manifest's ten cases and their versioned payloads.
+ *
+ * WHEN IT PAINTS: BY DEFAULT, AND IT STEPS ASIDE ON ONE CONDITION.
+ *
+ * `html[data-scene-ready="true"]`, which the scene sets after it has drawn a
+ * frame. That is the whole rule, and it is the right way round rather than the
+ * convenient one. The first version of this layer was hidden by default and
+ * revealed on five conditions, four of which needed script to publish an
+ * attribute; a shoot on a 400kbps link with 400ms of latency then measured the
+ * consequence, which was that at 2.5 seconds no tier had been published, the
+ * still was still hidden, and the reader was looking at a room whose fan
+ * asserts nothing. The one path where a finished still matters most was the one
+ * path that never got it.
+ *
+ * Painting by default gets every case right with no signal at all:
+ *
+ *   scripting disabled     nothing to publish, and nothing needs to be.
+ *   prefers-reduced-motion the canvas never mounts, so nothing takes over.
+ *   no WebGL               the same.
+ *   the renderer failed    `data-scene-ready` is never set.
+ *   PUBLIC_SCENE=off       there is no island to set it.
+ *   a slow link            the still is inline and costs no request; the canvas
+ *                          replaces it when and if it arrives.
+ *   a fast machine         a few hundred milliseconds of a finished picture,
+ *                          which is what "the first frame already contains the
+ *                          argument" means when it is built rather than said.
+ *
+ * The room's own schematic fan stands down while this layer is in the document,
+ * through a global rule in this component's stylesheet rather than in that one.
+ * That is deliberate: the rule ships with the layer, so a page that renders the
+ * hand-authored room WITHOUT this layer still gets the construction, and there
+ * is never a moment where two fans are drawn in one box.
+ *
+ * THE CONTROLS ARE RADIO INPUTS AND THE STATE MACHINE IS CSS.
+ * `:checked ~` and nothing else, so the five states advance with scripting
+ * disabled and so a reader gets the browser's own keyboard handling for a
+ * radio group rather than a hand-rolled one. Where scripting IS available, the
+ * narrative column's existing `instrumentstate` event moves the same radios, so
+ * there is one mechanism with two drivers rather than two mechanisms that have
+ * to be kept agreeing. `instrument-story.astro` publishes that event and this
+ * listens; nothing here touches that component.
+ *
+ * WHY THE INPUTS ARE DIRECT CHILDREN OF THE LAYER and the labels are not. The
+ * sibling combinator is a DOM relationship, and `display: contents` does not
+ * change it, so an input inside a fieldset cannot reach the stage. The inputs
+ * are therefore siblings of the stage and the labels sit where they are read,
+ * bound by `for`. That is also why there is no `<fieldset>`: a group whose
+ * radios each carry their own name and label announces correctly without one,
+ * and the alternative was a wrapper that would have broken the only mechanism
+ * that works without script.
+ *
+ * NOTHING IS LOST BETWEEN FIDELITIES. Every quantity the fan encodes is also a
+ * row in the still's own key, in text. That is not redundancy: it is what makes
+ * "no information disappears" checkable, and it is why the phone can drop the
+ * run without dropping a measurement.
+ */
+import { HERO_X, HERO_Y, heroCssVars } from "../../home/hero-geometry";
+import { states as storyStates, sectionLabel } from "../../home/story/story-copy";
+import { stillStates, still, stillsForState } from "./still-data";
+import SceneStill from "./SceneStill.astro";
+
+interface Props {
+  /** Half the room's height in CSS pixels, matching the canvas's own box. */
+  half?: number;
+}
+const { half = 420 } = Astro.props;
+
+/**
+ * The kill switch, read at build time.  ·  D-18, SCENE.md §10
+ *
+ * `PUBLIC_SCENE=off` marks this layer as permanent: there is no island in that
+ * build, so `data-scene-ready` can never be set, and the attribute says that in
+ * the DOM rather than leaving it to be inferred from an absence. SceneHost
+ * reads the same flag and does not render the island. Two files, because a
+ * static build has no runtime to broadcast a build-time flag with.
+ */
+const sceneOff = import.meta.env.PUBLIC_SCENE === "off";
+
+/**
+ * The fan's drawn extent.
+ *
+ * `hero-optics.astro` computes this as the measured fan's own top when a
+ * decomposition is bound and `HERO_Y.fanExtent` when none is. None is: the
+ * subject was withdrawn and `decomposition()` returns null. Reading the
+ * constant here rather than the module keeps this component free of the
+ * withdrawn figure entirely, and gate 20 is what would catch the two boxes
+ * parting company if that ever changed.
+ */
+const fanH = HERO_Y.fanExtent;
+
+/**
+ * The five states' words, from the narrative column's own copy.
+ *
+ * Not a second set of names. `story-copy.ts` already pairs each frozen state id
+ * with the copy.yaml block that carries its words, and fails the build naming
+ * the key when one is missing. The radio labels are those same kickers, so the
+ * control and the paragraph it corresponds to cannot say different things.
+ */
+const kicker = new Map(storyStates.map((s) => [s.id, s.kicker]));
+
+const stateInputId = (id: string) => `rl-still-state-${id}`;
+const caseInputId = (id: string) => `rl-still-case-${id}`;
+
+/** The state a session starts in: the first, as the narrative reads. */
+const firstState = stillStates[0].id;
+
+/**
+ * The landmarks gate 20 measures, as fractions of this element's own box.
+ *
+ * They are exact rather than measured, and that is the point. The box is
+ * symmetric about the optical axis by construction, so the axis is at 0.5 of
+ * its height whatever the room's height is; and the box is inset-inline: 0 in
+ * the same slot the hand-authored room fills, so the dispersing element is at
+ * `HERO_X.prism` of its width exactly as the room's own prism landmark is.
+ * Neither number is a second opinion about where something was drawn: both
+ * sides read `hero-geometry.ts`, which is what D-24 requires and what makes an
+ * 8px tolerance a formality rather than a hope.
+ */
+const beamAxisFraction = 0.5;
+const prismCentroidFraction = `${HERO_X.prism},0.5`;
+---
+
+{/* The inputs. Visually hidden, focusable, and siblings of the stage because
+    that is what the sibling combinator needs. */}
+<div
+  class="still-layer"
+  data-scene-still-layer
+  data-fidelity="still"
+  data-beam-axis={String(beamAxisFraction)}
+  data-prism-centroid={prismCentroidFraction}
+  data-scene-off={sceneOff ? "true" : undefined}
+  style={`--scene-above:${half}px;--scene-below:${half}px;${heroCssVars(fanH)}`}
+>
+  {/* --- the three landmarks gate 20 measures ------------------------------
+         Zero-size, unpainted, never `display: none`, and placed by exactly the
+         custom properties the hand-authored room places its own by. They are
+         the still's half of D-24's agreement, and they are marked rather than
+         read off the drawn parts for the reason that component records: a
+         suppressed element still answers querySelector and reports a rect of
+         zeros, which the gate would read as a landmark at the page origin.
+
+         The declared fractions on this element say the same thing a second
+         way, and the gate checks the two against each other. That is not
+         belt and braces: a raster still cannot expose a rect for anything, so
+         the fractions are the contract a future headless-gl still would meet,
+         and a vector still that could satisfy only one of them would be a
+         still whose geometry and whose declaration had come apart. --- */}
+  <span class="still-layer__landmark" data-landmark="beam-axis"></span>
+  <span class="still-layer__landmark still-layer__landmark--prism" data-landmark="prism-centroid"></span>
+  <span class="still-layer__landmark still-layer__landmark--detector" data-landmark="detector-plane"></span>
+
+  {
+    stillStates.map((s) => (
+      <input
+        class="still-layer__input"
+        type="radio"
+        name="rl-still-state"
+        id={stateInputId(s.id)}
+        value={s.id}
+        checked={s.id === firstState}
+        data-still-state-input={s.id}
+      />
+    ))
+  }
+  {
+    stillStates
+      .filter((s) => s.cases.length > 1)
+      .flatMap((s) =>
+        s.cases.map((caseId) => (
+          <input
+            class="still-layer__input"
+            type="radio"
+            name={`rl-still-case-${s.id}`}
+            id={caseInputId(caseId)}
+            value={caseId}
+            checked={caseId === s.defaultCase}
+          />
+        )),
+      )
+  }
+
+  {/* --- the stage. One state visible, one case within it. ---------------- */}
+  <div class="still-layer__stage">
+    {
+      stillStates.map((s) => (
+        <div class="still-layer__state" data-still-state={s.id}>
+          {stillsForState(s.id).map((c) => (
+            <div class="still-layer__case" data-still-case={c.caseId}>
+              <SceneStill still={c} isDefault={c.caseId === s.defaultCase} />
+            </div>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  {/* --- the controls. On the floor, below the rail, left of the readout.
+         They render only when the still is the active fidelity: with a canvas
+         running they would be a third action in a first viewport D-22 gives
+         exactly three things. When the still IS the instrument, they are the
+         instrument's own controls rather than a fourth thing. --- */}
+  <div class="still-layer__controls" data-still-controls>
+    <p class="still-layer__group type-mono-label" id="rl-still-states-label">{sectionLabel}</p>
+    <ol class="still-layer__radios">
+      {
+        stillStates.map((s, i) => (
+          <li>
+            <label class="still-layer__label type-mono-label" for={stateInputId(s.id)}>
+              <span class="still-layer__ordinal">{i + 1}</span>
+              {kicker.get(s.id) ?? s.id}
+            </label>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      stillStates
+        .filter((s) => s.cases.length > 1)
+        .map((s) => (
+          <div class="still-layer__cases" data-still-state={s.id}>
+            <p class="still-layer__group type-mono-label">{kicker.get(s.id) ?? s.id}</p>
+            <ol class="still-layer__radios">
+              {s.cases.map((caseId, i) => (
+                <li>
+                  {/* The drawn label is the ordinal and the accessible name is
+                      the whole subject. Six subjects written out is 340
+                      characters of mono type across the one viewport D-22
+                      gives three things, and a shoot showed it landing on the
+                      headline. The subject is not lost: the plate on the other
+                      side of the floor states the selected one in full, which
+                      is where a reader looks to find out what they are
+                      looking at. */}
+                  <label class="still-layer__label type-mono-label" for={caseInputId(caseId)}>
+                    <span class="still-layer__ordinal">{i + 1}</span>
+                    <span class="visually-hidden">{still(caseId).publicLabel}</span>
+                  </label>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+    }
+  </div>
+</div>
+
+<style>
+  /* The layer's box is the canvas's box: symmetric about the optical axis,
+     because gate 20 reads the axis at 0.5 of this element's height and the
+     camera puts world y = 0 at the centre of the canvas's frame. Measured
+     before SceneHost's box was symmetric: the canvas centre sat 40px from the
+     authored axis against an 8px tolerance. */
+  .still-layer {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(var(--scene-above) * -1);
+    block-size: calc(var(--scene-above) + var(--scene-below));
+    z-index: var(--z-scene);
+    /* The hero's own dial for how bright the room is, D-22. The still reads it
+       rather than choosing a second value. */
+    --fill: var(--hero-fill, 0.22);
+    /* The composition's active values, picked here exactly as hero-optics
+       picks them, because everything heroCssVars() emits is an INPUT: an inline
+       custom property beats every stylesheet rule, media query or not, so a
+       value emitted under its active name could not be re-picked below --bp-md.
+       Three of them were, once, and all three narrow overrides were dead. */
+    --beam-half: var(--beam-half-wide);
+    --rail-y: var(--rail-y-wide);
+    --floor-y: var(--floor-y-wide);
+    --fan-draw: var(--fan-h);
+
+    /* Painted from the first frame. See the header: this is the default and
+       not a state something has to switch on, because four of the six paths
+       this layer serves are sessions where the thing that would do the
+       switching is what is missing. */
+    opacity: 1;
+    visibility: visible;
+    /* No transition by default. The crossfade is opted into when the reader is
+       actually looking at the room; see the in-view note below. */
+    transition: none;
+  }
+
+  /* The canvas has drawn. The still steps aside, unless the build has no
+     canvas at all, in which case there is nothing to step aside for.
+     `visibility` as well as opacity, so nothing inside it stays a tab stop or a
+     hit target once the room is the canvas's. The BOX REMAINS, which gate 20
+     depends on: an element with display: none reports a rect of zeros and the
+     gate would read a landmark at the page origin and call it agreement. */
+  :global(html[data-scene-ready="true"]) .still-layer:not([data-scene-off]) {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* The strip's click-swallowing rule moved to install-strip.astro on merge,
+     which is where the packet that found it said it belonged. See that file. */
+
+  /* --- the room's construction stands down -------------------------------
+     Two fans in one box is the one thing this layering must never do: a
+     construction and a measurement drawn over each other read as one figure
+     that is partly invented, which is worse than either alone.
+
+     The rule is global and it is HERE rather than in hero-optics.astro, which
+     is what makes it conditional without a condition: it ships only when this
+     layer ships, so a page that renders the hand-authored room alone still
+     gets the construction, and no selector has to ask whether a sibling
+     exists. `data-hero-optics` and `data-truth-mode` are that component's own
+     published attributes; its class names carry a build hash this stylesheet
+     cannot know. */
+  :global([data-hero-optics] [data-truth-mode="schematic"]) {
+    opacity: 0;
+  }
+
+  /* SLOW CONNECTION. The still is inline in the document and costs no request,
+     so it is already there while the scene chunk and its payloads are not. When
+     they arrive the swap is a crossfade ONLY if the reader is still looking at
+     the room; a fade that runs after they have scrolled past is work nobody
+     sees, and a fade that runs as they arrive is a quality step in the middle
+     of an explanation. `data-in-view` is set by the script below and is absent
+     with no scripting, which leaves the swap instant, which is correct. */
+  .still-layer[data-in-view] {
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .still-layer,
+    .still-layer[data-in-view] {
+      transition: none;
+    }
+  }
+
+  /* --- the state machine, in CSS ---------------------------------------- */
+
+  /* Focusable, announced, and not drawn. Not `display: none` and not
+     `visibility: hidden`, either of which takes a radio out of the tab order
+     and out of the accessibility tree, which would leave the control group
+     working only for a pointer. */
+  .still-layer__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* The landmarks. The axis one sits at half this box's height, which IS the
+     optical axis: the box is symmetric about it by construction, so nothing
+     here computes the axis, it only marks where the layout already put it. */
+  .still-layer__landmark {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    inline-size: 0;
+    block-size: 0;
+  }
+  .still-layer__landmark--prism {
+    left: var(--prism-x);
+  }
+  .still-layer__landmark--detector {
+    left: auto;
+    right: var(--page-pad);
+  }
+
+  .still-layer__stage {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Every state and every case is laid out in the same place and only one is
+     painted. Local opacity, so the change is instant under reduced motion by
+     the token's own doing and there is nothing to tween.
+
+     THE TWO LEVELS USE DIFFERENT PROPERTIES, AND THEY HAVE TO.
+     `visibility` inherits, and a descendant may override an ancestor's
+     `hidden` with its own `visible`. So a case set to `visibility: visible`
+     inside a state set to `visibility: hidden` PAINTS, which is exactly what
+     happened: a shoot reported all five states showing at once. The state level
+     therefore owns visibility and the case level owns display, because a
+     `display: block` case inside a hidden state still inherits `hidden` and
+     stays unpainted and untabbable. */
+  .still-layer__state {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .still-layer__case {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Written out rather than generated, because a selector list is what the
+     browser needs and there are eleven of them. Each pairs one input with the
+     one thing it reveals. */
+  #rl-still-state-scorer:checked ~ .still-layer__stage .still-layer__state[data-still-state="scorer"],
+  #rl-still-state-selection:checked ~ .still-layer__stage .still-layer__state[data-still-state="selection"],
+  #rl-still-state-update:checked ~ .still-layer__stage .still-layer__state[data-still-state="update"],
+  #rl-still-state-response:checked ~ .still-layer__stage .still-layer__state[data-still-state="response"],
+  #rl-still-state-run-boundary:checked ~ .still-layer__stage .still-layer__state[data-still-state="run-boundary"] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Only the scorer state owns more than one case, so it is the only one that
+     chooses. A state with a single case draws it and has nothing to say. */
+  .still-layer__state[data-still-state="scorer"] .still-layer__case {
+    display: none;
+  }
+  #rl-still-case-scorer-score-tree:checked ~ .still-layer__stage .still-layer__case[data-still-case="scorer-score-tree"],
+  #rl-still-case-scorer-verifier-is-equiv:checked ~ .still-layer__stage .still-layer__case[data-still-case="scorer-verifier-is-equiv"],
+  #rl-still-case-scorer-verifier-swebench:checked ~ .still-layer__stage .still-layer__case[data-still-case="scorer-verifier-swebench"],
+  #rl-still-case-scorer-verifier-verl-gsm8k:checked ~ .still-layer__stage .still-layer__case[data-still-case="scorer-verifier-verl-gsm8k"],
+  #rl-still-case-scorer-verifier-verl-search-r1:checked ~ .still-layer__stage .still-layer__case[data-still-case="scorer-verifier-verl-search-r1"],
+  #rl-still-case-scorer-attribution-patching:checked ~ .still-layer__stage .still-layer__case[data-still-case="scorer-attribution-patching"] {
+    display: block;
+  }
+
+  /* --- the controls ------------------------------------------------------ */
+  /* THE CONTROLS ARE MEASURED FROM THE AXIS, NOT FROM THIS BOX'S TOP EDGE.
+     They were measured from the top edge, and the top edge is 420px ABOVE the
+     axis, so `--rail-y + --space-6` put them 284px above the optical axis:
+     directly on the headline, in both themes, at all three widths. `top: 50%`
+     is the axis, exactly as it is for the still's own parts, and the offset is
+     a margin from there. Found by opening a capture, not by a gate. */
+  .still-layer__controls {
+    position: absolute;
+    top: 50%;
+    margin-block-start: calc(var(--rail-y) + var(--space-6));
+    inset-inline-start: var(--page-pad);
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    max-inline-size: min(38ch, 42%);
+    pointer-events: auto;
+  }
+
+  .still-layer__group {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, below the fan's reach */
+  }
+
+  .still-layer__radios {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .still-layer__label {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding-block: var(--space-1);
+    padding-inline: var(--space-2);
+    border-inline-start: var(--border-w-accent) solid var(--line);
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .still-layer__ordinal {
+    color: var(--ink-3); /* ink3-ok: on --ground */
+    font-variant-numeric: tabular-nums;
+  }
+  .still-layer__label:hover {
+    color: var(--ink);
+    border-inline-start-color: var(--line-control);
+  }
+
+  /* The checked state is carried by the rule below rather than by :has(),
+     which a browser old enough to be on this path may not have. */
+  #rl-still-state-scorer:checked ~ .still-layer__controls label[for="rl-still-state-scorer"],
+  #rl-still-state-selection:checked ~ .still-layer__controls label[for="rl-still-state-selection"],
+  #rl-still-state-update:checked ~ .still-layer__controls label[for="rl-still-state-update"],
+  #rl-still-state-response:checked ~ .still-layer__controls label[for="rl-still-state-response"],
+  #rl-still-state-run-boundary:checked ~ .still-layer__controls label[for="rl-still-state-run-boundary"],
+  #rl-still-case-scorer-score-tree:checked ~ .still-layer__controls label[for="rl-still-case-scorer-score-tree"],
+  #rl-still-case-scorer-verifier-is-equiv:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-is-equiv"],
+  #rl-still-case-scorer-verifier-swebench:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-swebench"],
+  #rl-still-case-scorer-verifier-verl-gsm8k:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-verl-gsm8k"],
+  #rl-still-case-scorer-verifier-verl-search-r1:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-verl-search-r1"],
+  #rl-still-case-scorer-attribution-patching:checked ~ .still-layer__controls label[for="rl-still-case-scorer-attribution-patching"] {
+    color: var(--ink);
+    border-inline-start-color: var(--beam);
+  }
+
+  /* The focus ring belongs on the label, because the input it names is the one
+     that is not drawn. */
+  .still-layer__input:focus-visible ~ .still-layer__controls label[for],
+  .still-layer__input:focus-visible + .still-layer__controls label[for] {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  #rl-still-state-scorer:focus-visible ~ .still-layer__controls label[for="rl-still-state-scorer"],
+  #rl-still-state-selection:focus-visible ~ .still-layer__controls label[for="rl-still-state-selection"],
+  #rl-still-state-update:focus-visible ~ .still-layer__controls label[for="rl-still-state-update"],
+  #rl-still-state-response:focus-visible ~ .still-layer__controls label[for="rl-still-state-response"],
+  #rl-still-state-run-boundary:focus-visible ~ .still-layer__controls label[for="rl-still-state-run-boundary"] {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* A case group belongs to one state and is shown with it. */
+  .still-layer__cases {
+    display: none;
+  }
+  #rl-still-state-scorer:checked ~ .still-layer__controls .still-layer__cases[data-still-state="scorer"] {
+    display: grid;
+    gap: var(--space-2);
+  }
+  /* Six subjects on one line. The comparison this affords is the four verifier
+     audits against each other, which is the one static comparison in this data
+     that a reader without a canvas can actually make, so the control stays at
+     every width the floor can hold a row at. */
+  .still-layer__cases .still-layer__radios {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: var(--space-2);
+  }
+  .still-layer__cases .still-layer__label {
+    padding-inline: var(--space-3);
+  }
+
+  /* --- below --bp-lg -----------------------------------------------------
+     THE CONTROLS BECOME A SCALE RATHER THAN A LIST.
+
+     A column of five state names is 208px of the floor, measured, and below
+     --bp-lg the readout has to stack under it rather than sit beside it. Two
+     blocks of 200px do not go in 250px of floor, so the control that shrinks
+     is the one whose words are repeated a screen further down: every state's
+     name is the heading of its own paragraph in the narrative column.
+
+     The name is kept for assistive technology and dropped from the drawn
+     control. `font-size: 0` on the label with the ordinal restored is the one
+     way to do that without a second element or a second string, and the case
+     row already worked this way at every width. */
+  @media (max-width: 63.9375rem) /* --bp-lg */ {
+    /* ONE BAND, NOT TWO.
+       The state group and the subject group each took a row, which put the
+       controls at 654 to 742 and the readout at 710 to 897 in the same floor:
+       measured, overlapping, at both 768 and 1024. As two wrapping rows of
+       ordinals on one line they are 21px, and everything below them has room. */
+    .still-layer__controls {
+      inset-inline: var(--page-pad);
+      margin-block-start: calc(var(--rail-y) + var(--space-4));
+      max-inline-size: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2) var(--space-6);
+    }
+    /* A WRAPPING ROW, NOT A GRID COLUMN FLOW.
+       `grid-auto-flow: column` has no wrap, so at 390 the fifth state ran off
+       the right edge of the room and the hero's `overflow: hidden` clipped it.
+       `scrollWidth` was still 390, so the overflow assertion passed while a
+       control was unreachable: the capture is what found it. */
+    .still-layer__radios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .still-layer__label {
+      padding-inline: var(--space-3);
+      border-inline-start: none;
+      border-block-end: var(--border-w-accent) solid var(--line);
+      font-size: 0;
+      /* The name is a zero-width text node here, and a zero-width flex item is
+         still a flex item: the label's own gap was adding 12px of empty space
+         after every ordinal, which put the underline off centre under it. */
+      gap: 0;
+    }
+    .still-layer__ordinal {
+      font-size: var(--type-mono-label-size);
+    }
+    #rl-still-state-scorer:checked ~ .still-layer__controls .still-layer__cases[data-still-state="scorer"] {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    /* The checked mark moves with the border, which is now underneath. */
+    #rl-still-state-scorer:checked ~ .still-layer__controls label[for="rl-still-state-scorer"],
+    #rl-still-state-selection:checked ~ .still-layer__controls label[for="rl-still-state-selection"],
+    #rl-still-state-update:checked ~ .still-layer__controls label[for="rl-still-state-update"],
+    #rl-still-state-response:checked ~ .still-layer__controls label[for="rl-still-state-response"],
+    #rl-still-state-run-boundary:checked ~ .still-layer__controls label[for="rl-still-state-run-boundary"],
+    #rl-still-case-scorer-score-tree:checked ~ .still-layer__controls label[for="rl-still-case-scorer-score-tree"],
+    #rl-still-case-scorer-verifier-is-equiv:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-is-equiv"],
+    #rl-still-case-scorer-verifier-swebench:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-swebench"],
+    #rl-still-case-scorer-verifier-verl-gsm8k:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-verl-gsm8k"],
+    #rl-still-case-scorer-verifier-verl-search-r1:checked ~ .still-layer__controls label[for="rl-still-case-scorer-verifier-verl-search-r1"],
+    #rl-still-case-scorer-attribution-patching:checked ~ .still-layer__controls label[for="rl-still-case-scorer-attribution-patching"] {
+      border-block-end-color: var(--beam);
+    }
+  }
+
+  /* --- below --bp-md -----------------------------------------------------
+     The room's narrow composition, and the controls tuck under the rail
+     immediately rather than at --space-4, because at 390 the hero puts its own
+     secondary action on the floor at 686 to 708 and the readout has to clear
+     it. Measured: the controls used to run 634 to 722 and land on it. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .still-layer {
+      --rail-y: var(--rail-y-narrow);
+      --floor-y: var(--floor-y-narrow);
+      --beam-half: var(--beam-half-narrow);
+      --fan-draw: calc(var(--fan-h) * var(--fan-scale-narrow));
+    }
+    .still-layer__controls {
+      margin-block-start: calc(var(--rail-y) + var(--space-2));
+      gap: var(--space-2);
+    }
+    /* THE GROUP LABELS GO AND THE CONTROLS DO NOT.
+       Measured at 390: the floor under the rail is 227px, the hero puts its own
+       secondary action across 686 to 708 in the middle of it, and the readout
+       needs the band below that. Two group headings are 48px of the 227 and
+       they are the part a reader can do without: every radio still carries its
+       full name, which is what a screen reader and a keyboard use, and the
+       plate under the controls states the selected subject in words. */
+    .still-layer__group,
+    .still-layer__cases .still-layer__label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    /* THE SUBJECT CHOOSER LEAVES THE DRAWING AND NOT THE PAGE.
+       Eleven chips is two rows at 390 and the second one lands on the hero's
+       own secondary action, measured at 622 to 672 against 665 to 686. The six
+       radios stay in the document, focusable and named, so a keyboard or a
+       screen reader still moves between the four verifier audits; what the
+       phone drops is the drawn control, which is the part it has no floor for.
+       The state chooser, which is the one the narrative depends on, stays. */
+  }
+</style>
+
+<script>
+  /**
+   * Two small jobs, and neither of them is the state machine.
+   *
+   * 1. Mirror the narrative column's published state onto the radios, so a
+   *    reader scrolling the story moves the still with them. The event is
+   *    `instrument-story.astro`'s and it is read only; nothing here changes how
+   *    scrolling behaves, and nothing here owns the state.
+   *
+   * 2. Mark the layer as in view, which is the ONLY condition under which the
+   *    swap from still to canvas is allowed to be a crossfade rather than an
+   *    instant change.
+   *
+   * Neither waits on anything. A harness that asks for reduced motion and then
+   * waits for a signal reduced motion suppresses hangs, and that trap is
+   * recorded in this repository; there is nothing here to wait on.
+   */
+  const layer = document.querySelector<HTMLElement>("[data-scene-still-layer]");
+
+  if (layer) {
+    document.addEventListener("instrumentstate", (event) => {
+      const state = (event as CustomEvent<{ state: string }>).detail?.state;
+      if (!state) return;
+      const input = layer.querySelector<HTMLInputElement>(
+        `input[data-still-state-input="${state}"]`,
+      );
+      if (input && !input.checked) input.checked = true;
+    });
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            layer.toggleAttribute("data-in-view", entry.isIntersecting);
+          }
+        },
+        { threshold: 0 },
+      );
+      observer.observe(layer);
+    }
+
+    // Published for the runtime gate, which otherwise cannot tell a still layer
+    // that hydrated from one that was never reached.
+    layer.setAttribute("data-still-ready", "true");
+  }
+</script>

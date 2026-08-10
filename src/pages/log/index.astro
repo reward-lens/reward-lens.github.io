@@ -1,86 +1,454 @@
 ---
+/**
+ * /log/  ·  the campaign archive, demoted and reachable.
+ *
+ * This is the one route where the campaign's internal identifiers and the
+ * deprecated correlation are allow-listed, because on this page the correction
+ * itself is the content. The allowance stops at the route boundary.
+ *
+ * NOTHING FROM HERE GOES ON THE HOMEPAGE. The previous site led with this
+ * archive and that was its central failure: a stranger met internal
+ * identifiers before they met a finding.
+ *
+ * THE COUNTING RULE. 53 ledger rows and 17 headline calls are different counts
+ * of different things. They are not summed and no aggregate "N of M held" is
+ * published in either form. See _campaign.ts.
+ *
+ * THE FOREST PLOT'S ROW LABELS ARE PUBLIC NAMES. Even here. Gate 7 checks that
+ * figure specifically rather than being suppressed by this route's allowance.
+ *
+ * SECTION 4 IS THE ONE PLACE ON THE SITE THAT MAY WRITE 0.256. Both values come
+ * from `intervention.json:headline.correction`, which the generator parses out
+ * of the correction note rather than transcribing, and each carries the
+ * document and line it was parsed from. Neither resolves to an evidence record:
+ * `intervention.json:meta.evidenceId` is null, so D-35 applies and the citation
+ * is a document and a line rather than an invented id.
+ *
+ * ONE THING THIS PAGE STILL DOES NOT RENDER, AND IT IS AN ESCALATION.
+ * The version chip. `pages/log.md` §1 asks for one saying this describes 2.x
+ * work. `version-chip` needs an exact three-part version and nothing in
+ * src/data/** records which library version the campaign ran under; the freeze
+ * date sits between the 2.0.0 and 2.0.1 uploads, and inferring from that would
+ * be a claim a reader cannot check. `log.intro` states the fact in copy
+ * instead.
+ */
 import Base from "@layouts/Base.astro";
 import PageHeader from "@components/PageHeader.astro";
-import LogEntry from "@components/LogEntry.astro";
+import Callout from "@components/base/callout.astro";
+import ProvenanceChip from "@components/base/provenance-chip.astro";
+import TrustBadge from "@components/base/trust-badge.astro";
+import Forest from "./_forest.astro";
+import cards from "@data/cards.json";
+import intervention from "@data/intervention.json";
+import { corrections as logCorrections } from "@data/log-corrections.json";
+import { fill } from "@components/base/data";
+import { copy } from "../../copy";
+import { chipRecord, storeRecord, trustName } from "../evidence/_store";
+import {
+  cardByName,
+  fmt,
+  headlineCount,
+  ledgerCounts,
+  ledgerRows,
+} from "./_campaign";
 
-// Real events only, newest first. Paper entries join this list when a paper
-// exists, in author-year form.
-const entries = [
+const log = copy.log as Record<string, string>;
+const acts = copy.acts as Record<string, Record<string, string>>;
+
+const ledgerBody = fill(log.ledger_body, {
+  ledger_rows: String(ledgerCounts.total),
+  ledger_confirmed: String(ledgerCounts.confirmed),
+  ledger_refuted: String(ledgerCounts.refuted),
+  ledger_inconclusive: String(ledgerCounts.inconclusive),
+});
+const countingNote = fill(log.ledger_counting_note, {
+  headline_calls: String(headlineCount),
+});
+const cardsBody = fill(log.cards_body, { card_count: String(cards.length) });
+
+/* Section 4. The deprecated correlation and the one that supersedes it, both
+   parsed by the generator out of the correction note rather than transcribed,
+   and each carrying the document and line it was parsed from. The generator is
+   the only thing that ever writes these digits; this page reads them.
+
+   `supersedingRhoAsQuoted` rather than `headline.meanRho`, which is the same
+   quantity measured to six places (-0.170885). The correction note quotes the
+   rounded value, D-02 states the figure as -0.171, and this section is about
+   what the correction says. */
+const correction = intervention.headline.correction;
+for (const [field, value] of Object.entries({
+  deprecatedRho: correction.deprecatedRho,
+  supersedingRhoAsQuoted: correction.supersedingRhoAsQuoted,
+})) {
+  if (typeof value !== "number") {
+    throw new Error(
+      `/log/: src/data/intervention.json headline.correction.${field} is ` +
+        `${JSON.stringify(value)} rather than a number. copy.yaml:` +
+        `log.corrections_body binds it, and this is the one route where the ` +
+        `deprecated value may be written out, so there is no fallback and ` +
+        `nothing here is typed.`,
+    );
+  }
+}
+const correctionsBody = fill(log.corrections_body, {
+  deprecated_correlation: fmt(correction.deprecatedRho) ?? "",
+  current_correlation: fmt(correction.supersedingRhoAsQuoted) ?? "",
+});
+
+/* D-35: neither value resolves to an evidence record, so each cites a document
+   and a line instead of carrying a minted id. The pair is rendered rather than
+   described, so a reader can open the file at the line and read it. */
+/* THE CORRECTION THAT OUTRANKS THE STORE.
+
+   The store says this card is confirmed and the site's generated files all
+   carry 0.2139761313773256 with outcome "confirmed". CHECKPOINT.md states the
+   consequence plainly: "The evidence store will not tell you a claim is dead."
+   Retirement has to be data that outranks the store's verdict, and
+   src/data/log-corrections.json is that data, generated by
+   scripts/build_corrections.mjs from the experiment that found it. Every
+   number below is read from that file; nothing here is typed.
+
+   The card is NOT retracted and the store is NOT rewritten. A frozen
+   prediction is not amendable after the data is seen, which is the point of
+   freezing one. What is owed is a published correction, and this is it. This
+   is also the only route on the site where the claim may appear at all. */
+/* Whole counts get their thousands separators; fmt is for measured
+   quantities and leaves an integer bare. */
+const count = (n: number) => n.toLocaleString("en-US");
+
+const intransitive = logCorrections.find((c) => c.card === "topo-hodge");
+if (!intransitive) {
+  throw new Error(
+    "/log/: src/data/log-corrections.json carries no correction for the " +
+      "topo-hodge card. The archive is the one place the intransitive-mass " +
+      "claim may appear and it may appear only as a correction, so a missing " +
+      "correction is a build failure rather than a section that quietly " +
+      "renders the old reading. Run npm run build:corrections.",
+  );
+}
+const correctedCard = cards.find((c) => c.id === intransitive.card);
+
+const correctionSources = [
+  { value: correction.deprecatedRho, source: correction.deprecatedRhoSource },
   {
-    date: new Date("2026-07-22"),
-    type: "release",
-    title: "reward-lens 2.0.1 on PyPI: the dependency fix reaches the wheel",
-    links: [
-      { label: "PyPI", href: "https://pypi.org/project/reward-lens/2.0.1/" },
-    ],
-  },
-  {
-    date: new Date("2026-07-20"),
-    type: "results",
-    title:
-      "The campaign's scored ledger: 53 frozen hypotheses adjudicated, 8 kills fired",
-    links: [{ label: "the ledger", href: "/campaign/" }],
-  },
-  {
-    date: new Date("2026-07-10"),
-    type: "release",
-    title: "reward-lens 2.0.0: the v2 kernel, eight signal adapters, three gates",
-    links: [
-      { label: "PyPI", href: "https://pypi.org/project/reward-lens/2.0.0/" },
-    ],
-  },
-  {
-    date: new Date("2026-07-08"),
-    type: "site",
-    title: "The library repository and documentation site go public",
-    links: [
-      { label: "GitHub", href: "https://github.com/reward-lens/reward-lens" },
-    ],
-  },
-  {
-    date: new Date("2026-04-12"),
-    type: "release",
-    title: "reward-lens 1.0.0, the toolkit whose failure classes the v2 discipline was built to block",
-    links: [
-      { label: "PyPI", href: "https://pypi.org/project/reward-lens/1.0.0/" },
-    ],
+    value: correction.supersedingRhoAsQuoted,
+    source: correction.supersedingRhoSource,
   },
 ];
+
+/* The trust rung for a ledger row is the rung on the card's own adjudication
+   record, read from the store and mapped to its word. Never a literal. */
+const rowsWithTrust = ledgerRows.map((r) => {
+  const card = cardByName.get(r.card);
+  const rec = card ? storeRecord(card.adjudication_ev) : undefined;
+  return {
+    ...r,
+    title: card?.title ?? r.card,
+    cardSlug: card?.id ?? r.slug,
+    evidenceId: card?.adjudication_ev ?? null,
+    trust: rec ? trustName(rec.trust, "/log/") : null,
+  };
+});
+
+/* Grouped by verdict for section 6, in the verdict order the campaign's own
+   summary uses. All 27 are kept: removing the inconclusive ones is selection.*/
+const verdictOrder = ["confirmed", "refuted", "mixed", "inconclusive"];
+const grouped = verdictOrder
+  .map((v) => ({ verdict: v, rows: cards.filter((c) => c.verdict === v) }))
+  .filter((g) => g.rows.length > 0);
 ---
 
-<Base
-  title="Log · reward-lens"
-  description="Dated record of releases and results."
->
-  <div class="log-wrap">
-    <PageHeader eyebrow="the record" title="Log" lede="Real events only, newest first." />
-    <ol class="log-list">
+<Base title={`${log.title} · reward-lens`} description={log.intro}>
+  <div class="wrap lg">
+    <PageHeader eyebrow={log.title} title={log.heading} lede={log.intro} />
+
+    <Callout variant="note" label={log.title}>
+      {/* `log.intro` already says the work was done against the previous
+          version of the library; what it does not do is name the version, and a
+          reader scanning for that is scanning for "v2". This sentence was typed
+          here until `log.v2_label` existed. */}
+      <p>{log.v2_label}</p>
+      <p>{log.archive_note}</p>
+    </Callout>
+
+    <section class="lg__section" aria-labelledby="lg-ledger">
+      <h2 class="type-h3" id="lg-ledger">{log.ledger_heading}</h2>
+      <p class="type-body measure lg__lede">{ledgerBody}</p>
+
+      <ol class="lg__list">
+        {
+          rowsWithTrust.map((r) => (
+            <li class="lg__row">
+              <span class="lg__name">
+                <a class="type-body" href={`/log/cards/${r.cardSlug}/`}>
+                  {r.title}
+                </a>
+                <span class="lg__statement type-body-sm">{r.statement}</span>
+              </span>
+              <span class="lg__numbers type-mono-sm">
+                {r.observed !== null && r.evidenceId ? (
+                  <ProvenanceChip
+                    evidenceId={r.evidenceId}
+                    field={r.metric}
+                    display={fmt(r.observed) ?? ""}
+                    record={chipRecord(r.evidenceId)}
+                  />
+                ) : (
+                  <span class="lg__none">{copy.ui.no_value}</span>
+                )}
+                <span class="lg__line">
+                  {r.comparator} {fmt(r.threshold)}
+                </span>
+              </span>
+              <span class="lg__verdict type-mono-label">{r.outcome}</span>
+              <span class="lg__trust">
+                {r.trust && <TrustBadge level={r.trust} form="chip" />}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="lg__note type-body-sm measure">{countingNote}</p>
+    </section>
+
+    <section class="lg__section" aria-labelledby="lg-forest">
+      <h2 class="type-h3" id="lg-forest">{log.forest_heading}</h2>
+      <Forest label={log.forest_heading} />
+    </section>
+
+    <section class="lg__section" aria-labelledby="lg-corrections">
+      <h2 class="type-h3" id="lg-corrections">{log.corrections_heading}</h2>
+
+      <Callout variant="note" label={log.corrections_heading}>
+        <p>
+          <a href={`/log/cards/${intransitive.card}/`}>
+            {correctedCard?.title ?? intransitive.card}
+          </a>{" "}
+          is recorded here as {intransitive.storedVerdict} and it does not hold.
+          The later analysis found {count(intransitive.cyclicTriples)} cyclic
+          triples in {count(intransitive.triangles)} triangles and
+          {" "}{count(intransitive.acyclicTournaments)} of
+          {" "}{count(intransitive.tournaments)} sampled tournaments acyclic, so a
+          single scalar score reproduces all
+          {" "}{count(intransitive.comparisonsAScalarReproduces)} recorded
+          comparisons exactly. The measured value sits on the floor that the
+          shape of the comparison design imposes on any grader at all: it is
+          above that floor by
+          {" "}{fmt(intransitive.observedMinusFloor)}, against a frozen
+          threshold of {fmt(intransitive.threshold)}. The prediction could not
+          have failed.
+        </p>
+        <p>
+          The arithmetic was right and the published number was right. What did
+          not survive is the reading. The card is left standing, because a
+          frozen prediction is not amendable after the data is seen and
+          rewriting one is the failure the freeze exists to prevent. Source:
+          {" "}<code>{intransitive.source.published}</code>, from
+          {" "}<code>{intransitive.source.experiment}</code> at
+          {" "}<code>{intransitive.source.gitSha}</code>.
+        </p>
+      </Callout>
+
+      <p class="type-body measure lg__lede">{correctionsBody}</p>
+
+      <dl class="lg__sources">
+        {
+          correctionSources.map((c) => (
+            <div class="lg__source">
+              <dt class="lg__source-value type-mono-base">{fmt(c.value)}</dt>
+              <dd class="lg__source-cite type-mono-sm">
+                {c.source.document}:{c.source.line}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="lg__section" aria-labelledby="lg-self">
+      <h2 class="type-h3" id="lg-self">{log.self_assessment_heading}</h2>
+      <p class="type-body measure">{log.self_assessment}</p>
+      <p class="type-body">
+        <a href="/see/grader/">{acts.grader.title}</a>
+      </p>
+    </section>
+
+    <section class="lg__section" aria-labelledby="lg-cards">
+      <h2 class="type-h3" id="lg-cards">{log.cards_heading}</h2>
+      <p class="type-body measure lg__lede">{cardsBody}</p>
+
       {
-        entries.map((e) => (
-          <li>
-            <LogEntry
-              date={e.date}
-              type={e.type}
-              title={e.title}
-              links={e.links}
-            />
-          </li>
+        grouped.map((g) => (
+          <div class="lg__group">
+            <h3 class="lg__group-title type-mono-label">
+              {g.verdict} · {g.rows.length}
+            </h3>
+            <ul class="lg__cards">
+              {g.rows.map((c) => (
+                <li>
+                  <a class="type-body" href={`/log/cards/${c.id}/`}>
+                    {c.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))
       }
-    </ol>
+
+      <p class="type-body lg__method">
+        <a href="/log/method/">{log.method_link}</a>
+      </p>
+    </section>
   </div>
 </Base>
 
 <style>
-  .log-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .lg {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
   }
-  .log-list {
+  .lg__section {
+    margin-top: var(--space-7);
+    min-width: 0;
+  }
+  .lg__section h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+  }
+  .lg__lede {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-2);
+  }
+  .lg__note {
+    margin: var(--space-4) 0 0;
+    color: var(--ink-2);
+  }
+
+  .lg__list {
     list-style: none;
     margin: 0;
     padding: 0;
-    max-width: var(--measure-wide);
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .lg__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .lg__name {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .lg__statement {
+    color: var(--ink-2);
+  }
+  .lg__numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    align-items: baseline;
+    color: var(--ink-2);
+    min-width: 0;
+  }
+  /* --ink-3 sits on --ground here, which is where it is permitted. */
+  .lg__line,
+  .lg__none {
+    color: var(--ink-3);
+  }
+  .lg__verdict {
+    color: var(--ink-2);
+  }
+  .lg__trust {
+    min-width: 0;
+  }
+
+  /* Section 4's citations. A document and a line at the weight a provenance
+     chip gets, per D-35, so a reader sees that this number is sourced at a
+     weaker grade than one that resolves to a record rather than being
+     protected from the difference. */
+  .lg__sources {
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+    /* At the prose measure, not the grid width. Two rows spanning 1440px read
+       as a table somebody forgot to fill in; the ledger is full width because
+       it has 53 rows and four columns of its own. */
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .lg__source {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .lg__source-value {
+    margin: 0;
+    color: var(--ink);
+  }
+  .lg__source-cite {
+    margin: 0;
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  .lg__group {
+    margin-top: var(--space-5);
+  }
+  .lg__group-title {
+    margin: 0 0 var(--space-2);
+    color: var(--ink-3);
+  }
+  .lg__cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+  .lg__method {
+    margin-top: var(--space-6);
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .lg__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    /* --bp-md and not --bp-xl: this row carries no provenance chip, so the
+       hidden-panel overflow the ledger rows work around does not apply. */
+    .lg__source {
+      grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
+  }
+
+  /* Back at --bp-md, which is where the composition wanted it.
+     This block waited for --bp-xl for one build, because provenance-chip's
+     closed panel was `visibility: hidden` and therefore still in layout: a
+     chip in the second of four columns put that hidden panel's right edge at
+     894 on a 768 viewport, and the page scrolled with nothing visible causing
+     it. The repair on `main` makes a closed panel `display: none`, so the box
+     is gone rather than invisible, and the workaround has no reason to exist.
+     Re-measured after reverting: scrollWidth equals the viewport at 390, 768
+     and 1440 in both themes. */
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .lg__row {
+      grid-template-columns:
+        minmax(0, 2fr) minmax(0, 1fr) minmax(6rem, auto)
+        minmax(0, auto);
+      align-items: baseline;
+    }
   }
 </style>

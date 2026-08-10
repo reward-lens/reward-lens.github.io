@@ -1,0 +1,25 @@
+{
+ "artifact": "reward_lens/measure/composition/hodge.py:558-566",
+ "comparator": "the three parts sum to 1",
+ "contentHash": "479f58ecad9db7d604152665551342c4",
+ "humanSource": "The frozen study \"Intransitive preference mass no scalar reward can represent\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2",
+  "campaign.adjudication.TOPO-HODGE",
+  "study:campaign-topo-hodge@v1#7206aa3a"
+ ],
+ "label": "Intransitive preference mass no scalar reward can represent",
+ "limitation": "The parts are shares of one grader's measured total and do not transfer to another grader or another corpus. The curl part is a real share of this decomposition and the reading once placed on it is not: the intransitive-mass claim built from this number is withdrawn, because no cyclic triple was found in any sampled tournament.",
+ "quantity": {
+  "name": "curl mass",
+  "scale": "share of the measured total",
+  "unit": "1 [share of total comparison energy]",
+  "value": 0.2139761313773256
+ },
+ "scope": "2 public preference datasets, 5000 tournaments each, one grader.",
+ "slug": "derived-decomposition-curl",
+ "sourceUrl": "/evidence/844ad06a5aeb1d89c21c13c19a28cbd2/",
+ "statement": "The curl part carries 0.2139761313773256 of the measured total, on one grader's comparison flow over two public preference datasets.",
+ "subject": "one grader's comparison flow over two public preference datasets.",
+ "type": "derived-result"
+}

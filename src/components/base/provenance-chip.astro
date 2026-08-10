@@ -1,0 +1,815 @@
+---
+/**
+ * provenance-chip  ·  design/components/provenance-chip.md
+ *
+ * Makes any rendered number interrogable. The most-instantiated component on
+ * the site, so it is quiet: a 1px dotted underline, no colour and no icon.
+ * DESIGN.md §5.1 spends colour entirely on data, and an icon beside every
+ * number would make a dense page unreadable.
+ *
+ * The one thing here that is easy to get backwards: the panel opens
+ * IMMEDIATELY on focus and after a 220ms delay on hover. Tooltips delay on
+ * hover and not on focus (§6.5). A keyboard user who has to wait 220ms after
+ * arriving has no way to know the wait is deliberate.
+ *
+ * No JavaScript: the panel is still reachable. The wrapper opens it on
+ * :hover and :focus-within in CSS, so tabbing to the number reveals the record
+ * with scripting off. aria-expanded does not track in that state, which is why
+ * the enhanced path sets it.
+ *
+ * Print: src/styles/print.css already turns [data-provenance] into a numbered
+ * superscript and forces [data-provenance-panel] to render in flow. Both hooks
+ * are set here; the dotted underline is dropped in print because the number is
+ * carrying a marker instead.
+ */
+import { resolveEvidence, fill, uniqueId } from "./data";
+import type { EvidenceRecord } from "./data";
+import { ui } from "../../copy";
+import {
+  requireClaim,
+  claimForEvidenceField,
+  claimLabel,
+  publicDisclosure,
+  technicalProvenance,
+  findMachineId,
+} from "../../lib/claims";
+import type { PublicClaim } from "../../lib/claims";
+
+interface Props {
+  evidenceId: string;
+  /** Dotted path into the record, e.g. metrics.recovery_gap. */
+  field?: string;
+  /** What renders inline. Must round-trip to the same record value. */
+  display?: string;
+  /** Fields the generated record does not carry yet. Merged over the index. */
+  record?: EvidenceRecord;
+  /**
+   * A public claim slug. Explicit binding, for a statement whose provenance is
+   * a claim rather than one field of one record.
+   */
+  claim?: string;
+  class?: string;
+}
+
+const {
+  evidenceId,
+  field = "",
+  display = "",
+  record: override = {},
+  claim: claimSlug,
+  class: extraClass = "",
+} = Astro.props;
+
+// An unresolvable id fails the build, naming the id (criterion 2).
+const record = resolveEvidence(evidenceId, "provenance-chip", override);
+
+/* -------------------------------------------------------------------------
+   Public disclosure, or the record's own rows.
+
+   The panel used to render `record.observable` as text. On most of this site
+   that string is `campaign.adjudication.ADJ-AVP`, and a visitor was expected
+   to decode it to find out why the number beside it could be trusted. That is
+   the defect this branch closes.
+
+   Three modes, and which one applies is decided by the DATA rather than by the
+   caller, so no page has to opt in:
+
+     explicit  a `claim` slug was passed. It resolves or the build fails.
+     field     the record's observable is a machine identifier, so the record
+               cannot disclose publicly on its own. The claim generated for
+               this exact (record, field) pair is used.
+     study     same, and this field has no claim of its own, so the study's
+               adjudication is disclosed instead. The panel then shows no
+               quantity row, because an interpretation carries no quantity and
+               a study-level disclosure must not look like a measured one.
+
+   A caller that passes a record with a human observable (the fixtures do)
+   keeps the old behaviour exactly, which is why this changes no rendered byte
+   on the component gallery.
+   ------------------------------------------------------------------------- */
+
+const observableIsMachine = record.observable
+  ? findMachineId(record.observable) !== null
+  : false;
+
+let claim: PublicClaim | null = null;
+let resolution: "explicit" | "field" | "study" | null = null;
+
+if (claimSlug) {
+  claim = requireClaim(claimSlug, `provenance-chip on ${Astro.url.pathname}`);
+  resolution = "explicit";
+} else if (observableIsMachine) {
+  const found = claimForEvidenceField(evidenceId, field);
+  if (!found) {
+    throw new Error(
+      `provenance-chip on ${Astro.url.pathname}: the record for "${evidenceId}" states its ` +
+        `observable as a machine identifier, so it has no public disclosure of its own, and ` +
+        `no generated claim covers it. Every such record must resolve to a claim: run ` +
+        `\`npm run build:claims\` and check src/data/claims/_manifest.json.`,
+    );
+  }
+  claim = found.claim;
+  resolution = found.exact ? "field" : "study";
+}
+
+const disclosure = claim ? publicDisclosure(claim) : [];
+const technical = claim ? technicalProvenance(claim) : "";
+
+const shown = display || record.value || "";
+const hasSlot = Astro.slots.has("default");
+
+// The same field of the same record is cited more than once on a page:
+// `/see/reward-model/` cites eva344...'s AUC twice, and both chips claimed
+// `prov-eva344...-auc-panel`, so the second trigger's `aria-controls` and
+// `aria-describedby` resolved to the first chip's panel.
+const id = uniqueId(
+  `prov-${evidenceId.replace(/[^a-z0-9]/gi, "")}-${field.replace(/[^a-z0-9]/gi, "") || "v"}`,
+  Astro.url.pathname,
+);
+const panelId = `${id}-panel`;
+const observableId = `${id}-observable`;
+
+// copy.yaml:ui.provenance_aria, filled from the record. The wording is
+// copy.yaml's; only the whitespace and the separators an absent field would
+// orphan are tidied here. A record that carries no trust level still reads as
+// one clause short, because that is a record to fix and not a sentence to
+// paper over.
+const ariaLabel = fill(ui.provenance_aria, {
+  display: shown,
+  // The accessible name reaches a screen-reader user before anything else on
+  // the page does. A machine observable there is the same defect as one in the
+  // panel, heard rather than read, so the claim's own label stands in for it.
+  observable: claim ? claim.label : (record.observable ?? ""),
+  level: record.trust ?? "",
+})
+  .replace(/\s+/g, " ")
+  .replace(/\s*,\s*(?=[,.])/g, "")
+  .trim();
+
+const href = record.href ?? (record.slug ? `/evidence/${record.slug}/` : null);
+
+// The panel's heading. A machine observable never becomes one; the claim's
+// label does, and a caller-supplied human observable still does.
+const heading = claim ? claim.label : (record.observable ?? "");
+
+// The record's own rows, which are the no-claim path. In claim mode they are
+// replaced by the three public sentences: `subject` and `source` are already
+// carried by the claim, in prose, and `record.stats` prints raw store keys at
+// full float precision (C-53), which is technical provenance rather than a
+// public disclosure and moves behind the copy affordance with the ids.
+const rows: { key: string; value: string; mono?: boolean }[] = claim
+  ? []
+  : [
+      { key: "uncertainty", value: record.uncertainty ?? "" },
+      { key: "subject", value: record.subject ?? "" },
+      {
+        key: "source",
+        value: [record.source, record.commit].filter(Boolean).join(" · "),
+        mono: true,
+      },
+    ].filter((r) => r.value !== "");
+
+const statRows = claim ? [] : Object.entries(record.stats ?? {});
+
+// The uncertainty is public and belongs in the normal state; it is the one
+// record row a claim does not restate in prose.
+const claimUncertainty = claim?.quantity?.uncertainty ?? "";
+---
+
+<span
+  class:list={["prov", extraClass]}
+  data-prov
+  data-claim={claim ? claim.slug : undefined}
+  data-claim-type={claim ? claim.type : undefined}
+  data-claim-status={claim?.status}
+  data-claim-resolution={resolution ?? undefined}
+>
+  <button
+    type="button"
+    class="prov__trigger"
+    id={id}
+    aria-expanded="false"
+    aria-describedby={panelId}
+    aria-label={ariaLabel}
+    data-provenance
+    data-claim-value={claim?.quantity ? String(claim.quantity.value) : undefined}
+  >{hasSlot ? <slot /> : shown}</button><span
+    class="prov__panel"
+    id={panelId}
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby={heading ? observableId : undefined}
+    aria-label={heading ? undefined : ui.provenance_open}
+    data-provenance-panel
+    data-claim-disclosure={claim ? "" : undefined}
+  >
+    {
+      heading && (
+        <span class="prov__observable type-body-sm" id={observableId}>
+          {heading}
+        </span>
+      )
+    }
+    {
+      (record.value || record.trust) && (
+        <span class="prov__value-row">
+          {record.value && (
+            <span class="prov__value type-mono-base">{record.value}</span>
+          )}
+          {record.trust && (
+            <span class="prov__trust type-mono-label" data-trust={record.trust}>
+              <span class="prov__trust-dot" aria-hidden="true" />
+              {record.trust}
+            </span>
+          )}
+        </span>
+      )
+    }
+    {
+      claimUncertainty && (
+        <span class="prov__row type-mono-sm">{claimUncertainty}</span>
+      )
+    }
+    {
+      claim?.comparator && (
+        <span class="prov__row type-mono-sm">{claim.comparator}</span>
+      )
+    }
+    {
+      disclosure.map((row) => (
+        <span class="prov__row type-body-sm" data-claim-field={row.key}>
+          {row.text}
+        </span>
+      ))
+    }
+    {
+      statRows.map(([label, value]) => (
+        <span class="prov__row type-mono-sm">
+          {label} {String(value)}
+        </span>
+      ))
+    }
+    {
+      rows.map((r) => (
+        <span
+          class:list={[
+            "prov__row",
+            r.mono ? "type-mono-sm" : "type-body-sm",
+          ]}
+        >
+          {r.value}
+        </span>
+      ))
+    }
+    {
+      href && (
+        <a class="prov__link type-body-sm" href={href}>
+          {ui.provenance_record_link} ›
+        </a>
+      )
+    }
+    {
+      claim && (
+        /*
+          The secondary affordance, and the ONLY route by which a machine
+          identifier leaves this component.
+
+          The payload is an ATTRIBUTE, not a text node. `visibleText()` in
+          scripts/checks/_lib.mjs flattens tags to spaces, so gate 7 and the
+          claim gate both see the button's label and never the ids behind it.
+          That is the mechanical form of "immutableIds are never shown in a
+          normal disclosure": there is no state of this panel in which they
+          are text.
+        */
+        <button
+          type="button"
+          class="prov__tech type-mono-label"
+          data-claim-technical={technical}
+          data-copied-label={claimLabel("ui.claim_technical_copied")}
+          data-unavailable-label={claimLabel("ui.claim_technical_unavailable")}
+        >
+          {claimLabel("ui.claim_technical_copy")}
+        </button>
+      )
+    }
+  {/* NO WHITESPACE BETWEEN THE PANEL AND THE CHIP'S OWN CLOSE, AND NONE AFTER
+      IT. Astro emits source newlines as text nodes. The panel is display:none
+      when closed, so a newline after it renders as a space INSIDE the chip,
+      and the newline before <style> renders as a space AFTER it. Together they
+      put two spaces between a bound number and the punctuation that follows,
+      which reads as "0.26 , against a coin" in every sentence that binds a
+      value mid-clause. act-source carries the same note for the same reason. */}
+  </span></span><script>
+  // 220ms on hover, nothing on focus. components/provenance-chip.md states the
+  // number; it is not a token and must not become one, because the four --dur
+  // tokens are animation durations and this is an intent delay.
+  const HOVER_DELAY = 220;
+
+  const el = (root: Element, sel: string) => root.querySelector(sel);
+  const timers = new WeakMap<Element, number>();
+  const all = () => document.querySelectorAll<HTMLElement>("[data-prov]");
+  const opened = () => document.querySelectorAll<HTMLElement>("[data-prov][data-open]");
+
+  const place = (root: Element) => {
+    const panel = el(root, ".prov__panel") as HTMLElement | null;
+    const trigger = el(root, ".prov__trigger");
+    if (!panel || !trigger) return;
+    // Below --bp-sm the panel is in flow and there is nothing to place.
+    if (getComputedStyle(panel).position === "static") return;
+
+    panel.removeAttribute("data-above");
+    const a = trigger.getBoundingClientRect();
+    panel.style.setProperty("--prov-left", `${Math.round(a.left)}px`);
+    panel.style.setProperty("--prov-top", `${Math.round(a.bottom)}px`);
+    panel.style.setProperty(
+      "--prov-bottom",
+      `${Math.round(window.innerHeight - a.top)}px`,
+    );
+
+    // The panel never covers the number: it flips above only when there is no
+    // room below it and there is room above.
+    const below = panel.getBoundingClientRect();
+    if (below.bottom > window.innerHeight && a.top > below.height) {
+      panel.setAttribute("data-above", "true");
+    }
+
+    // Clamped into the viewport horizontally, so a chip in the last table
+    // column does not open off the right edge.
+    const now = panel.getBoundingClientRect();
+    let left = a.left;
+    if (now.right > window.innerWidth) left -= now.right - window.innerWidth;
+    if (left < 0) left = 0;
+    panel.style.setProperty("--prov-left", `${Math.round(left)}px`);
+  };
+
+  const close = (root: Element) => {
+    root.removeAttribute("data-open");
+    el(root, ".prov__trigger")?.setAttribute("aria-expanded", "false");
+  };
+
+  const open = (root: Element) => {
+    for (const other of opened()) if (other !== root) close(other);
+    root.setAttribute("data-open", "true");
+    el(root, ".prov__trigger")?.setAttribute("aria-expanded", "true");
+    place(root);
+  };
+
+  const cancel = (root: Element) => {
+    const t = timers.get(root);
+    if (t !== undefined) {
+      clearTimeout(t);
+      timers.delete(root);
+    }
+  };
+
+  for (const root of all()) {
+    // pointerenter and pointerleave, not over and out: they do not fire when
+    // the pointer moves between children, so hovering the number and then the
+    // panel is one hover.
+    root.addEventListener("pointerenter", (e) => {
+      if ((e as PointerEvent).pointerType === "touch") return;
+      cancel(root);
+      timers.set(root, window.setTimeout(() => open(root), HOVER_DELAY));
+    });
+    root.addEventListener("pointerleave", () => {
+      cancel(root);
+      if (!root.contains(document.activeElement)) close(root);
+    });
+  }
+
+  // Focus opens with no delay.
+  document.addEventListener("focusin", (e) => {
+    const target = e.target as Element | null;
+    const root = target?.closest?.("[data-prov]") ?? null;
+    for (const other of opened()) {
+      if (other !== root && !(target && other.contains(target))) close(other);
+    }
+    if (root) {
+      cancel(root);
+      open(root);
+    }
+  });
+
+  document.addEventListener("focusout", (e) => {
+    const root = (e.target as Element | null)?.closest?.("[data-prov]");
+    if (!root) return;
+    requestAnimationFrame(() => {
+      if (!root.contains(document.activeElement) && !root.matches(":hover")) {
+        close(root);
+      }
+    });
+  });
+
+  // A pointer press on the number fires pointerdown, then focusin, then click.
+  // focusin has already opened the panel by the time click runs, so a toggle
+  // that reads the live [data-open] closes what the same gesture just opened
+  // and a mouse click or a tap does NOTHING VISIBLE. Hover and the keyboard hid
+  // it: neither path has a click in the middle.
+  //
+  // The state is therefore sampled at pointerdown, before focus can move, and
+  // the click toggles against that sample instead of against the attribute the
+  // focus handler has since written. Deleting the focusin handler would also
+  // stop the two fighting and it is the wrong fix: focus opening immediately is
+  // the accessibility clause (§6.5), and it is the one this component exists to
+  // honour.
+  let pressed: { root: Element; open: boolean } | null = null;
+  document.addEventListener(
+    "pointerdown",
+    (e) => {
+      const root = (e.target as Element | null)?.closest?.("[data-prov]") ?? null;
+      pressed = root ? { root, open: root.hasAttribute("data-open") } : null;
+    },
+    true,
+  );
+
+  // Tap opens, tap outside closes.
+  document.addEventListener("click", (e) => {
+    const sampled = pressed;
+    pressed = null;
+    const target = e.target as Element | null;
+    const root = target?.closest?.("[data-prov]") ?? null;
+    if (!root) {
+      for (const other of opened()) close(other);
+      return;
+    }
+    if (target?.closest(".prov__trigger")) {
+      cancel(root);
+      // Enter and Space on a focused button produce a click with no pointerdown
+      // and detail 0. There is no gesture to sample there, and the attribute is
+      // the truth: the panel is open because focus opened it, and the key press
+      // is a real toggle.
+      const wasOpen =
+        sampled && sampled.root === root && (e as MouseEvent).detail > 0
+          ? sampled.open
+          : root.hasAttribute("data-open");
+      if (wasOpen) close(root);
+      else open(root);
+    }
+  });
+
+  // The technical affordance. The ids are on the element, so the copy works
+  // with no round trip and the panel stays open: a reader who wanted the ids
+  // is mid-task, and closing the disclosure under them would lose the sentence
+  // they were reading.
+  document.addEventListener("click", (e) => {
+    const button = (e.target as Element | null)?.closest?.(
+      ".prov__tech",
+    ) as HTMLButtonElement | null;
+    if (!button) return;
+    const payload = button.dataset.claimTechnical ?? "";
+    const say = (label: string) => {
+      const original = button.dataset.originalLabel ?? button.textContent ?? "";
+      button.dataset.originalLabel = original;
+      button.textContent = label;
+      window.setTimeout(() => {
+        button.textContent = button.dataset.originalLabel ?? original;
+      }, 1600);
+    };
+    if (!navigator.clipboard) {
+      // Same degradation the install strip uses: say what to do instead of
+      // failing silently, and leave the text selectable.
+      say(button.dataset.unavailableLabel ?? "");
+      return;
+    }
+    navigator.clipboard.writeText(payload).then(
+      () => say(button.dataset.copiedLabel ?? ""),
+      () => say(button.dataset.unavailableLabel ?? ""),
+    );
+  });
+
+  // Escape closes and returns focus to the number.
+  document.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key !== "Escape") return;
+    const root = (e.target as Element | null)?.closest?.("[data-prov][data-open]");
+    if (!root) return;
+    close(root);
+    (el(root, ".prov__trigger") as HTMLElement | null)?.focus();
+  });
+
+  const replace = () => {
+    for (const root of opened()) place(root);
+  };
+  window.addEventListener("resize", replace);
+  // A fixed panel does not travel with the page, so it is re-placed rather
+  // than left behind.
+  window.addEventListener("scroll", replace, { passive: true, capture: true });
+</script>{/*
+  AND NOTHING BETWEEN THE HOISTED BLOCKS EITHER. Astro lifts <script> and
+  <style> out of the template but keeps the source newlines that sat between
+  them, so a blank line here becomes a TRAILING TEXT NODE on every chip. That
+  is one space after every bound number, which reads as "0.26 ." wherever a
+  citation ends a clause. act-source carries the same note; this component
+  needed it in three places because it has both blocks and a panel.
+*/}<style>
+  .prov {
+    position: relative;
+    display: inline;
+    min-width: 0;
+  }
+
+  /* --- the number --- */
+  .prov__trigger {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: help;
+    text-align: inherit;
+    /* ink3-ok: the underline sits under prose, which is on --ground or
+       --surface-1 (5.25:1 and 4.85:1). The only raised surface in this file is
+       the panel, whose own text is --ink and --ink-2. */
+    text-decoration: underline dotted var(--ink-3); /* ink3-ok: under prose on --ground or --surface-1 */
+    text-decoration-thickness: var(--link-underline-thickness);
+    text-underline-offset: var(--link-underline-offset);
+    transition: text-decoration-color var(--dur-1) var(--curve-ui);
+  }
+  .prov__trigger:hover {
+    text-decoration-color: var(--ink);
+  }
+  .prov__trigger:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* --- the panel ---
+     --surface-2 with --shadow-overlay and no border: an overlay declares its
+     elevation once, as a shadow (DESIGN.md §8).
+
+     A CLOSED PANEL IS `display: none`, NOT `visibility: hidden`. This is the
+     whole of the second defect. `visibility: hidden` keeps the box in layout,
+     and an absolutely positioned box with `inline-size: max-content` and
+     `inset-inline-start: 0` sitting on a chip near the right edge extends up to
+     `--measure-command` (544px) past it. That is scrollable overflow on the
+     document, so gate 19 fails on EVERY page that renders a chip, which is
+     nearly all of them; and inside `.dt__scroll` it is 365px of empty
+     horizontal scroll a reader can travel into and find nothing.
+
+     `display: none` is not free: a box arriving from it has no previous value
+     to transition from, so it used to mean no animation. `transition-behavior:
+     allow-discrete` plus `@starting-style` removes that cost, both shipped in
+     Chrome 117, which is what this project builds and shoots against. The two
+     alternatives were weighed and rejected:
+
+       - `position: fixed` when closed. Fixed boxes are outside the document's
+         scrollable overflow, so it would fix the number, but `top: calc(100% +
+         …)` then resolves against the viewport rather than the chip and the
+         no-JavaScript path opens the panel somewhere below the fold. D-34 keeps
+         that path absolute for exactly this reason.
+       - `[popover]`. The top layer solves the clipping D-34 works around, with
+         no coordinates to compute. But a popover cannot be opened by CSS, so
+         hover and `:focus-within` stop working with scripting off, and the
+         contract requires the panel to be reachable there.
+
+     The file already relied on `display: none` below `--bp-sm`, which is why
+     320, 360 and 390 were the three widths that never overflowed. This makes
+     the narrow behaviour the rule instead of the exception. */
+  .prov__panel {
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(100% + var(--space-2));
+    z-index: var(--z-overlay);
+    display: none;
+    flex-direction: column;
+    gap: var(--space-2);
+    inline-size: max-content;
+    /* NOT `min(…, 100%)`. The panel's containing block is the inline .prov box,
+       which is only as wide as the number, so a percentage cap collapses the
+       panel to about fifty pixels and wraps it one character per line. Measured
+       against the viewport instead, and the script clamps the position. */
+    max-inline-size: min(var(--measure-command), calc(100vw - var(--space-7)));
+    padding: var(--space-4);
+    background: var(--surface-2);
+    border-radius: var(--radius-2);
+    box-shadow: var(--shadow-overlay);
+    color: var(--ink-2);
+    text-align: start;
+    opacity: 0;
+    /* Still needed. `display` transitions discretely, so the panel keeps its
+       box for --dur-2 on the way out and must not swallow a click while it
+       fades. */
+    pointer-events: none;
+    transform: translateY(-4px); /* provenance-chip.md, Motion */
+    transition:
+      opacity var(--dur-2) var(--curve-exit),
+      transform var(--dur-2) var(--curve-exit),
+      display var(--dur-2) var(--curve-exit) allow-discrete;
+  }
+  .prov__panel[data-above] {
+    top: auto;
+    bottom: calc(100% + var(--space-2));
+  }
+
+  /* On the scripted path the panel is FIXED, not absolute. An absolutely
+     positioned panel is clipped by any ancestor with overflow-x: auto, and
+     data-table's scroll container is exactly that: the contract puts a
+     provenance chip on every numeric cell, so the common case would have been
+     a panel a reader could not see. The no-JavaScript fallback below keeps the
+     absolute position, where the clipping is the price of having no script to
+     measure with. */
+  .prov[data-open] > .prov__panel {
+    position: fixed;
+    inset-inline-start: var(--prov-left, 0);
+    top: calc(var(--prov-top, 0px) + var(--space-2));
+  }
+  .prov[data-open] > .prov__panel[data-above] {
+    top: auto;
+    bottom: calc(var(--prov-bottom, 0px) + var(--space-2));
+  }
+
+  /* Opened by script, and by hover or focus alone when there is none. */
+  .prov[data-open] > .prov__panel,
+  :global(:root:not([data-js])) .prov:hover > .prov__panel,
+  :global(:root:not([data-js])) .prov:focus-within > .prov__panel {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      opacity var(--dur-3) var(--curve-enter),
+      transform var(--dur-3) var(--curve-enter),
+      display var(--dur-3) var(--curve-enter) allow-discrete;
+  }
+
+  /* The values the entry transition starts from. A box arriving from
+     `display: none` has no previous computed style, so without this it snaps to
+     opacity 1 and the --curve-enter motion the contract specifies never runs.
+
+     Gated on motion being wanted, rather than left to --dur-3 collapsing to
+     0.01ms under reduced motion. Resolving a starting style costs a style pass
+     of its own: measured, the panel reached opacity 1 at frame 3 (19ms) with
+     this rule unconditional and at frame 1 without it. Nineteen milliseconds is
+     imperceptible either way, but "instant" should be what the reduced-motion
+     path DOES, not what a collapsed duration makes it look like. There is
+     nothing to start from, so nothing animates. */
+  @media (prefers-reduced-motion: no-preference) {
+    @starting-style {
+      .prov[data-open] > .prov__panel,
+      :global(:root:not([data-js])) .prov:hover > .prov__panel,
+      :global(:root:not([data-js])) .prov:focus-within > .prov__panel {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+    }
+  }
+
+  .prov__observable {
+    color: var(--ink);
+  }
+  .prov__value-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .prov__value {
+    color: var(--ink);
+  }
+  .prov__row {
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+  .prov__link {
+    color: var(--ink);
+    align-self: flex-start;
+  }
+  .prov__link:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* The secondary affordance. Secondary is carried by SIZE and WEIGHT, never
+     by colour: DESIGN.md §5.1 spends colour on data only, and a tinted button
+     beside three sentences of provenance would be the brightest thing in the
+     panel for no reason a reader could act on. --line-control is the control
+     boundary token and the panel is --surface-2, so C-15's rule applies: the
+     identifying edge here is the button against the panel it sits in, which is
+     what a reader is distinguishing. */
+  .prov__tech {
+    align-self: flex-start;
+    color: var(--ink-2);
+    background: none;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .prov__tech:hover {
+    color: var(--ink);
+  }
+  .prov__tech:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* A claim that is not a measurement does not get a measurement's weight.
+     `interpretation`, `open-hypothesis`, `definition` and `limitation` carry
+     no quantity at all, which validate.mjs enforces, so the strong guarantee
+     is structural: there is no value row to dim. This is the visible half of
+     the same rule, for the panel's own heading. */
+  .prov[data-claim-type="interpretation"] .prov__observable,
+  .prov[data-claim-type="open-hypothesis"] .prov__observable,
+  .prov[data-claim-type="limitation"] .prov__observable,
+  .prov[data-claim-type="definition"] .prov__observable {
+    color: var(--ink-2);
+  }
+
+  /* A study-level disclosure under a number that has no claim of its own. The
+     panel says so by weight rather than by a word, because the sentence it
+     shows is true and only its grain is coarser. */
+  .prov[data-claim-resolution="study"] .prov__value {
+    color: var(--ink-2);
+  }
+
+  /* The panel's trust marker. trust-badge draws the same shape from the same
+     tokens; it is repeated rather than imported because trust-badge imports
+     this component and a static cycle between two .astro files is not worth
+     eight lines. */
+  .prov__trust {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--ink);
+    border: var(--border-w) solid var(--line-strong);
+    border-radius: var(--radius-1);
+    padding: var(--space-1) var(--space-2);
+    flex: none;
+  }
+  .prov__trust-dot {
+    inline-size: calc(var(--space-1) * 1.5);
+    block-size: calc(var(--space-1) * 1.5);
+    border-radius: var(--radius-pill);
+    background: var(--line-strong);
+    flex: none;
+  }
+  .prov__trust[data-trust="exploratory"] {
+    border-color: var(--trust-1);
+  }
+  .prov__trust[data-trust="exploratory"] .prov__trust-dot {
+    background: var(--trust-1);
+  }
+  .prov__trust[data-trust="calibrated"] {
+    border-color: var(--trust-2);
+  }
+  .prov__trust[data-trust="calibrated"] .prov__trust-dot {
+    background: var(--trust-2);
+  }
+  .prov__trust[data-trust="registered"] {
+    border-color: var(--trust-3);
+  }
+  .prov__trust[data-trust="registered"] .prov__trust-dot {
+    background: var(--trust-3);
+  }
+  .prov__trust[data-trust="adjudicated"] {
+    border-color: var(--trust-4);
+  }
+  .prov__trust[data-trust="adjudicated"] .prov__trust-dot {
+    background: var(--trust-4);
+  }
+
+  /* At 400% zoom the viewport is narrower than --bp-sm. The panel stops
+     floating and renders in flow beneath the paragraph, so nothing is lost
+     and nothing is clipped. */
+  @media (max-width: 29.9375rem) /* --bp-sm */ {
+    .prov__panel {
+      position: static;
+      max-inline-size: 100%;
+      margin-block-start: var(--space-2);
+    }
+    /* `position: static` again, to beat the fixed rule above; `display: flex`
+       comes from the open rule, which no longer has to be repeated here. */
+    .prov[data-open] > .prov__panel,
+    .prov[data-open] > .prov__panel[data-above],
+    :global(:root:not([data-js])) .prov:hover > .prov__panel,
+    :global(:root:not([data-js])) .prov:focus-within > .prov__panel {
+      position: static;
+      top: auto;
+      bottom: auto;
+    }
+  }
+
+  @media print {
+    .prov__trigger {
+      text-decoration: none;
+      cursor: auto;
+    }
+    /* print.css already forces the panel to `display: block` and
+       `position: static` with !important, so it prints as a numbered endnote,
+       and it keeps owning `display`. What it never touched is opacity, because
+       `opacity: 0` is this component's: it survived into print, and the endnote
+       reserved 544×413 of paper and printed nothing on it. Measured with
+       `emulateMedia({ media: "print" })`, not assumed. Criterion 6 says the
+       printed page is self-sufficient, so this is the third defect in the file
+       and it was invisible from the screen. */
+    .prov__panel {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

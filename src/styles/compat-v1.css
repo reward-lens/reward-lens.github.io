@@ -1,0 +1,94 @@
+/* =============================================================================
+   COMPATIBILITY LAYER FOR THE v1 TOKEN NAMES.  TEMPORARY.  F1 owns it.
+
+   WHY THIS FILE EXISTS
+   Wave 0 replaces the token vocabulary. Wave 1 replaces the pages and
+   components that consume it. Between those two events the 161 pages already
+   in this repository reference token names that no longer exist, and an
+   undefined custom property does not degrade, it drops the declaration. That
+   turns every card, code block and chip on the site transparent for the length
+   of one wave. This file holds them together and does nothing else.
+
+   WHAT IT IS ALLOWED TO CONTAIN
+   Aliases. Nothing but aliases. There is not one literal in this file: every
+   value on the right-hand side is a token from the frozen tokens.css. Where
+   the old scale and the new scale do not land on the same value the nearest
+   step is used and is marked. Nothing here invents a colour.
+
+   THE COLOURS THAT COULD NOT BE MAPPED
+   --accent, --info, --ok, --bad, --mix, --none, --pos and --neg belong to a
+   colour model this design replaced rather than renamed. DESIGN.md §5.1 is
+   explicit that there is no accent and that saturated colour is only ever
+   data, and the new palette's axes (six components, four trust rungs, three
+   reading outcomes) do not carry the old verdict axis. So they degrade to
+   chrome, not to a guessed data colour. Legacy verdict chips lose their hue
+   until the packet that owns them rebuilds them, which is a visible and
+   deliberate loss rather than a quiet invention.
+
+   HOW IT GOES AWAY
+   Delete this file and its @import in global.css once no file under src/
+   references a name defined below. `node scripts/lint-tokens.mjs` prints the
+   remaining references and exits non-zero while any survive.
+   ============================================================================= */
+
+:root {
+  /* --- space. The old scale was 4/8/12/16/24/32/48/64. --- */
+  --sp-1: var(--space-1);
+  --sp-2: var(--space-2);
+  --sp-3: var(--space-3);
+  --sp-4: var(--space-4);
+  --sp-6: var(--space-5);
+  --sp-8: var(--space-6);
+  --sp-12: var(--space-7);
+  --sp-16: var(--space-8); /* nearest step: 64px becomes 72px */
+
+  /* --- type sizes. Only the role sizes are aliased; line height and tracking
+         stay with whatever the legacy rule already set, because a legacy rule
+         that set a size did not set a matching line height either. --- */
+  --text-xs: var(--type-mono-sm-size);
+  --text-sm: var(--type-body-sm-size);
+  --text-base: var(--type-body-size); /* nearest step: 16px becomes 17px */
+  --text-lg: var(--type-h3-size);
+  --text-xl: var(--type-h2-size);
+  --text-2xl: var(--type-display-2-size);
+  --text-3xl: var(--type-display-2-size);
+  --text-4xl: var(--type-display-1-size);
+  --text-display: var(--type-display-1-size);
+
+  /* --- families. Both serifs are gone (DECISIONS.md D-12), so the roles they
+         held collapse onto the sans. --- */
+  --font-ui: var(--font-sans);
+  --font-display: var(--font-sans);
+  --font-prose: var(--font-sans);
+
+  /* --- shape. The old card radius was 6px; this design's ceiling is 3px. --- */
+  --r-chip: var(--radius-1);
+  --r-card: var(--radius-2);
+  --r-pill: var(--radius-pill);
+
+  /* --- surfaces --- */
+  --bg-page: var(--ground);
+  --bg-raised: var(--surface-2);
+  --bg-inset: var(--surface-1);
+
+  /* --- layout --- */
+  --page-max: var(--grid-max);
+  --measure-wide: var(--measure-caption);
+  --shadow-menu: var(--shadow-raised);
+
+  /* --- the colours with no counterpart. See the header. --- */
+  --accent: var(--ink);
+  --accent-ink: var(--ground);
+  --info: var(--ink);
+  --ok: var(--ink-2);
+  --bad: var(--ink-2);
+  --mix: var(--ink-2);
+  --none: var(--ink-2);
+  --ok-ink: var(--ink-2);
+  --bad-ink: var(--ink-2);
+  --mix-ink: var(--ink-2);
+  --none-ink: var(--ink-2);
+  --pos: var(--ink-2);
+  --neg: var(--ink-2);
+  --div-mid: var(--surface-3);
+}

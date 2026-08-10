@@ -1,0 +1,70 @@
+---
+/**
+ * The instrument movement on a page of its own, so it can be driven and
+ * photographed.
+ *
+ * WHY THIS ROUTE EXISTS AND WHY IT IS GATED. The movement's controls cannot be
+ * placed on the homepage from this packet: `src/pages/index.astro` is the
+ * integrator's file and it currently renders `<InstrumentStory />` with no
+ * slots filled. A control nobody can load cannot be screenshotted, cannot be
+ * driven by the runtime gate and cannot be shown to work, which is the same
+ * argument `src/pages/gallery/[...rest].astro` already makes for the base
+ * component gallery, in the same shape.
+ *
+ * So this follows that precedent exactly: `getStaticPaths` returns nothing
+ * unless `PUBLIC_SCENE_LAB=1`, `import.meta.env` is inlined at build time, and
+ * a production build therefore prunes the route rather than emitting an empty
+ * directory. Nothing about `dist/` changes for any other packet.
+ *
+ *   PUBLIC_SCENE_LAB=1 npm run build     # then /scene-lab/ is in dist
+ *   PUBLIC_SCENE_LAB=1 npm run dev       # http://localhost:4321/scene-lab/
+ *
+ * THIS IS THE ONE PAGE THAT MOUNTS THE ISLAND INSIDE THE MOVEMENT. There is one
+ * WebGL context per document. The homepage's is the hero's, so the movement
+ * there takes `mountScene` false and the panel is the instrument's DOM half
+ * only. Here there is no hero, so the canvas has somewhere to live and the
+ * scroll binding, the camera path and the pose interpolation can all be
+ * exercised end to end against a real renderer.
+ */
+import Base from "@layouts/Base.astro";
+import InstrumentMovement from "@components/home/instrument-narrative/instrument-movement.astro";
+
+export function getStaticPaths() {
+  if (import.meta.env.PUBLIC_SCENE_LAB !== "1") return [];
+  return [{ params: { rest: undefined } }];
+}
+---
+
+<Base title="Instrument movement" description="The five instrument states, their controls and the scene they drive.">
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  <div class="lab" data-pagefind-ignore>
+    <InstrumentMovement mountScene />
+    <div class="lab__tail">
+      <p class="type-body-sm">
+        The movement ends here. This page exists so the five states, the scroll binding and the
+        controls can be driven in a browser; it is not part of the site and is not built unless
+        the scene lab flag is set.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .lab {
+    max-inline-size: var(--grid-max);
+    margin-inline: auto;
+    padding-inline: var(--page-pad);
+    padding-block: var(--space-8);
+    display: grid;
+    gap: var(--space-9);
+    min-width: 0;
+  }
+  /* The last state has to be able to reach the middle of the viewport, or the
+     fifth state can never become active and the movement is four states long
+     on a tall screen. */
+  .lab__tail {
+    min-block-size: 60dvh;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+    max-width: min(var(--measure-prose), 100%);
+  }
+</style>

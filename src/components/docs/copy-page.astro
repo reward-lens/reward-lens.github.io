@@ -1,0 +1,135 @@
+---
+/**
+ * copy-page  ·  the copy-as-markdown control, on every documentation page.
+ *
+ * A meaningful fraction of this audience hands a page to a language model, and
+ * a control that copies the rendered DOM hands over navigation chrome, chip
+ * markup and the sidebar. So the control fetches the page's markdown twin and
+ * copies that: the same bytes a reader would get by opening the twin URL, and
+ * the twin is the fallback that matters when scripting is off.
+ *
+ * The twin is `<page URL without its trailing slash>.md`, generated at build
+ * time by an endpoint rather than committed, so there is no second copy of
+ * ninety pages to go stale. Same property the library keeps for its own
+ * generated pages (assay/docs/hooks.py:1-11).
+ *
+ * The control removes itself under :root:not([data-js]), like every other copy
+ * control on this site. The twin URL stays reachable by hand, which is the
+ * part that has to survive.
+ */
+import { ui } from "../../copy";
+
+interface Props {
+  /** The markdown twin's URL. */
+  href: string;
+  class?: string;
+}
+
+const { href, class: extraClass = "" } = Astro.props;
+---
+
+<button
+  class:list={["copypage", "type-body-sm", extraClass]}
+  type="button"
+  data-copy-page
+  data-href={href}
+  data-label={ui.copy_page}
+  data-done={ui.copy_page_done}
+>
+  <span class="copypage__glyph" aria-hidden="true"></span>
+  <span data-copy-page-text>{ui.copy_page}</span>
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-page]").forEach((btn) => {
+    const text = btn.querySelector<HTMLElement>("[data-copy-page-text]");
+    let timer: number | undefined;
+    btn.addEventListener("click", async () => {
+      const href = btn.dataset.href;
+      if (!href || !text) return;
+      try {
+        const md = await fetch(href).then((r) => r.text());
+        await navigator.clipboard.writeText(md);
+        text.textContent = btn.dataset.done ?? "";
+        btn.dataset.state = "done";
+      } catch {
+        // The clipboard can be refused and the fetch can fail. Either way the
+        // twin URL is a real page, so the honest fallback is to open it rather
+        // than to claim a copy that did not happen.
+        window.location.href = href;
+        return;
+      }
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        text.textContent = btn.dataset.label ?? "";
+        delete btn.dataset.state;
+      }, 1600);
+    });
+  });
+</script>
+
+<style>
+  :global(:root:not([data-js])) .copypage {
+    display: none;
+  }
+
+  .copypage {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--space-6);
+    padding-inline: var(--space-3);
+    color: var(--ink-2);
+    background: transparent;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .copypage:hover {
+    color: var(--ink);
+  }
+  .copypage:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .copypage[data-state="done"] {
+    color: var(--ink);
+  }
+  /* Two offset rectangles, drawn from the current colour. */
+  .copypage__glyph {
+    position: relative;
+    inline-size: var(--space-3);
+    block-size: var(--space-3);
+    flex: none;
+  }
+  .copypage__glyph::before,
+  .copypage__glyph::after {
+    content: "";
+    position: absolute;
+    inline-size: 72%;
+    block-size: 72%;
+    border: var(--border-w) solid currentColor;
+    border-radius: var(--radius-1);
+  }
+  .copypage__glyph::before {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+  }
+  .copypage__glyph::after {
+    inset-block-end: 0;
+    inset-inline-end: 0;
+  }
+
+  @media print {
+    .copypage {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .copypage {
+      transition: none;
+    }
+  }
+</style>

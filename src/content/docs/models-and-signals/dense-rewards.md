@@ -2,8 +2,10 @@
 title: Dense per-token rewards
 description: You have a whole-response score. Can you turn it into per-token credit?
 section: models-and-signals
-order: 28
+order: 29
 source: docs/content/models-and-signals/dense-rewards.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -67,4 +69,4 @@ This ordering, ship the map only after its answer-key validation, is deliberate 
 
 ## Reference
 
-[`DenseRewardExtractor`](/docs/reference/signals/#reward_lens.signals.dense.DenseRewardExtractor), and [a measurement you can trust](/docs/concepts/measurement-you-can-trust/) for the receipt every score carries.
+[`DenseRewardExtractor`](/docs/api/signals/#reward_lens.signals.dense.DenseRewardExtractor), and [a measurement you can trust](/docs/concepts/measurement-you-can-trust/) for the receipt every score carries.

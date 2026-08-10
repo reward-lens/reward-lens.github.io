@@ -1,0 +1,14 @@
+{
+ "contentHash": "3255885c5dc8fd8539c7cd760e4b1876",
+ "humanSource": "The project's own statement of what it is not claiming, carried on the limits page.",
+ "immutableIds": [
+  "copy.yaml:limits.not_claiming[4]"
+ ],
+ "label": "Not that monitors degrading under pressure is a new observation.",
+ "limitation": "Not that monitors degrading under pressure is a new observation.",
+ "scope": "What is not being claimed.",
+ "slug": "not-claiming-5",
+ "sourceUrl": "/limits/",
+ "statement": "It is a small live subfield with results pointing in both directions. What is missing is turning that degradation curve into the figure of merit by which competing monitors are ranked.",
+ "type": "limitation"
+}

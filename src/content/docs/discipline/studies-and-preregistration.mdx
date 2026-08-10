@@ -2,8 +2,10 @@
 title: Studies and preregistration
 description: What stops you from finding the result you wanted? In most analysis, nothing. You run the tools, you see a pattern, you write it up, and the write-up is graded
 section: discipline
-order: 61
+order: 88
 source: docs/content/discipline/studies-and-preregistration.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -13,7 +15,7 @@ import ThemedFigure from "@components/ThemedFigure.astro";
 
 ## A study is a spec, not a narrative
 
-A [`StudySpec`](/docs/reference/studies/) is a typed object. It names an id, a title, the science it belongs to, the subjects it runs on, and a tuple of hypotheses. Each hypothesis carries a **prediction**, and a prediction is machine-checkable, not prose: a metric, a comparator, and a threshold. "Crystallization is late" is a vibe. `Prediction(metric="mean_crystal_frac", comparator=">=", threshold=0.9)` is a claim a runner can adjudicate without asking you what you meant.
+A [`StudySpec`](/docs/api/studies/) is a typed object. It names an id, a title, the science it belongs to, the subjects it runs on, and a tuple of hypotheses. Each hypothesis carries a **prediction**, and a prediction is machine-checkable, not prose: a metric, a comparator, and a threshold. "Crystallization is late" is a vibe. `Prediction(metric="mean_crystal_frac", comparator=">=", threshold=0.9)` is a claim a runner can adjudicate without asking you what you meant.
 
 ```python
 from reward_lens.studies import Prediction
@@ -23,7 +25,7 @@ print(p.check(0.931), p.check(0.803))   # Skywork clears it, ArmoRM does not
 # -> True False
 ```
 
-The predictions that would *sink* the study are first-class too. A [`KillCriterion`](/docs/reference/studies/) is the same shape as a prediction, a metric and a comparator and a threshold, but it encodes a condition under which the study is abandoned rather than confirmed. Pre-committing to what would kill a study is how you stop yourself from quietly relaxing the bar when the data comes in soft.
+The predictions that would *sink* the study are first-class too. A [`KillCriterion`](/docs/api/studies/) is the same shape as a prediction, a metric and a comparator and a threshold, but it encodes a condition under which the study is abandoned rather than confirmed. Pre-committing to what would kill a study is how you stop yourself from quietly relaxing the bar when the data comes in soft.
 
 ## Freezing puts the prediction out of reach
 

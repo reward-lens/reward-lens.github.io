@@ -1,0 +1,293 @@
+---
+/**
+ * Section 1.  ·  DECISIONS.md D-22, which supersedes pages/home.md §1.
+ *
+ * The first viewport is not a headline over a figure. It is the room, and the
+ * type is in it. Three things and nothing else: the headline in the part of
+ * the room the light has not reached, the subhead beneath it, and the install
+ * strip sitting ON the optical axis with the beam passing behind it. Below the
+ * axis, the floor carries the version row and nothing else.
+ *
+ * HOW THE STRIP AND THE BEAM ARE HELD TOGETHER, which is the whole trick.
+ * `grid-template-rows: 1fr auto 1fr`, and the install strip is a subgrid over
+ * two of those rows: its surface takes the `auto` row and its version row
+ * takes the floor. The optics layer is a zero-height box placed in that same
+ * `auto` row with `align-self: center`, so its centre line and the surface's
+ * centre line are the same line by construction, at every width, in both
+ * themes, with scripting on or off. No arithmetic, nothing to measure, nothing
+ * to drift. That is why the measured offset is 0 rather than "within 2px".
+ *
+ * WHY THE STRIP IS THE BRIGHTEST THING HERE. Not because it was assigned a
+ * highlight. Because the light is behind it: the beam runs from the source at
+ * the left edge, under the strip, and out of its right edge toward the prism.
+ * D-22 calls that the difference between a metaphor used as illustration and a
+ * metaphor that is the page's own physics.
+ *
+ * WHAT IS DELIBERATELY ABSENT. No badge. No third action. No tagline strip. No
+ * scroll hint. No decorative gradient. No scrim behind the type. If a text
+ * zone reads too bright the fix is to move the light, and --hero-fill below is
+ * the dial for it.
+ */
+import InstallStrip from "../base/install-strip.astro";
+import HeroOptics from "./hero-optics.astro";
+import SceneHost from "../scene/SceneHost.astro";
+import { decomposition } from "./decomposition";
+import { copy, nav } from "../../copy";
+
+interface HeroCopy {
+  headline_a: string;
+  headline_b: string;
+  subhead: string;
+  secondary_action: string;
+}
+interface A11yCopy {
+  figure_alt: Record<string, string>;
+}
+
+const hero = (copy.home as Record<string, unknown>).hero as HeroCopy;
+const a11y = copy.a11y as unknown as A11yCopy;
+const d = decomposition();
+
+// The secondary action goes where the See route goes. The href is the one in
+// the navigation, never a second copy of the path.
+const seeHref = nav.primary.find((i) => i.href === "/see/")?.href ?? "/see/";
+
+const sceneAltId = "hero-scene-alt";
+---
+
+<section class="hero" data-hero>
+  <div class="hero__stage">
+    {/* Layer 0. The room. Zero height, centred on the strip's own row, bled
+        to both screen edges. Everything it draws is measured from that line. */}
+    <div class="hero__optics-slot">
+      <HeroOptics decomposition={d} labelledById={sceneAltId} />
+      {/* The live room, over the authored one. It is the same composition at a
+          higher fidelity, not a different picture: both read hero-geometry.ts,
+          which is what lets gate 20 compare them. */}
+      <SceneHost />
+    </div>
+
+    {/* Layer 1. The type, in normal flow above the canvas, pinned to the
+        bottom of the dark half. Both clauses at full ink: setting the second
+        in grey inverts the emphasis, and "your policy optimized something
+        else" is the more important half. */}
+    <div class="hero__type">
+      <h1 class="hero__headline type-display-1" data-hero-zone="headline">
+        <span class="hero__clause">{hero.headline_a}</span>
+        <span class="hero__clause">{hero.headline_b}</span>
+      </h1>
+      <p class="hero__subhead type-body" data-hero-zone="subhead">
+        {hero.subhead}
+      </p>
+    </div>
+
+    {/* The install strip. Its surface lands on the axis; its version row
+        lands on the floor. See the note above. */}
+    <InstallStrip size="lead" class="hero__strip" />
+
+    {/* The other end of the instrument. The page's two actions are the two
+        ends of the optical path: the command at the source, this at the
+        detector. */}
+    <a class="hero__secondary type-body-sm" href={seeHref}>
+      {hero.secondary_action}
+    </a>
+  </div>
+
+  <p class="visually-hidden" id={sceneAltId}>
+    {a11y.figure_alt.dispersion_scene}
+  </p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    /* Full bleed. 100% and not 100vw: with a classic scrollbar 100vw is wider
+       than the layout viewport and the page scrolls sideways, which is
+       HANDOFF.md trap 2 wearing a different hat. Gate 19 asserts it does not. */
+    inline-size: 100%;
+    min-width: 0;
+    /* The room's envelope, D-22: the viewport, floored at 560 and capped at
+       1080, less the header that sits above it.
+
+       --hero-nav is the shell's own height, measured in built output rather than composed
+       from tokens: nav-shell.astro's rows are sized by their content, so no
+       arithmetic over --space-2 and --space-5 reproduces it. 65px at 390, 768,
+       1024, 1440 and 1920. If the header changes height this drifts, and the
+       symptom is the axis leaving the 58-62% band that gate 21's viewport
+       assumes; the band is 36px wide, so it tolerates a change of about 40px
+       before it matters. */
+    --hero-nav: 65px;
+    --hero-fill: 0.22;
+    block-size: clamp(560px, calc(100svh - var(--hero-nav)), 1080px);
+    overflow: hidden;
+    background: var(--ground);
+    border-block-end: var(--border-w) solid var(--line);
+  }
+
+  .hero__stage {
+    block-size: 100%;
+    padding-inline: var(--page-pad);
+    /* The hero's top inset. tokens.css names --space-9 for exactly this, and
+       it is what puts the axis in the lower six-tenths of the viewport rather
+       than at its midpoint: the dark half above has to be tall enough to hold
+       display type without the light in it. */
+    padding-block-start: var(--space-9);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 1fr auto 1fr;
+    column-gap: var(--space-5);
+    row-gap: var(--space-3);
+    align-items: center;
+  }
+
+  /* The strip's two parts take two of the stage's own rows, through a
+     subgrid. The surface lands in the `auto` row that the optics layer is
+     centred in, and the version row lands on the floor. The root keeps a box,
+     which matters: gate 21 reads `.install-strip`'s bounding rectangle, and an
+     element that generates no box reports a zero rect and the assertion
+     quietly stops running. */
+  .hero__stage :global(.install-strip) {
+    grid-row: 2 / 4;
+    grid-column: 1;
+    justify-self: start;
+    display: grid;
+    grid-template-rows: subgrid;
+    z-index: var(--z-content);
+  }
+  @supports not (grid-template-rows: subgrid) {
+    .hero__stage :global(.install-strip) {
+      display: contents;
+    }
+    .hero__stage :global(.install-strip__surface) {
+      grid-row: 2;
+      grid-column: 1;
+      max-inline-size: min(var(--measure-command), 100%);
+      z-index: var(--z-content);
+    }
+    .hero__stage :global(.install-strip__version) {
+      grid-row: 3;
+      grid-column: 1;
+      z-index: var(--z-content);
+    }
+  }
+  .hero__stage :global(.install-strip__version) {
+    align-self: start;
+  }
+
+  /* --- layer 0 ---------------------------------------------------------- */
+  .hero__optics-slot {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    align-self: center;
+    /* The live room positions itself out from this line in both directions, so
+       this box has to be its containing block. Without it the canvas anchors
+       to the page and the axes part company. */
+    position: relative;
+    /* Zero height, so the auto row is still exactly the strip's height and the
+       centre of this box is the centre of that surface. */
+    block-size: 0;
+    /* Out to both screen edges. The stage's inline padding is the only thing
+       between this and the viewport, so cancelling it lands the source on the
+       left edge and the detector one gutter in from the right. */
+    margin-inline: calc(var(--page-pad) * -1);
+    z-index: var(--z-scene);
+  }
+
+  /* --- layer 1 ---------------------------------------------------------- */
+  .hero__type {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    display: grid;
+    /* The type sits at the bottom of the dark half, just above the axis,
+       rather than floating in the middle of it. */
+    align-content: end;
+    gap: var(--space-5);
+    padding-block-end: var(--space-6);
+    z-index: var(--z-content);
+    min-width: 0;
+  }
+
+  .hero__headline {
+    margin: 0;
+    color: var(--ink);
+    /* fit-content so the element's box is the text's box. The safe-zone
+       contract measures this rectangle, and a full-width block would drag the
+       lit half of the room into a zone the type never occupies. */
+    inline-size: fit-content;
+    max-inline-size: min(var(--measure-heading), 100%);
+    text-wrap: balance;
+  }
+  .hero__clause {
+    display: block;
+  }
+
+  .hero__subhead {
+    margin: 0;
+    color: var(--ink-2);
+    inline-size: fit-content;
+    /* pages/home.md §1: the subhead runs to 56ch, narrower than
+       --measure-prose, because it is read once and at speed. */
+    max-inline-size: min(56ch, 100%);
+    text-wrap: pretty;
+  }
+
+  /* --- layer 2 ---------------------------------------------------------- */
+  .hero__secondary {
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: end;
+    align-self: center;
+    /* Clear of the detector plane, which is one --page-pad in from the screen
+       edge: the link is beside the instrument's far end, not on top of it. */
+    margin-inline-end: var(--space-5);
+    z-index: var(--z-content);
+    color: var(--ink-2);
+    text-decoration-line: underline;
+    text-underline-offset: var(--link-underline-offset);
+    text-decoration-thickness: var(--link-underline-thickness);
+  }
+  .hero__secondary:hover {
+    color: var(--ink);
+  }
+  .hero__secondary:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* --- below --bp-md ----------------------------------------------------
+     The secondary action leaves the axis row, because at 390 the detector end
+     of the bench is 40px from the strip and the two actions would read as one
+     control. It goes to the floor beside the version row, still at the right
+     end of the optical path. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .hero {
+      --hero-fill: 0.2;
+    }
+    .hero__stage {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block-start: var(--space-8);
+    }
+    /* The strip stops filling the row. It shrinks to the width of its own
+       command, which is 256px and does not go lower, and the space it gives
+       back is the run between it and the detector plate. Without this the
+       plate is behind the strip and the arrival marks are invisible. */
+    .hero__stage :global(.install-strip) {
+      inline-size: max-content;
+      max-inline-size: 100%;
+    }
+    /* On the floor, below the version row and below the rail, so it crosses
+       neither. */
+    .hero__secondary {
+      grid-row: 3;
+      grid-column: 1;
+      justify-self: start;
+      align-self: start;
+      margin-inline-end: 0;
+      margin-block-start: var(--space-9);
+    }
+    .hero__type {
+      gap: var(--space-4);
+      padding-block-end: var(--space-5);
+    }
+  }
+</style>

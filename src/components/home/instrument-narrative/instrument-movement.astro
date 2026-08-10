@@ -1,0 +1,70 @@
+---
+/**
+ * The instrument movement: the five narrative states with the instrument
+ * beside them and the controls inside them.
+ *
+ * THIS COMPONENT ADDS NOTHING TO THE NARRATIVE. `home/story/instrument-story`
+ * owns the five articles, the active-state observer and the words; it already
+ * publishes the reader's state and already declares a slot for the visual
+ * region and one for each state's single control. This fills those slots. It
+ * does not restate a heading, re-run an observer or re-declare a state id, and
+ * the five ids it places controls against are the frozen ones from
+ * `scene/types/truth.ts` by way of `scene/runtime/states.ts`.
+ *
+ * WHY THREE STATES HAVE A CONTROL AND TWO DO NOT.
+ *
+ *   scorer      six recorded subjects sit behind this one state, with different
+ *               artifacts and different scopes, so the reader can change which
+ *               one is on the bench and the source plate follows them.
+ *   selection   the score-component control, bound to the recorded run.
+ *   update      trace one rollout out of the recorded step's eight.
+ *   response    nothing, deliberately. There is no measurement behind this
+ *               state; a control here could only offer a reader something to
+ *               operate that changes nothing true, which is the one kind of
+ *               interaction this build forbids outright.
+ *   run-boundary the detector rows are in the legend and in the plate, and the
+ *               instrument that scrubs this run properly lives on its own
+ *               route. A second, worse copy of it here would be the hero
+ *               repeating a control that exists two pages away.
+ */
+import InstrumentStory from "../story/instrument-story.astro";
+import InstrumentPanel from "../../scene-controls/instrument-panel.astro";
+import SubjectSelector from "../../scene-controls/subject-selector.astro";
+import ScoreToggle from "../../scene-controls/score-toggle.astro";
+import TraceRollout from "../../scene-controls/trace-rollout.astro";
+import { ALL_CASES, STATE_DEFS, defaultCase } from "../../scene/runtime/states";
+
+interface Props {
+  /**
+   * Mount the WebGL island inside the sticky region. Off on the homepage,
+   * where the hero already owns the document's one canvas.
+   */
+  mountScene?: boolean;
+  headingLevel?: 2 | 3;
+  id?: string;
+  class?: string;
+}
+
+const { mountScene = false, headingLevel = 2, id, class: extraClass = "" } = Astro.props;
+const opening = defaultCase("scorer");
+---
+
+<InstrumentStory headingLevel={headingLevel} id={id} class={extraClass}>
+  <InstrumentPanel
+    slot="visual"
+    cases={ALL_CASES}
+    active={opening}
+    mountScene={mountScene}
+  />
+
+  <SubjectSelector
+    slot="control-scorer"
+    cases={STATE_DEFS.scorer.cases}
+    active={opening}
+    legend="Subject on the bench"
+  />
+
+  <ScoreToggle slot="control-selection" />
+
+  <TraceRollout slot="control-update" />
+</InstrumentStory>

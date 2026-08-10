@@ -1,109 +1,72 @@
 ---
-// Callout: a quiet bordered aside in the info color family (never a status
-// color). Each type carries a small inline SVG glyph, no emoji.
-
+/**
+ * The ported corpus's admonition. Thirty-two pages import it and nothing else
+ * on the site does: scripts/port_docs.py turns the library's `!!! note`,
+ * `!!! warning`, `!!! tip`, `!!! important` and `!!! danger` blocks into this,
+ * which is why it takes five types where design/components/callout.md takes
+ * three variants and a copy.yaml label.
+ *
+ * Rewritten, and two of the three reasons are site rules it was breaking:
+ *
+ *  - IT DREW A WARNING TRIANGLE, on twenty-seven blocks. callout.md is
+ *    explicit that there is no icon, ever: every callout system drifts toward
+ *    coloured boxes with icons and once there are four of them a reader stops
+ *    reading any of them. HANDOFF.md rule 4 makes the same point about
+ *    refusals, and a triangle beside library prose that is describing careful
+ *    measurement reads as an error either way.
+ *  - It coloured its edge with --accent and --info. Neither exists in this
+ *    palette: the palette has no brand accent and spends colour only on data
+ *    (D-30), and --accent is a compat-v1.css alias Q1 deletes.
+ *  - Its five types produced five treatments. They produce one: a leading rule
+ *    and a label, which is the register callout.astro already established.
+ *
+ * The label is the library's own admonition title. When a block has none, this
+ * renders none, rather than falling back to a word this site would have had to
+ * invent. That is why the `labels` table is gone.
+ */
 interface Props {
   type?: "note" | "info" | "warn" | "important" | "tip";
   title?: string;
 }
 const { type = "note", title } = Astro.props;
-const labels: Record<string, string> = {
-  note: "Note",
-  info: "Info",
-  warn: "Warning",
-  important: "Important",
-  tip: "Tip",
-};
-// note/info/tip share the info family; warn/important lean on the accent edge.
-const glyph: Record<string, "info" | "warn" | "tip"> = {
-  note: "info",
-  info: "info",
-  tip: "tip",
-  warn: "warn",
-  important: "warn",
-};
-const g = glyph[type];
+const label = title && title.trim() !== "" ? title : null;
 ---
 
-<aside class={`callout callout-${type}`}>
-  <span class="callout-icon" aria-hidden="true">
-    {
-      g === "info" && (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 11v5" />
-          <path d="M12 7.5v.01" />
-        </svg>
-      )
-    }
-    {
-      g === "warn" && (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3 2.5 20h19L12 3Z" />
-          <path d="M12 10v4" />
-          <path d="M12 17.5v.01" />
-        </svg>
-      )
-    }
-    {
-      g === "tip" && (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18h6" />
-          <path d="M10 21h4" />
-          <path d="M12 3a6 6 0 0 0-3.5 10.9c.5.4.8.9.9 1.5l.1.6h5l.1-.6c.1-.6.4-1.1.9-1.5A6 6 0 0 0 12 3Z" />
-        </svg>
-      )
-    }
-  </span>
-  <div class="callout-content">
-    {title !== "" && <p class="callout-title">{title ?? labels[type]}</p>}
-    <div class="callout-body"><slot /></div>
-  </div>
+<aside class:list={["adm", `adm--${type}`]}>
+  {label && <p class="adm__label type-mono-label">{label}</p>}
+  <div class="adm__body type-body-sm"><slot /></div>
 </aside>
 
 <style>
-  .callout {
+  .adm {
     display: flex;
-    gap: var(--sp-3);
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--info);
-    border-radius: var(--r-card);
-    background: var(--bg-raised);
-    padding: var(--sp-3) var(--sp-4);
-    margin: var(--sp-6) 0;
-    font-size: var(--text-sm);
+    flex-direction: column;
+    gap: var(--space-2);
+    /* No fill and no icon. The rule is the whole treatment, the same one
+       callout.astro uses, so a callout in ported prose and a callout in site
+       prose read as the same object. */
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-4);
+    margin-block: var(--space-5);
+    min-width: 0;
+    max-inline-size: min(var(--measure-prose), 100%);
   }
-  .callout-warn,
-  .callout-important {
-    border-left-color: var(--accent);
+  .adm__label {
+    color: var(--ink-2);
+    margin: 0;
   }
-  .callout-icon {
-    flex: none;
-    display: inline-flex;
-    margin-top: 1px;
-    color: var(--info);
-  }
-  .callout-warn .callout-icon,
-  .callout-important .callout-icon {
-    color: var(--accent);
-  }
-  .callout-content {
+  .adm__body {
+    color: var(--ink-2);
     min-width: 0;
   }
-  .callout-title {
-    margin: 0 0 var(--sp-1);
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: var(--text-sm);
-    color: var(--ink);
+  .adm__body :global(p:first-child) {
+    margin-block-start: 0;
   }
-  .callout-body {
-    color: var(--ink-2);
+  .adm__body :global(p:last-child) {
+    margin-block-end: 0;
   }
-  .callout-body :global(p:first-child) {
-    margin-top: 0;
-  }
-  .callout-body :global(p:last-child) {
-    margin-bottom: 0;
+  .adm__body :global(pre) {
+    overflow-x: auto;
+    max-inline-size: 100%;
   }
 </style>

@@ -1,0 +1,61 @@
+{
+  "_what_this_is": "Gate 5's allow-list. QA.md §1 names it data/number-allowlist.json; it lives beside its gate rather than in src/data/**, which packet P1 owns and which holds GENERATED data. This is hand-maintained configuration for a check, and a generator and the thing that configures it should not share an owner by accident. Recorded here rather than silently relocated.",
+
+  "_the_two_sections_are_not_the_same_kind_of_thing": "`patterns` and `exact` are permanent: they describe forms of numeral that are not claims about the world, and each carries the reason it is not. `routes` is a RATCHET: whole routes whose numbers no packet has bound yet, each with the packet that will bind them and the date it was recorded. It may shrink and must not grow, and Q1 cannot sign off while it is non-empty. Gate 5 prints entries that are no longer needed.",
+
+  "patterns": [
+    {
+      "pattern": "^(19|20|21|22|23|24|25|26)\\d{2}$",
+      "reason": "A four-digit year. A date is not a measurement, and every date on the site is either a commit date rendered from generated metadata or the year in a citation."
+    },
+    {
+      "pattern": "^[0-9]$",
+      "reason": "A bare single digit. These are almost entirely list markers, heading ordinals and 'one of three' prose. A single digit cannot be a measurement with an uncertainty, and requiring a provenance chip on the '3' in 'three gates' would make the interface unreadable, which is the failure mode D-20 warns about for provenance as decoration."
+    },
+    {
+      "pattern": "^1?[0-9]{1,2}(px|rem|em|%|ch|vw|vh)$",
+      "reason": "A CSS length that leaked into text. Not a claim about the world."
+    }
+  ],
+
+  "exact": [],
+
+  "routes": [
+    {
+      "route": "/docs/**",
+      "packet": "P5",
+      "recorded": "2026-08-08",
+      "reason": "The ported documentation corpus, 74 routes with unbound numerics. P5 repoints the port at the v3 corpus (D-04) and binds its numbers through provenance chips at that point. Every one of these is a real unbound number today."
+    },
+    {
+      "route": "/atlas/**",
+      "packet": "P6",
+      "recorded": "2026-08-08",
+      "reason": "Ten model pages whose measurements render as plain text. P6 rebuilds /atlas/ and binds them."
+    },
+    {
+      "route": "/evidence/**",
+      "packet": "P6",
+      "recorded": "2026-08-08",
+      "reason": "C-24: the record page is a JSON dump, so every field of every record renders as an unbound numeral. P6 builds the record view specified in components/evidence-record.md."
+    },
+    {
+      "route": "/log/**",
+      "packet": "P6",
+      "recorded": "2026-08-08",
+      "reason": "The campaign log. P6 builds /log/ and its 27 cards."
+    },
+    {
+      "route": "/",
+      "packet": "P3",
+      "recorded": "2026-08-08",
+      "reason": "The v1 homepage, replaced wholesale by P3's room composition. Its numbers are bound when it is rebuilt."
+    },
+    {
+      "route": "/gallery/",
+      "packet": "P2",
+      "recorded": "2026-08-08",
+      "reason": "Every number on the component gallery is a fixture, which is exactly why D-33 has this route deleted before launch and why gate 5 would otherwise fail on it. The gallery-absent build assertion removes this entry by removing the route."
+    }
+  ]
+}

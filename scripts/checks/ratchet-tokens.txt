@@ -1,0 +1,163 @@
+# Gate 15's ratchet: token drift in files no wave-1 packet has rewritten yet.
+#
+# One line per finding: owning packet | date recorded | source file | signature.
+# The signature is file, rule number and the offending declaration, without a
+# line number, so a violation that moves does not read as a new one.
+#
+# THIS LIST MAY SHRINK AND MUST NOT GROW. A finding that is not here fails the
+# build. Rewrite a file, delete its lines. Q1 cannot sign off while this file is
+# non-empty, the same condition D-29 puts on the accessibility ratchet.
+#
+# It is a ratchet and not an allow-list, and the difference is the whole point:
+# an allow-list is permanent by default and is how the previous site ended up
+# with a perfect score nobody was re-checking. A ratchet expires by
+# construction because the only permitted direction is down.
+#
+# Re-record after a packet lands:  node scripts/checks/drift.mjs --record
+
+P4 | 2026-08-08 | src/components/CliExcerpt.astro | src/components/CliExcerpt.astro | rule 4 | line-height: 1.45;
+P4 | 2026-08-08 | src/components/CodeBlock.astro | src/components/CodeBlock.astro | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/CodeBlock.astro | src/components/CodeBlock.astro | rule 4 | letter-spacing: 0.04em;
+P4 | 2026-08-08 | src/components/CodeBlock.astro | src/components/CodeBlock.astro | rule 4 | line-height: 1.55;
+P4 | 2026-08-08 | src/components/CodeBlock.astro | src/components/CodeBlock.astro | rule 5 | transition: border-color 150ms ease, color 150ms ease;
+P4 | 2026-08-08 | src/components/DataTable.astro | src/components/DataTable.astro | rule 4 | font-size: 15px;
+P4 | 2026-08-08 | src/components/DataTable.astro | src/components/DataTable.astro | rule 4 | letter-spacing: 0.02em;
+P4 | 2026-08-08 | src/components/DataTable.astro | src/components/DataTable.astro | rule 4 | line-height: 1.4;
+P4 | 2026-08-08 | src/components/DataTable.astro | src/components/DataTable.astro | rule 5 | transition: background-color 150ms ease;
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 2 | border-color: var(--line-strong);
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 4 | font-size: 0.85em;
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 4 | font-size: 0.95em;
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 4 | line-height: 1.2;
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 4 | line-height: 1.5;
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 5 | transition: border-color 150ms ease, background-color 150ms ease;
+P4 | 2026-08-08 | src/components/EvidenceChip.astro | src/components/EvidenceChip.astro | rule 5 | transition: border-color 150ms ease, color 150ms ease;
+P4 | 2026-08-08 | src/components/InstallStrip.astro | src/components/InstallStrip.astro | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/InstallStrip.astro | src/components/InstallStrip.astro | rule 5 | transition: border-color 150ms ease, color 150ms ease;
+P4 | 2026-08-08 | src/components/InstallStrip.astro | src/components/InstallStrip.astro | rule 5 | transition: color 150ms ease, border-color 150ms ease;
+P4 | 2026-08-08 | src/components/KillBadge.astro | src/components/KillBadge.astro | rule 3 | color: color-mix(in oklab, var(--bad-ink) 80%, var(--ink-3));
+P4 | 2026-08-08 | src/components/KillBadge.astro | src/components/KillBadge.astro | rule 4 | font-size: 0.85em;
+P4 | 2026-08-08 | src/components/KillBadge.astro | src/components/KillBadge.astro | rule 4 | letter-spacing: 0.01em;
+P4 | 2026-08-08 | src/components/KillBadge.astro | src/components/KillBadge.astro | rule 4 | letter-spacing: 0.06em;
+P4 | 2026-08-08 | src/components/KillBadge.astro | src/components/KillBadge.astro | rule 4 | line-height: 1.2;
+P4 | 2026-08-08 | src/components/LogEntry.astro | src/components/LogEntry.astro | rule 6 | @media (max-width: 520px) {
+P4 | 2026-08-08 | src/components/PageHeader.astro | src/components/PageHeader.astro | rule 4 | font-size: clamp(2.5rem, 5vw, 3.4rem);
+P4 | 2026-08-08 | src/components/PageHeader.astro | src/components/PageHeader.astro | rule 4 | letter-spacing: -0.01em;
+P4 | 2026-08-08 | src/components/PageHeader.astro | src/components/PageHeader.astro | rule 4 | letter-spacing: 0.1em;
+P4 | 2026-08-08 | src/components/PageHeader.astro | src/components/PageHeader.astro | rule 4 | line-height: 1.1;
+P4 | 2026-08-08 | src/components/PageHeader.astro | src/components/PageHeader.astro | rule 4 | line-height: 1.2;
+P4 | 2026-08-08 | src/components/PageHeader.astro | src/components/PageHeader.astro | rule 4 | line-height: 1.5;
+P4 | 2026-08-08 | src/components/PrevNext.astro | src/components/PrevNext.astro | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/PrevNext.astro | src/components/PrevNext.astro | rule 4 | letter-spacing: 0.04em;
+P4 | 2026-08-08 | src/components/PrevNext.astro | src/components/PrevNext.astro | rule 5 | transition: border-color 150ms ease;
+P4 | 2026-08-08 | src/components/PrevNext.astro | src/components/PrevNext.astro | rule 6 | @media (max-width: 600px) {
+P4 | 2026-08-08 | src/components/Prose.astro | src/components/Prose.astro | rule 4 | font-size: 0.85em;
+P4 | 2026-08-08 | src/components/Prose.astro | src/components/Prose.astro | rule 4 | line-height: 1.25;
+P4 | 2026-08-08 | src/components/Prose.astro | src/components/Prose.astro | rule 4 | line-height: 1.7;
+P4 | 2026-08-08 | src/components/SectionNav.astro | src/components/SectionNav.astro | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/SectionNav.astro | src/components/SectionNav.astro | rule 6 | @media (max-width: 899.98px) {
+P4 | 2026-08-08 | src/components/SectionNavTree.astro | src/components/SectionNavTree.astro | rule 4 | font-size: 0.85em;
+P4 | 2026-08-08 | src/components/SectionNavTree.astro | src/components/SectionNavTree.astro | rule 4 | letter-spacing: 0.04em;
+P4 | 2026-08-08 | src/components/SectionNavTree.astro | src/components/SectionNavTree.astro | rule 4 | line-height: 1.4;
+P4 | 2026-08-08 | src/components/SectionNavTree.astro | src/components/SectionNavTree.astro | rule 5 | transition: color 150ms ease, border-color 150ms ease;
+P4 | 2026-08-08 | src/components/SiteFooter.astro | src/components/SiteFooter.astro | rule 6 | @media (max-width: 760px) {
+P4 | 2026-08-08 | src/components/SiteHeader.astro | src/components/SiteHeader.astro | rule 2 | border-bottom: 1px solid var(--line);
+P4 | 2026-08-08 | src/components/SiteHeader.astro | src/components/SiteHeader.astro | rule 2 | border: 1px solid var(--line);
+P4 | 2026-08-08 | src/components/SiteHeader.astro | src/components/SiteHeader.astro | rule 6 | @media (max-width: 760px) {
+P4 | 2026-08-08 | src/components/StatRow.astro | src/components/StatRow.astro | rule 4 | letter-spacing: 0.01em;
+P4 | 2026-08-08 | src/components/StatRow.astro | src/components/StatRow.astro | rule 4 | line-height: 1.2;
+P4 | 2026-08-08 | src/components/TerminalExcerpt.astro | src/components/TerminalExcerpt.astro | rule 4 | letter-spacing: 0.02em;
+P4 | 2026-08-08 | src/components/TerminalExcerpt.astro | src/components/TerminalExcerpt.astro | rule 4 | line-height: 1.55;
+P4 | 2026-08-08 | src/components/ThemeToggle.astro | src/components/ThemeToggle.astro | rule 2 | border-color: var(--line-strong);
+P4 | 2026-08-08 | src/components/ThemeToggle.astro | src/components/ThemeToggle.astro | rule 2 | border: 1px solid var(--line);
+P4 | 2026-08-08 | src/components/ThemeToggle.astro | src/components/ThemeToggle.astro | rule 6 | @media (max-width: 760px) {
+P4 | 2026-08-08 | src/components/TrustBadge.astro | src/components/TrustBadge.astro | rule 4 | line-height: 1;
+P4 | 2026-08-08 | src/components/VerdictChip.astro | src/components/VerdictChip.astro | rule 4 | font-size: 0.95em;
+P4 | 2026-08-08 | src/components/VerdictChip.astro | src/components/VerdictChip.astro | rule 4 | line-height: 1.2;
+P4 | 2026-08-08 | src/components/VerdictChip.astro | src/components/VerdictChip.astro | rule 4 | line-height: 1;
+P4 | 2026-08-08 | src/components/islands/AuditWalkthrough.css | src/components/islands/AuditWalkthrough.css | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/islands/AuditWalkthrough.css | src/components/islands/AuditWalkthrough.css | rule 2 | border: 1px solid var(--line-strong);
+P4 | 2026-08-08 | src/components/islands/AuditWalkthrough.css | src/components/islands/AuditWalkthrough.css | rule 4 | letter-spacing: 0.06em;
+P4 | 2026-08-08 | src/components/islands/AuditWalkthrough.css | src/components/islands/AuditWalkthrough.css | rule 4 | line-height: 1.5;
+P4 | 2026-08-08 | src/components/islands/AuditWalkthrough.css | src/components/islands/AuditWalkthrough.css | rule 4 | line-height: 1.65;
+P4 | 2026-08-08 | src/components/islands/AuditWalkthrough.css | src/components/islands/AuditWalkthrough.css | rule 6 | @media (max-width: 800px) {
+P4 | 2026-08-08 | src/components/islands/HypothesisBoard.css | src/components/islands/HypothesisBoard.css | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/islands/HypothesisBoard.css | src/components/islands/HypothesisBoard.css | rule 2 | border: 1px solid var(--line);
+P4 | 2026-08-08 | src/components/islands/HypothesisBoard.css | src/components/islands/HypothesisBoard.css | rule 4 | font-size: 15px;
+P4 | 2026-08-08 | src/components/islands/HypothesisBoard.css | src/components/islands/HypothesisBoard.css | rule 4 | letter-spacing: 0.05em;
+P4 | 2026-08-08 | src/components/islands/HypothesisBoard.css | src/components/islands/HypothesisBoard.css | rule 4 | line-height: 1.4;
+P4 | 2026-08-08 | src/components/islands/HypothesisBoard.css | src/components/islands/HypothesisBoard.css | rule 6 | @media (max-width: 760px) {
+P4 | 2026-08-08 | src/components/islands/LedgerStrip.css | src/components/islands/LedgerStrip.css | rule 5 | animation: ledger-draw 220ms ease-out backwards;
+P4 | 2026-08-08 | src/components/islands/LedgerStrip.css | src/components/islands/LedgerStrip.css | rule 5 | transition: opacity 150ms ease, transform 150ms ease;
+P4 | 2026-08-08 | src/components/islands/LedgerStrip.css | src/components/islands/LedgerStrip.css | rule 6 | @media (max-width: 480px) {
+P4 | 2026-08-08 | src/components/islands/TokenStrip.css | src/components/islands/TokenStrip.css | rule 1 | color: var(--ink-3);
+P4 | 2026-08-08 | src/components/islands/TokenStrip.css | src/components/islands/TokenStrip.css | rule 4 | letter-spacing: 0.06em;
+P4 | 2026-08-08 | src/components/islands/TokenStrip.css | src/components/islands/TokenStrip.css | rule 4 | line-height: 1.9;
+unassigned | 2026-08-08 | src/layouts/Docs.astro | src/layouts/Docs.astro | rule 6 | @media (max-width: 900px) {
+unassigned | 2026-08-08 | src/pages/404.astro | src/pages/404.astro | rule 4 | font-size: clamp(2rem, 5vw, 3rem);
+P6 | 2026-08-08 | src/pages/about.astro | src/pages/about.astro | rule 4 | line-height: 1.75;
+P6 | 2026-08-08 | src/pages/atlas/index.astro | src/pages/atlas/index.astro | rule 4 | line-height: 1.7;
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 1 | color: var(--ink-3);
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 3 | background: color-mix(in oklab, var(--bad) 6%, var(--bg-raised));
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 4 | font-size: clamp(1.9rem, 4vw, 2.6rem);
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 4 | letter-spacing: 0.04em;
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 4 | line-height: 1.15;
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 4 | line-height: 1.6;
+P6 | 2026-08-08 | src/pages/campaign/[card].astro | src/pages/campaign/[card].astro | rule 6 | @media (max-width: 600px) {
+P6 | 2026-08-08 | src/pages/campaign/index.astro | src/pages/campaign/index.astro | rule 4 | line-height: 1.7;
+P6 | 2026-08-08 | src/pages/campaign/method.astro | src/pages/campaign/method.astro | rule 4 | line-height: 1.5;
+P6 | 2026-08-08 | src/pages/campaign/method.astro | src/pages/campaign/method.astro | rule 4 | line-height: 1.7;
+P5 | 2026-08-08 | src/pages/docs/index.astro | src/pages/docs/index.astro | rule 4 | line-height: 1.6;
+P5 | 2026-08-08 | src/pages/docs/index.astro | src/pages/docs/index.astro | rule 4 | line-height: 1.7;
+P5 | 2026-08-08 | src/pages/docs/index.astro | src/pages/docs/index.astro | rule 5 | transition: border-color 150ms ease;
+P5 | 2026-08-08 | src/pages/docs/reference/[group].astro | src/pages/docs/reference/[group].astro | rule 1 | color: var(--ink-3);
+P5 | 2026-08-08 | src/pages/docs/reference/[group].astro | src/pages/docs/reference/[group].astro | rule 4 | font-size: 0.85em;
+P5 | 2026-08-08 | src/pages/docs/reference/[group].astro | src/pages/docs/reference/[group].astro | rule 4 | letter-spacing: 0.04em;
+P5 | 2026-08-08 | src/pages/docs/reference/[group].astro | src/pages/docs/reference/[group].astro | rule 4 | letter-spacing: 0.06em;
+P5 | 2026-08-08 | src/pages/docs/reference/[group].astro | src/pages/docs/reference/[group].astro | rule 4 | line-height: 1.6;
+P5 | 2026-08-08 | src/pages/docs/reference/[group].astro | src/pages/docs/reference/[group].astro | rule 5 | transition: opacity 120ms ease;
+P5 | 2026-08-08 | src/pages/docs/reference/index.astro | src/pages/docs/reference/index.astro | rule 1 | color: var(--ink-3);
+P5 | 2026-08-08 | src/pages/docs/reference/index.astro | src/pages/docs/reference/index.astro | rule 4 | font-size: 0.85em;
+P5 | 2026-08-08 | src/pages/docs/reference/index.astro | src/pages/docs/reference/index.astro | rule 4 | letter-spacing: 0.06em;
+P5 | 2026-08-08 | src/pages/docs/reference/index.astro | src/pages/docs/reference/index.astro | rule 4 | line-height: 1.5;
+P5 | 2026-08-08 | src/pages/docs/reference/index.astro | src/pages/docs/reference/index.astro | rule 5 | transition: border-color 150ms ease;
+P6 | 2026-08-08 | src/pages/evidence/[id].astro | src/pages/evidence/[id].astro | rule 4 | line-height: 1.5;
+P6 | 2026-08-08 | src/pages/evidence/index.astro | src/pages/evidence/index.astro | rule 4 | line-height: 1.7;
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 1 | border-color: var(--ink-3);
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 1 | color: var(--ink-3);
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 2 | border: 1px solid var(--line-strong);
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 4 | font-size: clamp(2.5rem, 3.5vw, 2.5rem);
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 4 | font-size: clamp(2.6rem, 6vw, 4rem);
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 4 | letter-spacing: -0.01em;
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 4 | line-height: 1.08;
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 4 | line-height: 1.6;
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 4 | line-height: 1.7;
+P3 | 2026-08-08 | src/pages/index.astro | src/pages/index.astro | rule 6 | @media (max-width: 900px) {
+P6 | 2026-08-08 | src/pages/science/index.astro | src/pages/science/index.astro | rule 4 | line-height: 1.6;
+P6 | 2026-08-08 | src/pages/science/index.astro | src/pages/science/index.astro | rule 4 | line-height: 1.7;
+P6 | 2026-08-08 | src/pages/science/index.astro | src/pages/science/index.astro | rule 4 | line-height: 1.8;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-accent: #e85d2c;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-accent: #fb8c5a;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-gauge: #0891b2;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-gauge: #22d3ee;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-tier-causal: #b45309;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-tier-causal: #f59e0b;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-tier-observational: #0d9488;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-tier-observational: #2dd4bf;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-tier-vulnerability: #be123c;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-tier-vulnerability: #fb7185;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-adjudicated: #15803d;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-adjudicated: #22c55e;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-calibrated: #3b82f6;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-calibrated: #60a5fa;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-exploratory: #64748b;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-exploratory: #94a3b8;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-registered: #7c3aed;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | --rl-trust-registered: #a78bfa;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 3 | color: #fff;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 4 | font-size: 0.66rem;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 4 | font-size: 0.7rem;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 4 | letter-spacing: 0.03em;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 4 | letter-spacing: 0.04em;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 4 | letter-spacing: 0;
+Q1 | 2026-08-08 | src/styles/docs-legacy.css | src/styles/docs-legacy.css | rule 4 | line-height: 1.55;

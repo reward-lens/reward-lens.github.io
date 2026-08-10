@@ -1,0 +1,19 @@
+{
+ "contentHash": "5d295ff1c06a99fca07e947f47b7c3b8",
+ "humanSource": "The frozen study \"Bias battery predicts RM-Bench Hard ranking\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:14bc4c666b5b115cf1fd2c86cf209f01",
+  "campaign.adjudication.STYLE-RMB",
+  "study:campaign-style-rmb@v1#59c45767",
+  "spec:59c457674b4b4f6fc20df702d3e34785"
+ ],
+ "label": "Bias battery predicts RM-Bench Hard ranking",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on fleet, over rmbench-full and diagnostic-v3.",
+ "slug": "study-style-rmb",
+ "sourceUrl": "/evidence/14bc4c666b5b115cf1fd2c86cf209f01/",
+ "statement": "The frozen study \"Bias battery predicts RM-Bench Hard ranking\" was adjudicated inconclusive, over 3 registered predictions of which 3 returned no value.",
+ "status": "unrun",
+ "subject": "fleet, over rmbench-full and diagnostic-v3",
+ "type": "interpretation"
+}

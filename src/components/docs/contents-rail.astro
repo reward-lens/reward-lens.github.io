@@ -1,0 +1,249 @@
+---
+/**
+ * contents-rail  ·  design/components/contents-rail.md
+ *
+ * The shape of a long page, and a way into the middle of it, without taking a
+ * column away from the prose when there is not room for one.
+ *
+ * Built from nothing (C-26): getHeadings() was never called anywhere in this
+ * repository and no rehype plugin was configured for slugs. The heading ids it
+ * needs already exist, from Astro's default markdown pipeline through
+ * github-slugger, and nothing consumed them. So no plugin is added and none is
+ * needed.
+ *
+ * Three rules that are not negotiable:
+ *
+ *  - It becomes a row. Below --bp-xl the margin column stops fitting and the
+ *    rail becomes a wrapped metadata row above the content, left-aligned, in
+ *    the same type. Not hidden, not behind a disclosure, not moved to the
+ *    bottom. This is the exact place a build reaches for display:none.
+ *  - Two heading levels, h2 and h3. A rail mirroring five levels is a second
+ *    navigation and the reader already has one on the left.
+ *  - Below `minimum` entries it renders nothing at all, not an empty label. A
+ *    rail listing two items is longer than the thing it indexes.
+ *
+ * No scroll spy at launch, deliberately. Highlighting the current section
+ * needs an IntersectionObserver, a threshold that behaves at every heading
+ * density, and a ruling on what "current" means with three headings on screen.
+ * It is a real improvement and it is not what makes the rail useful. Stated
+ * here so nobody builds it by reflex and nobody thinks it was forgotten.
+ */
+import { ui } from "../../copy";
+
+import type { Heading, SymbolEntry } from "./types";
+
+interface Props {
+  /** From Astro's getHeadings(), unfiltered. */
+  headings?: Heading[];
+  /** form="symbols": the reference pages' own list. */
+  symbols?: SymbolEntry[];
+  label?: string;
+  form?: "headings" | "symbols";
+  /** Below this many entries the component renders nothing at all. */
+  minimum?: number;
+  class?: string;
+}
+
+const {
+  headings = [],
+  symbols = [],
+  label = ui.on_this_page,
+  form = "headings",
+  minimum = 3,
+  class: extraClass = "",
+} = Astro.props;
+
+type Entry = { id: string; text: string; kind?: string; children: Entry[] };
+
+let entries: Entry[] = [];
+
+if (form === "symbols") {
+  entries = symbols.map((s) => ({
+    id: s.path,
+    text: s.name,
+    kind: s.kind,
+    children: [],
+  }));
+} else {
+  // Two levels. An h3 is a nested list inside its h2's <li>, so the nesting is
+  // real rather than an indent, and an indent is not structure. An h3 before
+  // any h2 becomes a top-level entry rather than being dropped.
+  for (const h of headings) {
+    if (h.depth !== 2 && h.depth !== 3) continue;
+    const node: Entry = { id: h.slug, text: h.text, children: [] };
+    if (h.depth === 3 && entries.length > 0) entries[entries.length - 1].children.push(node);
+    else entries.push(node);
+  }
+}
+
+const count = entries.reduce((n, e) => n + 1 + e.children.length, 0);
+const render = count >= minimum;
+---
+
+{
+  render && (
+    <nav class:list={["rail", extraClass]} aria-label={label}>
+      {/* A <p>, not a heading. A heading inside a navigation landmark that
+          indexes headings is a loop. */}
+      <p class="rail__label type-mono-label">{label}</p>
+      <ul class="rail__list">
+        {entries.map((e) => (
+          <li class="rail__item">
+            <a class="rail__link type-body-sm" href={`#${e.id}`}>
+              <span class="rail__text">{e.text}</span>
+              {e.kind && <span class="rail__kind type-mono-sm">{e.kind}</span>}
+            </a>
+            {e.children.length > 0 && (
+              <ul class="rail__list rail__list--nested">
+                {e.children.map((c) => (
+                  <li class="rail__item">
+                    <a class="rail__link type-body-sm" href={`#${c.id}`}>
+                      <span class="rail__text">{c.text}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  // The accessibility defect nearly every table of contents on the web has: a
+  // fragment link scrolls without moving focus, so the next Tab lands back at
+  // the top of the page. The fix is tabindex="-1" on the target, set at click
+  // time rather than baked into every heading, then focus() after the browser
+  // has done its own jump.
+  //
+  // With scripting off the links still work: they are fragment links and the
+  // scroll is the browser's. Only the focus move is lost.
+  document.querySelectorAll<HTMLAnchorElement>(".rail__link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const id = decodeURIComponent(link.hash.slice(1));
+      const target = document.getElementById(id);
+      if (!target) return;
+      target.setAttribute("tabindex", "-1");
+      requestAnimationFrame(() => target.focus({ preventScroll: true }));
+    });
+  });
+</script>
+
+<style>
+  /* --- the wide form: marginalia, not a panel --------------------------
+     No box, no fill, no border. A hairline leading rule and a list. The prose
+     is the page; marginalia that draws a box around itself competes with the
+     thing it annotates. */
+  .rail {
+    min-width: 0;
+    max-inline-size: min(var(--grid-margin-col), 100%);
+    position: sticky;
+    top: var(--space-7);
+    max-block-size: calc(100dvh - var(--space-9));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-inline-start: var(--border-w) solid var(--line);
+    padding-inline-start: var(--space-4);
+  }
+  .rail__label {
+    /* --ink-3 is permitted: this component paints no surface and sits on
+       --ground, where it is 5.25:1. */
+    color: var(--ink-3);
+    margin: 0 0 var(--space-3);
+  }
+  .rail__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .rail__list--nested {
+    padding-inline-start: var(--space-4);
+  }
+  .rail__link {
+    display: block;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding-block: var(--space-1);
+    min-width: 0;
+    overflow-wrap: anywhere;
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .rail__link:hover {
+    color: var(--ink);
+    text-decoration-line: underline;
+  }
+  .rail__link:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .rail__kind {
+    color: var(--ink-3);
+    margin-inline-start: var(--space-2);
+  }
+
+  /* --- the narrow form: a wrapped row, never a disappearance -------------
+     From --bp-xl down the third column stops fitting and this becomes a row
+     above the prose. Trap 10 in the register exists because this is the exact
+     place a build reaches for display:none. */
+  @media (max-width: 74.9375rem) /* --bp-xl minus one pixel */ {
+    .rail {
+      position: static;
+      max-inline-size: 100%;
+      max-block-size: none;
+      overflow-y: visible;
+      border-inline-start: 0;
+      padding-inline-start: 0;
+      border-block-end: var(--border-w) solid var(--line);
+      padding-block-end: var(--space-4);
+      margin-block-end: var(--space-6);
+    }
+    .rail__list {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: var(--space-3);
+    }
+    /* The h3s flatten into the same row. Two levels of wrap on one line reads
+       as noise, and the row's job is the shape of the page rather than its
+       outline. */
+    .rail__list--nested {
+      display: contents;
+    }
+    .rail__item {
+      display: flex;
+      align-items: baseline;
+      min-width: 0;
+    }
+    /* Middots between items, aria-hidden by construction: they are generated
+       content, so a screen reader never reaches them, and the list already
+       separates its items. */
+    .rail__item + .rail__item::before {
+      content: "·";
+      color: var(--ink-3);
+      margin-inline-end: var(--space-3);
+    }
+    .rail__link {
+      padding-block: var(--space-1);
+    }
+  }
+
+  /* A jumped-to heading must not land under the sticky header. */
+  :global(.docs-prose :is(h2, h3)) {
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+  }
+
+  /* A printed page has its own headings on it. */
+  @media print {
+    .rail {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rail__link {
+      transition: none;
+    }
+  }
+</style>

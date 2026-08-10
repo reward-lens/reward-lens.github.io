@@ -1,0 +1,1742 @@
+{
+ "meta": {
+  "subjectCount": 4,
+  "fieldsPerCard": 13,
+  "fieldOrder": [
+   "coverage",
+   "surviving mutants",
+   "metamorphic violations",
+   "sensitivity profile",
+   "false-positive catalogue",
+   "silent-zero rate",
+   "flakiness spread",
+   "exploit-family accounting",
+   "variance components",
+   "effective group size",
+   "curl mass",
+   "Afriat index",
+   "abstention channel"
+  ],
+  "accessStates": [
+   "full",
+   "log_only"
+  ],
+  "fullAccess": {
+   "fields": 52,
+   "read": 22,
+   "refused": 30,
+   "byReason": {
+    "ABOVE_LOD_BELOW_LOQ": 1,
+    "RECORD_INCOMPLETE": 21,
+    "SUBSTRATE_MISMATCH": 8
+   }
+  },
+  "logOnlyAccess": {
+   "fields": 52,
+   "read": 2,
+   "refused": 50,
+   "byReason": {
+    "ABOVE_LOD_BELOW_LOQ": 1,
+    "ACCESS_INSUFFICIENT": 32,
+    "RECORD_INCOMPLETE": 13,
+    "SUBSTRATE_MISMATCH": 4
+   }
+  },
+  "derivedFrom": [
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/is_equiv.txt",
+    "sha256": "2e1528ae75dcb970b3908403ac10af33e901f314054d2bd77cf6af13d6f46d03"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/is_equiv-log-only.txt",
+    "sha256": "5d011dc1d8ea594c385aa6289da12c0f08acffbd80fe1099aa624d645cb57d27"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/refusals/is_equiv.json",
+    "sha256": "43f6ae14c9035693279ff2980637283163587bb0163297e4d1717bf1983b0aff"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/swebench.txt",
+    "sha256": "65578564feda3b21728c5b47aa06200cd88a93141370f69fe48b256a5ec8b45c"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/swebench-log-only.txt",
+    "sha256": "40aa597648a037420b3fb5d9c9c9ae5e4194115111fa2d3091084d650ca19286"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/refusals/swebench.json",
+    "sha256": "6c2dbdd77dd94488c3ec3893777ac2d4692d3d1515f55e297434902600d17f99"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/verl_gsm8k.txt",
+    "sha256": "59f8412315eb15e114d735b108cda1d95b54f48219ff5ddec3f154df9d64c98b"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/verl_gsm8k-log-only.txt",
+    "sha256": "00fe6dbbe54c01ea04af41b8192e675164feed7c0ffe07cc7aec5755c3ddae87"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/refusals/verl_gsm8k.json",
+    "sha256": "5aa75cfaa5094668cc6838e951ec58e0ea3afc589140a945bb1dbad6e5caf9a7"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/verl_search_r1.txt",
+    "sha256": "5930e0bbe63a2498d329e114d096862c14065fdafb9e52a2749f9e47b818376d"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/cards/verl_search_r1-log-only.txt",
+    "sha256": "bf3b4d5810e727a7fcabab93e0e46ed6c3b587390a3b5469b2372a7c5024e72f"
+   },
+   {
+    "document": "reward-lens--github/reward-lens-assay/experiments/x1_release/refusals/verl_search_r1.json",
+    "sha256": "34eef2907991c41d7fff4b3c28e33b65a5988bdac084a15908a68ead0a860c46"
+   }
+  ]
+ },
+ "cards": [
+  {
+   "key": "is_equiv",
+   "displayName": "hendrycks/math is_equiv",
+   "subject": {
+    "name": "hendrycks/math is_equiv",
+    "kind": "grader",
+    "source": "https://raw.githubusercontent.com/hendrycks/math/main/modeling/math_equivalence.py (sha256 c4101b1f51a2bb65)",
+    "entrypoint": "is_equiv",
+    "corpus": "MATH-500 gold answers, 240 rollouts",
+    "notes": [
+     "The facet is which way round the two strings are passed. `is_equiv(str1, str2)` normalises both arguments and compares them, so nothing in its shape guarantees the verdict is symmetric; a marker's is. On these 240 pairs it turned out to be, which is why the variance-components field reports no facet variance and not why it was asked."
+    ]
+   },
+   "fingerprint": "verifier:95be1ad8dbf1474a1a7d56058e5f2b25",
+   "substrate": "PROGRAM",
+   "phase": "PRE_RUN",
+   "trust": "exploratory",
+   "lowestReadingTrust": "exploratory",
+   "evidenceId": "ev:4e215d64e0ab5030a4270e1e3376f8b1",
+   "graderCalls": 2400,
+   "mutationScore": 0.0,
+   "competentMutants": 60,
+   "survivedMutants": 60,
+   "killedMutants": 0,
+   "bareHandlerCount": 3,
+   "bareHandlers": [
+    {
+     "line": 43,
+     "function": "_fix_a_slash_b",
+     "returns": [
+      "string"
+     ]
+    },
+    {
+     "line": 151,
+     "function": "is_equiv",
+     "returns": [
+      "str1 == str2"
+     ]
+    },
+    {
+     "line": 13,
+     "function": "_fix_fracs",
+     "returns": [
+      "string"
+     ]
+    }
+   ],
+   "sourceLines": 152,
+   "bareHandlerEvidenceId": "ev:1eb7ebea233ef5322981093ba3549eff",
+   "metamorphicViolations": 259,
+   "metamorphicApplicablePairs": 378,
+   "metamorphicViolationRate": 0.6851851851851852,
+   "sensitiveFields": [
+    "surviving mutants"
+   ],
+   "access": {
+    "full": {
+     "readCount": 5,
+     "refusedCount": 8,
+     "summarySentence": "The lowest trust among them is exploratory.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Across 240 rollouts is_equiv has never taken 32% of its branches (12 of 38). Those are behaviours it cannot distinguish.",
+       "trust": "exploratory",
+       "supporting": [
+        "never fired: _fix_fracs.clause4, _fix_fracs.clause5, _remove_right_units.clause1, _strip_string.clause1, _strip_string.clause5, is_equiv.clause1, is_equiv.clause2, is_equiv.clause3",
+        "a random sample of the same size reaches 0.653 against the corpus's 0.684"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Of 60 mutants of is_equiv, 60 survive: 60 ways it could be wrong that no rollout in your corpus would reveal.",
+       "trust": "exploratory",
+       "supporting": [
+        "mutation score 0.000 over 60 competent",
+        "reproducers withheld. this payload enumerates concrete ways to make the grader wrong. It is written to the store with a sensitive flag, excluded from rendered artifacts unless explicitly requested, and not published without a recorded decision."
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "metamorphic violations on grade",
+       "trust": "exploratory",
+       "supporting": [
+        "259 violations over 378 applicable rollout-relation pairs (68.52%)",
+        "corpus 240 rollouts, 120 accepted at score > 0",
+        "baseline (identity transformation): 0 violations",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no rubric scorer over named numeric inputs and no declared input ranges",
+       "remedy": "expose the grader as a scorer over named numeric inputs and declare their ranges: `CardInputs(scorer=fn, rubric_inputs=[RubricInput('helpfulness', 0.0, 1.0), ...])`. A Sobol decomposition apportions output variance across an input space, so a grader with no numeric input space has no sensitivity profile rather than a flat one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.sobol_ST",
+       "quantity": "verifier.sobol_ST"
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no stricter reference oracle and no seed rollouts to search around",
+       "remedy": "supply a callable grader, a stricter reference that decides the same question, and seed rollouts to search around: `CardInputs(grader=fn, reference=StrictReference('exact', decide, basis='...'), fp_seeds=[...])`. A false positive is a disagreement with a stricter oracle, so without one there is no quantity here, only a distribution of scores.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.false_positive_rate",
+       "quantity": "verifier.false_positive_rate"
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "SilentZeroRate",
+       "quantity": "grader.silent_zero_rate"
+      },
+      {
+       "name": "flakiness spread",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "The same policy on the same task scored 50.0% on every one of 3 identical runs across 240 task(s). This environment is deterministic here, so a measured delta is not competing with its spread.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "refused",
+       "reason": "ABOVE_LOD_BELOW_LOQ",
+       "detail": "f2 = 0: no family in this log of 259 finds appears exactly twice, so f1**2/(2*f2) is undefined. f1 = 1 over 4 families found.",
+       "remedy": "collect about 259 more finds under the same search and re-run. The doubleton class is what Chao1 divides by, and an equiprobable-family model says a log this length should populate it after roughly that much more searching. The bias-corrected bound f1*(f1-1)/2 = 0.0 unseen families is attached and is a floor, not an estimate. Good-Turing's novelty probability f1/n = 0.004 needs no doubletons and is available now at rung 0.",
+       "bound": 0.0,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "ExploitFamilyCoverage",
+       "quantity": "verifier.unseen_exploit_mass"
+      },
+      {
+       "name": "variance components",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "0% of your score variance is which argument order you drew. %GRR = 0%, ndc = 2147483647. Every distinct value of the thing being scored is resolvable. This design has one observation per cell, so it carries no replication to estimate repeatability from and a measured zero here is the weakest possible evidence for it. Vary a facet and score again, or read the flakiness spread.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "EffectiveGroupSize",
+       "quantity": "grader.effective_group_size"
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "CurlMass",
+       "quantity": "grader.curl_mass"
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AfriatIndex",
+       "quantity": "grader.afriat_index"
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AbstentionRate",
+       "quantity": "grader.abstention_rate"
+      }
+     ]
+    },
+    "log_only": {
+     "readCount": 0,
+     "refusedCount": 13,
+     "summarySentence": "Nothing read, so this card is a list of what it would take.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GOLD: QUERY, GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply gold at QUERY; grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "flakiness spread",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs TASK: QUERY|REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply task at QUERY; task at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "refused",
+       "reason": "ABOVE_LOD_BELOW_LOQ",
+       "detail": "f2 = 0: no family in this log of 259 finds appears exactly twice, so f1**2/(2*f2) is undefined. f1 = 1 over 4 families found.",
+       "remedy": "collect about 259 more finds under the same search and re-run. The doubleton class is what Chao1 divides by, and an equiprobable-family model says a log this length should populate it after roughly that much more searching. The bias-corrected bound f1*(f1-1)/2 = 0.0 unseen families is attached and is a floor, not an estimate. Good-Turing's novelty probability f1/n = 0.004 needs no doubletons and is available now at rung 0.",
+       "bound": 0.0,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "variance components",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "key": "swebench",
+   "displayName": "SWE-bench grading.py",
+   "subject": {
+    "name": "SWE-bench grading.py get_eval_tests_report",
+    "kind": "grader",
+    "source": "swebench/harness/grading.py (swebench 4.1.0, sha256 88fc500ebaf692a5)",
+    "entrypoint": "get_eval_tests_report",
+    "corpus": "SWE-bench Lite gold test lists, 240 rollouts",
+    "notes": [
+     "No metamorphic relation is supplied. Both shipped relation sets rewrite a string input, and this grader has none: it takes two mappings. D3 falls back to the source-reading set, every relation of which is inapplicable here, and the card says so rather than reporting a violation rate of zero.",
+     "The gold test lists are truncated to 12 fail-to-pass and 24 pass-to-pass entries per instance so that one mutation run is minutes rather than hours. Truncation cannot change a resolution status, which is a conjunction over the lists."
+    ]
+   },
+   "fingerprint": "verifier:ca48315096e82c960386d4784708a672",
+   "substrate": "PROGRAM",
+   "phase": "PRE_RUN",
+   "trust": "exploratory",
+   "lowestReadingTrust": "exploratory",
+   "evidenceId": "ev:c04b68e797fa61ee19506ffe7bc67af6",
+   "graderCalls": 2400,
+   "mutationScore": 0.033,
+   "competentMutants": 60,
+   "survivedMutants": 58,
+   "killedMutants": 2,
+   "bareHandlerCount": 0,
+   "bareHandlers": [],
+   "sourceLines": 295,
+   "bareHandlerEvidenceId": "ev:f42c2fa6f5fc69b88426737e0b9e1cfa",
+   "metamorphicViolations": 0,
+   "metamorphicApplicablePairs": 0,
+   "metamorphicViolationRate": null,
+   "sensitiveFields": [
+    "surviving mutants"
+   ],
+   "access": {
+    "full": {
+     "readCount": 5,
+     "refusedCount": 8,
+     "summarySentence": "The lowest trust among them is exploratory.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Across 240 rollouts get_eval_tests_report has never taken 82% of its branches (33 of 40). Those are behaviours it cannot distinguish.",
+       "trust": "exploratory",
+       "supporting": [
+        "never fired: get_logs_eval.clause1, get_logs_eval.clause2, get_logs_eval.clause3, get_logs_eval.clause4, get_eval_tests_report.clause1, compute_fail_to_pass.clause1, compute_pass_to_pass.clause1, get_resolution_status.clause1, get_resolution_status.clause2, get_eval_report.clause1, get_eval_report.clause2, get_eval_report.clause3, get_eval_report.clause4",
+        "a random sample of the same size reaches 0.175 against the corpus's 0.175"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Of 60 mutants of get_eval_tests_report, 58 survive: 58 ways it could be wrong that no rollout in your corpus would reveal.",
+       "trust": "exploratory",
+       "supporting": [
+        "mutation score 0.033 over 60 competent",
+        "reproducers withheld. this payload enumerates concrete ways to make the grader wrong. It is written to the store with a sensitive flag, excluded from rendered artifacts unless explicitly requested, and not published without a recorded decision."
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "metamorphic violations on grade",
+       "trust": "exploratory",
+       "supporting": [
+        "0 violations over 0 applicable rollout-relation pairs (nan%)",
+        "corpus 240 rollouts, 60 accepted at score > 0",
+        "baseline (identity transformation): 0 violations",
+        "(+5 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no rubric scorer over named numeric inputs and no declared input ranges",
+       "remedy": "expose the grader as a scorer over named numeric inputs and declare their ranges: `CardInputs(scorer=fn, rubric_inputs=[RubricInput('helpfulness', 0.0, 1.0), ...])`. A Sobol decomposition apportions output variance across an input space, so a grader with no numeric input space has no sensitivity profile rather than a flat one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.sobol_ST",
+       "quantity": "verifier.sobol_ST"
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no stricter reference oracle and no seed rollouts to search around",
+       "remedy": "supply a callable grader, a stricter reference that decides the same question, and seed rollouts to search around: `CardInputs(grader=fn, reference=StrictReference('exact', decide, basis='...'), fp_seeds=[...])`. A false positive is a disagreement with a stricter oracle, so without one there is no quantity here, only a distribution of scores.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.false_positive_rate",
+       "quantity": "verifier.false_positive_rate"
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "SilentZeroRate",
+       "quantity": "grader.silent_zero_rate"
+      },
+      {
+       "name": "flakiness spread",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "The same policy on the same task scored 25.0% on every one of 3 identical runs across 240 task(s). This environment is deterministic here, so a measured delta is not competing with its spread.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no exploit log of finds by family",
+       "remedy": "log every exploit you have already found, with its family and the effort it took, and pass it: `CardInputs(exploit_log=ExploitLog.of([ExploitFind(family=..., effort=...), ...]))`. The unseen mass is a Good-Turing estimate off the frequency spectrum of what has been found, so a blacklist with no counts on it cannot produce one and the fix is where the blacklist is kept.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "ExploitFamilyCoverage",
+       "quantity": "verifier.unseen_exploit_mass"
+      },
+      {
+       "name": "variance components",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "40% of your score variance is evaluation type disagreement plus residual. %GRR = 89%, ndc = 0. This gauge cannot resolve two adjacent items: the measurement spread is as large as the spread it is measuring.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "EffectiveGroupSize",
+       "quantity": "grader.effective_group_size"
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "CurlMass",
+       "quantity": "grader.curl_mass"
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AfriatIndex",
+       "quantity": "grader.afriat_index"
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AbstentionRate",
+       "quantity": "grader.abstention_rate"
+      }
+     ]
+    },
+    "log_only": {
+     "readCount": 0,
+     "refusedCount": 13,
+     "summarySentence": "Nothing read, so this card is a list of what it would take.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GOLD: QUERY, GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply gold at QUERY; grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "flakiness spread",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs TASK: QUERY|REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply task at QUERY; task at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no exploit log of finds by family",
+       "remedy": "log every exploit you have already found, with its family and the effort it took, and pass it: `CardInputs(exploit_log=ExploitLog.of([ExploitFind(family=..., effort=...), ...]))`. The unseen mass is a Good-Turing estimate off the frequency spectrum of what has been found, so a blacklist with no counts on it cannot produce one and the fix is where the blacklist is kept.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "variance components",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "key": "verl_gsm8k",
+   "displayName": "verl GSM8K reward",
+   "subject": {
+    "name": "verl reward_score/gsm8k.py compute_score",
+    "kind": "environment",
+    "source": "verl/utils/reward_score/gsm8k.py (sha256 497c6e32b708d0bc)",
+    "entrypoint": "compute_score",
+    "corpus": "GSM8K test split, 240 rollouts",
+    "notes": [
+     "The facet is `method`, which `compute_score` takes as an argument and which verl's config sets: `strict` requires the `#### ` marker and `flexible` takes the last number anywhere in the completion. Both are shipped and both are used."
+    ]
+   },
+   "fingerprint": "verifier:59fbd42f0d190815b64ea96433d1d6ef",
+   "substrate": "PROGRAM",
+   "phase": "PRE_RUN",
+   "trust": "exploratory",
+   "lowestReadingTrust": "exploratory",
+   "evidenceId": "ev:1b7213bde1738ac6b61741424b0ffaa3",
+   "graderCalls": 2400,
+   "mutationScore": 0.4,
+   "competentMutants": 60,
+   "survivedMutants": 36,
+   "killedMutants": 24,
+   "bareHandlerCount": 0,
+   "bareHandlers": [],
+   "sourceLines": 72,
+   "bareHandlerEvidenceId": "ev:988d6ebd244e8ed33b729f7ec068fe71",
+   "metamorphicViolations": 122,
+   "metamorphicApplicablePairs": 430,
+   "metamorphicViolationRate": 0.2837209302325581,
+   "sensitiveFields": [
+    "surviving mutants"
+   ],
+   "access": {
+    "full": {
+     "readCount": 6,
+     "refusedCount": 7,
+     "summarySentence": "The lowest trust among them is exploratory.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Across 240 rollouts compute_score has never taken 61% of its branches (11 of 18). Those are behaviours it cannot distinguish.",
+       "trust": "exploratory",
+       "supporting": [
+        "never fired: extract_solution.clause3, extract_solution.clause4, extract_solution.clause5, extract_solution.clause6, compute_score.clause1",
+        "a random sample of the same size reaches 0.389 against the corpus's 0.389"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Of 60 mutants of compute_score, 36 survive: 36 ways it could be wrong that no rollout in your corpus would reveal.",
+       "trust": "exploratory",
+       "supporting": [
+        "mutation score 0.400 over 60 competent",
+        "reproducers withheld. this payload enumerates concrete ways to make the grader wrong. It is written to the store with a sensitive flag, excluded from rendered artifacts unless explicitly requested, and not published without a recorded decision."
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "metamorphic violations on grade",
+       "trust": "exploratory",
+       "supporting": [
+        "122 violations over 430 applicable rollout-relation pairs (28.37%)",
+        "corpus 240 rollouts, 122 accepted at score > 0",
+        "baseline (identity transformation): 0 violations",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no rubric scorer over named numeric inputs and no declared input ranges",
+       "remedy": "expose the grader as a scorer over named numeric inputs and declare their ranges: `CardInputs(scorer=fn, rubric_inputs=[RubricInput('helpfulness', 0.0, 1.0), ...])`. A Sobol decomposition apportions output variance across an input space, so a grader with no numeric input space has no sensitivity profile rather than a flat one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.sobol_ST",
+       "quantity": "verifier.sobol_ST"
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no stricter reference oracle and no seed rollouts to search around",
+       "remedy": "supply a callable grader, a stricter reference that decides the same question, and seed rollouts to search around: `CardInputs(grader=fn, reference=StrictReference('exact', decide, basis='...'), fp_seeds=[...])`. A false positive is a disagreement with a stricter oracle, so without one there is no quantity here, only a distribution of scores.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.false_positive_rate",
+       "quantity": "verifier.false_positive_rate"
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "SilentZeroRate",
+       "quantity": "grader.silent_zero_rate"
+      },
+      {
+       "name": "flakiness spread",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "The same policy on the same task scored 50.8% on every one of 3 identical runs across 240 task(s). This environment is deterministic here, so a measured delta is not competing with its spread.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "You have found 1 exploit family in 122 rollout-relation trials-logged finds from verl gsm8k compute_score.",
+       "trust": "exploratory",
+       "supporting": [
+        "Chao1 puts 0.0% of the families still unseen [nan%, nan%] (0.00 unseen against 1 seen), and that is a floor rather than an estimate.",
+        "Good-Turing puts the probability that the next find is novel at 0.000 [0.000, 0.000] at 95%, by Esty's variance.",
+        "f1 = 0, f2 = 0, n = 122",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "variance components",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "0% of your score variance is which extraction method you drew. %GRR = 0%, ndc = 2147483647. Every distinct value of the thing being scored is resolvable. This design has one observation per cell, so it carries no replication to estimate repeatability from and a measured zero here is the weakest possible evidence for it. Vary a facet and score again, or read the flakiness spread.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "EffectiveGroupSize",
+       "quantity": "grader.effective_group_size"
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "CurlMass",
+       "quantity": "grader.curl_mass"
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AfriatIndex",
+       "quantity": "grader.afriat_index"
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AbstentionRate",
+       "quantity": "grader.abstention_rate"
+      }
+     ]
+    },
+    "log_only": {
+     "readCount": 1,
+     "refusedCount": 12,
+     "summarySentence": "The lowest trust among them is exploratory.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GOLD: QUERY, GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply gold at QUERY; grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "flakiness spread",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs TASK: QUERY|REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply task at QUERY; task at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "You have found 1 exploit family in 122 rollout-relation trials-logged finds from verl gsm8k compute_score.",
+       "trust": "exploratory",
+       "supporting": [
+        "Chao1 puts 0.0% of the families still unseen [nan%, nan%] (0.00 unseen against 1 seen), and that is a floor rather than an estimate.",
+        "Good-Turing puts the probability that the next find is novel at 0.000 [0.000, 0.000] at 95%, by Esty's variance.",
+        "f1 = 0, f2 = 0, n = 122",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "variance components",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "key": "verl_search_r1",
+   "displayName": "verl Search-R1 QA exact match",
+   "subject": {
+    "name": "verl reward_score/search_r1_like_qa_em.py compute_score",
+    "kind": "environment",
+    "source": "verl/utils/reward_score/search_r1_like_qa_em.py (sha256 8070e4d07719f23e)",
+    "entrypoint": "compute_score",
+    "corpus": "NQ-Open validation split, 240 rollouts",
+    "notes": [
+     "The facet is the match rule: `compute_score` requires the normalised answer to equal a gold exactly and `compute_score_subem`, in the same module, accepts a gold that is a substring of it. Which one runs is a config choice in the environment.",
+     "Standard output is muffled while this card builds. The grader prints on a random draw, D1 calls it once per rollout and D2 once per rollout per mutant, so a build that did not muffle it would emit tens of thousands of lines. The draw itself is counted below, because it comes out of the process-wide stream and that is the part that is not cosmetic."
+    ]
+   },
+   "fingerprint": "verifier:e7a8ab3641ad91c4c5a1a68dde13b0c4",
+   "substrate": "PROGRAM",
+   "phase": "PRE_RUN",
+   "trust": "exploratory",
+   "lowestReadingTrust": "exploratory",
+   "evidenceId": "ev:85cccb048f78bba33c99601ef8d18497",
+   "graderCalls": 2400,
+   "mutationScore": 0.433,
+   "competentMutants": 60,
+   "survivedMutants": 34,
+   "killedMutants": 26,
+   "bareHandlerCount": 0,
+   "bareHandlers": [],
+   "sourceLines": 156,
+   "bareHandlerEvidenceId": "ev:22437c83db67d4d130c945fd9e6efbfc",
+   "metamorphicViolations": 2,
+   "metamorphicApplicablePairs": 362,
+   "metamorphicViolationRate": 0.0055248618784530384,
+   "sensitiveFields": [
+    "surviving mutants"
+   ],
+   "access": {
+    "full": {
+     "readCount": 6,
+     "refusedCount": 7,
+     "summarySentence": "The lowest trust among them is exploratory.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Across 240 rollouts compute_score has never taken 57% of its branches (17 of 30). Those are behaviours it cannot distinguish.",
+       "trust": "exploratory",
+       "supporting": [
+        "never fired: em_check.clause1, subem_check.clause1, subem_check.clause2, extract_solution.clause1, compute_score.clause3, compute_score.clause5, compute_score_subem.clause1, compute_score_subem.clause2, compute_score_subem.clause3",
+        "a random sample of the same size reaches 0.433 against the corpus's 0.433"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "Of 60 mutants of compute_score, 34 survive: 34 ways it could be wrong that no rollout in your corpus would reveal.",
+       "trust": "exploratory",
+       "supporting": [
+        "mutation score 0.433 over 60 competent",
+        "reproducers withheld. this payload enumerates concrete ways to make the grader wrong. It is written to the store with a sensitive flag, excluded from rendered artifacts unless explicitly requested, and not published without a recorded decision."
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "metamorphic violations on grade",
+       "trust": "exploratory",
+       "supporting": [
+        "2 violations over 362 applicable rollout-relation pairs (0.55%)",
+        "corpus 240 rollouts, 120 accepted at score > 0",
+        "baseline (identity transformation): 0 violations",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no rubric scorer over named numeric inputs and no declared input ranges",
+       "remedy": "expose the grader as a scorer over named numeric inputs and declare their ranges: `CardInputs(scorer=fn, rubric_inputs=[RubricInput('helpfulness', 0.0, 1.0), ...])`. A Sobol decomposition apportions output variance across an input space, so a grader with no numeric input space has no sensitivity profile rather than a flat one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.sobol_ST",
+       "quantity": "verifier.sobol_ST"
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no stricter reference oracle and no seed rollouts to search around",
+       "remedy": "supply a callable grader, a stricter reference that decides the same question, and seed rollouts to search around: `CardInputs(grader=fn, reference=StrictReference('exact', decide, basis='...'), fp_seeds=[...])`. A false positive is a disagreement with a stricter oracle, so without one there is no quantity here, only a distribution of scores.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "verifier.false_positive_rate",
+       "quantity": "verifier.false_positive_rate"
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "SilentZeroRate",
+       "quantity": "grader.silent_zero_rate"
+      },
+      {
+       "name": "flakiness spread",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "The same policy on the same task scored 50.0% on every one of 3 identical runs across 240 task(s). This environment is deterministic here, so a measured delta is not competing with its spread.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "You have found 1 exploit family in 2 rollout-relation trials-logged finds from verl search_r1 compute_score.",
+       "trust": "exploratory",
+       "supporting": [
+        "Chao1 puts 0.0% of the families still unseen [nan%, nan%] (0.00 unseen against 1 seen), and that is a floor rather than an estimate.",
+        "Good-Turing puts the probability that the next find is novel at 0.000 [0.000, 1.000] at 95%, by Esty's variance.",
+        "f1 = 0, f2 = 1, n = 2",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "variance components",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "1% of your score variance is match rule disagreement plus residual. %GRR = 9%, ndc = 15. This gauge resolves at least 15 distinct levels of the thing being scored.",
+       "trust": "exploratory",
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "EffectiveGroupSize",
+       "quantity": "grader.effective_group_size"
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "CurlMass",
+       "quantity": "grader.curl_mass"
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AfriatIndex",
+       "quantity": "grader.afriat_index"
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": "AbstentionRate",
+       "quantity": "grader.abstention_rate"
+      }
+     ]
+    },
+    "log_only": {
+     "readCount": 1,
+     "refusedCount": 12,
+     "summarySentence": "The lowest trust among them is exploratory.",
+     "fields": [
+      {
+       "name": "coverage",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "surviving mutants",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: SOURCE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at SOURCE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "metamorphic violations",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "sensitivity profile",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "false-positive catalogue",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GOLD: QUERY, GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply gold at QUERY; grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "silent-zero rate",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "flakiness spread",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs TASK: QUERY|REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply task at QUERY; task at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "exploit-family accounting",
+       "state": "read",
+       "reason": null,
+       "detail": null,
+       "remedy": null,
+       "bound": null,
+       "headline": "You have found 1 exploit family in 2 rollout-relation trials-logged finds from verl search_r1 compute_score.",
+       "trust": "exploratory",
+       "supporting": [
+        "Chao1 puts 0.0% of the families still unseen [nan%, nan%] (0.00 unseen against 1 seen), and that is a floor rather than an estimate.",
+        "Good-Turing puts the probability that the next find is novel at 0.000 [0.000, 1.000] at 95%, by Esty's variance.",
+        "f1 = 0, f2 = 1, n = 2",
+        "(+4 more lines in this instrument's own report)"
+       ],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "variance components",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: REPLICATE; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at REPLICATE. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "effective group size",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no per-group score vectors",
+       "remedy": "pass the per-group score vectors the run actually produced: `CardInputs(group_scores=GroupScores.of([...]))`. The effective size is the nominal group size discounted by how much of the within-group spread is grader noise, so it is a property of recorded groups and not of the grader alone.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "curl mass",
+       "state": "refused",
+       "reason": "ACCESS_INSUFFICIENT",
+       "detail": "needs GRADER: QUERY; you have GRADER: RECORD, RECORD: RECORD",
+       "remedy": "supply grader at QUERY. If you cannot, ask for the same quantity at a lower rung: `reward-lens capabilities` prints which rungs your access reaches and what each costs.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "Afriat index",
+       "state": "refused",
+       "reason": "SUBSTRATE_MISMATCH",
+       "detail": "this instrument applies to NEURAL_GEN, PROCEDURAL; the grader is PROGRAM",
+       "remedy": "use an instrument declared for PROGRAM. A PROGRAM grader is a different kind of object, not a harder case of the same one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      },
+      {
+       "name": "abstention channel",
+       "state": "refused",
+       "reason": "RECORD_INCOMPLETE",
+       "detail": "the record this card was built from carries no recorded score trees",
+       "remedy": "instrument the grader with `reward_lens.tap` so the per-leaf scores and the abstention channel are recorded, then pass `score_trees=` or `record_groups=` from the recorded groups. A composed score written down as one number has no channel to count, so this cannot be recovered from a record that did not keep one.",
+       "bound": null,
+       "headline": null,
+       "trust": null,
+       "supporting": [],
+       "instrument": null,
+       "quantity": null
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

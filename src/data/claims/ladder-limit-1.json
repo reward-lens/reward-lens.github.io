@@ -1,0 +1,14 @@
+{
+ "contentHash": "48551cb8f5af26d94d7f6b1a1b82d838",
+ "humanSource": "Quoted from the library documentation, discipline/trust-ladder and caveats.",
+ "immutableIds": [
+  "copy.yaml:trust_ladder.limits[0]"
+ ],
+ "label": "Calibration does not transfer for free.",
+ "limitation": "Calibration does not transfer for free.",
+ "scope": "What it does not do.",
+ "slug": "ladder-limit-1",
+ "sourceUrl": "/limits/",
+ "statement": "A scorecard earned on a family of planted-rule organisms tells you how a tool behaves on organisms like those. It is evidence about the instrument in a regime, not a warranty on your reward model.",
+ "type": "limitation"
+}

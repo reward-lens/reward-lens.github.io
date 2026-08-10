@@ -1,0 +1,362 @@
+---
+/**
+ * /see/  ·  one page you can send to somebody with fifteen minutes
+ *
+ * WHAT THIS ROUTE IS FOR. A researcher opens one link and, without following
+ * any of them, learns what can be looked inside, what was found in each place,
+ * and what none of it establishes. It is linear and it is deliberately the
+ * shortest route on the site.
+ *
+ * NOT AN INDEX OF THREE CARDS. Cards would make three studies look like three
+ * product features and would force each summary down to a length that can only
+ * hold a title. The three blocks below are stacked at full body measure, in
+ * reading order, and each one is four parts.
+ *
+ * THE SYSTEM EXPLANATION IS LABELLED AS ONE, AND THE MISSING CASE IS STATED.
+ * The opening paragraph describes how a policy, a grader and a reward model fit
+ * together. It is an explanation of the system and NOT a description of a
+ * measured subject, and the paragraph after it says so: these are three
+ * separate studies on three separate subjects, and NO SUBJECT HERE CARRIES THE
+ * WHOLE CHAIN. That sentence is the honest version of a page that would
+ * otherwise imply an integrated demonstration exists. It is stated plainly, at
+ * the same weight as everything else, rather than hidden in a caveat or
+ * dressed up as a roadmap.
+ *
+ * EACH BLOCK LEADS WITH THE QUESTION, never with a title. The title is the
+ * least informative thing about a study; the question is the thing a reader
+ * recognises as their own.
+ *
+ * THE FOURTH PART IS NOT DE-EMPHASISED. Same type, same ink, no smaller size,
+ * no italic. A reader who reads only the fourth lines of this page learns three
+ * true limitations, which is the acceptance criterion and the reason the parts
+ * are one component rather than four decisions per block.
+ *
+ * NOTHING HERE READS THE ARCHIVE'S CARD STORE. An earlier version stated two of
+ * the three results from `cards.json`, whose summaries are written in the v2
+ * research log's register and are stored under field names that describe the
+ * mechanism that produced them rather than the finding. The results below come
+ * from the same generated files the three routes render, so this page and the
+ * page it links to cannot disagree.
+ *
+ * THIS ROUTE DOES NOT USE act-layout. It has no six-part structure, no margin
+ * column and no instrument, and act-section validates a part number precisely
+ * so that a page which is not one of the three cannot borrow the shape.
+ */
+import Base from "@layouts/Base.astro";
+import ActProse from "@components/acts/act-prose.astro";
+import { copy, nav } from "../../copy";
+import { text, linkLabel } from "../../lib/see-public-text";
+import runSeries from "@data/run-series.json";
+import intervention from "@data/intervention.json";
+import graderCards from "@data/grader-cards.json";
+
+const acts = copy.acts as Record<string, any>;
+const index = acts.index as Record<string, string>;
+
+const links = nav.footer_groups[0].items;
+const hrefOf = (route: string) => {
+  const item = links.find((l) => l.href === route);
+  if (!item) {
+    throw new Error(
+      `/see/: no label for ${route} in copy.yaml:nav.footer_groups. A link on ` +
+        `this page takes its words from the navigation rather than inventing a ` +
+        `second name for the same route.`,
+    );
+  }
+  return { href: item.href, label: linkLabel(item.href, item.label) };
+};
+
+/* ---------------------------------------------------------------- the run */
+
+const shipped = runSeries.detectors.find((d: any) => d.shipped);
+const level = runSeries.detectors.find((d: any) => d.key === "variance_level");
+const cusum = runSeries.detectors.find((d: any) => d.key === "gradient_norm_cusum");
+const comparator = runSeries.detectors.find((d: any) => d.key === "gradient_norm_peak");
+if (!shipped || !level || !cusum || !comparator) {
+  throw new Error(
+    "/see/: src/data/run-series.json is missing one of the study's four " +
+      "detectors. This page states the signal that was kept together with the " +
+      "two that led by more and were rejected, and it does not state one " +
+      "without the others.",
+  );
+}
+
+const LEDGER = { document: "reward-lens-assay/PREDICTIONS.md", line: 154 };
+const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
+const signed = (v: number) => (v > 0 ? `+${v}` : String(v));
+const rho = (v: number) => (v >= 0 ? `+${v.toFixed(6)}` : v.toFixed(6));
+
+const runValues: Record<string, string> = {
+  rollout_count: runSeries.meta.rolloutCount.toLocaleString("en-GB"),
+  step_count: String(runSeries.meta.stepCount),
+  // The hub used to state the rollout count and the step count as a pair, and
+  // the pair is arithmetically impossible: 25,664 rollouts at the 64 per step
+  // this site publishes is 401 steps, not 400. Both numbers come from the same
+  // frozen ledger, which contradicts itself across two rows. /see/run/ has
+  // always disclosed that; the hub asserted the lower value alone, which is
+  // where a reader meets it first.
+  step_count_alt: String(runSeries.meta.stepCountDisagreement.values[1]),
+  transition_midpoint: String(runSeries.transition.midpoint),
+  transition_width: String(runSeries.transition.width1090),
+  alarm_step: String(shipped.alarmStep),
+  alarm_lead: signed(shipped.leadWidths!),
+  comparator_step: String(comparator.alarmStep),
+  comparator_lead: signed(comparator.leadWidths!),
+  comparator_lag_steps: String(comparator.comparatorLagSteps),
+  level_alarm_step: String(level.alarmStep),
+  level_lead: signed(level.leadWidths!),
+  surrogate_variance_level: pct(level.surrogateRate!),
+  surrogate_gradnorm_cusum: pct(cusum.surrogateRate!),
+  surrogate_shipped: pct(shipped.surrogateRate!),
+};
+const runBind = Object.fromEntries(
+  Object.entries(runValues).map(([k, display]) => [
+    k,
+    { display, source: LEDGER, label: k.replace(/_/g, " ") },
+  ]),
+);
+
+/* ------------------------------------------------------- the reward model */
+
+const headline = intervention.headline;
+const rmBind = {
+  rho_mean: {
+    display: rho(headline.meanRho),
+    source: { document: headline.meanRhoSource.document, line: headline.meanRhoSource.line },
+    label: "mean rank correlation",
+  },
+  rho_worst: {
+    display: rho(headline.sharpestRho),
+    source: {
+      document: headline.meanRhoSource.document,
+      line: (intervention.dimensions as any[]).find(
+        (d) => d.key === headline.sharpestDimension,
+      )!.spearmanRhoSource.line,
+    },
+    label: "sharpest rank correlation",
+  },
+  // rho_armo is bound on the route itself, from a fixture no generator emits.
+};
+
+/* ------------------------------------------------------------- the grader */
+
+const gc = graderCards as any;
+const CARDS_DOC = { document: gc.meta.derivedFrom[0].document, line: null };
+const grBind = {
+  card_fields_total: {
+    display: String(gc.meta.fullAccess.fields),
+    source: CARDS_DOC,
+    label: "card fields",
+  },
+  card_fields_read: {
+    display: String(gc.meta.fullAccess.read),
+    source: CARDS_DOC,
+    label: "fields read",
+  },
+  card_fields_refused: {
+    display: String(gc.meta.fullAccess.refused),
+    source: CARDS_DOC,
+    label: "fields refused",
+  },
+};
+
+/**
+ * Truncate at the first unfillable clause, and never past a sentence boundary.
+ * The same helper two of the three routes carry, for the same reason: a
+ * deletion that leaves a trailing clause referring to the deleted one produces
+ * a false sentence nobody wrote. This only ever deletes.
+ */
+const truncateUnfilled = (template: string, filled: Record<string, unknown>) => {
+  const missing = [...template.matchAll(/\{\{\s*([a-z0-9_.]+)\s*\}\}/gi)]
+    .map((x) => x[1])
+    .filter((k) => !(k in filled));
+  if (!missing.length) return template;
+  const holds = (t: string) => missing.some((k) => t.includes(`{{${k}}}`));
+
+  return template
+    .split(/(?<=\.)\s+/)
+    .map((sentence) => {
+      const clauses = sentence.split(/,\s+/);
+      const at = clauses.findIndex(holds);
+      if (at === -1) return sentence;
+      if (at === 0) return "";
+      const kept = clauses.slice(0, at).join(", ");
+      return kept.endsWith(".") ? kept : `${kept}.`;
+    })
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+};
+
+/* One shape per study, always all four parts and always in this order: the
+   question, what was measured, what it showed, and what it does not establish.
+   `showed` is a list because two of the three have a counterweight that is part
+   of the result rather than a caveat on it. */
+type Block = {
+  link: { label: string; href: string };
+  question: string;
+  measured: string;
+  showed: string[];
+  notEstablished: string;
+  bind: Record<string, any>;
+};
+
+const three: Block[] = [
+  {
+    link: hrefOf("/see/reward-model/"),
+    question: acts.reward_model.question,
+    measured: acts.reward_model.setup,
+    showed: [
+      text("acts.reward_model.conclusion"),
+      truncateUnfilled(acts.reward_model.result, rmBind),
+    ],
+    notEstablished: text("acts.reward_model.not_established"),
+    bind: rmBind,
+  },
+  {
+    link: hrefOf("/see/run/"),
+    question: acts.run.question,
+    measured: acts.run.setup,
+    /* The control is not a caveat on the result. The signal that led by most
+       is the one that was thrown away, and a summary that gave only the kept
+       signal would be the selection this study exists to refuse. */
+    showed: [text("acts.run.result"), acts.run.control],
+    notEstablished: text("acts.run.not_established"),
+    bind: runBind,
+  },
+  {
+    link: hrefOf("/see/grader/"),
+    question: acts.grader.question,
+    measured: acts.grader.setup,
+    showed: [acts.grader.result, text("acts.grader.mutation_scope")],
+    notEstablished: acts.grader.not_established,
+    bind: grBind,
+  },
+];
+---
+
+<Base title={`${index.title} · ${copy.meta.site_name}`} description={index.subhead}>
+  <div class="see wrap">
+    <header class="see__head">
+      <h1 class="type-display-2">{index.heading}</h1>
+      <p class="see__lede type-body">{index.subhead}</p>
+    </header>
+
+    {/* The system, and then the thing the system explanation is not. Both at
+        body measure and body ink, above the three studies, because a reader
+        who stops after these two paragraphs should still leave with something
+        true rather than with an impression. */}
+    <div class="see__frame">
+      <ActProse text={text("acts.index.system")} />
+      <ActProse class="see__gap" text={text("acts.index.no_integrated_case")} />
+    </div>
+
+    <div class="see__blocks">
+      {
+        three.map((b) => (
+          <section class="see__block" aria-labelledby={`see-${b.link.href.replace(/\W+/g, "-")}`}>
+            {/* 1. The question, and it is also the link. */}
+            <h2 class="type-h2" id={`see-${b.link.href.replace(/\W+/g, "-")}`}>
+              <a class="see__link" href={b.link.href}>
+                {b.question}
+              </a>
+            </h2>
+
+            {/* 2. What was measured, naming the subject and the access. */}
+            <ActProse class="see__part" text={b.measured} bind={b.bind} />
+
+            {/* 3. What it showed, with its numbers and its scope inline at the
+                same weight. */}
+            {b.showed.map((t) => (
+              <ActProse class="see__part" text={t} bind={b.bind} />
+            ))}
+
+            {/* 4. What it does not establish. Same type, same ink, same size. */}
+            <ActProse class="see__part" text={b.notEstablished} bind={b.bind} />
+
+            <p class="see__more type-body-sm">
+              <a class="see__link" href={b.link.href}>{b.link.label}</a>
+            </p>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Base>
+
+<style>
+  .see {
+    padding-block: var(--space-8) var(--space-9);
+    min-width: 0;
+  }
+
+  /* THE MEASURE GOES ON THE HEADING, NOT ON THE HEADER. It used to sit on the
+     block, which meant the lede inherited a display-type measure and set at
+     roughly a third of its own: six words a line under a six-line heading, in
+     a viewport with half of it empty. A heading measure and a prose measure
+     are different numbers and each element takes its own. */
+  .see__head h1 {
+    margin: 0;
+    max-width: min(var(--measure-heading), 100%);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .see__lede {
+    margin: var(--space-4) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+
+  /* The system explanation. No box, no tint, no rule: it is prose above prose,
+     and a treatment that framed it would make it look like the finding. */
+  .see__frame {
+    margin-block-start: var(--space-7);
+    min-width: 0;
+  }
+
+  /* Stacked blocks at full body measure. Not a grid of cards. */
+  .see__blocks {
+    margin-block-start: var(--space-8);
+    display: grid;
+    gap: var(--space-8);
+    min-width: 0;
+  }
+
+  .see__block {
+    min-width: 0;
+    padding-block-start: var(--space-7);
+    border-block-start: var(--border-w) solid var(--line);
+  }
+
+  .see__block h2 {
+    margin: 0 0 var(--space-5);
+    max-width: min(var(--measure-heading), 100%);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  /* The four parts are four claims, not four sentences of one paragraph. At
+     one interval they read as a wall and a reader skims past the fourth, which
+     is the one that has to land. */
+  /* Anchored under a page-scoped ancestor rather than left bare: Astro stamps
+     its scope on `.see__block`, which is this page's own markup, and the class
+     below sits on a component root that carries only the component's id. The
+     rule was compiling to a selector that matched nothing, so the four parts of
+     each block ran together as one paragraph. */
+  .see__block :global(.see__part) {
+    margin-block-start: var(--space-5);
+  }
+
+  .see__frame :global(.see__gap) {
+    margin-block-start: var(--space-4);
+  }
+
+  .see__more {
+    margin: var(--space-5) 0 0;
+  }
+
+  .see__link {
+    color: inherit;
+  }
+</style>

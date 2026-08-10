@@ -2,8 +2,10 @@
 title: Calibration and organisms
 description: How do you calibrate an instrument when there is no ground truth to calibrate against? For a real reward model there is no answer key. Nobody can tell you
 section: discipline
-order: 59
+order: 85
 source: docs/content/discipline/calibration-and-organisms.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -22,7 +24,7 @@ That built object is a **model organism**. You plant a rule you fully control, t
 
 The loop is five steps, and each one is a place a dishonest tool would get caught.
 
-1. **Plant a rule.** Pick a preference rule and instantiate it exactly: a spurious feature confounded with the label at a chosen agreement rate, a hidden second objective, a planted 3-cycle that makes preferences intransitive, a known annotator mixture. The [foundry](/docs/reference/organisms/) has a family of generators for these, each returning a data view and the answer key that governs it.
+1. **Plant a rule.** Pick a preference rule and instantiate it exactly: a spurious feature confounded with the label at a chosen agreement rate, a hidden second objective, a planted 3-cycle that makes preferences intransitive, a known annotator mixture. The [foundry](/docs/api/organisms/) has a family of generators for these, each returning a data view and the answer key that governs it.
 2. **Train it in.** Fine-tune a reward head on data drawn from the rule until the rule lives in $w_r$, not just in the labels.
 3. **Verify it governs behavior out of distribution.** In-distribution accuracy proves nothing; a lookup table would pass. The organism only counts if the planted rule still drives preferences on a held-out split it was never trained on. That out-of-distribution check is what separates a rule the model *learned* from one it *memorized*.
 4. **Score every method against the key.** Run attribution, patching, a probe, a detector, whatever you want to certify, and measure how well each recovers the thing you planted.

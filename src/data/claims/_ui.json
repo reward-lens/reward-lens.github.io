@@ -1,0 +1,20 @@
+{
+ "labels": {
+  "provenance_open": "Where this number came from",
+  "provenance_record_link": "Open the record"
+ },
+ "pendingCopyKeys": [
+  {
+   "key": "ui.claim_technical_copy",
+   "text": "Copy technical provenance"
+  },
+  {
+   "key": "ui.claim_technical_copied",
+   "text": "Copied"
+  },
+  {
+   "key": "ui.claim_technical_unavailable",
+   "text": "select to copy"
+  }
+ ]
+}

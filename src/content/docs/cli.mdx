@@ -2,8 +2,10 @@
 title: Command line
 description: What can the reward-lens command do on a laptop, and what does it refuse? The line is clean. Anything that is a view over the evidence store runs here and now
 section: root
-order: 71
+order: 100
 source: docs/content/cli.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -222,4 +224,4 @@ $ reward-lens serve Skywork/Skywork-Reward-Llama-3.1-8B-v0.2
 | `study run`, `study report` | freeze on CPU, analysis gated | `3` without `--execute` |
 | `organism make`, `train`, `score` | GPU-gated | `3` |
 
-For the calls the gated commands name, the how-to guides show the real thing on a model you load yourself: [attribute a score](/docs/how-to/attribute-a-score/), [freeze and run a study](/docs/how-to/freeze-and-run-a-study/), and [build a card, check a manuscript](/docs/how-to/cards-and-claims/). The [operate reference](/docs/reference/artifacts-operate/) documents the underlying functions.
+For the calls the gated commands name, the how-to guides show the real thing on a model you load yourself: [attribute a score](/docs/how-to/attribute-a-score/), [freeze and run a study](/docs/how-to/freeze-and-run-a-study/), and [build a card, check a manuscript](/docs/how-to/cards-and-claims/). The [operate reference](/docs/api/artifacts-operate/) documents the underlying functions.

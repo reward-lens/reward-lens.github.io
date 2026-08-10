@@ -1,0 +1,532 @@
+---
+/**
+ * /see/run/  ·  what pressure the run applied, and when the policy changed
+ *
+ * THE PUBLIC QUESTION. A policy is training against a number right now. Did
+ * anything readable from outside the model move before the labelled behaviour
+ * changed, and by enough to act on?
+ *
+ * THE ANSWER IS HALF A YES AND THE SECOND HALF IS THE POINT. One signal alarms
+ * before the fitted transition. Two signals alarm EARLIER and were rejected,
+ * because they fire nearly as often on order-destroyed surrogates of the same
+ * series, which means they are reading the distribution rather than the drift.
+ * That is why part 4's control block is the same component with the same props
+ * as its result block, and why the detector figure plots lead AGAINST
+ * false-alarm rate rather than lead alone.
+ *
+ * THE ADVERSE STATE IS REACHABLE IN ONE GESTURE AND IS NOT OPTIONAL. The
+ * scrubber's detector selector puts each row's lead and its surrogate rate in
+ * the same row of the same control, so a reader who picks the longest lead
+ * reads its 60.7% false-alarm rate without scrolling. Rows stay in the study's
+ * evaluation order. NEVER SORT THIS TABLE BY LEAD: sorted descending it puts
+ * the worthless detector first with no counterweight.
+ *
+ * THE CAPTION TRAP, AND IT IS THE ONE THING ON THIS ROUTE THAT IS EASY TO
+ * BREAK. `meta.stepCount` is the lower of two disagreeing ledger rows. Every
+ * series array is one longer, and the plot draws every index it is given. A
+ * figure that draws the full table under a caption saying the ledger's lower
+ * count is a quiet contradiction, so the disagreement is stated in part 3
+ * BESIDE THE PLOT, and the plot's own alt text describes what is drawn rather
+ * than what the ledger says. Do not move that note back into part 2 alone.
+ *
+ * THE STEP ALIGNMENT IS NOT RECONSTRUCTED. It is read off the rollout table's
+ * own step column and the generator asserts an equal rollout count at every
+ * step. There is no ordering disclaimer to write here and one must not be
+ * invented.
+ *
+ * THIS ROUTE'S PROVENANCE IS WEAKER THAN THE OTHER TWO AND THE PAGE SAYS SO.
+ * Every number cites a document and a line rather than resolving to a record,
+ * because the archive's evidence store contains no RL training run at all
+ * (GROUND-TRUTH.md C-34). D-35 rules that the citation renders at the weight a
+ * provenance chip gets, so a reader sees the difference rather than being
+ * protected from it. No id is ever minted.
+ *
+ * NOTHING ON THIS PAGE IS DERIVED. `{{comparator_lag_steps}}` is read off the
+ * comparator's own row (C-42), never computed from `133 - 106.0`: subtracting
+ * two bound fields still produces a number the rendered HTML cannot resolve.
+ *
+ * STORED VOCABULARY IS TRANSLATED AT THIS BOUNDARY, NEVER IN A COMPONENT. The
+ * comparator's stored label and the frozen analysis's stored field names carry
+ * the research log's scheme; `src/lib/see-public-text.ts` holds every
+ * translation and fails the build if one is missing.
+ */
+import ActLayout from "@components/acts/act-layout.astro";
+import ActSection from "@components/acts/act-section.astro";
+import ActMeta from "@components/acts/act-meta.astro";
+import ActQuestion from "@components/acts/act-question.astro";
+import ActProse from "@components/acts/act-prose.astro";
+import ActBlock from "@components/acts/act-block.astro";
+import ActFacts from "@components/acts/act-facts.astro";
+import ActFigureDetectors from "@components/acts/act-figure-detectors.astro";
+import ActBeforeAfter from "@components/acts/act-before-after.astro";
+import BundlePanel from "@components/acts/bundle-panel.astro";
+import TimelineScrubber from "@components/islands/timeline-scrubber.astro";
+import VersionChip from "@components/base/version-chip.astro";
+import FigureFrame from "@components/base/figure-frame.astro";
+import CodeBlock from "@components/base/code-block.astro";
+import { fill, requireRelease } from "@components/base/data";
+import { copy, ui } from "../../copy";
+import { text, publicLabel, publicExplanation } from "../../lib/see-public-text";
+import runSeries from "@data/run-series.json";
+import bundles from "@data/bundles.json";
+
+const acts = copy.acts as Record<string, any>;
+const act = acts.run as Record<string, string>;
+const parts = acts.parts.run as Record<string, string>;
+const figures = acts.figures as Record<string, Record<string, string>>;
+const release = requireRelease("/see/run/");
+
+const meta = runSeries.meta;
+const transition = runSeries.transition;
+const defect = runSeries.frozenAnalysisDefect;
+
+/* Stored labels translated once, here. The rows keep the study's order and
+   their numbers are untouched; only the comparator's name changes. */
+const detectors = (runSeries.detectors as any[]).map((d) => ({
+  ...d,
+  label: publicLabel(d.label),
+}));
+
+const detector = (key: string) => {
+  const d = detectors.find((row) => row.key === key);
+  if (!d) {
+    throw new Error(
+      `/see/run/: no detector "${key}" in src/data/run-series.json. The four ` +
+        `rows are the study's own four and the page states all four.`,
+    );
+  }
+  return d;
+};
+
+const bundle = (bundles as any).bundles.find((b: any) => b.route === "/see/run/");
+if (!bundle) {
+  throw new Error(
+    "/see/run/: no bundle for this route in src/data/bundles.json. Every act " +
+      "ends with a runnable path and a stated expected output.",
+  );
+}
+
+const shipped = detector("variance_derivative");
+const level = detector("variance_level");
+const cusum = detector("gradient_norm_cusum");
+const comparator = detector("gradient_norm_peak");
+
+// Display forms. The value is the generator's; only the unit and the sign are
+// applied here, and neither changes the number. A route never re-rounds.
+const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
+const signed = (v: number) => (v > 0 ? `+${v}` : String(v));
+
+const values: Record<string, string> = {
+  rollout_count: meta.rolloutCount.toLocaleString("en-GB"),
+  step_count: String(meta.stepCount),
+  step_count_alt: String(meta.stepCountDisagreement.values[1]),
+  /* How many step indices the plot actually draws. Read off the series the
+     scrubber is handed, never off `meta.stepCount`, which is the lower of two
+     disagreeing ledger rows. A figure's own description says what is in the
+     figure. EVIDENCE-VERDICTS.md §2. */
+  plot_step_count: String(runSeries.steps.length),
+  transition_midpoint: String(transition.midpoint),
+  transition_width: String(transition.width1090),
+
+  alarm_step: String(shipped.alarmStep),
+  alarm_lead: signed(shipped.leadWidths),
+  comparator_step: String(comparator.alarmStep),
+  comparator_lead: signed(comparator.leadWidths),
+
+  level_alarm_step: String(level.alarmStep),
+  level_lead: signed(level.leadWidths),
+  surrogate_variance_level: pct(level.surrogateRate),
+  surrogate_gradnorm_cusum: pct(cusum.surrogateRate),
+  surrogate_shipped: pct(shipped.surrogateRate),
+
+  lambda_lag: String(Math.abs(runSeries.companion.lagWidths)),
+
+  // Emitted by P1 on the comparator's own row (C-42). Read, never derived.
+  comparator_lag_steps: String(comparator.comparatorLagSteps),
+};
+
+if (comparator.comparatorLagSteps === null || comparator.comparatorLagSteps === undefined) {
+  throw new Error(
+    "/see/run/: the gradient-norm comparator carries no comparatorLagSteps in " +
+      "src/data/run-series.json. C-42: this page does not compute it from " +
+      "`133 - 106.0`, because a number the rendered HTML cannot resolve is the " +
+      "defect gate 5 exists to catch. This is an escalation to the data packet.",
+  );
+}
+
+/* THE PLOT DRAWS MORE STEP INDICES THAN THE LEDGER'S LOWER ROW COUNTS, and the
+   page has to say so beside the plot rather than caption one number over a
+   figure showing the other. If the two ever agree this note is redundant and
+   the guard below says so instead of leaving a contradiction in place. */
+if (runSeries.steps.length === meta.stepCount) {
+  throw new Error(
+    "/see/run/: src/data/run-series.json now draws exactly meta.stepCount " +
+      "steps. The disagreement note beside the instrument exists because the " +
+      "two differ; with them equal the note states a difference that is not " +
+      "there. Remove it and the guard together.",
+  );
+}
+
+/* Every value the act's prose substitutes, with its citation. act-prose renders
+   each one inside the citation rather than as text, so the rendered HTML says
+   where each number came from. All of them cite the same frozen ledger, which
+   is the honest shape of this act: one document, one line, no records. */
+const LEDGER = { document: "reward-lens-assay/PREDICTIONS.md", line: 154 };
+const bind = Object.fromEntries(
+  Object.entries(values).map(([key, display]) => [
+    key,
+    { display, source: LEDGER, label: key.replace(/_/g, " ") },
+  ]),
+) as Record<string, { display: string; source: typeof LEDGER; label: string }>;
+
+// The companion prediction is recorded one line further down, and the defect in
+// the frozen analysis eighteen lines above. A citation that points at the wrong
+// line is worse than no citation, so these three do not share the default.
+bind.lambda_lag.source = runSeries.companion.source;
+
+/* The scrubber's and the figure's labels. copy.yaml carries no column heading
+   or readout string for this component, so these are humanised field names from
+   run-series.json, which is the permission act-meta already documents and what
+   the shell pass did with "10-90 width". Escalated in the packet report; the
+   moment the keys land these five lines bind to them and nothing else changes. */
+const labels = {
+  legend: act.scrubber_aria,
+  detector: "detector",
+  lead: "lead, transition widths",
+  surrogate: "fires on surrogates",
+  shipped: "shipped",
+  step: "step",
+  hackRate: "hack rate",
+  alarm: "alarm",
+  midpoint: "midpoint",
+  comparator: "comparator",
+};
+
+const src = (o: { document: string; line: number }) => o;
+---
+
+<ActLayout title={act.title} description={act.question}>
+  <VersionChip slot="banner" describes={release.unpublished ?? release.latest} />
+
+  {/* ---------------------------------------------------------------- part 1 */}
+  <ActSection part={1} heading={parts.question} headingLevel={1}>
+    <ActMeta
+      slot="margin"
+      items={[
+        { label: "subject", value: meta.subject },
+        { label: "reproduction", value: ui.not_reproduced },
+      ]}
+    />
+    <ActQuestion question={act.question} />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 2 */}
+  <ActSection part={2} heading={parts.setup}>
+    <ActMeta
+      slot="margin"
+      items={[
+        {
+          label: "rollouts",
+          value: values.rollout_count,
+          source: src(meta.stepCountDisagreement.source[0]),
+        },
+        {
+          label: "steps, lower of two records",
+          value: values.step_count,
+          source: src(meta.stepCountDisagreement.source[0]),
+        },
+        {
+          label: "rollouts per step",
+          value: String(meta.rolloutsPerStep),
+          source: src(meta.stepCountDisagreement.source[0]),
+        },
+        { label: "reproduction", value: ui.not_reproduced },
+      ]}
+    />
+    <ActProse text={act.setup} bind={bind} />
+
+    <ActFacts
+      class="run__facts"
+      caption={parts.setup}
+      facts={[
+        {
+          label: "labelled rollouts",
+          display: values.rollout_count,
+          source: src(meta.stepCountDisagreement.source[0]),
+        },
+        {
+          /* The lower of the two records, said in the label rather than
+             asserted as the length of the run. The note beside the instrument
+             in part 3 carries the disagreement itself. */
+          label: "training steps, the lower of two records",
+          display: values.step_count,
+          source: src(meta.stepCountDisagreement.source[0]),
+        },
+        {
+          label: "fitted transition midpoint",
+          display: values.transition_midpoint,
+          source: src(transition.source),
+        },
+        {
+          label: "10-90 transition width",
+          display: values.transition_width,
+          source: src(transition.source),
+        },
+        {
+          label: "fit quality, R squared",
+          display: String(transition.r2),
+          source: src(transition.source),
+        },
+      ]}
+    />
+    {/* The disagreement itself is stated in part 3, against the instrument that
+        draws the longer series. Stating it twice on one page would read as two
+        different disclosures of the same thing. */}
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 3 */}
+  <ActSection part={3} heading={parts.instrument} width="wide">
+    {/* Read before the control, not after it. The selector's rows carry a lead
+        and a false-alarm rate side by side precisely so that picking the
+        longest lead shows what it costs, and this says out loud that the two
+        columns are meant to be read together. */}
+    <ActProse class="run__lede" text={text("acts.run.selection_warning")} />
+
+    <TimelineScrubber
+      series={{ ...(runSeries as any), detectors }}
+      step={90}
+      plotAlt={fill(text("a11y.figure_alt.run_timeline"), values)}
+      labels={labels}
+    />
+
+    {/* THE DISAGREEMENT BELONGS HERE, BESIDE THE PLOT THAT DRAWS THE LONGER
+        SERIES. Part 2 states the ledger's lower count as a fact with that
+        stated in its label; this is the figure's own caption and it is where a
+        reader counting points would look. D-03 discloses rather than resolves,
+        and C-30 records that D-03's own arithmetic is off in the other
+        direction, which is why the copy states the arithmetic without claiming
+        it settles anything. */}
+    <ActProse class="run__caption" text={act.step_count_disagreement} bind={bind} />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 4 */}
+  <ActSection part={4} heading={text("acts.parts.run.result")}>
+    <ActBlock heading={text("acts.run.result_heading")} level={3}>
+      <ActProse text={text("acts.run.result")} bind={bind} />
+    </ActBlock>
+
+    {/* Equal weight, structurally: same component, same props, directly
+        adjacent. The control is not a caveat on the result and act-block has
+        no knob that would let this route decide otherwise. */}
+    <ActBlock heading={act.control_heading} level={3}>
+      <ActProse text={act.control} bind={bind} />
+    </ActBlock>
+
+    <FigureFrame
+      slot="figure"
+      number="2.3"
+      title={figures.detector_comparison.title}
+      scope={figures.detector_comparison.scope}
+      caption={figures.detector_comparison.caption}
+      bleed={true}
+    >
+      <ActFigureDetectors detectors={detectors as any} labels={labels} />
+    </FigureFrame>
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 5 */}
+  <ActSection part={5} heading={parts.not_established}>
+    <ActProse text={text("acts.run.not_established")} />
+
+    {/* 5a. THE SHIPPED DETECTOR'S FALSE-ALARM RATE HAS TWO VALUES, and the
+        page prints both. The surrogate arm puts it at one figure and the same
+        detector read off the trainer log puts it at another, and the two differ
+        by more than four times. Part 4 states the first; the second is only in
+        the data and is the number a practitioner deciding whether to run this
+        in a loop would want. Which construction is right is not settled here
+        and the act does not settle it: that is what this part is for. */}
+    <ActBlock heading={parts.not_established} level={3}>
+      <ActFacts
+        class="run__facts"
+        caption={figures.detector_comparison.title}
+        facts={[
+          {
+            label: `${labels.surrogate}, ${shipped.label}`,
+            display: values.surrogate_shipped,
+            source: src(shipped.source),
+          },
+          {
+            label: `${labels.surrogate}, from the trainer log`,
+            display: pct(shipped.surrogateRateFromTrainerLog),
+            source: src(shipped.source),
+          },
+          {
+            label: `${labels.surrogate}, ${level.label}`,
+            display: values.surrogate_variance_level,
+            source: src(level.source),
+          },
+          {
+            label: `${labels.surrogate}, ${cusum.label}`,
+            display: values.surrogate_gradnorm_cusum,
+            source: src(cusum.source),
+          },
+          {
+            label: `${labels.surrogate}, ${comparator.label}`,
+            display: null,
+            source: null,
+          },
+        ]}
+      />
+    </ActBlock>
+
+    {/* 5b. The defect this build found in its own frozen analysis. Both
+        numbers, the sign disagreement visible, and the statement that the
+        flattering one was declined. pages/see-run.md:112. */}
+    <ActBlock heading={act.defect_heading} level={3}>
+      <ActProse text={act.defect} />
+
+      {/* The generator's own account of the defect, rendered rather than
+          summarised. It names the intervention the comparison below turns on,
+          and it is the project describing its own error in its own words, which
+          is worth more than the site describing it in ours. */}
+      <ActProse class="run__explain" text={publicExplanation(defect.explanation)} />
+
+      {/* Both numbers as a two-row table with the sign disagreement visible,
+          which is what pages/see-run.md:113 asks for, AND as the comparison
+          components/before-after.md asks for. Not a redundancy: the table is
+          the numbers, each with its citation, and the comparison is the
+          distance between them on one axis. The contract's own note on this
+          instance is that it "is currently a number in a table". */}
+      <ActFacts
+        class="run__facts"
+        caption={act.defect_heading}
+        facts={[
+          {
+            label: publicLabel("registered path"),
+            display: signed(defect.registeredValue),
+            source: src(defect.source),
+          },
+          {
+            label: publicLabel("corrected path"),
+            display: signed(defect.correctedValue),
+            source: src(defect.source),
+          },
+          {
+            label: "flattering value declined",
+            display: String(defect.declined),
+            source: src(defect.source),
+          },
+        ]}
+      />
+    </ActBlock>
+
+    {/* 5b. The companion prediction that went the other way. One registered
+        prediction resolved in favour and one against, on the same run, from the
+        same preregistration. An exhibit showing only the hit reads as
+        selection. pages/see-run.md:119. */}
+    <ActBlock heading={act.companion_heading} level={3}>
+      <ActProse text={text("acts.run.companion")} bind={bind} />
+      {/* The registered quantity, its measured lag, and the two robustness
+          checks the study recorded on it. The sign holding and the magnitude
+          not holding is the difference between "this went the other way" and
+          "we do not know", and both are on the record. */}
+      <ActFacts
+        class="run__facts"
+        caption={act.companion_heading}
+        facts={[
+          {
+            label: runSeries.companion.statement,
+            display: String(runSeries.companion.lagWidths),
+            source: src(runSeries.companion.source),
+          },
+          {
+            label: "sign robust",
+            display: String(runSeries.companion.signRobust),
+            source: src(runSeries.companion.source),
+          },
+          {
+            label: "magnitude robust",
+            display: String(runSeries.companion.magnitudeRobust),
+            source: src(runSeries.companion.source),
+          },
+        ]}
+      />
+    </ActBlock>
+
+    {/* components/before-after.md, Usage: "Act two section 5: the shipped
+        detector's false-alarm rate on the real series and on the
+        order-destroyed surrogate, one axis... It is the most persuasive
+        comparison on the site and it is currently a number in a table." The pair
+        this act actually has at that grade is the one above: the same
+        registered quantity computed two ways, published in both forms, with the
+        flattering one declined. One axis, one origin, both drawn, and the
+        intervention named inside the frame.
+
+        It takes the figure slot rather than sitting inside 5a because at 1440
+        the comparison is 1,216px wide there and 640 inside a block, and a
+        two-value comparison read across a full grid width is the difference
+        between a chart and a sentence with a picture attached. */}
+    <ActBeforeAfter
+      slot="figure"
+      before={{
+        label: publicLabel("registered path"),
+        value: defect.registeredValue,
+        display: signed(defect.registeredValue),
+        source: src(defect.source),
+      }}
+      after={{
+        label: publicLabel("corrected path"),
+        value: defect.correctedValue,
+        display: signed(defect.correctedValue),
+        source: src(defect.source),
+      }}
+      intervention={publicExplanation(defect.explanation)}
+      unit={labels.lead}
+    />
+  </ActSection>
+
+  {/* ---------------------------------------------------------------- part 6 */}
+  <ActSection part={6} heading={parts.reproduce}>
+    {/* The bundle re-fits the transition and prints its own numbers beside the
+        ledger's. IT CANNOT REGENERATE THE ALARM, and the requirements copy now
+        says so: the rollout table records lengths and outcomes and carries no
+        reward and no group index, so a within-group reward variance cannot be
+        formed from it (C-47). A description of an artifact written before the
+        artifact is a description of an intention. */}
+    <CodeBlock code={bundle.command} lang="bash" verified={true} label={bundle.filename} />
+    <BundlePanel bundle={bundle} requirements={act.bundle_requirements} />
+  </ActSection>
+</ActLayout>
+
+<style>
+  /* One interval between a part's prose and the table beneath it, set here
+     rather than inside act-facts, because the component is also used inside an
+     act-block where act-block owns the rhythm. */
+  /* THESE SELECTORS ARE GLOBAL AND THAT IS NOT LAZINESS. Astro scopes a page's
+     styles by stamping `data-astro-cid-<page>` on elements in the PAGE's own
+     markup, and a child component's root element carries only its own id. Every
+     spacing class this route hands to a component was therefore inert: the rule
+     compiled to `.run__facts[data-astro-cid-<page>]` and matched nothing,
+     which is why prose and the table beneath it sat with no interval between
+     them on every part of this route. Invisible in the code, obvious in the
+     picture.
+
+     The names are route-prefixed, so a global rule here cannot collide with
+     anything: `run__*` exists on this route and nowhere else. */
+  :global(.run__facts),
+  :global(.run__explain),
+  :global(.run__caption),
+  :global(.run__ba) {
+    margin-block-start: var(--space-5);
+  }
+
+  /* The reproduction status line. Not a badge, not a tick, not green, not
+     amber: components/bundle-panel.md is explicit that no colour or iconography
+     carries reproduction status in either direction, and that this negative
+     sentence is the most credible thing on the panel. */
+  .run__repro {
+    margin: var(--space-5) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+</style>

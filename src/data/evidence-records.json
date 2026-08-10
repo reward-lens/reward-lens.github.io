@@ -1,0 +1,371 @@
+{
+ "ev:6bf316c059230ff4ff99b118b1664631": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-err-rb2",
+  "source": "campaign.adjudication.ERR-RB2",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/6bf316c059230ff4ff99b118b1664631/",
+  "stats": {
+   "err_auroc_delta_llama8b": -0.003470736845503808,
+   "err_auroc_delta_llama8b_ci_high": -0.0018241777525145248,
+   "err_auroc_delta_llama8b_ci_low": -0.005095063654071338,
+   "err_auroc_delta_min_family": -0.003470736845503808,
+   "err_auroc_delta_qwen8b": -0.0009738428193937221,
+   "err_auroc_delta_qwen8b_ci_high": 0.0023281954874443313,
+   "err_auroc_delta_qwen8b_ci_low": -0.004634508227426182,
+   "err_auroc_internal_llama8b": 0.8728096018338405,
+   "err_auroc_internal_qwen8b": 0.8580564710073929,
+   "err_auroc_margin_llama8b": 0.8762803386793443,
+   "err_auroc_margin_qwen8b": 0.8590303138267866
+  }
+ },
+ "ev:1acdc14e2fa16124786a9cd0d44a03b2": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-forecast-cat",
+  "source": "campaign.adjudication.FORECAST-CAT",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/1acdc14e2fa16124786a9cd0d44a03b2/",
+  "stats": {
+   "forecast_mae": 0.08695840679817465,
+   "forecast_mae_minus_size_baseline": -0.10242024172821523,
+   "forecast_mae_minus_size_baseline_ci_high": -0.07469374333560999,
+   "forecast_mae_minus_size_baseline_ci_low": -0.11965441047419614,
+   "size_baseline_mae": 0.1893786485263899,
+   "slice_baseline_mae": 0.17701517365910444
+  }
+ },
+ "ev:14bc4c666b5b115cf1fd2c86cf209f01": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-style-rmb",
+  "source": "campaign.adjudication.STYLE-RMB",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/14bc4c666b5b115cf1fd2c86cf209f01/",
+  "stats": {}
+ },
+ "ev:5cd71da5713f2b2fb77697318b842401": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-ppe-bon",
+  "source": "campaign.adjudication.PPE-BON",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/5cd71da5713f2b2fb77697318b842401/",
+  "stats": {}
+ },
+ "ev:d746d48eef7a5630cecbd3e97a9d9cb8": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-ladder",
+  "source": "campaign.adjudication.LADDER",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/d746d48eef7a5630cecbd3e97a9d9cb8/",
+  "stats": {
+   "ladder_8b_chi_teacher_in_interval": 1.0,
+   "ladder_8b_crystallization_in_interval": 1.0,
+   "ladder_8b_metrics_in_interval": 3.0,
+   "ladder_8b_snr_in_interval": 1.0,
+   "ladder_extrap_minus_flat_error": 0.6002275013086775,
+   "ladder_extrap_minus_flat_error_ci_high": 2.4359016583798008,
+   "ladder_extrap_minus_flat_error_ci_low": -0.5311824800459731
+  }
+ },
+ "ev:c978e3958769ecf93dcf079771a3aedb": {
+  "value": "confirmed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-chi-drift",
+  "source": "campaign.adjudication.CHI-DRIFT",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/c978e3958769ecf93dcf079771a3aedb/",
+  "stats": {
+   "chi_bon_spearman": 0.9642857142857145,
+   "chi_bon_spearman_ci_high": 1.0,
+   "chi_bon_spearman_ci_low": 0.7500000000000002,
+   "chi_bon_spearman_second_model": 1.0,
+   "chi_minus_variance_baseline_spearman": 0.5714285714285714,
+   "chi_minus_variance_baseline_spearman_ci_high": 0.5714285714285716,
+   "chi_minus_variance_baseline_spearman_ci_low": 0.07142857142857151
+  }
+ },
+ "ev:02a1669641150750737afc8291255bf9": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-hump",
+  "source": "campaign.adjudication.HUMP",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/02a1669641150750737afc8291255bf9/",
+  "stats": {}
+ },
+ "ev:0b9b34f7e2af83d3b0ca32a60791a859": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-gauge-e19",
+  "source": "campaign.adjudication.GAUGE-E19",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/0b9b34f7e2af83d3b0ca32a60791a859/",
+  "stats": {}
+ },
+ "ev:095096260d9209c4fb9935cbb215812b": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-gauge-xfam",
+  "source": "campaign.adjudication.GAUGE-XFAM",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/095096260d9209c4fb9935cbb215812b/",
+  "stats": {}
+ },
+ "ev:137077efe204a6daddd359f54c494453": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-hack-fore",
+  "source": "campaign.adjudication.HACK-FORE",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/137077efe204a6daddd359f54c494453/",
+  "stats": {}
+ },
+ "ev:41058731abf1d0b1590d4f2286e8771c": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-surgery",
+  "source": "campaign.adjudication.SURGERY",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/41058731abf1d0b1590d4f2286e8771c/",
+  "stats": {
+   "erasure_certificate_pass": 1.0,
+   "exploit_drift_reduction": 0.8856159449336694,
+   "probe_recovery_auc": 0.24761904761904763,
+   "rb2_accuracy_delta_after_erasure": -0.39875212705615426
+  }
+ },
+ "ev:46e1500c4d39f9821c137ae0b00ac0da": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-verif-prm",
+  "source": "campaign.adjudication.VERIF-PRM",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/46e1500c4d39f9821c137ae0b00ac0da/",
+  "stats": {
+   "dense_localization_auc": 0.2821441611813727,
+   "style_share": -0.42684735632111825,
+   "verification_score": 0.8335037201890538
+  }
+ },
+ "ev:e7fd3fee89a0c56cf4465212601d0d26": {
+  "value": "confirmed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-judge-vbc",
+  "source": "campaign.adjudication.JUDGE-VBC",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/e7fd3fee89a0c56cf4465212601d0d26/",
+  "stats": {
+   "flip_rate": 0.822,
+   "verdict_prefix_match_rate": 1.0
+  }
+ },
+ "ev:e036326c47c7a0f52330559479e03790": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-values-contest",
+  "source": "campaign.adjudication.VALUES-CONTEST",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/e036326c47c7a0f52330559479e03790/",
+  "stats": {}
+ },
+ "ev:426a8cbed7f6d6dfb61d8fe3ed5264a4": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-forensic-receipt",
+  "source": "campaign.adjudication.FORENSIC-RECEIPT",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/426a8cbed7f6d6dfb61d8fe3ed5264a4/",
+  "stats": {
+   "omission_credulity_gap": 0.023256328422645356,
+   "reliance_recovery": 0.0,
+   "skepticism_effect": 0.023256328422645342
+  }
+ },
+ "ev:0c80d9086ebb0ad9704b88a8eefb01fa": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-atlas-vce",
+  "source": "campaign.adjudication.ATLAS-VCE",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/0c80d9086ebb0ad9704b88a8eefb01fa/",
+  "stats": {
+   "real_vce": -0.06987390356875109,
+   "real_vce_ci_high": -0.009192229234832329,
+   "real_vce_ci_low": -0.12281662932807336,
+   "reward_convergent_p_value": 0.001
+  }
+ },
+ "ev:a34316feccee3beaed93c05ce5888567": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-fact-kui",
+  "source": "campaign.adjudication.FACT-KUI",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/a34316feccee3beaed93c05ce5888567/",
+  "stats": {
+   "kui_control_fleet_median": 0.35355339059327373,
+   "kui_gap": 0.15152288168283162,
+   "kui_gap_fleet_median": 0.15152288168283162,
+   "kui_gap_perm_p": 0.3885611438856114
+  }
+ },
+ "ev:f9e6a003a5a1e0aa0fe3ff1eca0d9c7b": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-capacity-welch",
+  "source": "campaign.adjudication.CAPACITY-WELCH",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/f9e6a003a5a1e0aa0fe3ff1eca0d9c7b/",
+  "stats": {
+   "capacity_perm_p": 0.8934106589341065,
+   "dark_reward_kdeff_spearman": -0.4061811972299616,
+   "welch_floor_min_slack": 0.8163979052568419
+  }
+ },
+ "ev:54fb272fd011c8ca07a4959f553341ab": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-eval-aware",
+  "source": "campaign.adjudication.EVAL-AWARE",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/54fb272fd011c8ca07a4959f553341ab/",
+  "stats": {
+   "delta_r_per_steer": -0.0002095085858637909,
+   "organic_fpr": 0.317,
+   "real_probe_balanced_acc": 0.7932499999999999
+  }
+ },
+ "ev:844ad06a5aeb1d89c21c13c19a28cbd2": {
+  "value": "confirmed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-topo-hodge",
+  "source": "campaign.adjudication.TOPO-HODGE",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/844ad06a5aeb1d89c21c13c19a28cbd2/",
+  "stats": {
+   "curl_mass": 0.2139761313773256,
+   "gradient_mass": 0.7860238686226744,
+   "harmonic_mass": 2.425774958668703e-31,
+   "intransitive_mass": 0.2139761313773256
+  }
+ },
+ "ev:01c81c7185640f9b962b9115f360732e": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-emb-lora",
+  "source": "campaign.adjudication.EMB-LORA",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/01c81c7185640f9b962b9115f360732e/",
+  "stats": {
+   "order_recovery_auc": 0.7321428571428571,
+   "real_bias_before_quality": 0.2692307692307692,
+   "w_r_stabilization_monotone": 1.0
+  }
+ },
+ "ev:b37f71c015ebfd697d7deb2a7efb5f7e": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-cal-transfer",
+  "source": "campaign.adjudication.CAL-TRANSFER",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/b37f71c015ebfd697d7deb2a7efb5f7e/",
+  "stats": {
+   "max_abs_auc_difference": 0.41898333333333326,
+   "per_instrument_auc_differences": 0.29402604166666657
+  }
+ },
+ "ev:a34457e83cd4eec10d080804a2533e82": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-adj-avp",
+  "source": "campaign.adjudication.ADJ-AVP",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/a34457e83cd4eec10d080804a2533e82/",
+  "stats": {
+   "attribution_recovery_auc": 1.0,
+   "patching_recovery_auc": 0.4339622641509434,
+   "real8b_avp_spearman": -0.3735805860805861,
+   "recovery_gap": -0.5660377358490566,
+   "recovery_gap_ci_high": -0.4276729559748428,
+   "recovery_gap_ci_low": -0.7735849056603774
+  }
+ },
+ "ev:491f7f378d0b58dfdadebc9aaee7c983": {
+  "value": "mixed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-conf-partial",
+  "source": "campaign.adjudication.CONF-PARTIAL",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/491f7f378d0b58dfdadebc9aaee7c983/",
+  "stats": {
+   "best_index_perm_p": 0.046795320467953205,
+   "lineage_check_pass": 0.0,
+   "max_abs_partial_corr": 0.6484848484848483
+  }
+ },
+ "ev:3990df7af1488c08ad62786d879b0b0f": {
+  "value": "refuted",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-meta-ledger",
+  "source": "campaign.adjudication.META-LEDGER",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/3990df7af1488c08ad62786d879b0b0f/",
+  "stats": {
+   "brier_directional": 0.26,
+   "interval_coverage_0p8": 0.75,
+   "n_directional": 16.0,
+   "n_intervals": 4.0
+  }
+ },
+ "ev:a7ed2d6b81c5f79458dad733defb3803": {
+  "value": "confirmed",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-decomp",
+  "source": "campaign.adjudication.T3-DECOMP",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/a7ed2d6b81c5f79458dad733defb3803/",
+  "stats": {
+   "real_tacit_fraction": 0.9722865779496196
+  }
+ },
+ "ev:9d51086b170b359d58d8eb4bf4f882fb": {
+  "value": "inconclusive",
+  "trust": "registered",
+  "trustRung": 2,
+  "subject": "campaign-field-flat",
+  "source": "campaign.adjudication.T3-FIELD",
+  "commit": "f93f4b5578c221d3d2665f9b305f3e86759be862+dirty",
+  "href": "/evidence/9d51086b170b359d58d8eb4bf4f882fb/",
+  "stats": {}
+ }
+}

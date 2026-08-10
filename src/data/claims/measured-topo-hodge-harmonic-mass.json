@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "a86fbf38d4cadb2c68cc33f90d06a407",
+ "humanSource": "The frozen study \"Intransitive preference mass no scalar reward can represent\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2",
+  "campaign.adjudication.TOPO-HODGE",
+  "study:campaign-topo-hodge@v1#7206aa3a",
+  "spec:7206aa3a670d99eb3640c3230ce3b7fb"
+ ],
+ "label": "Intransitive preference mass no scalar reward can represent",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one.",
+ "quantity": {
+  "name": "harmonic_mass",
+  "unit": null,
+  "value": 2.425774958668703e-31
+ },
+ "scope": "One frozen study, adjudicated once, on nectar-tournaments and ultrafeedback-tournaments.",
+ "slug": "measured-topo-hodge-harmonic-mass",
+ "sourceUrl": "/evidence/844ad06a5aeb1d89c21c13c19a28cbd2/",
+ "statement": "A supporting measurement from the frozen study \"Intransitive preference mass no scalar reward can represent\", with no prediction registered against it in advance.",
+ "subject": "nectar-tournaments and ultrafeedback-tournaments",
+ "type": "measured-result"
+}

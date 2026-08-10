@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "5ec21b60fe4ef21f4edfb57e6d5d211d",
+ "humanSource": "The frozen study \"Susceptibility chi predicts best-of-n feature drift on a real bank\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:c978e3958769ecf93dcf079771a3aedb",
+  "campaign.adjudication.CHI-DRIFT",
+  "study:campaign-chi-drift@v1#1c12042d",
+  "spec:1c12042d2eeb93b23ff9cf27b6433125"
+ ],
+ "label": "Susceptibility chi predicts best-of-n feature drift on a real bank",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one. split-bank estimator: chi and drift read disjoint prompt halves, so the null re-centers at zero, but the correlation's exchangeable unit is k = 6 features and the null still passes the frozen 0.3 threshold 0.28 of the time; the registered CI exclusion carries size control and only orderings near the synthetic calibration (0.958) clear the 0.91 MDE.",
+ "quantity": {
+  "name": "chi_bon_spearman_second_model",
+  "unit": null,
+  "value": 1
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-8b and skywork-v2-llama31-8b, over ultrafeedback-bank.",
+ "slug": "measured-chi-drift-chi-bon-spearman-second-model",
+ "sourceUrl": "/evidence/c978e3958769ecf93dcf079771a3aedb/",
+ "statement": "A supporting measurement from the frozen study \"Susceptibility chi predicts best-of-n feature drift on a real bank\", with no prediction registered against it in advance.",
+ "subject": "skywork-v2-qwen3-8b and skywork-v2-llama31-8b, over ultrafeedback-bank",
+ "type": "measured-result"
+}

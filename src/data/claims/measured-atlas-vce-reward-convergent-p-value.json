@@ -1,0 +1,26 @@
+{
+ "comparator": "< 0.05",
+ "contentHash": "afb2b7825c6d56968cf8f0b5c751c647",
+ "humanSource": "The frozen study \"Value-convergence excess across the fleet beats the capability-matched null\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:0c80d9086ebb0ad9704b88a8eefb01fa",
+  "campaign.adjudication.ATLAS-VCE",
+  "study:campaign-atlas-vce@v1#2008bee7",
+  "spec:2008bee7d02b9461abfd6f12ff7b0ffe",
+  "H-vce-p"
+ ],
+ "label": "Value-convergence excess across the fleet beats the capability-matched null",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. the vce > 0 margin sits at the null center by construction: the point call passes under the null 0.48 of the time and its power at the threshold-alternative equals that rate; the alpha-exact p-value companion and the registered CI exclusion carry the card's evidence.",
+ "quantity": {
+  "name": "reward_convergent_p_value",
+  "unit": null,
+  "value": 0.001
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full and rb2-helpfulness-512.",
+ "slug": "measured-atlas-vce-reward-convergent-p-value",
+ "sourceUrl": "/evidence/0c80d9086ebb0ad9704b88a8eefb01fa/",
+ "statement": "the convergent-pair alignment exceeds the random-utility null at p < 0.05.",
+ "status": "supported",
+ "subject": "fleet, over rb2-full and rb2-helpfulness-512",
+ "type": "measured-result"
+}

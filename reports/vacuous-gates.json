@@ -1,0 +1,58 @@
+{
+  "4": {
+    "reason": "tests/regression/known-values.json does not exist. Packet P1 creates tests/ from nothing and migrates the 26 assertion sites (C-2, C-4). Until it lands, no derived value is pinned. Regenerate a local copy with: node scripts/checks/known-values.mjs --record",
+    "at": "2026-08-07T23:57:39.153Z"
+  },
+  "5": {
+    "reason": "1720 unbound numeral(s) across 6 route(s) were absorbed by the ratchet and not checked: /docs/** (P5), /atlas/** (P6), /evidence/** (P6), /log/** (P6), / (P3), /gallery/ (P2)",
+    "at": "2026-08-10T18:38:35.923Z"
+  },
+  "7": {
+    "reason": "2 of 5 pages were not swept: they are under an exempt prefix (/log/, /specs/, /demos/) or match the D-40 evidence-record pattern, where D-05 and D-40 permit the identifiers. Per allowance: /log/=1, /specs/=0, /demos/=0, /^\\/evidence\\/[0-9a-f]{32}\\/$/=1.",
+    "at": "2026-08-10T20:16:37.785Z"
+  },
+  "12": {
+    "reason": "28 of 30 same-origin redirect destinations do not exist in dist/ yet. The redirect resolves and points at the right place; the page it points at is packet P6's (/log/**, /atlas/).",
+    "at": "2026-08-07T23:57:43.703Z"
+  },
+  "14": {
+    "reason": "1 specified route(s) not built and therefore not scanned: /docs/reference/",
+    "at": "2026-08-10T22:33:14.886Z"
+  },
+  "16": {
+    "reason": "the scene is not built, so the 400KB scene budget was not measured.",
+    "at": "2026-08-07T23:59:09.452Z"
+  },
+  "17": {
+    "reason": "no frame baseline recorded, so the 8% regression arm did not run.",
+    "at": "2026-08-07T23:59:54.914Z"
+  },
+  "19": {
+    "reason": "5 specified route(s) not built: /see/, /see/run/, /see/reward-model/, /see/grader/, /docs/refusals/",
+    "at": "2026-08-08T03:01:34.483Z"
+  },
+  "20": {
+    "reason": "these fidelity/landmark pairs are not exposed and were not compared: scene: detector x",
+    "at": "2026-08-10T21:53:31.952Z"
+  },
+  "21": {
+    "reason": "assertion 2 is not asserted in the light theme: by peak 1 elements tie at 0.9779 (the page ground), and by mean the strip ranks 3 of 6 against D-38's claim that it is first at 0.8973. The light-theme criterion needs an owner.",
+    "at": "2026-08-10T22:32:59.641Z"
+  },
+  "22": {
+    "reason": "no element on any built route carries data-bound-value. Packets P3 (the SVG room), P4 (the three interactives) and P6 (the log figures) bind their figures to it. The contract is in this file's header. Until one lands there is no geometry to check and a pass would be a pass nobody earned.",
+    "at": "2026-08-08T00:03:26.517Z"
+  },
+  "23": {
+    "reason": "no visual baseline at design/dossier/baseline/. It is frozen after wave 1 merges, per the brief's §6.6: comparing today's half-built routes against each other would freeze a baseline of work in progress. Freeze it with: node scripts/checks/visual-diff.mjs --record",
+    "at": "2026-08-08T00:03:26.585Z"
+  },
+  "24": {
+    "reason": "No caption track exists under film/ yet (packet S2, D-23). The numbers arm ran against src/data/captions.json only; the colour arm ran against 0 film source file(s).",
+    "at": "2026-08-08T00:03:26.642Z"
+  },
+  "25": {
+    "reason": "1 route(s) state a superseded version and were absorbed by the stale-version ratchet rather than failed: /docs/contributing/ (P5, which owns the ported documentation corpus, src/content/docs/contributing/index.md:71). The ratchet may shrink and must not grow.",
+    "at": "2026-08-10T19:55:57.001Z"
+  }
+}

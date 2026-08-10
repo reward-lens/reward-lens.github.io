@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0",
+ "contentHash": "07bc45383e2a6ac8b132d0bc8dc89461",
+ "humanSource": "The frozen study \"A legibility frontier leaves a tacit residual\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:a7ed2d6b81c5f79458dad733defb3803",
+  "campaign.adjudication.T3-DECOMP",
+  "study:campaign-decomp@v1#4133c488",
+  "spec:4133c488b46f80ee553b992c7ddbb794",
+  "H-tacit"
+ ],
+ "label": "A legibility frontier leaves a tacit residual",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "real_tacit_fraction",
+  "unit": null,
+  "value": 0.9722865779496196
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-llama31-8b, over rb2-full.",
+ "slug": "measured-t3-decomp-real-tacit-fraction",
+ "sourceUrl": "/evidence/a7ed2d6b81c5f79458dad733defb3803/",
+ "statement": "a residual no short rubric captures.",
+ "status": "supported",
+ "subject": "skywork-v2-llama31-8b, over rb2-full",
+ "type": "measured-result"
+}

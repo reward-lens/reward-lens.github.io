@@ -4,6 +4,8 @@ description: Two reward models each reduce to a direction w_r. How aligned are t
 section: how-to
 order: 14
 source: docs/content/how-to/compare-two-models.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -12,7 +14,7 @@ import ThemedFigure from "@components/ThemedFigure.astro";
 
 **Two reward models each reduce to a direction $w_r$. How aligned are they?**
 
-The obvious move is a cosine between the two direction vectors. On two versions of one Skywork model that cosine comes out around $0.005$ (fixture E19, measured from the committed weights). Read literally, that says two reward models which agree on most preference pairs are very nearly orthogonal, which is absurd. The number is not wrong arithmetic. It is the wrong quantity: a raw cosine compares two vectors in two different coordinate systems, and each model is free to place its features on a different, arbitrarily scaled basis. So the raw cosine is a coordinate, not a fact about agreement.
+The obvious move is a cosine between the two direction vectors. On two versions of one Skywork model that cosine comes out around $0.005$ (an archived fixture, measured from the committed weights). Read literally, that says two reward models which agree on most preference pairs are very nearly orthogonal, which is absurd. The number is not wrong arithmetic. It is the wrong quantity: a raw cosine compares two vectors in two different coordinate systems, and each model is free to place its features on a different, arbitrarily scaled basis. So the raw cosine is a coordinate, not a fact about agreement.
 
 A frame is the shared coordinate system you put both directions into before you compare them. It is fit once from reference activations and whitens away the per-model basis and scale, so that what is left is the part of the direction that actually moves the reward. The full treatment is in [gauge and frames](/docs/discipline/gauge-and-frames/); here is the recipe.
 
@@ -74,7 +76,7 @@ This is the gate doing its job. A frameless cross-model comparison is not downgr
 
 <Callout type="warn" title="Needs a GPU">
 
-Reproducing the real $0.005$ raw cosine and its canonicalization needs both reward models resident in fp32, which does not fit an 8 GB GPU. The E19 result above is read from committed artifacts. On this hardware the mechanism runs on the synthetic and tiny paths; the 8B canonicalization is gated.
+Reproducing the real $0.005$ raw cosine and its canonicalization needs both reward models resident in fp32, which does not fit an 8 GB GPU. The $0.005$ quoted above is read from committed artifacts. On this hardware the mechanism runs on the synthetic and tiny paths; the 8B canonicalization is gated.
 
 </Callout>
-See also: [gauge and frames](/docs/discipline/gauge-and-frames/), [`effective_angle`](/docs/reference/geometry/#reward_lens.geometry.canonical.effective_angle), [`fit_frame`](/docs/reference/geometry/#reward_lens.geometry.frame.fit_frame).
+See also: [gauge and frames](/docs/discipline/gauge-and-frames/), [`effective_angle`](/docs/api/geometry/#reward_lens.geometry.canonical.effective_angle), [`fit_frame`](/docs/api/geometry/#reward_lens.geometry.frame.fit_frame).

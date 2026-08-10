@@ -1,0 +1,219 @@
+---
+/**
+ * act-section  ·  one of the six parts, DESIGN.md §16.2
+ *
+ *   1  The question, in one sentence a practitioner would ask
+ *   2  The setup: what was measured, on what, with what access
+ *   3  The instrument, shown working, interactively
+ *   4  The result, with its number and its scope
+ *   5  What it does not establish
+ *   6  Do it yourself: the code, the data, the expected output
+ *
+ * The six are the same shell six times, in that order, on all three routes. A
+ * part may not be omitted, reordered or merged, and `part` is validated here
+ * rather than trusted, because the ordering is the argument: /see/grader/ says
+ * in its own page file that asking whether the grader is sound only lands
+ * because acts one and two already depended on one.
+ *
+ * WHAT IS DELIBERATELY NOT HERE.
+ *
+ * There is no part *label*. The margin column would be the obvious place for
+ * "3 / 6" or "THE INSTRUMENT", and DESIGN.md §7.1 bans it in one sentence: a
+ * decorative label in a margin is decoration wearing a lab coat, and the test
+ * is that a string equally true on another page does not belong there. A part
+ * index is equally true on all three acts. The structure is carried by the
+ * sequence, the separating rule and the spacing instead.
+ *
+ * There is no `emphasis`, `variant` or `collapsed` property, for the same
+ * reason data-table has no `sortable`: part 5 must be able to occupy at least
+ * as much vertical space as part 4 (pages/see-run.md:125,
+ * pages/see-reward-model.md:188, pages/see-grader.md:184), and a property that
+ * lets a route de-emphasise a part is a property that will be used on the part
+ * the route likes least.
+ *
+ * HEADINGS. copy.yaml carries no section heading for parts 1 to 5 of any act;
+ * only part 6 has one, ui.bundle_heading. `heading` is therefore optional and
+ * a part with no heading renders none rather than inventing prose
+ * (HANDOFF.md §8 rule 1). Escalated with the packet report.
+ */
+interface Props {
+  /** 1 to 6, in the order of DESIGN.md §16.2. */
+  part: 1 | 2 | 3 | 4 | 5 | 6;
+  /** From copy.yaml. Absent where copy.yaml has no key for this part. */
+  heading?: string | null;
+  /** Part 1 carries the route's <h1>. Every other heading is an <h2>. */
+  headingLevel?: 1 | 2;
+  /**
+   * "wide" spans the body across the margin track, which is permitted escape 2
+   * and 3 of DESIGN.md §7.2: a wide figure, and the refusal ledger. Part 3 of
+   * every act is wide because the instrument is one of those.
+   */
+  width?: "prose" | "wide";
+  class?: string;
+}
+
+const {
+  part,
+  heading = null,
+  headingLevel = 2,
+  width = "prose",
+  class: extraClass = "",
+} = Astro.props;
+
+if (!Number.isInteger(part) || part < 1 || part > 6) {
+  throw new Error(
+    `act-section: part must be 1 to 6, got ${String(part)}. ` +
+      `DESIGN.md §16.2: every act has the same six-part structure and a part ` +
+      `may not be added, dropped or renumbered.`,
+  );
+}
+
+const Heading = `h${headingLevel}` as "h1" | "h2";
+const headingClass = headingLevel === 1 ? "type-display-2" : "type-h2";
+const hasMargin = Astro.slots.has("margin");
+const hasFigure = Astro.slots.has("figure");
+
+// The shell pass left part 3 rendering as an empty band between two rules,
+// which was correct for a shell and must not survive a route pass. A part with
+// no content is a hole the reader reads as a bug, and the six-part structure
+// makes it look deliberate. Refused here so it cannot ship by being forgotten.
+if (!Astro.slots.has("default") && !hasFigure) {
+  throw new Error(
+    `act-section part ${part}: empty. Every part of an act renders something ` +
+      `(DESIGN.md §16.2: a part may not be omitted). If the data this part ` +
+      `needs has not landed, that is an escalation to the packet that owns it, ` +
+      `not an empty band between two rules.`,
+  );
+}
+
+// A wide part has taken the margin track for its body, so there is nowhere for
+// margin metadata to sit that is not a full-width band above the content. That
+// band reads as a second heading rather than as a margin, so it is refused
+// here rather than styled: the instrument's metadata belongs to the figure
+// frame that holds the instrument.
+if (width === "wide" && hasMargin) {
+  throw new Error(
+    `act-section part ${part}: a "wide" part has no margin column, because its ` +
+      `body spans the margin track (DESIGN.md §7.2 escape 2). Move the metadata ` +
+      `into the figure frame, or make the part "prose".`,
+  );
+}
+---
+
+<section
+  class:list={[
+    "act-s",
+    `act-s--${width}`,
+    part === 1 && "act-s--first",
+    extraClass,
+  ]}
+  id={`part-${part}`}
+  data-part={part}
+>
+  <div class="act-s__margin">
+    {hasMargin && <slot name="margin" />}
+  </div>
+
+  <div class="act-s__body">
+    {heading && <Heading class={`act-s__heading ${headingClass}`}>{heading}</Heading>}
+    <slot />
+  </div>
+
+  {
+    /* PERMITTED ESCAPE 2, DESIGN.md §7.2: a wide figure. Added in the route
+       pass, because part 4 of every act carries both prose blocks and a figure,
+       and the two want different widths. Making the whole part "wide" gives the
+       figure its width and moves the prose's left edge a margin track to the
+       left, so parts 2, 4 and 5 stop sharing an edge and the six-part rhythm
+       reads as five parts and an exception. This slot spans both tracks while
+       the body stays at the reading measure, which is the escape the design
+       describes rather than a wider version of the part.
+
+       It is not an emphasis knob. It changes width and nothing else: no type
+       role, no ink, no order, and a part with nothing in it renders nothing. */
+    hasFigure && (
+      <div class="act-s__figure">
+        <slot name="figure" />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  /* One column below --bp-md, with the margin column above the body as a
+     wrapped row (DESIGN.md §7.1). min-width: 0 on both tracks: global.css
+     covers `section`, and a grid child of a grid child needs its own. */
+  .act-s {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-5);
+    /* The rule belongs to the part it opens, so it sits further from the part
+       that ended (--space-8, "between sections on a dense page") than from the
+       part that begins (--space-7). At shoot 1 the rule hugged the previous
+       part's last line and read as an underline on it. */
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-7);
+  }
+
+  /* The first part opens the page, so it takes no rule and no top inset: the
+     act's own padding has already placed it. */
+  .act-s--first {
+    margin-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  /* --line is "decorative separation only" (tokens.css:207), which is exactly
+     what this is: the six-part rhythm made visible without a string. It spans
+     both tracks because the part, not the body, is the unit. */
+  .act-s:not(.act-s--first) {
+    border-block-start: var(--border-w) solid var(--line);
+  }
+
+  .act-s__margin,
+  .act-s__body,
+  .act-s__figure {
+    min-width: 0;
+  }
+
+  .act-s__figure {
+    margin-block-start: var(--space-6);
+  }
+
+  .act-s__body > :global(:first-child) {
+    margin-block-start: 0;
+  }
+
+  .act-s__heading {
+    margin: 0 0 var(--space-5);
+    max-width: min(var(--measure-heading), 100%);
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  /* The body is held to the reading measure. "wide" is the escape and it is
+     applied to the track, not to a child, so a wide part's prose and its
+     figure share one left edge. */
+  .act-s--prose .act-s__body {
+    max-width: min(var(--measure-prose), 100%);
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .act-s {
+      grid-template-columns: var(--grid-margin-col) minmax(0, 1fr);
+      column-gap: var(--grid-margin-gap);
+      row-gap: 0;
+    }
+
+    /* Permitted escape 2 and 3, DESIGN.md §7.2. The body takes the margin
+       track as well, which is why a wide part may not carry margin metadata. */
+    .act-s--wide .act-s__body {
+      grid-column: 1 / -1;
+    }
+
+    /* The figure slot takes both tracks in every part, wide or not. That is the
+       point of it: the figure gets the escape and the prose does not. */
+    .act-s__figure {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

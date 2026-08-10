@@ -1,0 +1,366 @@
+---
+/**
+ * act-figure-dimensions  ·  Fig. 1.2, all twelve objective dimensions
+ *
+ * pages/see-reward-model.md:118: all twelve dimensions, bleed, and the figure
+ * rather than the mean is the section's centre, because `rho_mean` is a mean
+ * across dimensions and the per-dimension spread is the more informative fact.
+ *
+ * THE COLOUR RULE, AND THE DESIGN SPECIMEN GETS THIS WRONG. Twelve bars against
+ * six component tokens makes hue decorative and breaks the site's one colour
+ * rule. So the figure ENCODES SIGN: --written above the zero line, --realized
+ * below it, and identity comes from position and axis label. Two colours, both
+ * meaning what they always mean on this site, and a greyscale reader loses
+ * nothing because the zero line is where the bar starts and the value is text.
+ *
+ * ALL TWELVE, NEVER THE EIGHT THAT AGREE WITH THE HEADLINE. Hiding the four
+ * positive dimensions is exactly the selection this project argues against, and
+ * this is the act that argues it. The four positive bars are drawn at the same
+ * weight as the eight negative ones.
+ *
+ * A DIFFERENT COMPOSITION AT 390, NOT A SCALED ONE (page file:224). Twelve
+ * vertical bars with rotated labels at 390 is mush, and a figure legible at
+ * 1440 and mush at 390 is a defect rather than a responsive success. Below
+ * --bp-md the same twelve become a horizontal bar list with the axis label
+ * inline on each row and the zero line running down the middle. Both
+ * compositions are in the DOM and CSS chooses; neither is a fallback and both
+ * carry every dimension and every value.
+ *
+ * EVERY VALUE CARRIES ITS CITATION. The correlations were recorded in a fixture
+ * the generator names and hashes, and act one's numbers resolve to a document
+ * rather than to an evidence record for this quantity, so they cite through
+ * act-source at the weight a provenance chip gets (D-35).
+ */
+import ActSource from "@components/acts/act-source.astro";
+
+export interface DimensionRow {
+  key: string;
+  spearmanRho: number;
+  source: { document: string; line: number | null };
+}
+
+interface Props {
+  dimensions: DimensionRow[];
+  labels: { dimension: string; rho: string; above: string; below: string };
+  class?: string;
+}
+
+const { dimensions, labels, class: extraClass = "" } = Astro.props;
+
+if (!dimensions.length) {
+  throw new Error(
+    "act-figure-dimensions: no dimensions. The figure is the per-dimension " +
+      "spread and it does not render the mean instead.",
+  );
+}
+
+const rho = (v: number) => (v >= 0 ? `+${v.toFixed(6)}` : v.toFixed(6));
+
+/* One scale for all twelve, symmetric about zero, from the largest magnitude
+   present. A per-bar scale would make a −0.44 and a +0.15 look alike, and a
+   rebased axis is the oldest chart lie there is. */
+const peak = Math.max(...dimensions.map((d) => Math.abs(d.spearmanRho)));
+const share = (v: number) => (peak === 0 ? 0 : (Math.abs(v) / peak) * 100);
+
+const W = 1200;
+const H = 420;
+const PAD_B = 96;
+const PAD_T = 24;
+const MID = PAD_T + (H - PAD_T - PAD_B) / 2;
+const HALF = (H - PAD_T - PAD_B) / 2;
+const step = W / dimensions.length;
+const barW = step * 0.5;
+
+/* The figure's own citation. Every value it draws is one of the twelve in the
+   table beneath, each cited individually there; the two drawn compositions are
+   aria-hidden duplicates of that table, and this is what makes their rendered
+   numerals resolve rather than read as typed-in labels. All twelve share one
+   fixture, so the figure cites it once. */
+const figureCite = (() => {
+  const docs = new Set(
+    dimensions.map((d) => (d.source.line === null ? d.source.document : `${d.source.document}:${d.source.line}`)),
+  );
+  return [...docs].join(", ");
+})();
+
+const bars = dimensions.map((d, i) => {
+  const h = (share(d.spearmanRho) / 100) * HALF;
+  return {
+    ...d,
+    x: i * step + (step - barW) / 2,
+    y: d.spearmanRho >= 0 ? MID - h : MID,
+    h,
+    cx: i * step + step / 2,
+    positive: d.spearmanRho >= 0,
+  };
+});
+---
+
+<div class:list={["fd", extraClass]}>
+  <div class="fd__drawn" data-provenance>
+  {/* ------------------------------------------------- at --bp-md and above */}
+  <div class="fd__wide" aria-hidden="true">
+    <svg viewBox={`0 0 ${W} ${H}`} class="fd__svg" focusable="false" role="presentation">
+      <line class="fd__zero" x1="0" y1={MID} x2={W} y2={MID} />
+      {
+        bars.map((b) => (
+          <>
+            <rect
+              class:list={["fd__bar", b.positive ? "fd__bar--pos" : "fd__bar--neg"]}
+              x={b.x}
+              y={b.y}
+              width={barW}
+              height={Math.max(b.h, 1)}
+            />
+            <text
+              class="fd__value type-mono-sm"
+              x={b.cx}
+              y={b.positive ? b.y - 8 : b.y + b.h + 20}
+              text-anchor="middle"
+            >
+              {rho(b.spearmanRho)}
+            </text>
+            <text
+              class="fd__label type-mono-sm"
+              x={b.cx}
+              y={H - PAD_B + 24}
+              text-anchor="end"
+              transform={`rotate(-40 ${b.cx} ${H - PAD_B + 24})`}
+            >
+              {b.key}
+            </text>
+          </>
+        ))
+      }
+    </svg>
+  </div>
+
+  {/* --------------------------------- below --bp-md: a different composition */}
+  <ul class="fd__narrow" aria-hidden="true">
+    {
+      bars.map((b) => (
+        <li class="fd__nrow">
+          <span class="fd__nlabel type-mono-sm">{b.key}</span>
+          <span class="fd__ntrack">
+            <span
+              class:list={[
+                "fd__nbar",
+                b.positive ? "fd__nbar--pos" : "fd__nbar--neg",
+              ]}
+              style={`inline-size:${(share(b.spearmanRho) / 2).toFixed(3)}%`}
+            />
+          </span>
+          <span class="fd__nvalue type-mono-sm">{rho(b.spearmanRho)}</span>
+        </li>
+      ))
+    }
+  </ul>
+  <span class="fd__cite type-mono-sm" data-provenance-panel>{figureCite}</span>
+  </div>
+
+  {/* The same twelve as text, which is what the bars encode and the only form a
+      screen reader can read. Both compositions above are aria-hidden precisely
+      so this is read once rather than three times. */}
+  <div class="fd__scroll" role="group" aria-labelledby="fd-cap" tabindex="0">
+    <table class="fd__table">
+      <caption class="fd__cap type-mono-label" id="fd-cap">
+        {`${labels.above} · ${labels.below}`}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col" class="type-mono-label">{labels.dimension}</th>
+          <th scope="col" class="type-mono-label">{labels.rho}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          dimensions.map((d) => (
+            <tr>
+              <th scope="row" class="type-mono-sm">{d.key}</th>
+              <td class="type-mono-sm">
+                <ActSource
+                  display={rho(d.spearmanRho)}
+                  document={d.source.document}
+                  line={d.source.line}
+                  label={`${labels.rho}, ${d.key}`}
+                />
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .fd {
+    min-width: 0;
+  }
+
+  .fd__drawn {
+    min-width: 0;
+  }
+
+  /* The figure's citation reads as an endnote in print and is out of layout on
+     screen, where the table beneath already carries every value with its own. */
+  .fd__cite {
+    display: none;
+    color: var(--ink-2);
+  }
+
+  @media print {
+    .fd__cite {
+      display: block;
+      margin-block-start: var(--space-3);
+    }
+  }
+
+  .fd__wide {
+    display: none;
+    min-width: 0;
+  }
+
+  .fd__svg {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .fd__zero {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+  }
+
+  /* Sign, and only sign. Identity is position and label. */
+  .fd__bar--pos {
+    fill: var(--written);
+  }
+
+  .fd__bar--neg {
+    fill: var(--realized);
+  }
+
+  /* No font-size here. SVG <text> takes the type role class like any other
+     element, which is what act-figure-detectors already does on its own ticks
+     and names, and it is the only form that survives gate 15 (D-28: a type role
+     is one class, never a composite property). The viewBox is 1200 units wide
+     and renders at roughly that, so the class's size is also its rendered size. */
+  .fd__value,
+  .fd__label {
+    fill: var(--ink-2);
+  }
+
+  /* The narrow composition: a horizontal bar list with the label inline and the
+     zero line down the middle. Not the wide one scaled. */
+  .fd__narrow {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .fd__nrow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+    min-width: 0;
+  }
+
+  .fd__nlabel {
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  .fd__ntrack {
+    display: flex;
+    block-size: var(--space-4);
+    background: var(--surface-1);
+    border-radius: var(--radius-1);
+    position: relative;
+  }
+
+  /* The zero line is the centre of the track, so a positive bar grows right and
+     a negative one grows left from the same origin. */
+  .fd__ntrack::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 50%;
+    inline-size: var(--border-w);
+    background: var(--line-strong);
+  }
+
+  .fd__nbar {
+    display: block;
+    block-size: 100%;
+    border-radius: var(--radius-1);
+    position: relative;
+  }
+
+  .fd__nbar--pos {
+    background: var(--written);
+    margin-inline-start: 50%;
+  }
+
+  .fd__nbar--neg {
+    background: var(--realized);
+    margin-inline-start: auto;
+    margin-inline-end: 50%;
+  }
+
+  .fd__nvalue {
+    color: var(--ink);
+  }
+
+  .fd__scroll {
+    margin-block-start: var(--space-5);
+    overflow-x: auto;
+    min-width: 0;
+  }
+
+  .fd__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .fd__table {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    border-collapse: collapse;
+  }
+
+  .fd__cap {
+    caption-side: top;
+    text-align: start;
+    color: var(--ink-3); /* ink3-ok: caption on --ground, 5.25:1 (C-15) */
+    padding-block-end: var(--space-3);
+  }
+
+  .fd__table th,
+  .fd__table td {
+    padding: var(--space-2) var(--space-4);
+    border-block-end: var(--border-w) solid var(--line);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  .fd__table thead th {
+    color: var(--ink-2);
+  }
+
+  .fd__table tbody th {
+    color: var(--ink);
+    font-weight: var(--type-mono-sm-weight, 400);
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .fd__wide {
+      display: block;
+    }
+
+    .fd__narrow {
+      display: none;
+    }
+  }
+</style>

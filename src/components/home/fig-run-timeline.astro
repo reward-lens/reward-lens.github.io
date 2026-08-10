@@ -1,0 +1,160 @@
+---
+/**
+ * Section 5's figure. The forecasting exhibit compressed to its essential
+ * shape: the labelled hack rate over the run, the fitted transition, the step
+ * the shipped signal alarms at, and the step the registered comparator peaks
+ * at. This is the static rendering, which is what ships with the scene off and
+ * what prints; the scrubber is a later upgrade over it.
+ *
+ * Every coordinate below comes from src/data/run-series.json. The only numbers
+ * written into this file are the viewBox and the plot's inset, which are the
+ * size of the drawing and describe nothing.
+ *
+ * THE COLOUR RULE. Two marks and two roles: --alarm for the signal that
+ * shipped, --comparator for the registered baseline that lagged. Both are
+ * data-role tokens, not decoration. The curve itself is --ink-3, because the
+ * curve is context and the two markers are the finding.
+ */
+interface Detector {
+  key: string;
+  label: string;
+  alarmStep: number | null;
+  leadWidths: number | null;
+  surrogateRate: number | null;
+  shipped: boolean;
+}
+
+interface Props {
+  steps: number[];
+  hackRate: number[];
+  detectors: Detector[];
+  transition: { midpoint: number; width1090: number };
+  /** copy.yaml:a11y.figure_alt.run_timeline, already filled. */
+  alt: string;
+}
+
+const { steps, hackRate, detectors, transition, alt } = Astro.props;
+
+const W = 720;
+const H = 190;
+const PAD = { l: 8, r: 8, t: 12, b: 22 };
+
+const xMin = steps[0];
+const xMax = steps[steps.length - 1];
+const x = (step: number) =>
+  PAD.l + ((step - xMin) / (xMax - xMin)) * (W - PAD.l - PAD.r);
+const y = (v: number) => PAD.t + (1 - v) * (H - PAD.t - PAD.b);
+
+const path = steps
+  .map((s, i) => `${i === 0 ? "M" : "L"}${x(s).toFixed(2)},${y(hackRate[i]).toFixed(2)}`)
+  .join(" ");
+
+const shipped = detectors.find((d) => d.shipped) ?? null;
+const comparator =
+  detectors.find((d) => !d.shipped && d.alarmStep !== null && d.alarmStep > transition.midpoint) ??
+  null;
+
+const tLo = transition.midpoint - transition.width1090 / 2;
+const tHi = transition.midpoint + transition.width1090 / 2;
+---
+
+<svg
+  class="runfig"
+  viewBox={`0 0 ${W} ${H}`}
+  role="img"
+  aria-label={alt}
+  preserveAspectRatio="xMidYMid meet"
+>
+  <!-- the fitted transition, 10 to 90 -->
+  <rect
+    class="runfig__transition"
+    x={x(tLo)}
+    y={PAD.t}
+    width={x(tHi) - x(tLo)}
+    height={H - PAD.t - PAD.b}
+  />
+  <line
+    class="runfig__midpoint"
+    x1={x(transition.midpoint)}
+    x2={x(transition.midpoint)}
+    y1={PAD.t}
+    y2={H - PAD.b}
+  />
+
+  <!-- the labelled outcome -->
+  <path class="runfig__curve" d={path} />
+
+  <!-- the baseline -->
+  <line class="runfig__axis" x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} />
+
+  {
+    shipped?.alarmStep != null && (
+      <g class="runfig__mark runfig__mark--alarm">
+        <line x1={x(shipped.alarmStep)} x2={x(shipped.alarmStep)} y1={PAD.t} y2={H - PAD.b} />
+        <text class="type-mono-label" x={x(shipped.alarmStep)} y={H - PAD.b + 15}>
+          {shipped.alarmStep}
+        </text>
+      </g>
+    )
+  }
+  {
+    comparator?.alarmStep != null && (
+      <g class="runfig__mark runfig__mark--comparator">
+        <line x1={x(comparator.alarmStep)} x2={x(comparator.alarmStep)} y1={PAD.t} y2={H - PAD.b} />
+        <text class="type-mono-label" x={x(comparator.alarmStep)} y={H - PAD.b + 15}>
+          {comparator.alarmStep}
+        </text>
+      </g>
+    )
+  }
+  <text class="runfig__t-label type-mono-label" x={x(transition.midpoint)} y={PAD.t - 2}>
+    {transition.midpoint}
+  </text>
+</svg>
+
+<style>
+  .runfig {
+    inline-size: 100%;
+    block-size: auto;
+    display: block;
+  }
+  .runfig__transition {
+    fill: var(--surface-2);
+  }
+  .runfig__midpoint,
+  .runfig__axis {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+  }
+  .runfig__curve {
+    fill: none;
+    stroke: var(--ink-3); /* ink3-ok: on --ground; the curve is context, the markers are the finding */
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+  .runfig__mark line {
+    stroke-width: 1.5;
+  }
+  .runfig__mark text {
+    text-anchor: middle;
+  }
+  .runfig__mark--alarm line,
+  .runfig__mark--alarm text {
+    stroke: var(--alarm);
+    fill: var(--alarm);
+  }
+  .runfig__mark--alarm text {
+    stroke: none;
+  }
+  .runfig__mark--comparator line {
+    stroke: var(--comparator);
+    stroke-dasharray: 3 3;
+  }
+  .runfig__mark--comparator text {
+    fill: var(--comparator);
+  }
+  .runfig__t-label {
+    fill: var(--ink-2);
+    text-anchor: middle;
+  }
+</style>

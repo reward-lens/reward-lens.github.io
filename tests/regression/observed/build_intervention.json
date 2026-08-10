@@ -1,0 +1,71 @@
+{
+ "generator": "build_intervention",
+ "source": "scripts/build_intervention.py",
+ "values": {
+  "attributed_components": 65,
+  "deprecated_rho": -0.256,
+  "dimensions": 12,
+  "dimensions_whose_top_attribution_component_moves_nothing": [
+   "confidence",
+   "refusal_quality",
+   "sycophancy"
+  ],
+  "dimensions_with_a_top5_attribution_component_below_threshold": [
+   "confidence",
+   "factuality",
+   "helpfulness",
+   "refusal_quality",
+   "safety",
+   "sycophancy"
+  ],
+  "joined_pairs": 360,
+  "max_patch_fraction": [
+   "formatting",
+   "mlp_L0"
+  ],
+  "max_patch_fraction_value": 7.7105534881713655,
+  "mean_rho": -0.170885,
+  "pairs_per_dimension": [
+   30
+  ],
+  "patched_components": 64,
+  "positive_dimensions": 4,
+  "sharpest_dimension": "code_correctness",
+  "sharpest_rho": -0.441117,
+  "superseding_rho_as_quoted": -0.171,
+  "top_attribution_components": [
+   "mlp_L31"
+  ],
+  "top_attribution_patch_fraction": {
+   "code_correctness": 0.07078783396278238,
+   "confidence": 0.0,
+   "correctness": 0.342072563239398,
+   "factuality": 0.023732185439079775,
+   "formatting": 2.352342374558746,
+   "helpfulness": 0.05016240836233015,
+   "instruction_following": 0.18143945553493254,
+   "math_correctness": 0.43188076258672153,
+   "refusal_quality": 0.0,
+   "safety": 0.04028075176824183,
+   "sycophancy": 0.0,
+   "verbosity": 0.18104056310560449
+  },
+  "top_attribution_patch_rank": {
+   "code_correctness": 32,
+   "confidence": 64,
+   "correctness": 2,
+   "factuality": 43,
+   "formatting": 17,
+   "helpfulness": 29,
+   "instruction_following": 4,
+   "math_correctness": 2,
+   "refusal_quality": 64,
+   "safety": 25,
+   "sycophancy": 64,
+   "verbosity": 12
+  },
+  "unpatched_components": [
+   "embed"
+  ]
+ }
+}

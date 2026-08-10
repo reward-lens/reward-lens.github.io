@@ -1,0 +1,127 @@
+---
+/**
+ * callout  ·  design/components/callout.md
+ *
+ * Lifts one paragraph out of the reading flow because it changes how the
+ * surrounding content should be read, without making it look like a warning.
+ *
+ * The register problem is the whole design. Every callout system drifts toward
+ * coloured boxes with icons, and once there are four of them a reader stops
+ * reading any of them. So: no icon, ever. No coloured fill. One left rule and
+ * a label. There is no variant="tip", no variant="warning" and no
+ * variant="danger", because this site does not warn anybody about anything.
+ *
+ * An <aside> and nothing else. role="alert" is an assertive live region and
+ * would interrupt a screen-reader user on page load, which is exactly wrong
+ * for static prose; role="note" is the same mistake more quietly.
+ */
+import { requireCalloutVariant } from "./data";
+
+interface Props {
+  variant?: "note" | "scope" | "aside";
+  /** From copy.yaml. Set in type-mono-label, caps. Never generic. */
+  label: string;
+  evidenceId?: string | null;
+  class?: string;
+}
+
+const {
+  variant = "note",
+  label,
+  evidenceId = null,
+  class: extraClass = "",
+} = Astro.props;
+
+requireCalloutVariant(variant, label);
+
+const body = await Astro.slots.render("default");
+if (body.replace(/<[^>]*>/g, "").trim() === "") {
+  throw new Error(
+    `callout: the "${label}" callout has an empty body. ` +
+      `components/callout.md: a callout with an empty body fails the build.`,
+  );
+}
+
+const labelId = `callout-${label.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`;
+---
+
+<aside
+  class:list={["callout", `callout--${variant}`, extraClass]}
+  aria-labelledby={labelId}
+  data-evidence-id={evidenceId}
+>
+  <p class="callout__label type-mono-label" id={labelId}>{label}</p>
+  <div class="callout__body type-body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    max-inline-size: min(var(--measure-prose), 100%);
+    background: var(--surface-1);
+    /* One left rule and nothing else. No fill tint, no border on the other
+       three edges, no icon. */
+    border-inline-start: var(--border-w-accent) solid var(--ink-3);
+    padding: var(--space-4) var(--space-5);
+  }
+
+  /* The rule colours are already spoken for by the data palette, which is the
+     constraint that keeps the set from growing to five. */
+  .callout--note {
+    border-inline-start-color: var(--state-refusal);
+  }
+  .callout--scope {
+    border-inline-start-color: var(--state-bounded);
+  }
+  .callout--aside {
+    /* ink3-ok: a rule, not text, and this file paints --surface-1 only. */
+    border-inline-start-color: var(--ink-3);
+  }
+
+  /* Real text at --ink-2, never an icon and never a colour alone. The label is
+     what makes the component safe in greyscale and in print, because the rule
+     colour carries nothing the label does not. */
+  .callout__label {
+    color: var(--ink-2);
+    margin: 0;
+  }
+
+  .callout__body {
+    color: var(--ink);
+    min-width: 0;
+  }
+  .callout__body :global(p) {
+    margin: 0;
+  }
+  .callout__body :global(p + p) {
+    margin-block-start: var(--space-3);
+  }
+  /* A long inline code span or a URL inside the body cannot push the page
+     wider than the viewport. */
+  .callout__body :global(code),
+  .callout__body :global(a) {
+    overflow-wrap: anywhere;
+  }
+  .callout__body :global(a:focus-visible) {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* The label stays above the body at every width and never moves inline
+     beside it. Nothing collapses and nothing hides. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .callout {
+      padding: var(--space-3) var(--space-4);
+    }
+  }
+
+  @media print {
+    .callout {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+</style>

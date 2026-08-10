@@ -1,0 +1,457 @@
+---
+/**
+ * /limits/  ·  primary navigation, not a footer link.
+ *
+ * THE FAILURE MODE THIS PAGE AVOIDS. There is a version of this page so
+ * pleased with its own limitations that the limitations become the marketing,
+ * and this audience detects it immediately. The early note appears once, near
+ * the top, in plain language, and is never repeated. No sentence congratulates
+ * the project for being honest. /limits/ is a page, not a theme.
+ *
+ * WHAT CHANGED, AND WHY IT IS THE POINT OF THE ROUTE.
+ *
+ * The page used to answer one question: how many instruments are built and how
+ * many are not. That collapses eight different states into two, and the two it
+ * keeps are the two a reader can already guess. Code that runs, code that has
+ * been exercised on real hardware, an instrument qualified against a reference
+ * material, a claim that came out supported on one run, a claim that was
+ * refuted, a claim that came out inconclusive, a study nobody has run, and an
+ * integration that is deliberately unavailable are eight different things, and
+ * a researcher deciding what they may say needs the difference between them.
+ *
+ * All eight are now on the page and every count is generated:
+ *   - implemented and open, per area, from the library's own registry
+ *   - exercised, degraded, failed, excused and never run, from the build
+ *     ledger, with how many of each ran on real hardware
+ *   - supported, refuted, mixed and inconclusive, from the archive's cards
+ *   - qualified, which is zero, from the archive's own records
+ *
+ * THE STATE WORDS ARE NOT WRITTEN HERE. `PASS`, `NOT-RUN`, `EXCUSED`,
+ * `PASS-DEGRADED` and `FAIL` are values in works-ledger.json, and `confirmed`,
+ * `refuted`, `mixed` and `inconclusive` are values in cards.json. That is what
+ * makes them renderable under HANDOFF.md §8 rule 1 when a state name invented
+ * for this page could not be.
+ *
+ * SECTIONS NOT BUILT, AND WHY, both escalations in the packet log:
+ *  - §4, the numbers that are least settled. `copy.yaml:limits` carries no key
+ *    for it. Its four entries are written out in `pages/limits.md` and each
+ *    needs an evidence link; typing four paragraphs here would break rule 1 on
+ *    the page whose subject is not overclaiming.
+ *  - §5, what would change this. Same gap. The page ends instead on the link
+ *    to /collaborate/, which is where the missing experiment is stated in
+ *    full, so the reader still leaves with something to do rather than on a
+ *    limitation.
+ *
+ * THE FOUR CONNECTING SENTENCES ARE BOUND. They were typed into this file for
+ * the same reason /atlas/ typed six: `copy.yaml:limits` carried no key for a
+ * state word. `totals_note`, `capability_note`, `qualified_note` and
+ * `claims_note` are those keys, and every number in them is a placeholder
+ * filled from atlas.json here.
+ */
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import ActSource from "@components/acts/act-source.astro";
+import atlas from "@data/atlas.json";
+import { copy } from "../copy";
+
+const limits = copy.limits as Record<string, string> & {
+  not_claiming: { title: string; body: string }[];
+};
+const at = copy.atlas as Record<string, string>;
+const log = copy.log as Record<string, string>;
+const col = copy.collaborate as Record<string, string>;
+
+const areas = atlas.areas.filter((a) => a.implemented + a.open > 0);
+const totalImplemented = atlas.counts.implemented;
+const totalOpen = atlas.counts.open;
+
+/* The archive holds 1,231 records and not one of them is calibrated against a
+   reference material. Counted here from the per-subject totals the generator
+   already produced, never typed. */
+const qualified = atlas.subjects.reduce((n, s) => n + s.uniform.calibrated, 0);
+const archived = atlas.counts.records;
+
+const number = (n: number) => n.toLocaleString("en-US");
+
+const cap = atlas.capabilities;
+const exercisedOnRealHardware = cap.byStatus.reduce(
+  (n, b) => n + b.onRealHardware,
+  0,
+);
+
+/* Every number on this page is read out of atlas.json, which build_atlas.mjs
+   writes from src/data/catalogue.json and src/data/fleet/*.json and which
+   `npm run build:atlas:check` re-derives. That file is what a reader opens to
+   check any count here, so it is what every citation on the page names.
+
+   D-35's weaker grade, deliberately: these are counts of a registry, not
+   readings of a run, and the archive holds no evidence record for "how many
+   instruments exist". A document is what they have and a document is what they
+   cite. No `ev:` id is minted for them. */
+const ATLAS_DOC = "src/data/atlas.json";
+
+/* atlas.json has no lines worth citing: it is one generated JSON document and
+   pointing at a line of it would be a precision the artifact does not have,
+   which is the case act-source's `line: null` exists for. */
+const ATLAS_LINE = null;
+
+/**
+ * A copy.yaml sentence, split at its {{placeholders}} so each number inside it
+ * renders as a citation instead of as text.
+ *
+ * `fill` returns a string, and a number interpolated into a string cannot be
+ * bound to anything: gate 5 read six of this page's numerals straight out of
+ * these three sentences. Splitting keeps copy.yaml the author of every word and
+ * this file the author of none, which is the property the sentences were moved
+ * into copy.yaml for.
+ */
+type Bound = { display: string; label: string };
+const parts = (template: string, values: Record<string, Bound>): (string | Bound)[] => {
+  const out: (string | Bound)[] = [];
+  let last = 0;
+  const re = /\{\{\s*([a-z0-9_.]+)\s*\}\}/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(template)) !== null) {
+    if (m.index > last) out.push(template.slice(last, m.index));
+    const value = values[m[1]];
+    if (!value) {
+      throw new Error(
+        `/limits/: copy.yaml writes {{${m[1]}}} and this page has no value for it. ` +
+          `Every number in these sentences is generated and bound; a placeholder ` +
+          `nothing fills would render as its own braces.`,
+      );
+    }
+    out.push(value);
+    last = m.index + m[0].length;
+  }
+  if (last < template.length) out.push(template.slice(last));
+  return out;
+};
+
+/* The four sentences that carry the page from one state to the next. Each
+   string is copy.yaml's; each number is atlas.json's; this file joins them and
+   types neither.
+
+   Two of the six are sums this file computes rather than fields it reads, so
+   their labels say what they are a sum of. A citation that named the file
+   without naming the derivation would send a reader to look for a "46" that is
+   not written anywhere in it. */
+const totalsParts = parts(limits.totals_note, {
+  implemented_count: { display: number(totalImplemented), label: "instruments implemented" },
+  open_count: { display: number(totalOpen), label: "instruments specified and not built" },
+});
+const capabilityParts = parts(limits.capability_note, {
+  capability_count: { display: number(cap.total), label: "capabilities in the build record" },
+  hardware_count: {
+    display: number(exercisedOnRealHardware),
+    label: "capabilities exercised on real hardware, summed over capabilities.byStatus[].onRealHardware",
+  },
+});
+const qualifiedParts = parts(limits.qualified_note, {
+  record_count: { display: number(archived), label: "records in the archive" },
+  qualified_count: {
+    display: number(qualified),
+    label:
+      "records calibrated against a reference material, summed over subjects[].uniform.calibrated",
+  },
+});
+---
+
+<Base title={`${limits.title} · reward-lens`} description={limits.early_note}>
+  <div class="wrap lm">
+    <PageHeader eyebrow={limits.title} title={limits.heading} />
+
+    <p class="lm__early type-body measure">{limits.early_note}</p>
+
+    <section class="lm__section" aria-labelledby="lm-claims">
+      <h2 class="type-h3" id="lm-claims">{limits.not_claiming_heading}</h2>
+      <ol class="lm__claims">
+        {
+          limits.not_claiming.map((c) => (
+            <li class="lm__claim">
+              <h3 class="lm__claim-title type-body">{c.title}</h3>
+              <p class="lm__claim-body type-body measure">{c.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="lm__section" aria-labelledby="lm-built">
+      <h2 class="type-h3" id="lm-built">{limits.unbuilt_heading}</h2>
+
+      <div class="lm__scroll" role="group" tabindex="0" aria-labelledby="lm-built">
+        <table class="lm__table">
+          <caption class="visually-hidden">{limits.unbuilt_heading}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="lm__th type-mono-label">{at.filter_measures}</th>
+              <th scope="col" class="lm__th lm__th--n type-mono-label">
+                {at.status_implemented}
+              </th>
+              <th scope="col" class="lm__th lm__th--n type-mono-label">
+                {at.status_open}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              areas.map((a) => (
+                <tr class="lm__tr">
+                  <th scope="row" class="lm__rowhead type-body-sm">{a.area}</th>
+                  <td class="lm__td type-mono-base">
+                    <ActSource
+                      display={String(a.implemented)}
+                      document={ATLAS_DOC}
+                      line={ATLAS_LINE}
+                      label={`implemented, ${a.area}`}
+                    />
+                  </td>
+                  <td class="lm__td type-mono-base">
+                    <ActSource
+                      display={String(a.open)}
+                      document={ATLAS_DOC}
+                      line={ATLAS_LINE}
+                      label={`specified and not built, ${a.area}`}
+                    />
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="lm__note type-body measure">
+        {
+          totalsParts.map((p) =>
+            typeof p === "string" ? p : (
+              <ActSource display={p.display} document={ATLAS_DOC} line={ATLAS_LINE} label={p.label} />
+            ),
+          )
+        }
+      </p>
+      <p class="lm__note type-body-sm measure">{at.status_open_note}</p>
+
+      <p class="lm__note type-body measure" id="lm-capability">
+        {
+          capabilityParts.map((p) =>
+            typeof p === "string" ? p : (
+              <ActSource display={p.display} document={ATLAS_DOC} line={ATLAS_LINE} label={p.label} />
+            ),
+          )
+        }
+      </p>
+
+      {/* Both count tables below were description lists, for one reason: a
+          count column needs a header, copy.yaml had no word for "how many", and
+          the first version of this page borrowed `atlas.catalogue_heading` and
+          put FIND AN INSTRUMENT over a column of counts. `atlas.count_label` is
+          that word. The corner cell is empty and the table is named by the
+          sentence above it, which is the sentence that says what the states
+          are: a caption repeating it would be the same string twice. */}
+      <table class="lm__states" aria-labelledby="lm-capability">
+        <thead>
+          <tr>
+            <td class="lm__state-corner"></td>
+            <th scope="col" class="lm__state-th type-mono-label">
+              {at.count_label}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            cap.byStatus.map((b) => (
+              <tr class="lm__state">
+                <th scope="row" class="lm__state-name type-mono-base">
+                  {b.status}
+                </th>
+                <td class="lm__state-count type-mono-base">
+                  <ActSource
+                    display={String(b.count)}
+                    document={ATLAS_DOC}
+                    line={ATLAS_LINE}
+                    label={`capabilities at ${b.status}`}
+                  />
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <p class="lm__note type-body measure">
+        {
+          qualifiedParts.map((p) =>
+            typeof p === "string" ? p : (
+              <ActSource display={p.display} document={ATLAS_DOC} line={ATLAS_LINE} label={p.label} />
+            ),
+          )
+        }
+      </p>
+
+      <p class="lm__note type-body measure" id="lm-claims-note">{limits.claims_note}</p>
+
+      <table class="lm__states" aria-labelledby="lm-claims-note">
+        <thead>
+          <tr>
+            <td class="lm__state-corner"></td>
+            <th scope="col" class="lm__state-th type-mono-label">
+              {at.count_label}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            atlas.claimStates.map((c) => (
+              <tr class="lm__state">
+                <th scope="row" class="lm__state-name type-mono-base">
+                  {c.verdict}
+                </th>
+                <td class="lm__state-count type-mono-base">
+                  <ActSource
+                    display={String(c.count)}
+                    document={ATLAS_DOC}
+                    line={ATLAS_LINE}
+                    label={`claims ${c.verdict}`}
+                  />
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <p class="lm__note type-body measure">{limits.reproduction_none}</p>
+      <p class="lm__note type-body">
+        <a href="/log/">{log.title}</a>
+      </p>
+    </section>
+
+    <p class="lm__next type-body">
+      <a href="/collaborate/">{col.heading}</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .lm {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
+  }
+  /* The plainest opening on the site: no figure, no card, no callout. */
+  .lm__early {
+    margin: 0;
+    color: var(--ink);
+  }
+  .lm__section {
+    margin-top: var(--space-7);
+    min-width: 0;
+  }
+  .lm__section h2 {
+    margin: 0 0 var(--space-4);
+    color: var(--ink);
+  }
+
+  .lm__claims {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .lm__claim {
+    padding: var(--space-4) 0;
+    border-top: var(--border-w) solid var(--line);
+  }
+  .lm__claim-title {
+    margin: 0 0 var(--space-2);
+    color: var(--ink);
+  }
+  .lm__claim-body {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .lm__scroll {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    min-width: 0;
+  }
+  .lm__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .lm__table {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    border-collapse: collapse;
+    text-align: start;
+  }
+  .lm__th {
+    text-align: start;
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    border-bottom: var(--border-w) solid var(--line-strong);
+    color: var(--ink-3);
+    vertical-align: bottom;
+  }
+  .lm__th--n {
+    text-align: end;
+    padding-inline-end: 0;
+    padding-inline-start: var(--space-4);
+  }
+  .lm__rowhead {
+    text-align: start;
+    font-weight: var(--type-body-sm-weight, 400);
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    color: var(--ink);
+  }
+  .lm__td {
+    text-align: end;
+    padding: var(--space-2) 0 var(--space-2) var(--space-4);
+    border-bottom: var(--border-w) solid var(--line);
+    color: var(--ink);
+  }
+  /* Two columns, a short state word and a two-digit count, so this sits inside
+     the prose measure at every width and needs no scroll container. */
+  .lm__states {
+    margin: var(--space-4) 0 0;
+    inline-size: 100%;
+    max-inline-size: min(var(--measure-prose), 100%);
+    border-collapse: collapse;
+    text-align: start;
+    min-width: 0;
+  }
+  .lm__state-corner {
+    border-bottom: var(--border-w) solid var(--line-strong);
+  }
+  .lm__state-th {
+    text-align: end;
+    padding: var(--space-2) 0 var(--space-2) var(--space-4);
+    border-bottom: var(--border-w) solid var(--line-strong);
+    color: var(--ink-3);
+    vertical-align: bottom;
+  }
+  .lm__state-name {
+    text-align: start;
+    font-weight: inherit;
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .lm__state-count {
+    text-align: end;
+    padding: var(--space-2) 0 var(--space-2) var(--space-4);
+    border-bottom: var(--border-w) solid var(--line);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .lm__note {
+    margin: var(--space-4) 0 0;
+    color: var(--ink-2);
+  }
+  .lm__next {
+    margin-top: var(--space-7);
+  }
+</style>

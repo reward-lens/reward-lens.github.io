@@ -1,0 +1,126 @@
+---
+/**
+ * Proof bench, third place: the policy is only as aligned as the pressure
+ * applied to it, and the thing applying the pressure is a program nobody
+ * audited.
+ *
+ * The artifact is complete and per-field, so this may be drawn.
+ * `src/data/grader-cards.json` carries four scoring programs in wide use, each
+ * mutated the same number of ways and run against its own benchmark's real
+ * answer pairs.
+ *
+ * WHAT THE ZERO IS AND IS NOT (design/scene/EVIDENCE-VERDICTS.md §3). It is an
+ * absence of detection on one subject. It is not a population estimate and it
+ * is not a general defect rate for verifiers, which is why the other three
+ * subjects are drawn beside it rather than left out: the same instrument
+ * reports 2, 24 and 26 on them, and that is what makes a zero a finding rather
+ * than a broken harness.
+ *
+ * The card's own denominators are stated and the assay ledger's differently
+ * named measurement of the same subject is not cited beside them. The two
+ * disagree, they are different measurements under one name, and averaging them
+ * would produce a number neither record contains.
+ */
+import ProofExhibit from "./proof-exhibit.astro";
+import RecordBlock from "./record-block.astro";
+import MutationMarks from "./mutation-marks.astro";
+import FigureFrame from "@components/base/figure-frame.astro";
+import { copy } from "../../../copy";
+import { grader } from "./proof-data";
+
+interface Props {
+  /** Where "Audit a grader" goes. */
+  href?: string;
+  /** Assigned by the page, sequential within it. */
+  figureNumber?: string;
+  headingLevel?: 3 | 4;
+  id?: string;
+}
+
+const {
+  href = "/see/grader/",
+  figureNumber = "2",
+  headingLevel = 3,
+  id = "proof-grader",
+} = Astro.props;
+
+const home = copy.home as Record<string, any>;
+const block = home.proof.grader;
+const figure = (copy.acts as Record<string, any>)?.figures?.mutation_survival;
+
+const data = grader();
+const drawable = Boolean(data && figure);
+
+/* One row per card, in the file's order, each drawing one mark per competent
+   mutant. `killedMutants` is the file's own name for the count and it is what
+   labels the number, so a reader can grep the value in the file it came from. */
+const rows =
+  data?.cards.map((card) => ({
+    name: card.displayName,
+    killedKey: "killedMutants",
+    killed: card.killedMutants,
+    competent: card.competentMutants,
+  })) ?? [];
+
+const record = data
+  ? [
+      { key: "subjectCount", value: String(data.meta.subjectCount) },
+      { key: "corpus", value: data.primary.subject.corpus },
+      { key: "graderCalls", value: String(data.primary.graderCalls) },
+      { key: "fingerprint", value: data.primary.fingerprint },
+      /* The strongest locator this card has, and it is a public one: the exact
+         program the audit ran against, with the hash of the bytes it read. */
+      { key: "source", value: data.primary.subject.source },
+    ]
+  : [];
+---
+
+<ProofExhibit
+  id={id}
+  heading={block.heading}
+  body={block.body}
+  link={block.link}
+  href={href}
+  headingLevel={headingLevel}
+>
+  {data && <RecordBlock slot="margin" rows={record} />}
+
+  {
+    drawable && (
+      <Fragment slot="exhibit">
+        <FigureFrame
+          number={figureNumber}
+          title={figure.title}
+          caption={figure.caption}
+          trust={data!.primary.trust}
+        >
+          <MutationMarks rows={rows} />
+        </FigureFrame>
+        {/* REPORTED DEVIATION, and the defect behind it.
+            figure-frame renders `scope` at the right end of its head bar, and
+            that bar sets `.ff__scope { flex: none }`, so a scope longer than
+            the space left beside the title cannot shrink and is clipped
+            mid-word. Measured at 390: the head read "ONE CHECKER. THE SAME
+            INSTRUMENT KILLS A SUB" and the rest of the sentence was gone.
+            This scope is two sentences and the second one is the reason a
+            score of zero is a finding rather than a broken harness, so losing
+            it silently is not an option. It renders below the figure instead,
+            at the same type size as the caption and marked by the rule this
+            site already uses for a scope line. The frame is F2's; the one-line
+            fix is in its stylesheet and it is in the handoff. */}
+        <p class="scope type-body-sm">{figure.scope}</p>
+      </Fragment>
+    )
+  }
+</ProofExhibit>
+
+<style>
+  .scope {
+    margin: 0;
+    margin-block-start: var(--space-3);
+    color: var(--ink-2);
+    max-width: min(var(--measure-caption), 100%);
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-4);
+  }
+</style>

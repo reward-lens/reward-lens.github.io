@@ -2,8 +2,10 @@
 title: Concepts
 description: What do you have to believe before any of the tools make sense? Not much, and it is worth getting straight first, because every instrument in the library is a
 section: concepts
-order: 49
+order: 74
 source: docs/content/concepts/index.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # Concepts

@@ -2,8 +2,10 @@
 title: Bradley-Terry and preference
 description: Where does the reward model's number come from? Not from a rule anyone wrote down. It comes from fitting one specific probabilistic model to pairs of human
 section: theory
-order: 66
+order: 95
 source: docs/content/theory/bradley-terry.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # Bradley-Terry and preference

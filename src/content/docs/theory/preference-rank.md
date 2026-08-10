@@ -2,8 +2,10 @@
 title: When preference is not rank-one
 description: What if preference has no consistent ranking to find? A scalar reward head assumes it does. It compresses every comparison onto one axis, which forces
 section: theory
-order: 70
+order: 99
 source: docs/content/theory/preference-rank.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 # When preference is not rank-one
@@ -30,7 +32,7 @@ The antisymmetry is built in, and the rank of $A$ measures how much intransitive
 
 ## Measuring it
 
-That is what [`PreferenceRankTest`](/docs/reference/geometry/) does. It fits both the best transitive model and a rank-$k$ skew operator on a training split, then scores their held-out prediction. The gap is the cyclic structure the scalar head cannot express. The mechanism is clean enough to watch on a planted cycle: put items on a circle and let a pure skew form decide every winner, so the preference is cyclic by construction.
+That is what [`PreferenceRankTest`](/docs/api/geometry/) does. It fits both the best transitive model and a rank-$k$ skew operator on a training split, then scores their held-out prediction. The gap is the cyclic structure the scalar head cannot express. The mechanism is clean enough to watch on a planted cycle: put items on a circle and let a pure skew form decide every winner, so the preference is cyclic by construction.
 
 ```python
 import numpy as np

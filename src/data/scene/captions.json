@@ -1,0 +1,123 @@
+{
+ "note": "Generated beside the geometry, from the same arrays. A caption and the figure under it read one record, so the two cannot drift apart without the generator noticing. `values` holds the numbers the sentence uses, so a component can bind one without retyping it.",
+ "generatedBy": "scripts/build_scene_data.mjs",
+ "captions": {
+  "scorer-score-tree": {
+   "text": "The score tree on this run has one leaf, named length_reward. 1,400 of 1,600 rollouts carry a value between 0.62 and 3.36; on the other 200 the grader abstained and the leaf holds nothing. One leaf is not a decomposition, and the spectrum here has one band for that reason.",
+   "values": {
+    "leafCount": 1,
+    "leafName": "length_reward",
+    "rolloutCount": 1600,
+    "scoredRolloutCount": 1400,
+    "abstainedRolloutCount": 200,
+    "leafValueMin": 0.62,
+    "leafValueMax": 3.36
+   }
+  },
+  "scorer-verifier-is-equiv": {
+   "text": "MATH equivalence checker: 0 of 60 competent mutants killed over 2,400 grader calls on MATH-500 gold answers, 240 rollouts. A reader with full access to this grader gets 5 of its 13 card fields; a reader with only the training log gets 0.",
+   "values": {
+    "killedMutants": 0,
+    "competentMutants": 60,
+    "graderCalls": 2400,
+    "fullRead": 5,
+    "fullFields": 13,
+    "logOnlyRead": 0,
+    "metamorphicViolations": 259,
+    "metamorphicApplicablePairs": 378
+   }
+  },
+  "scorer-verifier-swebench": {
+   "text": "SWE-bench test-report grader: 2 of 60 competent mutants killed over 2,400 grader calls on SWE-bench Lite gold test lists, 240 rollouts. A reader with full access to this grader gets 5 of its 13 card fields; a reader with only the training log gets 0.",
+   "values": {
+    "killedMutants": 2,
+    "competentMutants": 60,
+    "graderCalls": 2400,
+    "fullRead": 5,
+    "fullFields": 13,
+    "logOnlyRead": 0
+   }
+  },
+  "scorer-verifier-verl-gsm8k": {
+   "text": "GSM8K answer grader: 24 of 60 competent mutants killed over 2,400 grader calls on GSM8K test split, 240 rollouts. A reader with full access to this grader gets 6 of its 13 card fields; a reader with only the training log gets 1.",
+   "values": {
+    "killedMutants": 24,
+    "competentMutants": 60,
+    "graderCalls": 2400,
+    "fullRead": 6,
+    "fullFields": 13,
+    "logOnlyRead": 1,
+    "metamorphicViolations": 122,
+    "metamorphicApplicablePairs": 430
+   }
+  },
+  "scorer-verifier-verl-search-r1": {
+   "text": "Open-domain QA exact-match grader: 26 of 60 competent mutants killed over 2,400 grader calls on NQ-Open validation split, 240 rollouts. A reader with full access to this grader gets 6 of its 13 card fields; a reader with only the training log gets 1.",
+   "values": {
+    "killedMutants": 26,
+    "competentMutants": 60,
+    "graderCalls": 2400,
+    "fullRead": 6,
+    "fullFields": 13,
+    "logOnlyRead": 1,
+    "metamorphicViolations": 2,
+    "metamorphicApplicablePairs": 362
+   }
+  },
+  "scorer-attribution-patching": {
+   "text": "Two ways of asking which part of a reward model produced a score, on the same 12 dimensions and the same 64 components. Their rank correlation averages -0.170885 across the dimensions, and on code correctness it reaches -0.441117. The largest single patching movement is 7.71 times the pair margin, and it is drawn at that size rather than clamped.",
+   "values": {
+    "dimensionCount": 12,
+    "componentCount": 64,
+    "meanRho": -0.170885,
+    "sharpestDimension": "code correctness",
+    "sharpestRho": -0.441117,
+    "largestPatchFractionOfMargin": 7.7105534881713655,
+    "pairsPerDimension": 30
+   }
+  },
+  "selection-advantages": {
+   "text": "Each ray is one rollout and its offset is that rollout's recorded advantage, the value the estimator actually applied. Across 200 steps the 1,600 advantages run from -1.49161 to 1.493695. 220 of them are exactly zero, and 200 of those are rollouts the grader abstained on, which this estimator forces to zero rather than dropping.",
+   "values": {
+    "stepCount": 200,
+    "rolloutCount": 1600,
+    "rolloutsPerStep": 8,
+    "groupsPerStep": 2,
+    "advantageMin": -1.49161,
+    "advantageMax": 1.493695,
+    "zeroAdvantageCount": 220,
+    "abstainedCount": 200
+   }
+  },
+  "update-step": {
+   "text": "Across 200 recorded steps the clipped gradient norm runs from 0.253293 to 0.441912, on batches of 8 rollouts each. What the record does not hold is any per rollout gradient, so how much of that norm survived cancellation between the eight rollouts is not drawable from it.",
+   "values": {
+    "stepCount": 200,
+    "rolloutsPerStep": 8,
+    "gradNormMin": 0.253293,
+    "gradNormMax": 0.441912,
+    "rewardMin": 1.014286,
+    "rewardMax": 1.622857
+   }
+  },
+  "response-unresolved": {
+   "text": "Nothing was measured here. The reconciliation this state would have illustrated does close on the 200-step run, and the closure is carried by the sampling noise of two batches of eight rollouts. On the worst feature-run pair the test's own detection floor is 3.760 against a first-order prediction of 5.647e-06, a ratio of 665,862; the median ratio over the six pairs is 854,374. Monte Carlo uncertainty is effectively all of the composed variance, and five of the nine uncertainty terms were computed while four are named absent. Neither verdict could have failed meaningfully, and that is the result this state shows.",
+   "values": {}
+  },
+  "run-boundary-series": {
+   "text": "25,664 labelled rollouts, 64 at each of 401 recorded step indices. The labelled series crosses its midpoint at step 106 with a ten-to-ninety width of 23.9 steps. The promoted signal alarms at step 90 and fires on 24.3% of in-control surrogates. The signal recorded as \"Within-group reward variance, level\" alarms earlier, at step 70, and fires on 60.7%, which is why it was rejected. The figure draws 401 points. The frozen ledger states 400 steps for this run and the published rollout table carries 401 distinct step indices; the site states the lower number and does not assert which record is right.",
+   "values": {
+    "rolloutCount": 25664,
+    "rolloutsPerStep": 64,
+    "drawnPoints": 401,
+    "declaredStepCount": 400,
+    "transitionMidpoint": 106,
+    "transitionWidth": 23.9,
+    "promotedAlarmStep": 90,
+    "promotedSurrogateRate": 0.243,
+    "earliestAlarmStep": 70,
+    "earliestSurrogateRate": 0.607
+   }
+  }
+ }
+}

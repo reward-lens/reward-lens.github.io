@@ -1,0 +1,19 @@
+{
+ "comparator": "> 0",
+ "contentHash": "32ad64fc97fcfa2f9b77244c50f2ad65",
+ "humanSource": "The frozen study \"The reward Hessian's flat subspace overlaps the flagged hackable direction\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:9d51086b170b359d58d8eb4bf4f882fb",
+  "H-flat",
+  "study:campaign-field-flat@v1#f27fb97d"
+ ],
+ "label": "The reward Hessian's flat subspace overlaps the flagged hackable direction",
+ "limitation": "The study returned no value because an input it needs was not produced by the run that was supposed to produce it.",
+ "scope": "One frozen study, adjudicated once, on skywork-v2-llama31-8b, over rb2-full.",
+ "slug": "open-t3-field-flat-hack-overlap-minus-random",
+ "sourceUrl": "/evidence/9d51086b170b359d58d8eb4bf4f882fb/",
+ "statement": "Registered prediction, not resolved: the flat directions of the reward Hessian overlap the HACK-FORE-flagged direction more than a random direction does.",
+ "status": "unrun",
+ "subject": "skywork-v2-llama31-8b, over rb2-full",
+ "type": "open-hypothesis"
+}

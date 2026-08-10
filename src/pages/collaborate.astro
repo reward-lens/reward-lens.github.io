@@ -1,0 +1,517 @@
+---
+/**
+ * /collaborate/  ·  open problems, not "get in touch".
+ *
+ * There is no contact form, no email address, no invitation in the abstract.
+ * An invitation costs the reader nothing to decline; a well-posed open problem
+ * costs them attention, which is the thing worth asking for.
+ *
+ * SECTION 1 LEADS WITH THE EXPERIMENT THAT DOES NOT EXIST, before anything the
+ * project wants help with. No date appears, because there is none and
+ * inventing one would be the first dishonest sentence on the site.
+ *
+ * THE ENTRIES ARE DERIVED, AND THEY SAY SO. `data/open-targets.json` is the
+ * registry's own list: a quantity with no estimator is an open research
+ * target. An entry is listed only when the registry can answer all four parts,
+ * which is `copy.yaml:collaborate.open_problems_intro`'s own filter ("an entry
+ * that cannot say what would count as an answer is not ready and is not
+ * listed"): it needs a definition, an interpretation, and an instrument that
+ * would close it. 22 of the 147 open targets pass and all 22 render. Nothing
+ * is hand-selected beyond that test, nothing is padded, and nothing is
+ * withheld for carrying a banned identifier: see the note above
+ * `withoutCitation`, which is the one thing this page edits out of registry
+ * prose and it edits out a pointer rather than a claim.
+ *
+ * THE FOUR PART LABELS COME FROM copy.yaml AND ARE NOT WRITTEN HERE.
+ * `collaborate.open_problems_intro` names them in order in its own first
+ * sentence, and they are split out of it with a build-time assertion that the
+ * split still yields four. `copy.yaml:collaborate` has no dedicated keys for
+ * them; a `problem_labels` block would be better and it is an escalation in
+ * the packet log. What is not acceptable is typing four strings here.
+ *
+ * `wouldClose` from the registry names the instrument that would close a
+ * target and prefixes it with the instrument identifier and its work package,
+ * both of which gate 7 bans outside /log/. The identifier and the work package
+ * are stripped and the instrument's public name is what renders.
+ */
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import CodeBlock from "@components/base/code-block.astro";
+import { fill } from "@components/base/data";
+import bannedTerms from "@data/banned-terms.json";
+import bundlesData from "@data/bundles.json";
+import catalogue from "@data/catalogue.json";
+import openTargets from "@data/open-targets.json";
+import quantities from "@data/quantities.json";
+import termsLock from "../../scripts/checks/terms.json";
+import { copy, ui, urls } from "../copy";
+
+const col = copy.collaborate as Record<string, string> & {
+  help: { title: string; body: string }[];
+};
+const acts = copy.acts as Record<string, Record<string, string>>;
+
+/* ---------------------------------------------------------------------------
+ * Gate 6's own lock, read here rather than restated.
+ *
+ * Two sources feed this page and neither was written for it: the library's
+ * quantity registry, and the copy for the three /see/ routes. Both carry
+ * vocabulary the terminology lock forbids outside /docs/ and /log/, and neither
+ * is this packet's to edit. `bannedPattern` below already handles the ~399
+ * internal identifiers; this handles the ~32 vocabulary rules, and it does it
+ * with the gate's own file so the page cannot drift from the gate that judges
+ * it.
+ *
+ * WHAT IT DOES ABOUT A HIT IS THE PART THAT MATTERS. It never edits a sentence
+ * and it never silently substitutes a word: a page that quietly rewrites a
+ * definition is worse than one that shows less of it. It truncates, at a
+ * sentence boundary for prose and at a line boundary for captured output, and
+ * it always truncates a contiguous run from the start. What a reader sees is
+ * therefore a real prefix of the real text, and the whole of it is one command
+ * away in every case, because the command is on the page.
+ * ------------------------------------------------------------------------ */
+const lockRules = [...termsLock.forbidden, ...termsLock.constrained].map((r) => ({
+  id: r.id,
+  re: new RegExp(r.pattern, "i"),
+  requires: "requires" in r && r.requires ? new RegExp(r.requires as string, "i") : null,
+}));
+const locked = (s: string): boolean =>
+  lockRules.some((r) => r.re.test(s) && !(r.requires && r.requires.test(s)));
+
+/* A sentence boundary is a terminator followed by whitespace and then the start
+   of something that looks like a new sentence. It is NOT every full stop: the
+   first version of this split "Python 3.10 or newer" into "Python 3." and
+   "10 or newer", and the page shipped a prerequisite that began "10 or newer".
+   That was visible in a screenshot and invisible in the code, which is why the
+   rule about opening every capture exists. */
+const SENTENCE_BREAK = /(?<=[.!?])\s+(?=[A-Z`"'(\[])/;
+
+/** The longest leading run of whole sentences that the lock permits. */
+const publicPrefix = (s: string): string => {
+  const sentences = s.trim().split(SENTENCE_BREAK);
+  const kept: string[] = [];
+  for (const sentence of sentences) {
+    if (locked(sentence)) break;
+    kept.push(sentence);
+  }
+  return (kept.length ? kept.join(" ") : sentences[0]).trim();
+};
+
+/** The longest leading run of whole lines that the lock permits. */
+const publicLines = (s: string): string => {
+  const lines = s.split("\n");
+  const end = lines.findIndex((l) => locked(l));
+  return (end === -1 ? lines : lines.slice(0, end)).join("\n").trimEnd();
+};
+
+/* The four part labels, taken from the copy that names them. */
+const match = col.open_problems_intro.match(/states\s+([^.]+)\./);
+const partLabels = (match?.[1] ?? "")
+  .split(/,\s*(?:and\s+)?/)
+  .map((s) => s.trim())
+  .filter(Boolean);
+if (partLabels.length !== 4) {
+  throw new Error(
+    `/collaborate/: copy.yaml:collaborate.open_problems_intro no longer names ` +
+      `four parts in its first sentence (found ${partLabels.length}: ` +
+      `${JSON.stringify(partLabels)}). pages/collaborate.md §2 requires all ` +
+      `four on every entry, and this page reads their labels from that ` +
+      `sentence because copy.yaml carries no dedicated keys for them.`,
+  );
+}
+
+const byId = new Map(quantities.quantities.map((q) => [q.id, q]));
+const instrumentById = new Map(catalogue.instruments.map((i) => [i.id, i]));
+
+/* Registry prose occasionally ends a sentence by pointing at an internal
+   document: "...names the opposite end on a real panel; see SPEC-ERRATA E46."
+   The document name and the erratum number are both banned outside /log/, and
+   an earlier pass dropped the whole entry rather than render them.
+
+   Dropping the entry was wrong, and it is the same over-reach in the other
+   direction. The banned part is the pointer, not the paragraph: every word
+   before "see SPEC-ERRATA E46" is public prose about a real open problem, and
+   losing it costs a reader a well-posed question to save them a citation they
+   could not follow anyway. So the citation clause is removed and the sentence
+   it hangs off is kept, which is what publicClose already does to wouldClose
+   two functions below.
+
+   What is NOT done is silence. If a banned term survives outside a citation
+   clause, this throws and names the entry and the term, because a page that
+   quietly renders less than its data holds is a page nobody can audit. Today
+   nothing throws and nothing is dropped: 22 of the 147 open targets pass the
+   four-part test and all 22 render. */
+const bannedPattern = new RegExp(
+  bannedTerms.terms
+    .slice()
+    .sort((a, b) => b.length - a.length)
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|"),
+);
+
+/* A trailing "see <internal document> <id>" pointer, with the punctuation that
+   attaches it. Anchored on the document names so it cannot eat a sentence that
+   merely contains the word "see". */
+const DOCUMENT_NAMES = (bannedTerms.families["project codename"] ?? []).map((t) =>
+  t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+);
+const CITATION = new RegExp(
+  `[;,(]?\\s*\\b(?:see|cf\\.?)\\s+(?:${DOCUMENT_NAMES.join("|")})\\b[^.)]*\\)?`,
+  "gi",
+);
+const withoutCitation = (s: string): string =>
+  s.replace(CITATION, "").replace(/\s+([.,;])/g, "$1").trim();
+
+const requirePublic = (where: string, ...parts: (string | null)[]): void => {
+  for (const part of parts) {
+    const hit = part && bannedPattern.exec(part);
+    if (hit) {
+      throw new Error(
+        `/collaborate/: the registry's prose for ${where} carries the banned ` +
+          `identifier "${hit[0]}" outside a citation clause, so this page ` +
+          `cannot render it and will not silently drop the entry either. ` +
+          `Either the registry sentence changes upstream, or ` +
+          `src/data/banned-terms.json is over-reaching past DECISIONS.md ` +
+          `D-05's family table again, which is what took it from 606 terms ` +
+          `to 399.`,
+      );
+    }
+  }
+};
+
+/* The registry prefixes wouldClose with the instrument id and suffixes it with
+   the work package. Both are banned outside /log/; the public name is not. */
+const publicClose = (wouldClose: string, instrumentName: string | null) => {
+  if (!instrumentName) return null;
+  const idx = wouldClose.indexOf(instrumentName);
+  if (idx === -1) return instrumentName;
+  return wouldClose.slice(idx).replace(/,\s*work package.*$/i, "").trim();
+};
+
+const problems = openTargets.targets
+  .map((t) => ({ t, q: byId.get(t.quantity) }))
+  .filter(
+    ({ t, q }) =>
+      q && q.definition && q.interpretation && t.claimed && t.instrumentName,
+  )
+  .map(({ t, q }) => {
+    /* What already exists is the written specification, which is the
+       instrument's own headline in the catalogue, plus the unit the reading
+       would carry. What does not exist is an estimator, which is why the
+       quantity is on this list at all. */
+    const spec = instrumentById.get(t.instrument ?? "")?.headline ?? null;
+    const question = publicPrefix(withoutCitation(q!.definition as string));
+    const answer = publicPrefix(withoutCitation(q!.interpretation as string));
+    const exists = spec ? publicPrefix(withoutCitation(spec)) : null;
+    requirePublic(t.quantity, question, answer, exists, t.instrumentName);
+    return {
+      name: t.instrumentName as string,
+      question,
+      exists,
+      unit: q!.unit as string | null,
+      answer,
+      firstStep: publicClose(t.wouldClose ?? "", t.instrumentName),
+    };
+  });
+
+/* ---------------------------------------------------------------------------
+ * Reproducible starting points.
+ *
+ * The three bundles the /see/ routes already ship. Nothing here is authored:
+ * every field is read off `data/bundles.json`, which the bundle generator emits
+ * with the archive's own size, digest and commit, the command that regenerates
+ * it, and the output that command printed. The prerequisite is the copy the
+ * matching route already states, reached through the key the generator recorded
+ * rather than through a mapping written here.
+ *
+ * WHY THIS IS THE FIRST SECTION AND NOT A DOWNLOAD LIST. An open problem asks
+ * for a week. A bundle asks for four minutes and a `python` on the path, and it
+ * ends with the reader holding output they can diff against the output on this
+ * page. That is the smallest unit of collaboration this project can actually
+ * accept, and every one of the three currently reads "no independent
+ * reproduction recorded", which is the line `collaborate.help[0]` says is worth
+ * more than any new feature.
+ *
+ * The status line IS the scientific stake, and it is not decoration: these are
+ * the site's three complete artifact-backed cases. A reproduction that agrees
+ * moves each of them off a single machine and a single author. One that
+ * disagrees is a defect report against a headline result, which is worth more
+ * still, and it is the only outcome on this page that this project cannot
+ * produce for itself.
+ * ------------------------------------------------------------------------ */
+const bundles = bundlesData.bundles.map((b) => {
+  const actKey = b.act.replace(/-/g, "_");
+  const act = acts[actKey];
+  if (!act?.title) {
+    throw new Error(
+      `/collaborate/: bundles.json names act "${b.act}", which resolves to ` +
+        `copy.yaml:acts.${actKey}, and that key has no title. The starting ` +
+        `points read their names from the copy the matching route already ` +
+        `uses rather than from a mapping typed here.`,
+    );
+  }
+  const [group, key] = b.requirementsKey.split(".").slice(1);
+  const requirements = (acts[group] ?? {})[key];
+  if (typeof requirements !== "string" || requirements.trim() === "") {
+    throw new Error(
+      `/collaborate/: bundles.json points ${b.filename} at ` +
+        `copy.yaml:${b.requirementsKey}, which is empty or missing. A starting ` +
+        `point that cannot state what it needs is not a starting point.`,
+    );
+  }
+  return {
+    name: act.title,
+    route: b.route,
+    href: b.href,
+    filename: b.filename,
+    sizeBytes: b.sizeBytes,
+    sha256: b.sha256,
+    command: b.command,
+    output: publicLines(b.expectedOutput),
+    requirements: publicPrefix(requirements),
+    reproduction: b.reproducedBy
+      ? fill(ui.reproduced_by, b.reproducedBy as Record<string, string>)
+      : ui.not_reproduced,
+  };
+});
+---
+
+<Base title={`${col.title} · reward-lens`} description={col.heading}>
+  <div class="wrap co">
+    <PageHeader eyebrow={col.title} title={col.heading} lede={col.missing_experiment} />
+
+    <section class="co__section" aria-labelledby="co-bundles">
+      <h2 class="type-h3" id="co-bundles">{ui.bundle_heading}</h2>
+      <p class="type-body measure co__lede">{col.help[0].body}</p>
+
+      <ol class="co__problems">
+        {
+          bundles.map((b) => (
+            <li class="co__problem">
+              <h3 class="co__name type-h3">
+                <a href={b.route}>{b.name}</a>
+              </h3>
+              <p class="co__dd type-body">{b.requirements}</p>
+              <div class="co__block">
+                <CodeBlock
+                  code={b.command}
+                  lang="bash"
+                  label={b.filename}
+                  output={b.output}
+                />
+              </div>
+              <ul class="co__links type-body">
+                <li>
+                  <a href={b.href} download={b.filename}>
+                    {ui.download_code}
+                  </a>{" "}
+                  <span class="co__digest type-mono-sm">
+                    {b.filename} · {b.sha256}
+                  </span>
+                </li>
+              </ul>
+              <p class="co__status type-mono-label">{b.reproduction}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="co__section" aria-labelledby="co-problems">
+      <h2 class="type-h3" id="co-problems">{col.open_problems_heading}</h2>
+      <p class="type-body measure co__lede">{col.open_problems_intro}</p>
+      <p class="type-body-sm measure co__note">{col.open_problems_derived_note}</p>
+
+      <ol class="co__problems">
+        {
+          problems.map((p) => (
+            <li class="co__problem">
+              <h3 class="co__name type-h3">{p.name}</h3>
+              <dl class="co__dl">
+                <div class="co__pair">
+                  <dt class="co__dt type-mono-label">{partLabels[0]}</dt>
+                  <dd class="co__dd type-body">{p.question}</dd>
+                </div>
+                <div class="co__pair">
+                  <dt class="co__dt type-mono-label">{partLabels[1]}</dt>
+                  <dd class="co__dd type-body">
+                    {p.exists ?? copy.ui.no_value}
+                    {p.unit && <span class="co__unit type-mono-sm">{p.unit}</span>}
+                  </dd>
+                </div>
+                <div class="co__pair">
+                  <dt class="co__dt type-mono-label">{partLabels[2]}</dt>
+                  <dd class="co__dd type-body">{p.answer}</dd>
+                </div>
+                <div class="co__pair">
+                  <dt class="co__dt type-mono-label">{partLabels[3]}</dt>
+                  <dd class="co__dd type-body">{p.firstStep}</dd>
+                </div>
+              </dl>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="co__section" aria-labelledby="co-help">
+      <h2 class="type-h3" id="co-help">{col.help_heading}</h2>
+      <ol class="co__help">
+        {
+          col.help.map((h) => (
+            <li class="co__help-item">
+              <h3 class="co__help-title type-body">{h.title}</h3>
+              <p class="co__help-body type-body measure">{h.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="co__section" aria-labelledby="co-reach">
+      <h2 class="type-h3" id="co-reach">{col.reach_heading}</h2>
+      <p class="type-body measure">{col.reach_body}</p>
+      <ul class="co__links type-body">
+        <li><a href={urls.repo}>{urls.repo}</a></li>
+        <li><a href={`${urls.repo}/issues`}>{`${urls.repo}/issues`}</a></li>
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .co {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
+  }
+  .co__block {
+    margin: var(--space-3) 0;
+  }
+  /* Same reason as /start/: the expected output is a report twenty lines deep
+     and eighty columns wide, and beside the command it was cut at the right
+     edge on every line. It goes under the command at every width. */
+  .co__block :global(.cb__panes) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .co__block :global(.cb__output) {
+    border-block-start: var(--border-w) solid var(--line);
+    border-inline-start: 0;
+  }
+  /* The reproduction status is the scientific stake of a bundle, so it sits at
+     the foot of the block in the label role rather than inside the prose. It is
+     not coloured: colour on this site is only ever data, and "nobody has run
+     this yet" is a fact about the world rather than a reading. */
+  .co__status {
+    margin: var(--space-3) 0 0;
+    color: var(--ink-3);
+  }
+  .co__section {
+    margin-top: var(--space-7);
+    min-width: 0;
+  }
+  .co__section h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+  }
+  .co__lede {
+    margin: 0 0 var(--space-2);
+    color: var(--ink-2);
+  }
+  .co__note {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-3);
+  }
+
+  /* Blocks, not a grid of cards. Cards would make these look like features. */
+  .co__problems,
+  .co__help {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .co__problem {
+    padding: var(--space-5) 0;
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .co__name {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+  .co__dl {
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .co__pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .co__dt {
+    margin: 0;
+    color: var(--ink-3);
+  }
+  .co__dd {
+    margin: 0;
+    color: var(--ink-2);
+    max-width: min(var(--measure-prose), 100%);
+    overflow-wrap: anywhere;
+  }
+  .co__unit {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--ink-3);
+  }
+
+  .co__help-item {
+    padding: var(--space-4) 0;
+    border-top: var(--border-w) solid var(--line);
+  }
+  .co__help-title {
+    margin: 0 0 var(--space-2);
+    color: var(--ink);
+  }
+  .co__help-body {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .co__links {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .co__links li {
+    min-width: 0;
+  }
+  .co__links a {
+    overflow-wrap: anywhere;
+  }
+  /* A sha256 is 64 characters with no break opportunity in it, and at 390 it is
+     wider than the viewport on its own. It pushed the page to 488 before this
+     rule, which is trap 2 in HANDOFF.md §6 exactly: the ancestors all carried
+     `min-width: 0` and one unbreakable string still won. The digest is what
+     makes the artifact checkable, so it wraps rather than being dropped or
+     truncated with a control that hides half of it. */
+  .co__digest {
+    display: block;
+    min-width: 0;
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .co__pair {
+      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+  }
+</style>

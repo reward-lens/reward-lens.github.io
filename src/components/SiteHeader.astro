@@ -1,12 +1,18 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
+import { nav } from "../copy";
 
-const sections = [
-  { href: "/campaign/", label: "Campaign" },
-  { href: "/atlas/", label: "Atlas" },
-  { href: "/docs/", label: "Docs" },
-  { href: "/science/", label: "Science" },
-];
+// NOT IMPORTED BY ANYTHING. The shell that renders is `nav-shell.astro`, from
+// `layouts/Base.astro`. This is the v1 header, kept because deleting one of a
+// duplicate pair is how a route nobody was looking at stops building, and left
+// here with a note instead so the next reader does not have to work that out.
+//
+// Its four typed sections were `/campaign/` "Campaign", `/atlas/`, `/docs/` and
+// `/science/` "Science". Two of those routes are now redirect stubs, and
+// `Campaign` was primary navigation for an archive. They are replaced by
+// `nav.primary` from copy.yaml, which is the one place the site's navigation is
+// written, so this file cannot drift from the live shell again.
+const sections = nav.primary;
 const path = Astro.url.pathname;
 ---
 

@@ -1,0 +1,14 @@
+{
+ "contentHash": "004b22ad36ffdd4be3e4d62c7eb12153",
+ "humanSource": "Quoted from the library documentation, discipline/trust-ladder and caveats.",
+ "immutableIds": [
+  "copy.yaml:trust_ladder.limits[1]"
+ ],
+ "label": "Registered does not mean true.",
+ "limitation": "Registered does not mean true.",
+ "scope": "What it does not do.",
+ "slug": "ladder-limit-2",
+ "sourceUrl": "/limits/",
+ "statement": "It means the prediction predated the data. A frozen prediction can be frozen and wrong, and the most useful outcome of a preregistered study is often a clean refutation, which the library records as prominently as a confirmation.",
+ "type": "limitation"
+}

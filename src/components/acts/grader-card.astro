@@ -1,0 +1,395 @@
+---
+/**
+ * grader-card  ·  components/grader-card.md
+ *
+ * THIS COMPONENT IS MOSTLY ABSENCE, AND THE ABSENCE IS THE CONTENT. A grader
+ * card is thirteen fields and on the sharpest subject more than half of them
+ * refuse. Every instinct in interface design says to lead with what was
+ * measured and tuck the rest away; that instinct is exactly wrong here and
+ * following it would invert the act.
+ *
+ * A refused field carries strictly more information than a read one. A read
+ * field is a number. A refused field is a reason, the input that was missing,
+ * and a remedy naming what somebody would have to record to fill it. So the
+ * layout follows the information rather than the convention: REFUSALS ARE
+ * FULL-HEIGHT ROWS WITH VISIBLE REMEDIES, READINGS ARE SINGLE LINES, and the
+ * two are interleaved in the order the library returns them rather than sorted
+ * into a good half and a bad half. There is no showRefusals property, no sortBy
+ * property, and no disclosure around a remedy at full density.
+ *
+ * THE CORRECTED LOG-ONLY CLAIM, WHICH IS THE BETTER ONE (C-46). The slogan this
+ * component was written against said log-only access "produces zero readings
+ * and thirteen refusals on every card". It does not. Measured from the release
+ * artifacts: is_equiv and swebench drop to zero readings and thirteen refusals;
+ * verl_gsm8k and verl_search_r1 keep exactly one, the single field countable
+ * from a log alone. ZERO, ZERO, ONE, ONE. The upstream generator produced the
+ * slogan by interpolating one card's numbers and stating them of four.
+ *
+ * The corrected version is more useful than the slogan it replaces, and this
+ * component renders it rather than rounding it back down: "every card drops to
+ * zero" says only that a log buys nothing, and "two drop to zero and two keep
+ * exactly one" says precisely what a log does buy, which is almost nothing and
+ * not literally nothing. THE COUNTS ARE NEVER STATED IN THE COMPONENT. They are
+ * counted from the fields being rendered, so the card cannot disagree with
+ * itself, and a future generator change moves the number on the page.
+ *
+ * THE REGISTER IS THE ONE refusal-card ALREADY SOLVES, which is why the refused
+ * rows ARE refusal-card rather than a second implementation: blue, never red,
+ * no warning triangle, no error styling. A refusal is a success in this
+ * library's semantics, and refusal-card also validates the reason against the
+ * frozen seventeen and fails the build on a refusal with no remedy, which are
+ * this contract's criteria 3 and 4 for free.
+ *
+ * THE FIELD TEXT IS THE LIBRARY'S OWN RENDERED OUTPUT, QUOTED, so a reading's
+ * headline and its supporting lines are <samp>: sample output from a program is
+ * what they literally are, and the site does not silently edit output it
+ * reproduces. That is the same reasoning gate 9 and gate 5 carry for the ported
+ * reference corpus.
+ */
+import RefusalCard from "@components/base/refusal-card.astro";
+import TrustBadge from "@components/base/trust-badge.astro";
+import ActSource from "@components/acts/act-source.astro";
+
+export interface CardField {
+  name: string;
+  state: string;
+  reason: string | null;
+  detail: string | null;
+  remedy: string | null;
+  bound: number | null;
+  headline: string | null;
+  trust: string | null;
+  supporting: string[];
+  instrument: string | null;
+  quantity: string | null;
+}
+
+export interface CardSubject {
+  name: string;
+  kind: string;
+  source: string;
+  entrypoint: string;
+  corpus: string;
+  notes: string[];
+}
+
+interface Props {
+  subject: CardSubject;
+  fields: CardField[];
+  /** "full" | "log_only". The access demonstration. */
+  access: string;
+  trust: string;
+  /**
+   * WHY THIS IS A DOCUMENT AND NOT AN evidenceId, AND IT IS AN ESCALATION.
+   * grader-cards.json carries an `evidenceId` on every card and on every bare
+   * handler count, and NOT ONE OF THEM RESOLVES: evidence-index.json holds the
+   * campaign's twenty-seven and none of the eight card ids is among them. An id
+   * that resolves to nothing is the one defect that would discredit every other
+   * number on the site, so this component never renders one. It cites the
+   * rendered artifact the generator read, with its sha256 recorded in the same
+   * file, which is the D-35 grade and is checkable by opening it.
+   */
+  source: { document: string; line: number | null };
+  /** The card key, for the anchor the selector links to. */
+  cardKey: string;
+  /** The library's own summary line for this card at this access. */
+  summarySentence: string;
+  /** Humanised field names. copy.yaml carries none for this component. */
+  labels: { read: string; refused: string; fields: string; access: string };
+  class?: string;
+}
+
+const {
+  subject,
+  fields,
+  access,
+  trust,
+  source,
+  cardKey,
+  summarySentence,
+  labels,
+  class: extraClass = "",
+} = Astro.props;
+
+if (fields.length < 13) {
+  throw new Error(
+    `grader-card "${subject.name}": ${fields.length} fields at ${access} ` +
+      `access. A card with fewer than thirteen fields fails the build naming ` +
+      `the subject and the count (components/grader-card.md, Empty).`,
+  );
+}
+
+/* Counted from what is being rendered, never passed in and never asserted. A
+   card that states a count it did not render is the C-46 defect one level
+   down. */
+const read = fields.filter((f) => f.state === "read").length;
+const refused = fields.filter((f) => f.state === "refused").length;
+
+const uid = `gc-${cardKey}-${access}`;
+---
+
+<article
+  class:list={["gc", extraClass]}
+  id={access === "full" ? cardKey : undefined}
+  aria-labelledby={`${uid}-name`}
+  data-grader-card
+  data-access={access}
+>
+  <header class="gc__head">
+    <div class="gc__head-row">
+      <h4 class="gc__name type-h3" id={`${uid}-name`}>{subject.name}</h4>
+      <TrustBadge level={trust} form="chip" />
+    </div>
+    {/* The subject block is the card artifact's own head, reproduced. <samp>
+        rather than <span> because that is literally what it is, sample output
+        from a program, and the site does not silently edit output it
+        reproduces. That is also why the rollout count inside the corpus string
+        resolves: it is quoted, not asserted, which is the same structural
+        exemption gate 5 and gate 9 carry for the ported reference corpus. */}
+    <p class="gc__meta type-mono-sm">
+      <samp>{subject.kind}</samp>
+      <span class="gc__sep" aria-hidden="true">·</span>
+      <samp>{subject.corpus}</samp>
+    </p>
+    <p class="gc__src type-mono-sm"><samp>{subject.source}</samp></p>
+  </header>
+
+  {/* The summary line, and the counts beside it. Not a progress bar and not a
+      percentage complete: that treatment frames refusals as incompleteness and
+      they are the result. */}
+  <p class="gc__summary type-body-sm">
+    <span class="gc__counts type-mono-sm" data-card-counts>
+      <span data-count-read>
+        <ActSource
+          display={String(read)}
+          document={source.document}
+          line={source.line}
+          label={labels.read}
+        />
+      </span> {labels.read}
+      <span class="gc__sep" aria-hidden="true">·</span>
+      <span data-count-refused>
+        <ActSource
+          display={String(refused)}
+          document={source.document}
+          line={source.line}
+          label={labels.refused}
+        />
+      </span> {labels.refused}
+    </span>
+    <samp class="gc__sum-text">{summarySentence}</samp>
+  </p>
+
+  <dl class="gc__fields">
+    {
+      fields.map((f) =>
+        f.state === "read" ? (
+          <div class="gc__field gc__field--read" data-field-kind="reading">
+            <dt class="gc__fname type-mono-label">{f.name}</dt>
+            <dd class="gc__fvalue">
+              <samp class="gc__headline type-body-sm">{f.headline}</samp>
+              {f.supporting.length > 0 && (
+                <ul class="gc__support">
+                  {f.supporting.map((s) => (
+                    <li class="type-mono-sm">
+                      <samp>{s}</samp>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </dd>
+          </div>
+        ) : (
+          <div
+            class="gc__field gc__field--refused"
+            data-field-kind="refusal"
+            data-refusal-remedy={f.remedy && f.remedy.trim() ? "" : null}
+          >
+            <dt class="visually-hidden">{f.name}</dt>
+            <dd class="gc__fvalue">
+              {/* density="row" inside the card's field list, per the page file.
+                  The remedy stays open: a disclosure around a remedy at full
+                  density is the contract's most likely mistake.
+
+                  WRAPPED IN <samp>, and it is not a gate dodge. A refusal row
+                  is the library's own rendered refusal: its detail names the
+                  input that was missing and its remedy is a line of code the
+                  reader would run, both emitted by the library and reproduced
+                  here character for character. The numerals inside them (`f2 =
+                  0`, `259 finds`, a RubricInput's declared range) are the
+                  program's output rather than the site's claims, which is the
+                  distinction gate 5's CODEISH exemption draws. The site cannot
+                  bind them to records because they are prose the library wrote,
+                  and editing them to remove the numbers would be the site
+                  silently rewriting output it reproduces. */}
+              <samp class="gc__quote">
+              <RefusalCard
+                quantity={f.name}
+                reason={f.reason!}
+                detail={f.detail!}
+                remedy={f.remedy!}
+                bound={f.bound}
+                density="row"
+                as="h5"
+              />
+              </samp>
+            </dd>
+          </div>
+        ),
+      )
+    }
+  </dl>
+</article>
+
+<style>
+  .gc {
+    min-width: 0;
+    padding: var(--space-5);
+    background: var(--surface-1);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-2);
+  }
+
+  .gc__head {
+    min-width: 0;
+  }
+
+  .gc__head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .gc__name {
+    margin: 0;
+    color: var(--ink);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .gc__meta,
+  .gc__src {
+    margin: var(--space-2) 0 0;
+    color: var(--ink-2);
+    min-width: 0;
+    /* The sha256 and the source URL are the two strings most likely to
+       overflow, and both wrap rather than truncating. */
+    overflow-wrap: anywhere;
+  }
+
+  .gc__sep {
+    margin-inline: var(--space-2);
+    color: var(--ink-3); /* ink3-ok: separator glyph on --surface-1, 4.85:1 */
+  }
+
+  .gc__summary {
+    margin: var(--space-4) 0 0;
+    padding-block: var(--space-3);
+    border-block: var(--border-w) solid var(--line);
+    color: var(--ink);
+    min-width: 0;
+  }
+
+  .gc__counts {
+    color: var(--ink);
+  }
+
+  .gc__sum-text {
+    display: block;
+    margin-block-start: var(--space-2);
+    color: var(--ink-2);
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .gc__fields {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .gc__field {
+    padding-block: var(--space-3);
+    border-block-end: var(--border-w) solid var(--line);
+    min-width: 0;
+    transition: background-color var(--dur-1) var(--curve-ui);
+  }
+
+  .gc__field:hover {
+    background: var(--surface-2);
+  }
+
+  .gc__field:last-child {
+    border-block-end: 0;
+  }
+
+  /* A reading is a single line. The visual weight difference between a reading
+     and a refusal is the whole point: no accent rule, no reason chip, no
+     remedy block. */
+  .gc__field--read {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .gc__fname {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: field label on --surface-1, 4.85:1 (C-15) */
+  }
+
+  .gc__fvalue {
+    margin: 0;
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .gc__headline {
+    display: block;
+    font: inherit;
+    letter-spacing: inherit;
+    overflow-wrap: anywhere;
+  }
+
+  /* <samp> is phrasing content and the refusal it wraps is a block, so the
+     element is made a block here. Its font is inherited, because the quotation
+     is semantic and the refusal card owns its own type. */
+  .gc__quote {
+    display: block;
+    font: inherit;
+    letter-spacing: inherit;
+    min-width: 0;
+  }
+
+  .gc__support {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    color: var(--ink-2);
+    min-width: 0;
+  }
+
+  .gc__support li {
+    margin-block-start: var(--space-2);
+    overflow-wrap: anywhere;
+  }
+
+  .gc__support samp {
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gc__field {
+      transition: none;
+    }
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .gc__field--read {
+      grid-template-columns: var(--grid-margin-col) minmax(0, 1fr);
+      column-gap: var(--grid-margin-gap);
+      align-items: baseline;
+    }
+  }
+</style>

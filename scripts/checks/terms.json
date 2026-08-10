@@ -1,0 +1,459 @@
+{
+  "_what_this_is": "The terminology lock, gate 6. Each entry is a phrase that must not reach rendered HTML outside the routes named in its own `allow` block, the canonical form that replaces it, the citation for the rule, and a probe pair the gate runs against itself on every invocation. A rule without a citation is somebody's preference; a rule with one is checkable. A rule without a probe is a rule nobody has shown can still fire.",
+  "_two_kinds": "`forbidden` fails on the match. `constrained` fails on the match UNLESS its `requires` expression appears within `window` characters, which is how a word that is legitimate under a named condition is held to naming that condition instead of being deleted.",
+  "_route_allowances": "`/log/` and everything under it is the historical archive and keeps the formal vocabulary the campaign was recorded in. `/evidence/<id>/` keeps the store's own keys, because the record exists so a reader can check a number against the store (D-40). `/evidence/` the index does not, and neither does anything else. Redirect stubs are skipped whole: their content is the old URL they preserve.",
+  "forbidden": [
+    {
+      "id": "act-numbering",
+      "pattern": "\\bacts?\\s+(one|two|three|1|2|3)\\b",
+      "canonical": "inside the reward model / inside the training run / audit the grader",
+      "why": "The three routes are named by what a reader sees on them. `act one` is a running order from a script nobody outside the build has read, and `Read act one` as a call to action asks a stranger to follow a numbering before they have been told what is at the end of it.",
+      "citation": "commission brief, public vocabulary table; DECISIONS.md D-05's argument that an identifier carrying no information is not fixed by a gloss",
+      "probe": {
+        "hit": "One frozen study. Read act one The first script",
+        "miss": "The act of measuring changes what is measured."
+      }
+    },
+    {
+      "id": "three-acts",
+      "pattern": "\\bthree\\s+acts\\b",
+      "canonical": "the three routes, named by what each one shows",
+      "why": "Same rule in its collective form. It is currently the first footer link on all 162 built pages, which makes the internal running order the site's most repeated string.",
+      "citation": "commission brief, public vocabulary table; copy.yaml nav.footer_groups[0].items[0].label",
+      "probe": {
+        "hit": "The three acts Inside a reward model",
+        "miss": "three actors in one scene"
+      }
+    },
+    {
+      "id": "campaign-prose",
+      "pattern": "(?<!v2\\s)(?<!v2\\.0\\s)\\bcampaigns?\\b(?![.\\-\\w])",
+      "canonical": "research log, or v2 campaign",
+      "why": "The campaign is becoming a historical archive under /log/ and stops being the project's public abstraction. The word may appear in the log, in a redirect, in a source URL, in a machine record and in the one sentence that explains what the archive is. It may not be how the homepage names what the project does.",
+      "citation": "commission brief, public vocabulary table; D-26 keeps the /campaign/ URLs working without advertising them",
+      "allow": {
+        "routes": [
+          "/log/"
+        ],
+        "routePatterns": [
+          "^/evidence/[0-9a-f]{8,}/$"
+        ]
+      },
+      "probe": {
+        "hit": "the campaign ledger, the Atlas, the docs",
+        "miss": "the v2 campaign is archived here"
+      }
+    },
+    {
+      "id": "campaign-machine-key",
+      "pattern": "\\bcampaign[.\\-][a-z0-9_.\\-]+",
+      "canonical": "source, or evidence",
+      "why": "`campaign.adjudication.ADJ-AVP` and `campaign-adj-avp` are store keys. D-40 rules that the store's keys are the content of an evidence record and may appear there; everywhere else they are a machine identifier standing where a finding should be. Five of them render on the homepage today.",
+      "citation": "DECISIONS.md D-40; commission brief, explicit removals",
+      "allow": {
+        "routes": [
+          "/log/"
+        ],
+        "routePatterns": [
+          "^/evidence/[0-9a-f]{8,}/$"
+        ]
+      },
+      "probe": {
+        "hit": "campaign.adjudication.ADJ-AVP refuted",
+        "miss": "the campaign, adjudication and the rest"
+      }
+    },
+    {
+      "id": "registered-prediction",
+      "pattern": "\\bregistered\\s+(prediction|predictions|hypothesis|hypotheses)\\b",
+      "canonical": "prediction",
+      "why": "`registered` is the campaign's own formality. Outside the log it adds a procedure a reader has not been shown and cannot check, to a word that already carries the claim.",
+      "citation": "commission brief, public vocabulary table. /log/ may preserve the formal wording.",
+      "allow": {
+        "routes": [
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "the registered prediction was that patching would recover",
+        "miss": "the prediction was that patching would recover"
+      }
+    },
+    {
+      "id": "kill-criterion",
+      "pattern": "\\b(registered\\s+)?kill\\s+criteri(on|a)\\b",
+      "canonical": "the result contradicted the prediction",
+      "why": "A kill criterion is a pre-registration mechanism. Outside historical method detail it names an apparatus instead of the outcome, and the outcome is the part a reader can act on.",
+      "citation": "commission brief, public vocabulary table and explicit removals",
+      "allow": {
+        "routes": [
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "The registered kill criterion fired.",
+        "miss": "the result contradicted the prediction"
+      }
+    },
+    {
+      "id": "adjudicated",
+      "pattern": "\\badjudicat(e|ed|es|ing|ion|ions|or)\\b",
+      "canonical": "resolved, supported, refuted, or inconclusive",
+      "why": "Adjudication is the campaign's process word. The four public words each say what actually happened; the process word says only that a process ran. D-05 kept the trust levels verbatim and the repositioning supersedes that for public surfaces.",
+      "citation": "commission brief, public vocabulary table, superseding DECISIONS.md D-05's trust-level row",
+      "allow": {
+        "routes": [
+          "/log/",
+          "/docs/api/"
+        ],
+        "routePatterns": [
+          "^/evidence/[0-9a-f]{8,}/$"
+        ],
+        "whyDocsApi": "ADJUDICATED is a real member of the library's TrustLevel enum and `adjudicated: bool = False` is a real parameter of make_evidence. The public vocabulary table that bans this word also says to preserve exact API identifiers even where they use a different convention, and renaming an enum in the reference would make the reference wrong for anyone typing it. Scoped to /docs/api/ only: /docs/ prose is still held to the public word."
+      },
+      "probe": {
+        "hit": "the result is adjudicated against a prediction",
+        "miss": "the result is refuted by the fixture"
+      }
+    },
+    {
+      "id": "trust-rung",
+      "pattern": "\\btrust\\s+ladder\\b|\\brungs?\\b",
+      "canonical": "evidence strength, or what supports this reading",
+      "why": "The rungs are an internal schema. A reader meeting `this rung` on a public page has been handed a scale with no units and no scale drawn anywhere near it. Deep documentation may keep it, because that is where the scale is defined.",
+      "citation": "commission brief, public vocabulary table: internal schema and deep docs only",
+      "allow": {
+        "routes": [
+          "/docs/",
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "Nothing in this repository has reached this rung.",
+        "miss": "nothing here has that much evidence behind it"
+      }
+    },
+    {
+      "id": "evidence-record-id",
+      "pattern": "\\bevidence\\s+record\\s+ids?\\b",
+      "canonical": "source, or evidence",
+      "why": "The id is how the machine finds a record and the last thing a reader knows. `pages/evidence.md` already rules that the id is never the primary column; this is the same rule applied to prose.",
+      "citation": "DECISIONS.md D-40, closing paragraph; commission brief, public vocabulary table",
+      "allow": {
+        "routes": [
+          "/log/"
+        ],
+        "routePatterns": [
+          "^/evidence/[0-9a-f]{8,}/$"
+        ]
+      },
+      "probe": {
+        "hit": "every number carries an evidence record id",
+        "miss": "every number carries a source"
+      }
+    },
+    {
+      "id": "policy-deformation",
+      "pattern": "\\bpolicy\\s+deformation\\b",
+      "canonical": "what changed in the policy",
+      "why": "Deformation is the formal name for the quantity. It is allowed in the documentation, after the plain-language explanation, and not before one.",
+      "citation": "commission brief, public vocabulary table: formal docs, after the plain-language explanation",
+      "allow": {
+        "routes": [
+          "/docs/",
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "measuring the policy deformation directly",
+        "miss": "measuring what changed in the policy"
+      }
+    },
+    {
+      "id": "metrology",
+      "pattern": "\\bmetrolog(y|ies|ical|ically|ist|ists)\\b",
+      "canonical": "validity and calibration",
+      "why": "Metrology is the register the project thinks in and not a word a practitioner arrives with. Deep concepts and the package reference keep it because that is where it is defined.",
+      "citation": "commission brief, public vocabulary table: deep concepts and package reference only",
+      "allow": {
+        "routes": [
+          "/docs/",
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "the verifier series and the metrology are built",
+        "miss": "validity and calibration are built and tested"
+      }
+    },
+    {
+      "id": "read-the-audit",
+      "pattern": "\\bread\\s+the\\s+audit\\b",
+      "canonical": "a call to action naming the task the reader is about to do",
+      "why": "The main call to action sends a stranger to an audit of a campaign they have not been told about. Named removal in the repositioning brief.",
+      "citation": "commission brief, explicit removals",
+      "probe": {
+        "hit": "Read the audit",
+        "miss": "See what a reward model is made of"
+      }
+    },
+    {
+      "id": "four-part-inventory",
+      "pattern": "the\\s+campaign\\s+ledger,\\s+the\\s+Atlas,\\s+the\\s+docs,\\s+the\\s+science",
+      "canonical": "a description of what the site is for, not a list of its internal parts",
+      "why": "A named removal. It describes the site by its build structure, three quarters of which is being repositioned, and it is the package description, so it reaches anything that reads package.json.",
+      "citation": "commission brief, explicit removals; package.json:23",
+      "probe": {
+        "hit": "The reward-lens website: the campaign ledger, the Atlas, the docs, the science.",
+        "miss": "The reward-lens website."
+      }
+    },
+    {
+      "id": "ledger",
+      "pattern": "\\bledgers?\\b",
+      "canonical": "account, or record",
+      "why": "The ledger is a data structure the project keeps. On a public page it is a metaphor asking the reader to picture bookkeeping, when the concrete word for the thing is already shorter.",
+      "citation": "commission brief, public vocabulary table: actual ledger data structures and /log/ only",
+      "allow": {
+        "routes": [
+          "/log/"
+        ],
+        "routePatterns": [
+          "^/evidence/[0-9a-f]{8,}/$"
+        ]
+      },
+      "probe": {
+        "hit": "the campaign ledger records every card",
+        "miss": "the record of every card"
+      }
+    },
+    {
+      "id": "hypothesis-count",
+      "pattern": "\\b\\d[\\d,]*\\s+(registered\\s+)?(hypothes(es|is)|predictions|kill\\s+criteria)\\b",
+      "canonical": "not stated site-wide",
+      "why": "A site-wide count of registered hypotheses is a credibility signal of the same kind as a line count: it measures how much was written down, not what was found. The log page may count its own contents.",
+      "citation": "commission brief, explicit removals; GROUND-TRUTH.md \u00a78 on counts as credibility signals",
+      "allow": {
+        "routes": [
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "84 registered hypotheses across the campaign",
+        "miss": "the hypotheses are recorded in the log"
+      }
+    },
+    {
+      "id": "deprecated-correlation",
+      "pattern": "(?<![\\d.])0\\.256\\b",
+      "canonical": "\u22120.171, the value in fixtures/e_parity/golden.json entry E04",
+      "why": "D-02 fixes the correlation at \u22120.171 and rules that the deprecated \u22120.256 fails the build outside the log page, where the correction itself is the content. The rule was stated in DECISIONS.md, in pages/log.md twice, and implemented in no gate: gate 7 reads only banned-terms.json, which holds no numerals. It has been correct by construction rather than by check since it was written.",
+      "citation": "DECISIONS.md D-02; GROUND-TRUTH.md C-55",
+      "allow": {
+        "routes": [
+          "/log/"
+        ]
+      },
+      "probe": {
+        "hit": "the correlation is 0.256 on the canonical model",
+        "miss": "the correlation is 0.2561 by another estimator"
+      }
+    },
+    {
+      "id": "production-ready",
+      "pattern": "\\bproduction[-\\s]ready\\b",
+      "canonical": "what is implemented, and what it has been run on",
+      "why": "A readiness claim with no named regime. Constrain rather than delete: say which part is implemented and on what it was run.",
+      "citation": "commission brief, the constrain list",
+      "probe": {
+        "hit": "a production-ready measurement stack",
+        "miss": "implemented, and run on one training record"
+      }
+    },
+    {
+      "id": "real-time",
+      "pattern": "\\breal[-\\s]time\\b",
+      "canonical": "in-loop, per step, or during the run, with the cost stated",
+      "why": "Real-time is a latency guarantee. The library reports an overhead ratio under four different conditions and dispatches nothing with a deadline. Constrain rather than delete: name the cadence the hook actually runs at.",
+      "citation": "commission brief, the constrain list; GROUND-TRUTH.md \u00a78 on the overhead ratio",
+      "probe": {
+        "hit": "real-time monitoring of the run",
+        "miss": "a hook that runs once per optimizer step"
+      }
+    },
+    {
+      "id": "sixteen-reasons",
+      "pattern": "\\bsixteen\\s+(refusal\\s+)?reasons\\b",
+      "canonical": "seventeen reasons",
+      "why": "The refusal enum has seventeen members. The kernel page is one amendment behind (E48 added QUANTITY_UNDEFINED after E30 added RECORD_INCOMPLETE), and two library tests pin seventeen.",
+      "citation": "GROUND-TRUTH.md C-10; reading.py:33 and :62-95; test_w1_kernel.py:470",
+      "probe": {
+        "hit": "sixteen reasons a reading can be refused",
+        "miss": "seventeen reasons a reading can be refused"
+      }
+    },
+    {
+      "id": "release-candidate",
+      "pattern": "\\brelease\\s+candidate\\b",
+      "canonical": "the released version, as generated into release.json",
+      "why": "The rc1 marker was removed in commit 2e75a0d. Calling a version a release candidate is the site asserting something the repository stopped saying, on the one component whose reason for existing is version honesty. 3.0.0 has been on the package index since 2026-08-07, so the older `has not been released` wording is now wrong in the other direction.",
+      "citation": "DECISIONS.md D-25; GROUND-TRUTH.md C-1 and C-17; STATE.md \u00a70 on release.json",
+      "probe": {
+        "hit": "3.0.0 is a release candidate",
+        "miss": "3.0.0 is on the package index"
+      }
+    },
+    {
+      "id": "tagged-unpublished",
+      "pattern": "\\btagged\\s+and\\s+(not\\s+yet\\s+published|unpublished)\\b",
+      "canonical": "the released version, as generated into release.json",
+      "why": "Written when the v3.0.0 tag was local only. It is now published, and citing a tag against the wrong state is the same unverifiable claim in reverse.",
+      "citation": "GROUND-TRUTH.md C-17; STATE.md \u00a70",
+      "probe": {
+        "hit": "3.0.0 is tagged and not yet published",
+        "miss": "3.0.0 is on the package index"
+      }
+    },
+    {
+      "id": "line-count",
+      "pattern": "\\b1[0-9]{2},[0-9]{3}\\s+lines\\b",
+      "canonical": "not stated",
+      "why": "Software-quality counts are not scientific facts and are forbidden as credibility signals.",
+      "citation": "GROUND-TRUTH.md \u00a78; commission brief \u00a712",
+      "probe": {
+        "hit": "104,000 lines of Python",
+        "miss": "the library is large"
+      }
+    },
+    {
+      "id": "test-count",
+      "pattern": "\\b[0-9,]{3,}\\s+(collected\\s+)?tests\\b",
+      "canonical": "not stated",
+      "why": "Same rule: a test count is not a scientific fact.",
+      "citation": "GROUND-TRUTH.md \u00a78",
+      "probe": {
+        "hit": "3,306 collected tests",
+        "miss": "the suite is green"
+      }
+    },
+    {
+      "id": "module-count",
+      "pattern": "\\b\\d+\\s+modules\\b",
+      "canonical": "not stated",
+      "why": "Same rule: a module count is not a scientific fact.",
+      "citation": "GROUND-TRUTH.md \u00a78",
+      "probe": {
+        "hit": "212 modules",
+        "miss": "the package is organised by science"
+      }
+    },
+    {
+      "id": "absolute-overhead",
+      "pattern": "\\b\\d+(\\.\\d+)?\\s?(us|\u00b5s|microseconds?)\\b",
+      "canonical": "the overhead ratio",
+      "why": "There are four different absolute microsecond figures under four different conditions. The project's own instruction is to publish the ratio, and the ratio is the only form that goes on the site.",
+      "citation": "GROUND-TRUTH.md \u00a78; assay/README.md:295-297",
+      "probe": {
+        "hit": "adds 42 microseconds per call",
+        "miss": "adds a measured fraction of a step"
+      }
+    },
+    {
+      "id": "reward-hacking-detector",
+      "pattern": "\\breward\\s+hacking\\s+detector\\b",
+      "canonical": "the variance-derivative monitor",
+      "why": "The library refuses the claim that it detects reward hacking. It measures a named observable and reports a lead time against a surrogate false-alarm rate.",
+      "citation": "DECISIONS.md D-05 replacement table",
+      "probe": {
+        "hit": "a reward hacking detector",
+        "miss": "the variance-derivative monitor"
+      }
+    },
+    {
+      "id": "proof-from-measurement",
+      "pattern": "\\b(guarantees|proves)\\s+(that\\s+)?(the|a)\\s+(model|reward|policy)\\b",
+      "canonical": "measures / reports",
+      "why": "The site does not claim proof from measurement. A refusal is a success in this library's semantics and an overclaim is the one thing the audience is scanning for.",
+      "citation": "QA.md \u00a76.3, the overclaim sweep",
+      "probe": {
+        "hit": "proves the model is aligned",
+        "miss": "measures how the model's score decomposes"
+      }
+    }
+  ],
+  "constrained": [
+    {
+      "id": "causal-on-an-observational-instrument",
+      "pattern": "\\bcausal(ly|ity)?\\b",
+      "requires": "\\bpatch|\\bablat|\\bintervention|\\bintervene|\\bknockout|\\bresect|\\brandomi[sz]|\\bcounterfactual|\\bdo-operator|\\bmanipulat|\\bnot\\s+causal|\\bobservational|\\bcorrelational|\\bcannot\\s+be\\s+causal",
+      "window": 320,
+      "canonical": "say what the instrument did: it ranked, it correlated, it patched",
+      "why": "Attribution is observational. It reports how much a component's activation covaries with the score, and calling that causal imports the claim that patching is there to test. The word is allowed where an intervention is named in the same breath, which is exactly where it is true.",
+      "citation": "commission brief, the constrain list; docs/concepts/observational-vs-causal",
+      "probe": {
+        "hit": "the strongest causal head sits at layer 0",
+        "miss": "causal patching says they carry"
+      }
+    },
+    {
+      "id": "calibrated-without-a-regime",
+      "pattern": "\\bcalibrat(ed|ion|ions)\\b",
+      "requires": "\\borganism|\\bfixture|\\bregime|\\benvelope|\\breference\\s+material|\\bstudy|\\bagainst\\b|\\bon\\s+the\\b|\\bheld[-\\s]out|\\bcorpus|\\bdataset|\\btemperature|\\bisotonic|\\bPlatt|\\bcoverage|\\bexploratory\\b|\\brungs?\\b|\\bladder\\b",
+      "window": 320,
+      "canonical": "calibrated on <artifact>, in <regime>",
+      "why": "Calibration is a relation between an instrument, a regime and a reference material. Unqualified, it reads as a property of the tool and generalises to regimes nobody measured. Where it is the name of a trust tier rather than a claim, the trust-rung rule owns it instead, so the tier vocabulary licenses it here.",
+      "citation": "commission brief, the constrain list; ASSAY's validity envelope",
+      "allow": {
+        "routes": [
+          "/log/"
+        ],
+        "routePatterns": [
+          "^/evidence/[0-9a-f]{8,}/$"
+        ]
+      },
+      "probe": {
+        "hit": "the estimator is calibrated and ready to use",
+        "miss": "calibrated on the planted-key organism"
+      }
+    },
+    {
+      "id": "end-to-end-across-cases",
+      "pattern": "\\bend[-\\s]to[-\\s]end\\b",
+      "requires": "\\bsame\\s+(case|run|record|model)|\\bone\\s+(case|run|record)|\\bsingle\\s+(case|run|record)|\\bin\\s+one\\s+run",
+      "window": 320,
+      "canonical": "name the stages, and name the case each one came from",
+      "why": "The site's three stages come from three different cases: a static model fixture, a public training series and a verifier audit. Called end-to-end they read as one pipeline over one artifact, which is the thing that was never run.",
+      "citation": "commission brief, the constrain list; STATE.md \u00a70 evidence table",
+      "probe": {
+        "hit": "an end-to-end measurement stack",
+        "miss": "end-to-end on one run, from rollout to score"
+      }
+    },
+    {
+      "id": "ground-truth-from-a-grader",
+      "pattern": "\\bground[-\\s]truth\\b",
+      "requires": "\\bplanted|\\bsynthetic|\\bmodel\\s+organism|\\bby\\s+construction|\\banswer\\s+key|\\bknown\\s+key|\\bnot\\s+ground|\\bno\\s+ground",
+      "window": 320,
+      "canonical": "the grader's label, which is what is being audited",
+      "why": "A grader's output is the object under test, not the truth to test against. Ground truth exists here only where something was planted, and that is the case the word is reserved for.",
+      "citation": "commission brief, the constrain list",
+      "probe": {
+        "hit": "scored against ground truth by the verifier",
+        "miss": "ground truth by construction, because the key was planted"
+      }
+    },
+    {
+      "id": "proof-words",
+      "pattern": "\\b(proved|proven|verified|validated)\\b",
+      "requires": "\\btest|\\bfixture|\\bCI\\b|\\btype\\s+check|\\bsignature|\\bchecksum|\\bhash|\\bschema|\\bformally|\\bproof\\s+assistant|\\bnot\\s+(proved|proven|verified|validated)",
+      "window": 320,
+      "canonical": "implemented, qualified on a fixture, supported on one run, inconclusive, or unrun",
+      "why": "Four of the five real outcomes in this repository are weaker than proof and one of them is `unrun`. The words are allowed where the thing verified is a machine-checkable artifact, which is the only place they are literally true.",
+      "citation": "commission brief, the constrain list; STATE.md \u00a76 on claims with no measured instance",
+      "probe": {
+        "hit": "the approach is validated across models",
+        "miss": "validated by a schema test in CI"
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+ "contentHash": "5789c4b7d3a087aa54b7a414201c8a9b",
+ "humanSource": "The frozen study \"Intransitive preference mass no scalar reward can represent\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:844ad06a5aeb1d89c21c13c19a28cbd2",
+  "campaign.adjudication.TOPO-HODGE",
+  "study:campaign-topo-hodge@v1#7206aa3a",
+  "spec:7206aa3a670d99eb3640c3230ce3b7fb",
+  "H-intransitive"
+ ],
+ "label": "Intransitive preference mass no scalar reward can represent",
+ "limitation": "The intransitive-mass reading is dead: zero cyclic triples in 186,378 triangles, 10,000 of 10,000 sampled tournaments acyclic, and the measured value sits on the encoding floor. The store still carries the adjudication as confirmed, which is why this cannot be left to the outcome mapping: it would render as supported.",
+ "scope": "One frozen study, adjudicated once, on nectar-tournaments and ultrafeedback-tournaments.",
+ "slug": "measured-topo-hodge-intransitive-mass",
+ "sourceUrl": "/evidence/844ad06a5aeb1d89c21c13c19a28cbd2/",
+ "statement": "This reading is withdrawn. The study's own follow-up found no cyclic triple in any sampled tournament, which places the measured value on the floor the encoding imposes rather than on a property of the preferences.",
+ "subject": "nectar-tournaments and ultrafeedback-tournaments",
+ "type": "limitation"
+}

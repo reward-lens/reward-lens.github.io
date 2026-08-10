@@ -1,0 +1,19 @@
+{
+ "contentHash": "190dbf0ae5dbe98cee2ed059431fc01e",
+ "humanSource": "The frozen study \"The fleet decodes a property it does not price\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:a34316feccee3beaed93c05ce5888567",
+  "campaign.adjudication.FACT-KUI",
+  "study:campaign-fact-kui@v1#dcdc401f",
+  "spec:dcdc401fbbe744065b8f175de0384372"
+ ],
+ "label": "The fleet decodes a property it does not price",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "study-fact-kui",
+ "sourceUrl": "/evidence/a34316feccee3beaed93c05ce5888567/",
+ "statement": "The frozen study \"The fleet decodes a property it does not price\" was adjudicated refuted, over 3 registered predictions of which 3 did not. no reliable decode-not-price gap across the fleet.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full",
+ "type": "interpretation"
+}

@@ -46,7 +46,9 @@
 .ts-label {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--ink-3);
+  /* --ink-3 is 4.29:1 on --surface-2, which is AA-large and not AA-body, and
+     .tokenstrip paints --bg-raised. GROUND-TRUTH.md C-15, DECISIONS.md D-29. */
+  color: var(--ink-2);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-right: var(--sp-2);
@@ -97,7 +99,8 @@
 .ts-provenance {
   margin: 0;
   font-size: var(--text-xs);
-  color: var(--ink-3);
+  /* Same surface, same rule as .ts-label above. */
+  color: var(--ink-2);
 }
 
 .ts-trust {

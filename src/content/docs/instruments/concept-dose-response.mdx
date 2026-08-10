@@ -2,8 +2,10 @@
 title: Concept dose-response
 description: Push an activation toward a concept. Does the reward move, and by how much per unit of push?
 section: instruments
-order: 41
+order: 42
 source: docs/content/instruments/concept-dose-response.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -110,4 +112,4 @@ The dose-response is honest only over the range you actually steer. Push far eno
 
 ## How much to trust it
 
-`ConceptDoseResponse` returns [`Evidence`](/docs/reference/core/#reward_lens.core.evidence.Evidence) at `EXPLORATORY`, gauge `RAW_ONLY`. It is a causal measurement, the slope comes from an intervention, but it is not calibrated: no calibration provider is wired in this release, so it defaults to `EXPLORATORY` and stays exploratory by construction until a scorecard exists. It is also not comparable across models without a frame. Within one model it earns a strong claim: "steering this concept changes the reward at this rate over this range." It does not by itself earn "the model has a preference for this concept" as a portable, cross-model statement; for that you need to canonicalize the direction into a shared frame first. The instrument that turns a raw concept axis into a frame-expressed, comparable one is [effective angle](/docs/discipline/gauge-and-frames/); the observational cousin that reads alignment without steering is [component attribution](/docs/instruments/attribution/).
+`ConceptDoseResponse` returns [`Evidence`](/docs/api/core/#reward_lens.core.evidence.Evidence) at `EXPLORATORY`, gauge `RAW_ONLY`. It is a causal measurement, the slope comes from an intervention, but it is not calibrated: no calibration provider is wired in this release, so it defaults to `EXPLORATORY` and stays exploratory by construction until a scorecard exists. It is also not comparable across models without a frame. Within one model it earns a strong claim: "steering this concept changes the reward at this rate over this range." It does not by itself earn "the model has a preference for this concept" as a portable, cross-model statement; for that you need to canonicalize the direction into a shared frame first. The instrument that turns a raw concept axis into a frame-expressed, comparable one is [effective angle](/docs/discipline/gauge-and-frames/); the observational cousin that reads alignment without steering is [component attribution](/docs/instruments/attribution/).

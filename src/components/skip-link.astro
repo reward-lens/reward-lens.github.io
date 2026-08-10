@@ -1,0 +1,35 @@
+---
+import { ui } from "../copy";
+
+// The first focusable thing in the document. Off-screen until focused, then it
+// arrives at full opacity with no transition, because a focus affordance that
+// fades in is a focus affordance a keyboard user has already moved past.
+---
+
+<a href="#main" class="skip-link">{ui.skip_link}</a>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: var(--z-skip-link);
+    background: var(--surface-2);
+    color: var(--ink);
+    /* A focusable edge takes the only rule that meets 3:1. DESIGN.md §5.3. */
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-sans);
+    font-size: var(--type-body-sm-size);
+    line-height: var(--type-body-sm-lh);
+    letter-spacing: var(--type-body-sm-track);
+    text-decoration: none;
+    /* Moved out of view rather than hidden, so it stays in the focus order. */
+    transform: translateY(calc(-100% - var(--space-6)));
+    transition: none;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+</style>

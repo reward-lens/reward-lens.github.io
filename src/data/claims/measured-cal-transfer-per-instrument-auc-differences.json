@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "4db670aa88ca47183f5cc1f363c29b64",
+ "humanSource": "The frozen study \"Instrument calibration transfers from CPU toy trunks to a real 0.6B trunk\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:b37f71c015ebfd697d7deb2a7efb5f7e",
+  "campaign.adjudication.CAL-TRANSFER",
+  "study:campaign-cal-transfer@v1#31f5b67b",
+  "spec:31f5b67bc4168dab4b55ec6a9a588279"
+ ],
+ "label": "Instrument calibration transfers from CPU toy trunks to a real 0.6B trunk",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one.",
+ "quantity": {
+  "name": "per_instrument_auc_differences",
+  "unit": null,
+  "value": 0.29402604166666657
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-0.6b, over caltransfer-organisms.",
+ "slug": "measured-cal-transfer-per-instrument-auc-differences",
+ "sourceUrl": "/evidence/b37f71c015ebfd697d7deb2a7efb5f7e/",
+ "statement": "A supporting measurement from the frozen study \"Instrument calibration transfers from CPU toy trunks to a real 0.6B trunk\", with no prediction registered against it in advance.",
+ "subject": "skywork-v2-qwen3-0.6b, over caltransfer-organisms",
+ "type": "measured-result"
+}

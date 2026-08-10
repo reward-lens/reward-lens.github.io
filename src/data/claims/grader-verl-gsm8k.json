@@ -1,0 +1,17 @@
+{
+ "artifact": "verl/utils/reward_score/gsm8k.py (sha256 497c6e32b708d0bc)",
+ "comparator": "mutation score 0.4 over 60 competent mutants",
+ "contentHash": "05d84d2ec77e093b897c779a62b724a8",
+ "humanSource": "The released grader card for this scoring program, regenerated from the release artifacts rather than restated.",
+ "immutableIds": [
+  "ev:1b7213bde1738ac6b61741424b0ffaa3",
+  "verifier:59fbd42f0d190815b64ea96433d1d6ef"
+ ],
+ "label": "verl GSM8K reward",
+ "limitation": "A mutation score is a statement about this checker on this corpus, and it does not transfer to another corpus or another checker.",
+ "scope": "2400 grader calls on one corpus, at the exploratory level.",
+ "slug": "grader-verl-gsm8k",
+ "statement": "A scoring program was run against a fixed corpus and 24 of 60 competent mutants were caught.",
+ "subject": "verl reward_score/gsm8k.py compute_score, entry point compute_score, over GSM8K test split, 240 rollouts.",
+ "type": "fixture-qualification"
+}

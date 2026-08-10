@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.7",
+ "contentHash": "75f449c53d29e83606bcb01d95686973",
+ "humanSource": "The frozen study \"Does the process reward model verify or style-read\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:46e1500c4d39f9821c137ae0b00ac0da",
+  "campaign.adjudication.VERIF-PRM",
+  "study:campaign-verif-prm@v1#616bec72",
+  "spec:616bec72ae5ab5714b01adaef378aba9",
+  "H-verif-loc"
+ ],
+ "label": "Does the process reward model verify or style-read",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "dense_localization_auc",
+  "unit": null,
+  "value": 0.2821441611813727
+ },
+ "scope": "One frozen study, adjudicated once, on qwen-prm, over processbench-full.",
+ "slug": "measured-verif-prm-dense-localization-auc",
+ "sourceUrl": "/evidence/46e1500c4d39f9821c137ae0b00ac0da/",
+ "statement": "the PRM localizes ProcessBench error steps.",
+ "status": "refuted",
+ "subject": "qwen-prm, over processbench-full",
+ "type": "measured-result"
+}

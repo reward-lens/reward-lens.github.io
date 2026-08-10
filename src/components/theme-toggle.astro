@@ -1,0 +1,121 @@
+---
+import { ui } from "../copy";
+
+// The theme toggle writes [data-theme] on the root, which is the attribute that
+// tokens.css lets win over the OS preference in both directions.
+//
+// It is hidden when scripting is off. The head script in Base.astro sets
+// data-js on the root; without it this control is a button that cannot do
+// anything, and a dead control is worse than no control. With scripting off the
+// OS preference still themes the page through prefers-color-scheme.
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label={ui.theme_toggle_aria}
+>
+  <svg
+    class="theme-toggle__icon theme-toggle__icon--sun"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path
+      d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"
+    ></path>
+  </svg>
+  <svg
+    class="theme-toggle__icon theme-toggle__icon--moon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 48px. Every control in the header is a touch target at every width. */
+    inline-size: var(--space-7);
+    block-size: var(--space-7);
+    padding: 0;
+    background: transparent;
+    color: var(--ink-2);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--curve-ui),
+      background-color var(--dur-1) var(--curve-ui);
+  }
+  .theme-toggle:hover {
+    color: var(--ink);
+    background: var(--surface-3);
+  }
+  .theme-toggle__icon {
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+  }
+
+  /* No scripting, no toggle. */
+  :global(:root:not([data-js])) .theme-toggle {
+    display: none;
+  }
+
+  /* Show the icon for the theme the button switches TO, so the glyph is a
+     label for the action rather than a report of the current state. */
+  .theme-toggle__icon--sun {
+    display: none;
+  }
+  .theme-toggle__icon--moon {
+    display: block;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .theme-toggle__icon--sun {
+      display: block;
+    }
+    :global(:root:not([data-theme="light"])) .theme-toggle__icon--moon {
+      display: none;
+    }
+  }
+  :global(:root[data-theme="dark"]) .theme-toggle__icon--sun {
+    display: block;
+  }
+  :global(:root[data-theme="dark"]) .theme-toggle__icon--moon {
+    display: none;
+  }
+  :global(:root[data-theme="light"]) .theme-toggle__icon--sun {
+    display: none;
+  }
+  :global(:root[data-theme="light"]) .theme-toggle__icon--moon {
+    display: block;
+  }
+</style>
+
+<script>
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest("[data-theme-toggle]");
+    if (!btn) return;
+    const root = document.documentElement;
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* private mode: the choice lasts for this page only */
+    }
+  });
+</script>

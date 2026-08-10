@@ -1,0 +1,225 @@
+---
+/**
+ * act-facts  ·  a label-and-value table whose values cite a document
+ *
+ * WHY THIS IS NOT data-table. `data-table` binds a numeric cell through
+ * `evidenceId`, and a cell with no id renders as plain text, which gate 5
+ * counts as an unbound number and fails on. That is the correct behaviour for
+ * two of the three acts. It is wrong for /see/run/, whose numbers have no
+ * record at all and never will: the campaign evidence store contains no RL
+ * training run (GROUND-TRUTH.md C-34), and D-35 rules that those numbers carry
+ * `source: {document, line}` and that no id is ever minted for them.
+ *
+ * So this is data-table's shape with act-source in the value cell instead of
+ * provenance-chip. It is deliberately small: a caption, label-value rows, and
+ * an optional note beneath. It does not grow a sort, a filter or a second
+ * numeric column, because at that point the answer is data-table and the
+ * question is why the numbers still have no records.
+ *
+ * A ROW MAY CARRY ITS OWN DISAGREEMENT. pages/see-run.md:53 requires a
+ * footnote-marked line beneath the fitted-parameters table stating that two
+ * internal records disagree on the step count, per D-03: disclosed rather than
+ * resolved. That is the `note` slot, and it is NOT styled as an error, because
+ * a disclosed disagreement is the site working rather than the site failing.
+ */
+import ActSource from "@components/acts/act-source.astro";
+import { ui } from "../../copy";
+import { uniqueId } from "@components/base/data";
+
+export interface Fact {
+  label: string;
+  /** Already formatted by the caller. A component never re-rounds. */
+  display: string | null;
+  source: { document: string; line: number | null } | null;
+  /** A second value on the same row, for a pair that disagrees. */
+  compare?: string | null;
+}
+
+interface Props {
+  caption: string;
+  facts: Fact[];
+  /** Column heading for `compare`, when any row carries one. */
+  compareLabel?: string | null;
+  class?: string;
+}
+
+const { caption, facts, compareLabel = null, class: extraClass = "" } = Astro.props;
+
+if (!facts.length) {
+  throw new Error(
+    `act-facts "${caption}": no rows. An empty table is a caption with a border.`,
+  );
+}
+for (const f of facts) {
+  /* Both value columns cite, so both need a source. The compare column was the
+     one that slipped: it renders through the same citation as the display
+     column and read `source` without checking it, so a row with a comparison
+     and no source crashed inside the render rather than failing here with its
+     own name. Found by building against it. */
+  const cited = [f.display, f.compare].filter((v) => v !== null && v !== undefined);
+  if (cited.length && f.source === null) {
+    throw new Error(
+      `act-facts "${caption}": row "${f.label}" renders ${cited.join(" and ")} ` +
+        `with no source. D-35: a number with no evidence record cites a ` +
+        `document and a line, and never nothing.`,
+    );
+  }
+}
+
+const hasCompare = facts.some((f) => f.compare !== undefined && f.compare !== null);
+// The caption is not an identity. /see/reward-model/ renders this table three
+// times under one caption, so all three scroll regions took their
+// aria-labelledby from the first caption element.
+const capId = uniqueId(
+  `af-${caption.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`,
+  Astro.url.pathname,
+);
+---
+
+<div class:list={["af", extraClass]}>
+  <div class="af__scroll" role="group" aria-labelledby={capId} tabindex="0">
+    <table class="af__table">
+      <caption class="af__caption type-mono-label" id={capId}>{caption}</caption>
+      {/* THE HEADER ROW EXISTS ONLY WHEN IT CARRIES INFORMATION.
+
+          It used to name both columns with the table's own caption, so a
+          screen reader moving through a three-row table announced
+          "the published correlation, and the correction to it" six times and
+          never said which column the cell was in. Measured on
+          /see/reward-model/, before:
+
+            r0c1  caption | published, then deprecated | -0.256
+
+          Every label cell already carries `scope="row"`, and for two columns
+          that is a complete association on its own. Dropping the header row
+          there leaves:
+
+            r0c1  published, then deprecated | -0.256
+
+          which is the whole of what the cell means and nothing the reader has
+          just heard. Removing invented strings rather than adding two more.
+
+          The compare arm is the case where a header row does carry
+          information: two value columns whose cells would otherwise share one
+          row header and be indistinguishable. So it keeps a header row, with
+          an empty corner cell over the row-label column, which is what that
+          column is, and a real name over each value column. */}
+      {
+        hasCompare && (
+          <thead class="visually-hidden">
+            <tr>
+              <td />
+              <th scope="col">{ui.facts_value_heading}</th>
+              <th scope="col">{compareLabel ?? ui.facts_compare_heading}</th>
+            </tr>
+          </thead>
+        )
+      }
+      <tbody>
+        {
+          facts.map((f) => (
+            <tr class="af__tr">
+              <th class="af__td af__td--label type-body-sm" scope="row">{f.label}</th>
+              <td class="af__td type-mono-base" data-align="end">
+                {f.display === null ? (
+                  <>
+                    <span aria-hidden="true">—</span>
+                    <span class="visually-hidden">{ui.no_value}</span>
+                  </>
+                ) : (
+                  <ActSource
+                    display={f.display}
+                    document={f.source!.document}
+                    line={f.source!.line}
+                    label={f.label}
+                  />
+                )}
+              </td>
+              {hasCompare && (
+                <td class="af__td type-mono-base" data-align="end">
+                  {f.compare === null || f.compare === undefined ? (
+                    <>
+                      <span aria-hidden="true">—</span>
+                      <span class="visually-hidden">{ui.no_value}</span>
+                    </>
+                  ) : (
+                    <ActSource
+                      display={f.compare}
+                      document={f.source!.document}
+                      line={f.source!.line}
+                      label={`${f.label}, ${compareLabel ?? ""}`}
+                    />
+                  )}
+                </td>
+              )}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    Astro.slots.has("note") && (
+      <p class="af__note type-body-sm">
+        <slot name="note" />
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .af {
+    min-width: 0;
+  }
+
+  .af__scroll {
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .af__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .af__table {
+    border-collapse: collapse;
+    inline-size: max-content;
+    min-inline-size: 100%;
+  }
+
+  .af__caption {
+    caption-side: top;
+    text-align: start;
+    color: var(--ink-2);
+    padding-block-end: var(--space-3);
+  }
+
+  .af__td {
+    padding: var(--space-3) var(--space-4);
+    border-block-end: var(--border-w) solid var(--line);
+    text-align: start;
+    vertical-align: baseline;
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .af__td--label {
+    color: var(--ink-2);
+    font-weight: inherit;
+    padding-inline-start: 0;
+  }
+
+  .af__td[data-align="end"] {
+    text-align: end;
+  }
+
+  /* The disagreement note. Same ink and same type as the body, because D-03
+     discloses a disagreement rather than apologising for one, and a smaller,
+     dimmer line under a table is an apology. */
+  .af__note {
+    margin: var(--space-4) 0 0;
+    max-width: min(var(--measure-prose), 100%);
+    color: var(--ink-2);
+  }
+</style>

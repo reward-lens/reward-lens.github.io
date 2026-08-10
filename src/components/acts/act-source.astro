@@ -1,0 +1,237 @@
+---
+/**
+ * act-source  ·  a number whose provenance is a document and a line, D-35
+ *
+ * /see/run/ carries numbers at a weaker grade of provenance than the other two
+ * acts. The campaign evidence store contains no RL training run at all
+ * (GROUND-TRUTH.md C-34, quoting experiments/i5_variance_derivative.py:8-9), so
+ * the run's numbers are recorded in a document rather than in a record, and
+ * D-35 rules that they carry `source: {document, line}` and that no id is ever
+ * minted for them.
+ *
+ * THE DESIGN DECISION THIS COMPONENT IS, in one sentence: the citation renders
+ * at the same visual weight a provenance-chip gets, so a reader sees the
+ * difference between the two grades rather than being protected from it. Same
+ * dotted underline, same focus ring, same cursor, same reading order. What
+ * differs is what opens: a record on one act, a document and a line on this
+ * one. A reader who opens both learns something true about the two acts. A
+ * reader who opens neither is not misled either way, because neither is styled
+ * as better than the other.
+ *
+ * It also carries `data-provenance`, which is gate 5's structural pass
+ * condition (scripts/checks/provenance.mjs:42). That is not a loophole: the
+ * gate's rule is that a rendered number resolves to something checkable, and a
+ * document with a line number is checkable by opening it. What the gate must
+ * never see is a fabricated `ev:` id, which is the failure D-35 rejects by
+ * name.
+ *
+ * WHY IT IS A <button> AND NOT A <details>, AND THIS COST A SHOOT TO FIND. The
+ * first build used <details>/<summary>, which needs no script and is keyboard
+ * operable for free. It renders correctly in isolation and it destroys every
+ * paragraph it sits in: `details` is on the HTML parser's list of start tags
+ * that IMPLICITLY CLOSE AN OPEN <p>, so `<p>alarms at step <details>90</details>
+ * , a lead of…</p>` parses as a paragraph, a details, and an anonymous block.
+ * The computed display of every node said `inline` and the sentence was in
+ * three pieces. Invisible in the code, obvious in the picture. A <button> is
+ * phrasing content and stays inside its paragraph.
+ *
+ * WHY THE PANEL IS `display: none` WHEN CLOSED, rather than `visibility:
+ * hidden`. A hidden-but-laid-out absolutely positioned panel still contributes
+ * to the page's scroll width, so a citation late in a line pushes the document
+ * past the viewport. `display: none` removes it from layout entirely, which is
+ * why this component cannot cause the overflow that provenance-chip currently
+ * does (reported with the packet).
+ *
+ * NO SCRIPT. The panel opens on :hover and :focus-within, which is the same
+ * mechanism provenance-chip falls back to with scripting off. Because a
+ * `display: none` panel is out of the accessibility tree, the citation is ALSO
+ * in the button's accessible name: a screen-reader user gets the document and
+ * the line without opening anything.
+ */
+interface Props {
+  /** The rendered number, already formatted by the caller. Never re-rounded. */
+  display: string;
+  /** The document the number is recorded in, as the generator emitted it. */
+  document: string;
+  /**
+   * The line within it. Null where the document has no lines: the run's series
+   * comes from a binary rollout table, and citing "line 1" of an .npz would be
+   * a precision the artifact does not have. D-35 requires the document; the
+   * line is what makes a text document checkable and it is omitted rather than
+   * faked where there is none. Reported with the packet.
+   */
+  line: number | null;
+  /** What the number is, for the accessible name. From copy.yaml or a field. */
+  label?: string | null;
+  /**
+   * Render the citation as text rather than as a focusable trigger.
+   *
+   * FOR ONE CASE ONLY: a citation that lives inside `.visually-hidden`. The
+   * scrubber's 401-row data table on /see/run/ is a screen-reader affordance,
+   * and its caption carried a full `<button class="src__trigger">`. That button
+   * is focusable and permanently off screen, so tabbing through the route put
+   * the focus ring on nothing — WCAG 2.2 AA 2.4.7, found by the accessibility
+   * packet's keyboard traversal.
+   *
+   * The button earns nothing there. Everything it offers a hidden reader is
+   * already in its accessible name, and the panel it opens is inside a
+   * `height: 1px; overflow: hidden` box that no one can ever see. So in that
+   * one place the citation is a `<span>`: same text, same `data-provenance`
+   * hook for gate 5, no focus stop.
+   *
+   * DO NOT reach for this to quiet a focus-order complaint anywhere visible. A
+   * citation a sighted reader can see must stay operable, and turning it into
+   * text would take the panel away from everyone.
+   */
+  static?: boolean;
+  class?: string;
+}
+
+const {
+  display,
+  document,
+  line,
+  label = null,
+  static: isStatic = false,
+  class: extraClass = "",
+} = Astro.props;
+
+if (!display) {
+  throw new Error(
+    "act-source: no display value. A citation with nothing to cite is a " +
+      "disclosure the reader opens to find an empty panel.",
+  );
+}
+if (!document || (line !== null && !Number.isInteger(line))) {
+  throw new Error(
+    `act-source "${display}": a source needs a document (D-35). ` +
+      `Got document="${document}" line=${String(line)}. If the number has an ` +
+      `evidence record, use provenance-chip instead; if it has neither, it ` +
+      `does not render.`,
+  );
+}
+
+// The document path as the generator emitted it, and the line beside it. Not
+// composed into a sentence: this is a citation, and a reader who wants to check
+// it wants the path in a form they can paste.
+const cite = line === null ? document : `${document}:${line}`;
+---
+
+{/*
+  NO WHITESPACE INSIDE THIS ELEMENT, and it has to be written on one line to
+  guarantee it. Astro emits source newlines as text nodes, so a formatted
+  version of the same markup renders "fires on 69.3% ." with a space before the
+  period, on every sentence that ends in a citation. The panel carries the same
+  hook the chip's panel does: print.css renders it in flow as an endnote, and
+  gate 5 reads it as bound, which is right, because a line number inside a
+  citation is part of the citation and not a second claim.
+*/}<span class:list={["src", extraClass]}>{isStatic ? <span class="src__static" data-provenance>{`${display}${label ? `, ${label}` : ""}. Recorded at ${cite}.`}</span> : <><button type="button" class="src__trigger" data-provenance aria-label={`${display}${label ? `, ${label}` : ""}. Recorded at ${cite}.`}>{display}</button><span class="src__panel type-mono-sm" data-provenance-panel>{cite}</span></>}</span>{/*
+  AND NO WHITESPACE AFTER IT EITHER, WHICH IS THE HALF THAT WAS MISSED. The
+  element above is written on one line so nothing leaks inside it; the blank
+  line that used to sit between it and the <style> block is also a text node,
+  and Astro emits it after the citation. That is where "at step 90 , a lead of"
+  came from: a space between the citation and the comma that follows it, on
+  every bound number in a sentence. Both ends have to be tight.
+*/}<style>
+  /* Inline, so a citation sits inside a sentence or a table cell without
+     breaking the line box. `position: relative` gives the panel a containing
+     block that follows the number. */
+  .src {
+    position: relative;
+    display: inline;
+    min-width: 0;
+  }
+
+  /* The chip's trigger, copied deliberately rather than approximated:
+     components/provenance-chip.md's trigger is a dotted --ink-3 underline at
+     the link thickness and offset, with `cursor: help` and the global focus
+     ring. Any visual difference here would be the site quietly grading its own
+     provenance. */
+  .src__trigger {
+    display: inline;
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    text-align: inherit;
+    cursor: help;
+    /* ink3-ok: the underline sits under prose and table text, both on --ground
+       or --surface-1 (5.25:1 and 4.85:1). GROUND-TRUTH.md C-15. */
+    text-decoration: underline dotted var(--ink-3); /* ink3-ok: under prose on --ground or --surface-1 */
+    text-decoration-thickness: var(--link-underline-thickness);
+    text-underline-offset: var(--link-underline-offset);
+    transition: text-decoration-color var(--dur-1) var(--curve-ui);
+  }
+
+  .src__trigger:hover {
+    text-decoration-color: var(--ink);
+  }
+
+  .src__trigger:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* Out of layout entirely when closed, so a citation at the right end of a
+     line cannot stretch the page's scroll width. --surface-2 with the overlay
+     shadow and no border: an overlay declares its elevation once (DESIGN.md §8),
+     which is the same treatment the chip's panel gets. */
+  .src__panel {
+    display: none;
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(100% + var(--space-2));
+    z-index: var(--z-overlay);
+    inline-size: max-content;
+    /* Measured against the viewport, not the containing block: the containing
+       block is the inline box around the number and a percentage cap would
+       collapse the panel to the width of the number (WAVE-0 ruling 8). */
+    max-inline-size: min(var(--measure-command), calc(100vw - var(--space-7)));
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-2);
+    border-radius: var(--radius-2);
+    box-shadow: var(--shadow-overlay);
+    color: var(--ink-2);
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+
+  .src:hover > .src__panel,
+  .src:focus-within > .src__panel {
+    display: block;
+  }
+
+  /* Inside a scroll container an absolutely positioned disclosure is clipped by
+     the very container that makes it scrollable (D-34). Below --bp-sm the panel
+     goes back in flow, which is the resolution the design already reached for
+     provenance-chip at this width. */
+  @media (max-width: 29.9375rem) /* --bp-sm */ {
+    .src__panel {
+      position: static;
+      margin-inline-start: var(--space-2);
+      max-inline-size: 100%;
+      box-shadow: none;
+      background: none;
+      padding: 0;
+    }
+    .src:hover > .src__panel,
+    .src:focus-within > .src__panel {
+      display: inline;
+    }
+  }
+
+  @media print {
+    /* A citation whose whole value is being checkable prints open, in flow. */
+    .src__panel {
+      display: inline !important;
+      position: static;
+      box-shadow: none;
+      background: none;
+      padding: 0;
+      margin-inline-start: var(--space-2);
+    }
+  }
+</style>

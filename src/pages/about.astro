@@ -1,70 +1,148 @@
 ---
+/**
+ * /about/  ·  the scope statement for the project.
+ *
+ * Every other route states the scope of a measurement. This one states the
+ * scope of the project, which is the context all of those sit inside.
+ *
+ * The conditions are stated as conditions on the evidence, never as hardship
+ * and never as a reason to be impressed. Nothing here frames the project or
+ * its author as under-resourced or uncredentialed, and nothing claims that
+ * being independent makes the work more rigorous.
+ *
+ * FOUR COPY KEYS THIS PAGE CANNOT RENDER, AND WHY IT OMITS THEM RATHER THAN
+ * EDITING THEM. `copy.yaml` is reserved to the build lead, so each is reported
+ * with proposed text instead of being rewritten here, and the section it
+ * carried is left out rather than half-stated:
+ *
+ *   - `about.conditions` enumerates an absence of funding, institution and
+ *     review. `pages/about.md` §2 asks for it; the packet brief forbids
+ *     framing the project around being unfunded or institutionless, and says
+ *     so as a standing constraint rather than a preference. The two disagree
+ *     and this page follows the brief. Its one clause that is load-bearing for
+ *     the reader, that no result here has been independently reproduced, is
+ *     carried below by `limits.reproduction_none`, which says the same thing
+ *     and says only that.
+ *   - `about.conditions_note` and `about.empty_rung` both name the trust
+ *     ladder, and `about.checking` names a kill criterion. Gate 6 fails all
+ *     three on this route: the ladder is an internal schema and the criterion
+ *     is a pre-registration mechanism, and neither is licensed outside /docs/
+ *     and /log/.
+ *
+ * The citations are the three a reader can check without asking anyone: the
+ * repository, the package on the index, and the preprint. The preprint has a
+ * URL in `copy.yaml:urls` and no label of its own, so its address is its link
+ * text, which is what /collaborate/ already does for the repository and the
+ * issue tracker.
+ */
 import Base from "@layouts/Base.astro";
 import PageHeader from "@components/PageHeader.astro";
-import CodeBlock from "@components/CodeBlock.astro";
+import { copy, nav, urls } from "../copy";
+
+const about = copy.about as Record<string, string>;
+const limits = copy.limits as Record<string, string>;
+const meta = copy.meta;
+
+const project = nav.footer_groups.find((g) => g.heading === "The project");
+if (!project) {
+  throw new Error(
+    "/about/: copy.yaml:nav.footer_groups has no group headed \"The project\". " +
+      "The citation list and the two onward links both read their labels off it " +
+      "rather than typing them, per pages/about.md §4.",
+  );
+}
+
+/* nav carries the repository and the package index as "{{urls.repo}}" style
+   placeholders resolved by copy.ts, so the labels come from nav and the
+   addresses come from urls. The preprint is in urls and in no nav group. */
+const labelFor = (href: string): string | null =>
+  nav.footer_groups.flatMap((g) => g.items).find((i) => i.href === href)?.label ?? null;
+
+const citations = [
+  { href: urls.repo, label: labelFor(urls.repo) },
+  { href: urls.pypi, label: labelFor(urls.pypi) },
+  { href: urls.preprint, label: null },
+];
+
+const limitsLink = nav.footer_groups
+  .flatMap((g) => g.items)
+  .find((i) => i.href === "/limits/");
+const collaborateLink = project.items.find((i) => i.href === "/collaborate/");
 ---
 
-<Base
-  title="About · reward-lens"
-  description="What reward-lens is, who builds it, and how to cite it."
->
-  <div class="about-wrap">
-    <PageHeader eyebrow="about" title="About reward-lens" />
+<Base title={`${about.title} · reward-lens`} description={about.what_it_is}>
+  <div class="wrap ab">
+    <PageHeader eyebrow={about.title} title={about.heading} />
 
-    <div class="about-prose">
-      <p>
-        reward-lens is built by one person and measured by machinery that does
-        not care about that. The library is a mechanistic interpretability
-        toolkit for reward models, the graders that define what RLHF
-        optimizes: eight kinds of reward signal behind one protocol, with
-        attribution, causal intervention, concept probes, geometry,
-        training-dynamics tracking, and optimization-loop recorders over
-        them. Every measurement returns an Evidence object with uncertainty,
-        provenance, and a trust level computed by gates the caller cannot
-        override.
-      </p>
-      <p>
-        The code is MIT-licensed at
-        <a href="https://github.com/reward-lens/reward-lens"
-          >github.com/reward-lens/reward-lens</a
-        >, installable as <code>pip install reward-lens</code>. Questions,
-        bug reports, and collaboration all run through
-        <a href="https://github.com/reward-lens/reward-lens/issues"
-          >GitHub issues</a
-        >.
-      </p>
+    <p class="ab__lede type-body measure">{about.what_it_is}</p>
+    <p class="ab__by type-body-sm">{meta.author}</p>
 
-      <h2 id="cite">How to cite</h2>
-      <CodeBlock filename="bibtex">
-        <pre>{`@misc{nadaf2026rewardlens,
-    title         = {reward-lens: A Mechanistic Interpretability Library for Reward Models},
-    author        = {Nadaf, Mohammed Suhail B},
-    year          = {2026},
-    eprint        = {2604.26130},
-    archivePrefix = {arXiv},
-    url           = {https://arxiv.org/abs/2604.26130},
-}`}</pre>
-      </CodeBlock>
-    </div>
+    <section class="ab__section" aria-labelledby="ab-conditions">
+      <h2 class="type-h3" id="ab-conditions">{about.conditions_heading}</h2>
+      <p class="type-body measure">{limits.reproduction_none}</p>
+      <ul class="ab__links type-body">
+        {
+          citations.map((c) => (
+            <li>
+              <a href={c.href}>{c.label ?? c.href}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="ab__section" aria-labelledby="ab-next">
+      <h2 class="type-h3" id="ab-next">{about.next_heading}</h2>
+      <ul class="ab__links type-body">
+        {limitsLink && <li><a href={limitsLink.href}>{limitsLink.label}</a></li>}
+        {
+          collaborateLink && (
+            <li>
+              <a href={collaborateLink.href}>{collaborateLink.label}</a>
+            </li>
+          )
+        }
+      </ul>
+    </section>
   </div>
 </Base>
 
 <style>
-  .about-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .ab {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
   }
-  .about-prose {
-    max-width: var(--measure-prose);
+  .ab__lede {
+    margin: 0;
+    color: var(--ink);
   }
-  .about-prose p {
+  .ab__section {
+    margin-top: var(--space-7);
+    min-width: 0;
+  }
+  .ab__section h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+  }
+  .ab__section p {
+    margin: 0 0 var(--space-3);
     color: var(--ink-2);
-    line-height: 1.75;
   }
-  .about-prose h2 {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    margin: var(--sp-8) 0 var(--sp-4);
+  /* --ink-3 on --ground, which is where it is permitted. */
+  .ab__by {
+    margin: var(--space-2) 0 0;
+    color: var(--ink-3);
+  }
+  .ab__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .ab__links a {
+    overflow-wrap: anywhere;
   }
 </style>

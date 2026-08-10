@@ -1,0 +1,681 @@
+---
+/**
+ * The room, drawn.  ·  DECISIONS.md D-22, D-24, D-37
+ *
+ * Source at the left edge, collimated beam across the frame, dispersing
+ * element right of centre, spectrum fanning in one direction, detector plane
+ * at the right gutter. Beneath the axis, the rail with twelve engraved ticks
+ * and the floor catching the spill. Behind it, the back wall.
+ *
+ * THIS IS NOT A PLACEHOLDER. D-24: one composition, three fidelities. This one
+ * is inline in the HTML and renders at frame one, before any script; the
+ * build-time still and the live scene are upgrades over it, not replacements
+ * for it. On a machine that cannot do better this is the final artifact, so it
+ * is drawn to be looked at rather than to be replaced.
+ *
+ * WHY IT IS NOT ONE STRETCHED SVG. A single viewBox spanning 320px to 1920px
+ * has to choose between `preserveAspectRatio="none"`, which shears the prism
+ * into a wedge and makes the dispersion angles a function of the window, and a
+ * uniform fit, which either shrinks the bench to a stamp on a phone or crops
+ * the source and the detector off a wide desktop. Neither is a room. So the
+ * bench is laid out in CSS, where a run of glass legitimately gets longer as
+ * the window widens, and the two parts with real geometry are their own
+ * elements: the prism at a fixed drawn size, and the fan in a viewBox whose
+ * vertical scale is pinned 1:1 so a band's extent at the detector is the same
+ * number of pixels at every width. That extent is the data-bearing quantity.
+ *
+ * THE VERTICAL ORIGIN. This component's own box has zero height and its centre
+ * line IS the optical axis, because it is placed in the same `auto` grid row
+ * as the install strip's surface and centred in it. Every offset below is
+ * measured from that line. Nothing computes where the axis is; the grid put it
+ * there and the strip and the beam cannot disagree.
+ */
+import { HERO_Y, RAIL_TICKS, heroCssVars } from "./hero-geometry";
+import type { Decomposition } from "./decomposition";
+
+interface Props {
+  /** null when src/data/decomposition.json has not been emitted yet. */
+  decomposition: Decomposition | null;
+  /**
+   * The id of the element holding copy.yaml:a11y.figure_alt.dispersion_scene.
+   * It is the room's accessible NAME, which is what alt text is.
+   *
+   * It used to be wired to `aria-describedby`, and that is a different thing: a
+   * description supplements a name and does not supply one, so the room was a
+   * `role="img"` with no name at all and axe's role-img-alt failed it in both
+   * themes. A described image with no name announces as "image" and the
+   * sentence describing what the instrument shows is read as an aside to
+   * nothing.
+   */
+  labelledById?: string | null;
+}
+
+const { decomposition: d, labelledById = null } = Astro.props;
+
+/* The fan's viewBox. 1000 across so band x-coordinates read as per-mille of
+   the run; the height is the fan's real pixel extent, and the element is sized
+   to exactly that many CSS pixels, which pins the vertical scale at 1:1. */
+const FAN_W = 1000;
+const fanH = d ? Math.max(1, Math.ceil(-d.fanTop)) : HERO_Y.fanExtent;
+
+/* Where the wedge starts thinning. A fan of fixed total energy spreads as it
+   travels, so the wash is brightest at the exit face and thinner where it
+   lands. The crisp statement is the arrival mark on the plane, drawn at full
+   strength on top. `white` here is a mask channel, not a colour. */
+const WEDGE_FADE_START = 0.34;
+
+/* THE LABELS ARE A KEY, NOT TEXT ON THE LIGHT.
+   A label at each band's own arrival height puts three lines of 11px type on
+   the brightest thing in the room, and with the shares this measurement
+   actually returns the two outer bands land 14px apart and collide. So the key
+   sits clear of the fan, in the fan's own top-down order, and each row carries
+   a bar whose LENGTH is that band's share. The bar and the band encode the
+   same measurement twice, which is why the part that measured zero has no bar
+   and still has a name. */
+const legend = d
+  ? [...d.bands].sort((a, b) => a.labelY - b.labelY) // outermost first, as the fan reads top down
+  : [];
+
+const ticks = Array.from({ length: RAIL_TICKS }, (_, i) => i);
+---
+
+<div
+  class="optics"
+  aria-hidden={labelledById ? undefined : "true"}
+  role={labelledById ? "img" : undefined}
+  aria-labelledby={labelledById ?? undefined}
+  data-hero-optics
+  data-fidelity="svg"
+  style={heroCssVars(fanH)}
+>
+  {/* --- the two landmarks gate 20 measures. ---------------------------------
+         D-24: one composition, three fidelities, agreeing within 8px on the
+         beam axis and the prism centroid. scripts/checks/fidelity.mjs reads
+         [data-landmark] inside [data-fidelity="svg"] and takes the CENTRE of
+         each rect, so both are zero-size and both are placed by the same custom
+         properties the drawn parts use. Packet S1 builds the still and the
+         scene against these two names.
+
+         THEY ARE MARKERS RATHER THAN THE DRAWN PARTS THEMSELVES, for two
+         reasons that are both about the gate measuring what it means to.
+
+         The beam is a run, not a point: its rect spans the whole bench, and its
+         centre x is meaningless. Only its centre y is the axis, so the axis is
+         marked at the axis and nothing else is implied.
+
+         The prism is `display: none` below --bp-md, and a `display: none`
+         element still answers querySelector while reporting a rect of zeros.
+         The gate would have read a prism centroid at (0,0) and called it a
+         landmark rather than reporting it missing. So the centroid is marked by
+         an element that is always laid out, at HERO_X.prism on the axis, which
+         is where this composition puts the dispersing element at every width.
+         Below --bp-md the room declines to DRAW the prism, because the run does
+         not fit; it does not move it. --- */}
+  <span class="optics__landmark" data-landmark="beam-axis"></span>
+  <span class="optics__landmark optics__landmark--prism" data-landmark="prism-centroid"></span>
+  {/* The third landmark. D-24 names the detector x alongside the beam axis and
+      the prism centroid, and gate 20 had no way to read it on any fidelity, so
+      the composition's right-hand end was the one part of it nothing checked.
+      It is marked rather than measured off `.optics__detector` for the same
+      reason the prism is: the plane is `inline-size: var(--border-w)` and its
+      rect's centre is half a pixel off the plane itself, which is inside the
+      tolerance but is not the number the contract names. HERO_X.detector is 1,
+      "the right gutter, one --page-pad in", and this marks exactly that. */}
+  <span class="optics__landmark optics__landmark--detector" data-landmark="detector-plane"></span>
+
+  {/* --- the room itself: the floor below the rail, and the wall above it,
+         which is the page's own ground --- */}
+  <div class="optics__floor"></div>
+  <div class="optics__pool"></div>
+
+  {/* --- the rail, twelve engraved ticks --- */}
+  <div class="optics__rail">
+    {ticks.map((i) => <span class="optics__tick" style={`--i:${i}`}></span>)}
+  </div>
+
+  {/* --- the source, at the left edge. An aperture in the wall and the light
+         coming through it. A drawn housing here reads as a stray grey box
+         half off the page rather than as an instrument. --- */}
+  <div class="optics__halo"></div>
+  <div class="optics__slit"></div>
+
+  {/* --- the collimated beam, from the source to the dispersing element.
+         It runs behind the install strip and continues out of its right
+         edge; nothing here knows the strip exists, which is the point. --- */}
+  <div class="optics__beam">
+    <div class="optics__beam-core"></div>
+  </div>
+
+  {/* --- the dispersing element. Fixed drawn size, so it is a prism at every
+         width rather than a wedge that opens with the window. --- */}
+  <svg
+    class="optics__prism"
+    viewBox="0 0 104 92"
+    fill="none"
+    focusable="false"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <defs>
+      <linearGradient id="hero-prism-face" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.20" />
+        <stop offset="0.62" stop-color="var(--beam)" stop-opacity="0.05" />
+        <stop offset="1" stop-color="var(--beam)" stop-opacity="0.14" />
+      </linearGradient>
+    </defs>
+    <path class="optics__prism-face" d="M52 6 L100 86 L4 86 Z" fill="url(#hero-prism-face)" />
+    <path class="optics__prism-edge" d="M52 6 L100 86 L4 86 Z" />
+    <path class="optics__prism-entry" d="M52 6 L4 86" />
+    <path class="optics__prism-exit" d="M52 6 L100 86" />
+  </svg>
+
+  {/* --- the dispersion. One direction only. --- */}
+  <svg
+    class="optics__fan"
+    viewBox={`0 0 ${FAN_W} ${fanH}`}
+    preserveAspectRatio="none"
+    fill="none"
+    focusable="false"
+  >
+    <defs>
+      <linearGradient id="hero-wedge-fade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="white" stop-opacity="1" />
+        <stop offset={String(WEDGE_FADE_START)} stop-color="white" stop-opacity="0.88" />
+        <stop offset="1" stop-color="white" stop-opacity="0.58" />
+      </linearGradient>
+      <mask id="hero-wedge-mask">
+        <rect x="0" y="0" width={FAN_W} height={fanH} fill="url(#hero-wedge-fade)" />
+      </mask>
+    </defs>
+    {
+      d && (
+        <g mask="url(#hero-wedge-mask)">
+          {d.bands.map((b) => (
+            <polygon
+              class="optics__band"
+              data-band={b.index}
+              points={`0,${fanH} ${FAN_W},${fanH + b.nearY} ${FAN_W},${fanH + b.farY}`}
+              style={`--band:var(${b.token})`}
+            />
+          ))}
+        </g>
+      )
+    }
+    {
+      d &&
+        d.bands.map((b) => (
+          <line
+            class="optics__arrival"
+            data-band={b.index}
+            x1={FAN_W}
+            y1={fanH + b.nearY}
+            x2={FAN_W}
+            y2={fanH + b.farY}
+            style={`--band:var(${b.token})`}
+            vector-effect="non-scaling-stroke"
+          />
+        ))
+    }
+    {
+      /*
+        THE CONSTRUCTION SHOWN WHEN NOTHING IS MEASURED.
+
+        The measured subject was withdrawn, and for a while the consequence was
+        a dispersing element that dispersed nothing: the beam arrived at the
+        prism face and the room simply stopped. A prism that separates no light
+        is a worse statement than an empty frame, because it reads as a broken
+        page rather than as an absent measurement.
+
+        So the room draws the separation as a construction. It asserts nothing.
+        The rays are evenly spaced, which is the point: an even fan cannot be
+        mistaken for a distribution, where the withdrawn version's unequal band
+        widths were read as one. Nothing here carries a magnitude, a count that
+        means anything, or a position derived from data, which is what the
+        truth contract requires of a schematic: geometry that looks measured is
+        the single failure mode it exists to prevent.
+
+        `data-truth-mode="schematic"` is on the element so the fidelity gate and
+        anyone reading the DOM can tell this apart from a bound figure without
+        having to know the history. The live scene replaces it with the real
+        instrument; until then this is the honest placeholder.
+      */
+      !d && (
+        <g class="optics__fan-schematic" data-truth-mode="schematic" mask="url(#hero-wedge-mask)">
+          {[0.18, 0.34, 0.5, 0.66, 0.82].map((t, i) => (
+            <line
+              class="optics__ray-schematic"
+              data-ray={i}
+              x1="0"
+              y1={fanH}
+              x2={FAN_W}
+              y2={fanH - fanH * t}
+              vector-effect="non-scaling-stroke"
+            />
+          ))}
+        </g>
+      )
+    }
+  </svg>
+
+  {/* --- the detector plane, at the right gutter --- */}
+  <div class="optics__detector"></div>
+
+  {/* --- what landed on it. The part that measured zero keeps its name, gets
+         no bar and draws no arrival mark. --- */}
+  {
+    legend.length > 0 && (
+      <ul class="optics__labels">
+        {legend.map((b) => (
+          <li
+            class:list={["optics__label", b.isZero && "optics__label--zero"]}
+            style={`--share:${b.share};--band:var(${b.token})`}
+          >
+            <span class="optics__label-text type-mono-label">{b.label}</span>
+            <span class="optics__bar"></span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  {d?.zeroNote && <p class="visually-hidden">{d.zeroNote}</p>}
+</div>
+
+<style>
+  /* The box is a zero-height line at the optical axis, bled to both screen
+     edges by its parent. Everything is positioned from that line. */
+  .optics {
+    position: relative;
+    block-size: 0;
+    min-width: 0;
+    z-index: var(--z-scene);
+    pointer-events: none;
+    /* Set by the hero: 0.22, permitted down to 0.16 when a text zone reads
+       too bright. DECISIONS.md D-22 states the move as dimming the light,
+       never as adding a panel behind the type. */
+    --fill: var(--hero-fill, 0.22);
+    /* --prism-x, --detector-inset, --prism-w, --prism-h, --fan-h and the two
+       sets of composition values are set on this element by heroCssVars() in
+       hero-geometry.ts. Nothing about the composition's geometry is written
+       twice: the still and the live scene read the same module, which is what
+       makes gate 20's 8px agreement checkable rather than hopeful.
+
+       THE ACTIVE VALUES ARE CHOSEN HERE, NOT THERE, AND THAT IS THE WHOLE
+       POINT. Everything heroCssVars() emits is an INPUT: an inline custom
+       property beats any stylesheet rule, media query or not, so a value
+       emitted under its active name cannot be re-picked below --bp-md. Three
+       of them used to be, and all three narrow overrides were dead. The four
+       lines below and their counterparts in the narrow block are the only
+       places the composition is switched. */
+    --beam-half: var(--beam-half-wide);
+    --rail-y: var(--rail-y-wide);
+    --floor-y: var(--floor-y-wide);
+    /* How far along the axis the source glow reaches. Its HEIGHT is not here:
+       that derives from --beam-half, see the halo's own note. */
+    --halo-w: 300px;
+    /* The drawn height of the fan. Equal to its real extent above --bp-md, so
+       the vertical scale is 1:1; narrowed below it, where the run is short
+       enough that the true spread would open at an angle no bench produces. */
+    --fan-draw: var(--fan-h);
+  }
+
+  .optics > * {
+    position: absolute;
+  }
+
+  /* --- the landmarks -----------------------------------------------------
+     Zero-size, unpainted, and never display: none, because the gate reads a
+     rect and a suppressed element reports zeros rather than nothing. The axis
+     one sits at the optics box's own origin line, which IS the optical axis:
+     the box has zero height and is centred in the strip's grid row, so nothing
+     here computes the axis, it only marks where the grid already put it. */
+  .optics__landmark {
+    left: 0;
+    top: 0;
+    inline-size: 0;
+    block-size: 0;
+  }
+  .optics__landmark--prism {
+    left: var(--prism-x);
+  }
+  .optics__landmark--detector {
+    left: auto;
+    right: var(--page-pad);
+  }
+
+  /* --- the room ---------------------------------------------------------
+     The wall above the rail is the page's own --ground and is not painted, and
+     that is a measured decision rather than a saving. --line-control is 3.02:1
+     against flat --ground (C-15) and the strip's border is read against the
+     6px band immediately above and below it, which is wall. A wall painted
+     --surface-1 at any opacity at all takes that band to 0.0042 linear or
+     higher and the border to 2.98:1 or lower. There is no headroom in 3.02 to
+     spend, so the depth is carried by the floor and the rail's lit edge
+     instead, on the other side of the axis from the strip. */
+  .optics__floor {
+    inset-inline: 0;
+    top: var(--rail-y);
+    block-size: 200vh;
+    background: var(--surface-1);
+    opacity: 0.6;
+  }
+
+  /* The spill. The floor is what the room stands on, so it catches the light
+     the bench does not: a pool under the beam and a wider one under the fan,
+     both falling off downward. Without it the lower two fifths of the frame is
+     a black slab and the composition stops being a room. */
+  .optics__pool {
+    inset-inline: 0;
+    top: var(--rail-y);
+    block-size: calc(var(--floor-y) - var(--rail-y));
+    background:
+      radial-gradient(64% 100% at 26% -10%, var(--beam), transparent 70%),
+      radial-gradient(40% 82% at 76% -6%, var(--beam), transparent 72%);
+    opacity: calc(var(--fill) * 1.05);
+  }
+  /* The beam's own reflection, directly beneath it and only as long as it. */
+  .optics__pool::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0 calc(100% - var(--prism-x));
+    top: 0;
+    block-size: var(--space-6);
+    background: linear-gradient(to bottom, var(--beam), transparent);
+    opacity: 0.5;
+  }
+
+  /* --- the rail ---------------------------------------------------------
+     A machined edge, not a section divider: the lit lip is on top, where the
+     light from the bench would land, and the groove sits under it. */
+  .optics__rail {
+    inset-inline: 0;
+    top: var(--rail-y);
+    block-size: var(--space-4);
+    border-block-start: var(--border-w) solid var(--line-strong);
+    border-block-end: var(--border-w) solid var(--line);
+  }
+  .optics__tick {
+    position: absolute;
+    top: 0;
+    inline-size: var(--border-w);
+    block-size: var(--space-2);
+    /* Engraved: a dark groove with a lit lower lip. */
+    background: var(--line);
+    box-shadow: var(--border-w) 0 0 0 var(--line-strong);
+    left: calc((100% / 12) * (var(--i) + 0.5));
+  }
+
+  /* --- the source -------------------------------------------------------
+     THE GLOW IS EXACTLY AS TALL AS THE BEAM, AND THAT IS STRUCTURAL.
+
+     D-39 rules that the failing vertical band was this halo rather than the
+     beam, that D-22 requires no halo, and that the halo narrows rather than the
+     exception widening to cover it. It was 300x52 centred on the axis. The
+     strip's vertical borders are read scanline by scanline over the strip's
+     full height, 61.5px at 1440, so a 52px glow lit 52 of those 62 rows while
+     the beam's exemption covers 23 of them, and 13 rows failed 3:1. A previous
+     pass had already shortened it from 460 to 52 to clear the horizontal edges,
+     which is what took those to 3.04 and 3.07; the vertical edges are a taller
+     rectangle and 52 was still far too tall for them.
+
+     Its height is now the beam's own lit height, so every row it can light is a
+     row D-38's exception already covers, by construction and at every width.
+     Not a number tuned until the gate passed: the glow at a slit IS the light
+     in the beam leaving it, so a source glow taller than its own beam was
+     always drawing something the bench does not do. The exception stays exactly
+     as wide as D-22 forces it to be.
+
+     `transparent 76%` means the outer quarter of that height carries nothing at
+     all, so the real lit extent is about +/-8.4px at 1440 inside a +/-11px
+     exemption, and the margin is the gradient's, not a fudge factor's.
+
+     Only the horizontal reach is set per breakpoint now. It has no bearing on
+     the vertical borders any more, and it is what keeps the source reading as a
+     source rather than a dot. */
+  .optics__halo {
+    left: 0;
+    top: 0;
+    /* An elongated waist along the axis rather than a circle. */
+    inline-size: var(--halo-w);
+    block-size: calc(var(--beam-half) * 2);
+    margin-block-start: calc(var(--beam-half) * -1);
+    margin-inline-start: calc(var(--halo-w) / -2);
+    background: radial-gradient(closest-side, var(--beam), transparent 76%);
+    opacity: calc(var(--fill) * 1.15);
+  }
+  .optics__slit {
+    left: 0;
+    top: 0;
+    inline-size: var(--space-1);
+    block-size: calc(var(--beam-half) * 3);
+    margin-block-start: calc(var(--beam-half) * -1.5);
+    background: var(--beam);
+    border-start-end-radius: var(--radius-1);
+    border-end-end-radius: var(--radius-1);
+  }
+
+  /* --- the beam ---------------------------------------------------------
+     One element from the source to the prism. The install strip sits on top
+     of it, so the beam passes behind the strip and continues out of its
+     right edge with no seam and no knowledge of where the strip is. */
+  .optics__beam {
+    left: 0;
+    inline-size: var(--prism-x);
+    top: calc(var(--beam-half) * -1);
+    block-size: calc(var(--beam-half) * 2);
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--beam) 40%,
+      var(--beam) 60%,
+      transparent
+    );
+    /* Where the beam leaves the strip's right edge it is the pixel the strip's
+       border is read against, so it is bright enough to be a different thing
+       from that border rather than a near match for it. */
+    opacity: calc(var(--fill) * 1.9);
+  }
+  .optics__beam-core {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    block-size: var(--border-w-accent);
+    margin-block-start: calc(var(--border-w) * -1);
+    background: var(--beam);
+    opacity: 0.9;
+  }
+
+  /* --- the dispersing element ------------------------------------------- */
+  .optics__prism {
+    left: var(--prism-x);
+    inline-size: var(--prism-w);
+    block-size: var(--prism-h);
+    /* A triangle's centroid is a third of the way up from its base; the drawn
+       path puts the base at 86 of 92, so this lands the centroid on the axis
+       and the entry face across the beam. */
+    margin-inline-start: calc(var(--prism-w) / -2);
+    margin-block-start: calc(var(--prism-h) * -0.68);
+  }
+  .optics__prism-edge {
+    stroke: var(--line-control);
+    stroke-width: 1;
+  }
+  /* The two faces the beam actually touches. The entry face takes the
+     collimated beam and is lit along its length; the exit face is where the
+     fan leaves, and it is the brighter of the two. */
+  .optics__prism-entry {
+    stroke: var(--beam);
+    stroke-width: 1;
+    opacity: 0.42;
+  }
+  .optics__prism-exit {
+    stroke: var(--beam);
+    stroke-width: 1.5;
+    opacity: 0.78;
+  }
+
+  /* --- the dispersion ---------------------------------------------------
+     Height is the fan's real extent in pixels and the element is that many
+     pixels tall, so the vertical scale is 1:1 and a band's extent at the
+     detector is the same measurement at every width above --bp-md. Only the
+     run stretches, which is what a longer bench does. */
+  .optics__fan {
+    /* An SVG is a replaced element: `inline-size: auto` with both `left` and
+       `right` set resolves to the viewBox's intrinsic width, not to the
+       constraint equation, so the box lands at 1000px and takes the page's
+       scroll width with it. The run is stated instead. */
+    left: calc(var(--prism-x) + var(--prism-w) / 2);
+    inline-size: calc(
+      100% - var(--prism-x) - var(--prism-w) / 2 - var(--page-pad)
+    );
+    block-size: var(--fan-draw);
+    bottom: 0;
+    overflow: visible;
+  }
+  .optics__band {
+    fill: var(--band);
+    opacity: calc(var(--fill) * 1.7);
+  }
+  /* The crisp statement. A band whose two edges coincide draws a zero-length
+     line, and a butt cap draws nothing: measured, absent, and not rounded up
+     to a visible tick. */
+  .optics__arrival {
+    stroke: var(--band);
+    stroke-width: 3;
+    stroke-linecap: butt;
+    opacity: 0.95;
+  }
+
+  /* --- the construction, drawn when no subject is bound -----------------
+     Deliberately colourless. Colour on this site is only ever data, and
+     these rays are not data: giving them the component palette would be the
+     exact misreading the withdrawn decomposition already caused once. They
+     take the beam's own neutral and sit well below it in weight, so the room
+     still reads as an optical bench without asserting a measurement. */
+  .optics__ray-schematic {
+    stroke: var(--beam);
+    stroke-width: 1;
+    opacity: 0.22;
+  }
+
+  /* --- the detector plane ----------------------------------------------- */
+  .optics__detector {
+    right: var(--page-pad);
+    bottom: calc(var(--space-5) * -1);
+    inline-size: var(--border-w);
+    block-size: calc(var(--fan-draw) + var(--space-7));
+    background: var(--line-control);
+  }
+
+  /* --- the key ----------------------------------------------------------
+     Clear of the light, in the fan's own order, with a bar per part whose
+     length is that part's share. */
+  .optics__labels {
+    right: var(--page-pad);
+    bottom: calc(var(--fan-draw) + var(--space-4));
+    display: grid;
+    justify-items: end;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .optics__label {
+    display: grid;
+    grid-template-columns: auto var(--space-8);
+    align-items: center;
+    gap: var(--space-3);
+    white-space: nowrap;
+  }
+  .optics__label-text {
+    color: var(--ink-2);
+  }
+  .optics__bar {
+    block-size: var(--space-1);
+    inline-size: calc(var(--share) * var(--space-8));
+    background: var(--band);
+    justify-self: start;
+  }
+  /* A part measured at zero gets no bar. The name stays, and the sentence
+     explaining it is in the description this scene is bound to. */
+  .optics__label--zero .optics__label-text {
+    color: var(--ink-3); /* ink3-ok: on --ground; the fan does not reach the key */
+  }
+
+  /* --- below --bp-md ----------------------------------------------------
+     THE BENCH DOES NOT FIT, SO IT IS NOT FAKED.
+
+     Measured: the install strip's min-content width is 256px and it does not
+     go below that, because the command does not wrap and does not scroll. At
+     390 the content box is 350px wide, which leaves 94px between the strip's
+     right edge and the gutter. A 68px prism and a run long enough to disperse
+     through do not go in 94px, and forcing them produces a 50-degree fan, an
+     angle no dispersing element makes, on the one figure whose whole claim is
+     that its geometry follows its measurements.
+
+     So the phone gets a closer view of the same bench rather than a squashed
+     one: the source, the beam, the strip on the axis, and the detector plate
+     at the gutter carrying the arrival marks, whose lengths are still the band
+     shares at the same relative scale. The wedge and the prism, which are the
+     middle of the instrument, are the parts that drop. pages/home.md's
+     small-screen state asks for exactly this ("the scene collapses to a short
+     band with its labels in a DOM legend beneath"), and the key below the rail
+     is that legend. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .optics {
+      --rail-y: var(--rail-y-narrow);
+      --floor-y: var(--floor-y-narrow);
+      --beam-half: var(--beam-half-narrow);
+      /* The marks are scaled together, so a share still reads against a share.
+         They have to clear the subhead above them, and the run they came from
+         is a third of what it is at 1440. */
+      --fan-draw: calc(var(--fan-h) * var(--fan-scale-narrow));
+    }
+    /* Only the reach along the axis. The height follows --beam-half, which
+       this block has just narrowed, so the glow tracks the beam down with it. */
+    .optics__halo {
+      --halo-w: 200px;
+    }
+    /* Twelve ticks at 390 are 30px apart and read as a texture rather than a
+       scale; the rail keeps its lit edges and drops the engraving. */
+    .optics__tick {
+      display: none;
+    }
+    /* The beam runs the whole bench, because there is nothing in the middle of
+       it to stop at. */
+    .optics__beam {
+      inline-size: calc(100% - var(--page-pad));
+    }
+    .optics__prism,
+    .optics__band {
+      display: none;
+    }
+    .optics__pool::after {
+      inset-inline: 0 var(--page-pad);
+    }
+    /* The fan collapses onto the plate. The arrivals are at the viewBox's right
+       edge, so a narrow box lands them on the detector exactly as a wide one
+       does. */
+    .optics__fan {
+      left: auto;
+      right: var(--page-pad);
+      inline-size: var(--space-3);
+    }
+    .optics__labels {
+      right: auto;
+      inset-inline: var(--page-pad);
+      bottom: auto;
+      top: calc(var(--rail-y) + var(--space-5));
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      justify-items: start;
+      justify-content: start;
+      gap: var(--space-5);
+    }
+    .optics__label {
+      grid-template-columns: auto;
+      gap: var(--space-1);
+    }
+    .optics__bar {
+      inline-size: calc(var(--share) * var(--space-7));
+    }
+  }
+</style>

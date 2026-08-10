@@ -4,6 +4,9 @@ description: Which parts of the network wrote the margin between chosen and reje
 section: how-to
 order: 12
 source: docs/content/how-to/attribute-a-score.md
+libraryVersion: 3.0.0
+staleMarkers:
+- '2.0'
 ---
 import Callout from "@components/Callout.astro";
 
@@ -72,4 +75,4 @@ Reproducing this needs the 8B model in fp32, which does not fit an 8 GB GPU. The
 
 The contributions are projections onto $ w_r $. They tell you where the reward is visible, not what caused it, and the distinction is not academic. On Skywork-v0.2 the attribution ranking and the causal patching ranking anti-correlate: the components attribution ranks highest are not the ones [patching](/docs/how-to/patching-memory/) finds necessary. The Spearman rho between the two rankings is $-0.171$ on average and reaches $-0.441$ on the code-correctness axis. Late MLPs explain the score; early heads move it. If your claim is that a component is responsible, attribution is the first look and patching is the test. See [observational vs causal](/docs/concepts/observational-vs-causal/).
 
-See also: [Component attribution](/docs/instruments/attribution/), [The reward direction](/docs/concepts/reward-direction/). API: [`DirectLinearAttribution`](/docs/reference/measure/#reward_lens.measure.battery.dla.DirectLinearAttribution).
+See also: [Component attribution](/docs/instruments/attribution/), [The reward direction](/docs/concepts/reward-direction/). API: [`DirectLinearAttribution`](/docs/api/measure/#reward_lens.measure.battery.dla.DirectLinearAttribution).

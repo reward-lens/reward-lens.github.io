@@ -1,0 +1,17 @@
+{
+ "artifact": "https://raw.githubusercontent.com/hendrycks/math/main/modeling/math_equivalence.py (sha256 c4101b1f51a2bb65)",
+ "comparator": "mutation score 0 over 60 competent mutants",
+ "contentHash": "bc969d757e4d7620e754c39ba3e98f96",
+ "humanSource": "The released grader card for this scoring program, regenerated from the release artifacts rather than restated.",
+ "immutableIds": [
+  "ev:4e215d64e0ab5030a4270e1e3376f8b1",
+  "verifier:95be1ad8dbf1474a1a7d56058e5f2b25"
+ ],
+ "label": "hendrycks/math is_equiv",
+ "limitation": "A mutation score is a statement about this checker on this corpus, and it does not transfer to another corpus or another checker.",
+ "scope": "2400 grader calls on one corpus, at the exploratory level.",
+ "slug": "grader-is-equiv",
+ "statement": "A scoring program was run against a fixed corpus and 0 of 60 competent mutants were caught.",
+ "subject": "hendrycks/math is_equiv, entry point is_equiv, over MATH-500 gold answers, 240 rollouts.",
+ "type": "fixture-qualification"
+}

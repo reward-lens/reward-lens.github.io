@@ -1,0 +1,315 @@
+---
+/**
+ * act-grader-cards  ·  act three's instrument: four cards and the access state
+ *
+ * pages/see-grader.md:63 puts the CARD SELECTOR ABOVE, THE CARDS BELOW, AND THE
+ * ACCESS TOGGLE BESIDE THE SELECTOR, which is why the access control lives here
+ * and not inside grader-card: there is one control and it moves all four cards
+ * at once, so the comparison a reader makes is across the set rather than card
+ * by card. The contract's anatomy draws it inside the card; the page file owns
+ * the section layout and one control is also the only form the driven test can
+ * operate. Recorded in the packet report rather than resolved silently.
+ *
+ * THE STATE THAT IS BAD FOR THE PROJECT IS ONE CONTROL AWAY FROM THE DEFAULT,
+ * and it is the strongest single argument in this act. A reader who flips it
+ * and watches the cards empty has learned what access buys, and the interface
+ * does not punish them for it: the emptied card is the most legible thing on
+ * the page, because thirteen refusals with thirteen remedies is a reading.
+ *
+ * AND THE EMPTYING IS NOT UNIFORM, WHICH IS THE CORRECTION THIS SECTION IS
+ * BUILT TO RATHER THAN AROUND (C-46). Two cards drop to zero readings and
+ * thirteen refusals; two keep exactly one, the field countable from a log
+ * alone. The section renders what the data says, counts it from the rendered
+ * fields, and says the true thing, which is better content than the slogan:
+ * a log buys almost nothing, and not literally nothing.
+ *
+ * NO JAVASCRIPT, AND THE CONTRACT IS RIGHT THAT IT IS THE BETTER EXHIBIT. Both
+ * access states render, in full, each under its own heading, so the comparison
+ * is visible at once instead of one at a time. The control removes itself under
+ * :root:not([data-js]) (WAVE-0 ruling 4) because with nothing to switch it
+ * would be a dead control, and the headings that name the two states are
+ * present on that path and hidden on the scripted one.
+ *
+ * THE ONE THING MOST LIKELY TO BE BUILT INACCESSIBLY, per the contract, is a
+ * client-side filter that swaps DOM without announcing. The reader who most
+ * needs to know that thirteen fields just refused is the one who cannot see the
+ * card change, so the change announces the new counts, read from the cards
+ * being shown rather than from a constant.
+ */
+import GraderCard from "@components/acts/grader-card.astro";
+import type { CardField, CardSubject } from "@components/acts/grader-card.astro";
+
+export interface AccessState {
+  readCount: number;
+  refusedCount: number;
+  summarySentence: string;
+  fields: CardField[];
+}
+
+export interface GraderCardRecord {
+  key: string;
+  displayName: string;
+  subject: CardSubject;
+  trust: string;
+  access: Record<string, AccessState>;
+}
+
+interface Props {
+  cards: GraderCardRecord[];
+  /**
+   * The rendered artifacts the generator read, one pair per card, with their
+   * hashes in the same file. Act three's card numbers cite these rather than an
+   * evidence id, because the ids grader-cards.json carries resolve against
+   * nothing. See grader-card.astro's `source` note.
+   */
+  sourceFor: (key: string, access: string) => { document: string; line: number | null };
+  /** The data's own state names, in its own order. Never typed here. */
+  accessStates: string[];
+  /** Humanised field names. copy.yaml carries none for this component. */
+  labels: {
+    read: string;
+    refused: string;
+    fields: string;
+    access: string;
+    subjects: string;
+  };
+  class?: string;
+}
+
+const { cards, accessStates, sourceFor, labels, class: extraClass = "" } = Astro.props;
+
+if (cards.length === 0) {
+  throw new Error(
+    "act-grader-cards: no cards. Act three's instrument is the four subjects " +
+      "and it does not render the argument without the exhibit.",
+  );
+}
+for (const state of accessStates) {
+  for (const c of cards) {
+    if (!c.access[state]) {
+      throw new Error(
+        `act-grader-cards: card "${c.key}" has no "${state}" access state. ` +
+          `The access comparison is the strongest argument in this act and it ` +
+          `is not rendered on a subset of the subjects.`,
+      );
+    }
+  }
+}
+
+const DEFAULT_STATE = accessStates[0];
+---
+
+<div class:list={["gcs", extraClass]} data-grader-cards>
+  <div class="gcs__controls">
+    {/* The selector. With scripting off these are four anchors to four cards
+        that are all already on the page, which is what the page file asks for
+        and needs no script at either end. */}
+    <nav class="gcs__select" aria-label={labels.subjects}>
+      <ul class="gcs__jump">
+        {
+          cards.map((c) => (
+            <li>
+              <a class="gcs__jump-link type-mono-sm" href={`#${c.key}`}>
+                {c.displayName}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {/* A real <select> with a visible label, never an unlabelled toggle. */}
+    <p class="gcs__access">
+      <label class="gcs__access-label type-mono-label" for="gcs-access">{labels.access}</label>
+      <select class="gcs__access-input type-mono-sm" id="gcs-access" data-access-control>
+        {
+          accessStates.map((s) => (
+            <option value={s} selected={s === DEFAULT_STATE}>
+              {s}
+            </option>
+          ))
+        }
+      </select>
+    </p>
+  </div>
+
+  <p class="visually-hidden" aria-live="polite" data-gcs-live></p>
+
+  {
+    accessStates.map((state) => (
+      <section
+        class="gcs__state"
+        data-access-state={state}
+        hidden={false}
+        aria-labelledby={`gcs-h-${state}`}
+      >
+        {/* Present on the no-JavaScript path, where both states are on the
+            page at once and each needs naming. Hidden on the scripted path,
+            where the control already says which state is showing. */}
+        {/* h3, not h4. Part 3's own heading is the h2 above, and this is the
+            first heading beneath it, so anything lower skips a level and the
+            document outline breaks. Found by the driven test, not by eye. */}
+        <h3 class="gcs__state-h type-mono-label" id={`gcs-h-${state}`}>{state}</h3>
+
+        <div class="gcs__cards">
+          {cards.map((c) => (
+            <GraderCard
+              subject={c.subject}
+              fields={c.access[state].fields}
+              access={state}
+              trust={c.trust}
+              source={sourceFor(c.key, state)}
+              cardKey={c.key}
+              summarySentence={c.access[state].summarySentence}
+              labels={labels}
+            />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  /*
+   * The access swap, and the announcement that goes with it. The counts read
+   * out of the cards being shown, so the live region cannot disagree with the
+   * page: if the data changes, the sentence changes with it.
+   */
+  for (const root of document.querySelectorAll<HTMLElement>("[data-grader-cards]")) {
+    /* THE CONTROL IS A <select> AND THE SCRIPT SAYS SO. It reads `.value` and
+       looks inside it for an <option>, neither of which any Element has. The
+       untyped version happened to work because the markup below renders a
+       select; if it ever renders something else the enhancement would fail on
+       the first line of `show` with the cards already hidden, and the access
+       comparison this component exists for would show one state and no way
+       back. Narrowing here means a different control stands the script down
+       and leaves both states rendered. */
+    const control = root.querySelector<HTMLSelectElement>("select[data-access-control]");
+    const live = root.querySelector<HTMLElement>("[data-gcs-live]");
+    const states = [...root.querySelectorAll<HTMLElement>("[data-access-state]")];
+    if (!control || states.length < 2) continue;
+
+    const show = (want: string, announce: boolean) => {
+      let read = 0;
+      let refused = 0;
+      let subjects = 0;
+      for (const s of states) {
+        const on = s.dataset.accessState === want;
+        s.hidden = !on;
+        if (!on) continue;
+        for (const card of s.querySelectorAll("[data-grader-card]")) {
+          subjects += 1;
+          read += card.querySelectorAll("[data-field-kind='reading']").length;
+          refused += card.querySelectorAll("[data-field-kind='refusal']").length;
+        }
+      }
+      if (announce && live) {
+        const words = control.querySelector(`option[value="${want}"]`);
+        const name = words?.textContent?.trim();
+        live.textContent = `${name || want}: ${read}, ${refused}, ${subjects}`;
+      }
+    };
+
+    show(control.value, false);
+    control.addEventListener("change", () => show(control.value, true));
+  }
+</script>
+
+<style>
+  .gcs {
+    min-width: 0;
+  }
+
+  .gcs__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block-end: var(--space-4);
+    border-block-end: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+
+  .gcs__select {
+    min-width: 0;
+  }
+
+  .gcs__jump {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    min-width: 0;
+  }
+
+  .gcs__jump-link {
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  .gcs__jump-link:hover {
+    color: var(--ink);
+  }
+
+  .gcs__access {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin: 0;
+    min-width: 0;
+  }
+
+  .gcs__access-label {
+    color: var(--ink-3); /* ink3-ok: control label on --ground, 5.25:1 (C-15) */
+  }
+
+  .gcs__access-input {
+    background: var(--surface-1);
+    color: var(--ink);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .gcs__access-input:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .gcs__state {
+    margin-block-start: var(--space-6);
+    min-width: 0;
+  }
+
+  .gcs__state-h {
+    margin: 0 0 var(--space-4);
+    color: var(--ink-2);
+  }
+
+  .gcs__cards {
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  /* A copy control with nothing to switch is a dead control, so it removes
+     itself and the two state headings do the naming instead. */
+  :global(:root:not([data-js])) .gcs__access {
+    display: none;
+  }
+
+  /* On the scripted path the control names the state, so the heading would be
+     a second label for the same thing. */
+  :global(:root[data-js]) .gcs__state-h {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

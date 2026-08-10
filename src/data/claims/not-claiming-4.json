@@ -1,0 +1,14 @@
+{
+ "contentHash": "184db22ae2018fd40012da7c1ecb6284",
+ "humanSource": "The project's own statement of what it is not claiming, carried on the limits page.",
+ "immutableIds": [
+  "copy.yaml:limits.not_claiming[3]"
+ ],
+ "label": "Not that intervals are absent from the field.",
+ "limitation": "Not that intervals are absent from the field.",
+ "scope": "What is not being claimed.",
+ "slug": "not-claiming-4",
+ "sourceUrl": "/limits/",
+ "statement": "A government evaluator published 95% confidence intervals six days before this project's own field scan ran.",
+ "type": "limitation"
+}

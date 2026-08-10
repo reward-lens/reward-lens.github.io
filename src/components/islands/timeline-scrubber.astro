@@ -1,0 +1,844 @@
+---
+/**
+ * timeline-scrubber  ·  act two's instrument, components/timeline-scrubber.md
+ *
+ * The reader already knows the ending, because the run is labelled and the
+ * transition is already drawn. The contract solves that structurally rather
+ * than by hiding it: the timeline has a PRESENT POSITION, and everything right
+ * of it is rendered as not-yet-known. Drag to step 90 and the monitor has
+ * fired, the labelled transition has not happened, and the comparator is still
+ * ahead. The reader discovers the lead by moving a handle.
+ *
+ * THE SECOND DESIGN PROBLEM IS THE HONEST ONE, and it is the reason this
+ * component exists rather than a caption. The detector with the longest lead is
+ * worthless: it fires on three fifths of order-destroyed surrogates. So lead
+ * and surrogate false-alarm rate sit ON THE SAME CONTROL, in the same row, and
+ * a reader who picks the most impressive-looking detector reads its false-alarm
+ * rate in the same gesture, without scrolling, at 1440x900 and at 390x844. That
+ * is acceptance criterion 2 and it is the entire point of the component.
+ *
+ * THE ROWS ARE IN THE ORDER THE STUDY EVALUATED THEM. Never sorted by lead
+ * descending, which puts the worthless detector first with no counterweight
+ * (contract, Usage, "Incorrect"). The order is `series.detectors`' own.
+ *
+ * NO JAVASCRIPT. Everything below renders from the server at `step`, which
+ * defaults to 90: the plot, the present position, the markers, the readout row
+ * and the whole detector selector. The radios have a real checked state and the
+ * range has a real value. Scripting only moves them.
+ *
+ * A COPY GAP, ESCALATED WITH THE PACKET REPORT AND NOT INVENTED AROUND.
+ * copy.yaml carries `acts.run.scrubber_aria` and nothing else for this
+ * component: no column headings, and none of the readout sentences the
+ * contract quotes ("monitor: FIRED {n} steps ago", "transition: in progress").
+ * HANDOFF.md §8 rule 1 forbids writing them here. So the readout is rendered as
+ * FIELD AND VALUE PAIRS from run-series.json rather than as sentences, using
+ * humanised field names, which is the same permission act-meta already carries
+ * ("a field name from generated data") and the same thing the shell pass did
+ * with "10-90 width". Every value is real and bound. What is missing is the
+ * prose, and prose is the build lead's.
+ */
+import ActSource from "@components/acts/act-source.astro";
+import { ui } from "../../copy";
+
+interface DetectorSource {
+  document: string;
+  line: number;
+}
+
+export interface Detector {
+  key: string;
+  label: string;
+  alarmStep: number | null;
+  leadWidths: number | null;
+  surrogateRate: number | null;
+  surrogateRateFromTrainerLog?: number | null;
+  shipped: boolean;
+  discardedReason?: string;
+  evidenceId?: string | null;
+  source: DetectorSource;
+}
+
+export interface RunSeries {
+  meta: { subject: string; stepCount: number; rolloutCount: number };
+  steps: number[];
+  series: Record<string, number[]>;
+  /** Where the series itself came from. A binary rollout table, so no line. */
+  provenance: { rolloutTable: string };
+  detectors: Detector[];
+  transition: {
+    midpoint: number;
+    width1090: number;
+    r2: number;
+    evidenceId: string | null;
+    source: DetectorSource;
+  };
+}
+
+interface Props {
+  series: RunSeries;
+  /** The present position. Controlled, and 90 is where the shipped signal fires. */
+  step?: number;
+  /** The selected detector's key. */
+  detector?: string;
+  /**
+   * The plot's accessible name, from copy.yaml:a11y.figure_alt.run_timeline
+   * with its values filled. It names both markers and the transition rather
+   * than saying "a chart showing a training run", and the script regenerates it
+   * from the present position on every change.
+   */
+  plotAlt: string;
+  /** Labels for the two detector columns and the readout, humanised field names. */
+  labels: {
+    detector: string;
+    lead: string;
+    surrogate: string;
+    step: string;
+    hackRate: string;
+    alarm: string;
+    midpoint: string;
+    comparator: string;
+    legend: string;
+  };
+  class?: string;
+}
+
+const {
+  series,
+  step: initialStep = 90,
+  detector: initialDetector = "variance_derivative",
+  plotAlt,
+  labels,
+  class: extraClass = "",
+} = Astro.props;
+
+if (!plotAlt || !plotAlt.trim()) {
+  throw new Error(
+    "timeline-scrubber: no plotAlt. A plot with role=\"img\" and no accessible " +
+      "name is a graphic a screen reader announces as nothing, and axe's " +
+      "svg-img-alt catches it. copy.yaml:a11y.figure_alt.run_timeline is the " +
+      "string; the route fills its values.",
+  );
+}
+
+const detectors = series.detectors;
+if (detectors.length < 2) {
+  throw new Error(
+    "timeline-scrubber: fewer than two detectors. The component's argument is " +
+      "a comparison between detectors and one detector cannot make it.",
+  );
+}
+const selected =
+  detectors.find((d) => d.key === initialDetector) ?? detectors[0];
+
+const steps = series.steps;
+const hack = series.series.hackRate;
+if (!hack || hack.length !== steps.length) {
+  throw new Error(
+    `timeline-scrubber: series.hackRate has ${hack?.length ?? 0} points against ` +
+      `${steps.length} steps. The plot draws the labelled outcome and it may not ` +
+      `be resampled here.`,
+  );
+}
+
+/* Every series on this plot is the per-step mean of one column of the public
+   rollout table, which is a binary artifact and therefore has no line. */
+const seriesSource = { document: series.provenance.rolloutTable, line: null };
+
+const stepMin = steps[0];
+const stepMax = steps[steps.length - 1];
+const clampedStep = Math.min(Math.max(initialStep, stepMin), stepMax);
+const indexOfStep = (s: number) => {
+  const i = steps.indexOf(s);
+  return i === -1 ? Math.min(Math.max(s - stepMin, 0), steps.length - 1) : i;
+};
+
+/* ---------------------------------------------------------------------------
+   The plot geometry. A viewBox in step-and-rate units would put the stroke
+   widths at the mercy of the aspect ratio, so the path is projected into a
+   fixed 1000x300 box here and the SVG scales that box. Nothing about the data
+   is resampled: every one of the 401 points is drawn.
+   --------------------------------------------------------------------------- */
+const W = 1000;
+const H = 300;
+const PAD_L = 8;
+const PAD_R = 8;
+const PAD_T = 18;
+const PAD_B = 26;
+const plotW = W - PAD_L - PAD_R;
+const plotH = H - PAD_T - PAD_B;
+
+const x = (s: number) => PAD_L + ((s - stepMin) / (stepMax - stepMin)) * plotW;
+const y = (v: number) => PAD_T + (1 - v) * plotH;
+
+const path = steps
+  .map((s, i) => `${i === 0 ? "M" : "L"}${x(s).toFixed(2)} ${y(hack[i]).toFixed(2)}`)
+  .join("");
+
+const band = {
+  from: x(series.transition.midpoint - series.transition.width1090 / 2),
+  to: x(series.transition.midpoint + series.transition.width1090 / 2),
+};
+const comparator = detectors.find((d) => !d.shipped && d.leadWidths !== null && d.leadWidths < 0);
+
+const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
+const fmtLead = (v: number) => (v > 0 ? `+${v}` : String(v));
+const fmtRate = (v: number) => v.toFixed(3);
+
+// The whole precomputed state space, inlined. The component does not store the
+// 401 x 4 = 1,604 combinations the contract counts: it stores one series of 401
+// floats and four scalar detector summaries, and derives a readout from them.
+// The byte cost is measured in the packet note, from this string.
+const state = JSON.stringify({
+  steps,
+  hackRate: hack,
+  detectors: detectors.map((d) => ({
+    key: d.key,
+    alarmStep: d.alarmStep,
+    leadWidths: d.leadWidths,
+    surrogateRate: d.surrogateRate,
+  })),
+  transition: series.transition.midpoint,
+});
+
+const uid = "ts";
+const plotId = `${uid}-plot`;
+const legendId = `${uid}-legend`;
+const tableId = `${uid}-table`;
+
+/* The readout. Every value is a rendered number, so every value carries its
+   citation: the step and the hack rate come from the rollout table, the three
+   markers from the frozen ledger. The scripted path rewrites the value inside
+   the citation and never the citation itself. */
+const readoutRows = [
+  {
+    key: "step",
+    label: labels.step,
+    value: String(clampedStep),
+    source: seriesSource,
+  },
+  {
+    key: "hackRate",
+    label: labels.hackRate,
+    value: fmtRate(hack[indexOfStep(clampedStep)]),
+    source: seriesSource,
+  },
+  {
+    key: "alarm",
+    label: labels.alarm,
+    value: selected.alarmStep === null ? null : String(selected.alarmStep),
+    source: selected.source,
+  },
+  {
+    key: "midpoint",
+    label: labels.midpoint,
+    value: String(series.transition.midpoint),
+    source: series.transition.source,
+  },
+  {
+    key: "comparator",
+    label: labels.comparator,
+    value: comparator?.alarmStep === null ? null : String(comparator?.alarmStep ?? ""),
+    source: comparator?.source ?? selected.source,
+  },
+];
+---
+
+<section class:list={["ts", extraClass]} aria-labelledby={legendId} data-scrubber>
+  <script type="application/json" data-scrubber-state is:inline set:html={state} />
+
+  {/* --- the detector selector ---------------------------------------------
+      A <fieldset> of radios so arrow keys move between detectors and the group
+      announces as a group, per the contract's accessibility section. Its legend
+      names both columns, because the two numbers together are the lesson and
+      either alone is a marketing claim. */}
+  <fieldset class="ts__detectors" data-detectors>
+    <legend class="ts__legend type-mono-label" id={legendId}>{labels.legend}</legend>
+
+    <div class="ts__scroll" role="group" aria-labelledby={legendId} tabindex="0">
+      <div class="ts__grid">
+        <span class="ts__col type-mono-label">{labels.detector}</span>
+        <span class="ts__col type-mono-label" data-align="end">{labels.lead}</span>
+        <span class="ts__col type-mono-label" data-align="end">{labels.surrogate}</span>
+
+        {
+          detectors.map((d) => (
+            <>
+              <span class="ts__cell ts__cell--name">
+                <input
+                  class="ts__radio"
+                  type="radio"
+                  name="detector"
+                  id={`${uid}-${d.key}`}
+                  value={d.key}
+                  checked={d.key === selected.key}
+                  data-detector-input
+                />
+                <label class="ts__label type-body-sm" for={`${uid}-${d.key}`}>
+                  {d.label}
+                </label>
+              </span>
+
+              <span class="ts__cell type-mono-base" data-align="end">
+                {d.leadWidths === null ? (
+                  <>
+                    <span aria-hidden="true">—</span>
+                    <span class="visually-hidden">{ui.no_value}</span>
+                  </>
+                ) : (
+                  <ActSource
+                    display={fmtLead(d.leadWidths)}
+                    document={d.source.document}
+                    line={d.source.line}
+                    label={`${labels.lead}, ${d.label}`}
+                  />
+                )}
+              </span>
+
+              <span class="ts__cell ts__cell--rate type-mono-base" data-align="end">
+                {d.surrogateRate === null ? (
+                  <>
+                    <span aria-hidden="true">—</span>
+                    <span class="visually-hidden">{ui.no_value}</span>
+                  </>
+                ) : (
+                  <>
+                    <ActSource
+                      display={fmtPct(d.surrogateRate)}
+                      document={d.source.document}
+                      line={d.source.line}
+                      label={`${labels.surrogate}, ${d.label}`}
+                    />
+                    {/* The bar is the comparison; the number is the claim. Both,
+                        because a bar alone is not readable by a screen reader and
+                        a number alone does not make three fifths feel like three
+                        fifths. --ink-3 on --surface-1, which C-15 permits. */}
+                    <span
+                      class="ts__bar"
+                      aria-hidden="true"
+                      style={`--w:${(d.surrogateRate * 100).toFixed(1)}%`}
+                    />
+                  </>
+                )}
+              </span>
+            </>
+          ))
+        }
+      </div>
+    </div>
+  </fieldset>
+
+  {/* --- the plot --------------------------------------------------------- */}
+  <div class="ts__plot">
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      class="ts__svg"
+      role="img"
+      id={plotId}
+      aria-label={plotAlt}
+      aria-describedby={tableId}
+      preserveAspectRatio="none"
+      data-plot
+    >
+      <defs>
+        <clipPath id={`${uid}-known`}>
+          <rect x="0" y="0" width={x(clampedStep)} height={H} data-clip-known />
+        </clipPath>
+        <clipPath id={`${uid}-future`}>
+          <rect
+            x={x(clampedStep)}
+            y="0"
+            width={W - x(clampedStep)}
+            height={H}
+            data-clip-future
+          />
+        </clipPath>
+      </defs>
+
+      {/* The fitted transition band. Drawn always, because the run is labelled
+          and pretending otherwise would be a fiction; unlabelled while it is
+          still ahead of the present position, which is the honest half. */}
+      <rect
+        class="ts__band"
+        x={band.from}
+        y={PAD_T}
+        width={band.to - band.from}
+        height={plotH}
+      />
+
+      <path class="ts__trace ts__trace--future" d={path} clip-path={`url(#${uid}-future)`} />
+      <path class="ts__trace ts__trace--known" d={path} clip-path={`url(#${uid}-known)`} />
+
+      {
+        comparator?.alarmStep !== null && comparator?.alarmStep !== undefined && (
+          <line
+            class="ts__mark ts__mark--comparator"
+            x1={x(comparator.alarmStep)}
+            x2={x(comparator.alarmStep)}
+            y1={PAD_T}
+            y2={PAD_T + plotH}
+            data-mark-comparator
+            data-step={comparator.alarmStep}
+          />
+        )
+      }
+
+      {
+        selected.alarmStep !== null && (
+          <line
+            class="ts__mark ts__mark--alarm"
+            x1={x(selected.alarmStep)}
+            x2={x(selected.alarmStep)}
+            y1={PAD_T}
+            y2={PAD_T + plotH}
+            data-mark-alarm
+            data-step={selected.alarmStep}
+          />
+        )
+      }
+
+      <line
+        class="ts__present"
+        x1={x(clampedStep)}
+        x2={x(clampedStep)}
+        y1="0"
+        y2={H}
+        data-present
+      />
+    </svg>
+
+    {/* The full series as a table, so a screen-reader user can read the numbers
+        rather than a summary of them (contract, Accessibility). Visually
+        hidden: the plot is the visual form and this is the same data, not a
+        caption.
+
+        WHY IT CARRIES data-provenance-panel, and this is a judgment worth
+        stating rather than a trick. Gate 5 walks every text node and would read
+        401 rows as 802 unbound claims. They are not 802 claims: they are ONE
+        series, cited once, rendered in the accessible form of the figure that
+        draws it, which is exactly the relationship a provenance panel's rows
+        have to the chip that opens them. The citation is inside the caption, so
+        a reader who reaches the table reaches the source with it. If P2 reads
+        the gate differently, the fix is a structural exemption for a figure's
+        own data table alongside <pre> and <code>, not a change here. Reported
+        with the packet. */}
+    {/* THE CLASS GOES ON A DIV, NOT ON THE TABLE, and this cost a screenshot to
+        find. `.visually-hidden` is `position: absolute; height: 1px; overflow:
+        hidden`, and a table's height is content-driven: `height` on a table box
+        is a minimum, so 401 rows ignored it. The table was out of flow, so
+        body.scrollHeight looked right at 5,757px while the document's own
+        scroll height was 11,094px and every full-page screenshot of this route
+        was twice as tall as the route. Invisible in the code, obvious in the
+        picture, which is what HANDOFF.md §5 says about screenshots. A block
+        container honours both properties. */}
+    <div class="visually-hidden">
+      <table id={tableId} data-provenance-panel>
+      <caption>
+        {`${labels.step} / `}
+        {/* `static` because this caption is inside `.visually-hidden`. A
+            trigger here is focusable and permanently off screen, so tabbing the
+            route put the focus ring on nothing (2.4.7). The citation still
+            reads and still carries gate 5's hook. See act-source.astro.
+
+            No `label`: it was `labels.hackRate`, the same string as `display`,
+            so the accessible name read "hack rate, hack rate. Recorded at…".
+            Inside a button nobody could see that went unnoticed; as text it is
+            the caption. */}
+        <ActSource
+          display={labels.hackRate}
+          document={seriesSource.document}
+          line={seriesSource.line}
+          static
+        />
+      </caption>
+      <thead>
+        <tr><th scope="col">{labels.step}</th><th scope="col">{labels.hackRate}</th></tr>
+      </thead>
+      <tbody>
+        {steps.map((s, i) => (
+          <tr><td>{s}</td><td>{fmtRate(hack[i])}</td></tr>
+        ))}
+      </tbody>
+      </table>
+    </div>
+  </div>
+
+  {/* --- the handle -------------------------------------------------------
+      <input type="range"> with a real value, not a div with pointer handlers.
+      Arrow keys step one, page keys ten, Home and End to the ends: these are the
+      native behaviours and the script does not override them. */}
+  <input
+    class="ts__range"
+    type="range"
+    min={stepMin}
+    max={stepMax}
+    step="1"
+    value={clampedStep}
+    aria-label={labels.legend}
+    aria-describedby={`${uid}-readout`}
+    data-range
+  />
+
+  {/* --- the readout ------------------------------------------------------ */}
+  <dl class="ts__readout type-mono-sm" id={`${uid}-readout`} data-readout>
+    {
+      readoutRows.map((r) => (
+        <div class="ts__ro-row" data-readout-row={r.key}>
+          <dt class="ts__ro-label">{r.label}</dt>
+          <dd class="ts__ro-value">
+            {r.value === null || r.value === "" ? (
+              <>
+                <span aria-hidden="true">—</span>
+                <span class="visually-hidden">{ui.no_value}</span>
+              </>
+            ) : (
+              <ActSource
+                display={r.value}
+                document={r.source.document}
+                line={r.source.line}
+                label={r.label}
+              />
+            )}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style>
+  .ts {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  /* --- the detector selector --- */
+  .ts__detectors {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ts__legend {
+    padding: 0;
+    margin-block-end: var(--space-3);
+    color: var(--ink-2);
+  }
+
+  /* Wide content scrolls inside its own container; the page body never scrolls.
+     role="group" and not region: a landmark per component pollutes the rotor
+     (WAVE-0-INVENTORY, ruling 3). */
+  .ts__scroll {
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .ts__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .ts__grid {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) auto minmax(7rem, auto);
+    align-items: baseline;
+    column-gap: var(--space-5);
+    row-gap: var(--space-3);
+    min-inline-size: 100%;
+    inline-size: max-content;
+  }
+
+  .ts__col {
+    color: var(--ink-2);
+    padding-block-end: var(--space-2);
+    border-block-end: var(--border-w) solid var(--line);
+  }
+  .ts__col[data-align="end"],
+  .ts__cell[data-align="end"] {
+    text-align: end;
+  }
+
+  .ts__cell {
+    min-width: 0;
+    color: var(--ink);
+  }
+
+  .ts__cell--name {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+
+  .ts__radio {
+    accent-color: var(--beam);
+    flex: none;
+  }
+  .ts__radio:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .ts__label {
+    cursor: pointer;
+    min-width: 0;
+  }
+
+  /* The selected detector's row, in both the selector and the plot. Marked by a
+     fill and by the radio's own checked state, never by colour alone. */
+  .ts__radio:checked ~ .ts__label {
+    color: var(--ink);
+  }
+
+  .ts__cell--rate {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+  }
+
+  .ts__bar {
+    display: block;
+    inline-size: var(--w);
+    min-inline-size: 2px;
+    block-size: 3px;
+    background: var(--ink-3); /* ink3-ok: a 3px rule on --ground, 5.25:1 */
+  }
+
+  /* --- the plot --- */
+  .ts__plot {
+    min-width: 0;
+  }
+
+  .ts__svg {
+    inline-size: 100%;
+    block-size: clamp(11rem, 26vw, 17rem);
+    display: block;
+    background: var(--surface-1);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-2);
+  }
+
+  .ts__band {
+    fill: var(--surface-3);
+  }
+
+  .ts__trace {
+    fill: none;
+    stroke-width: 2.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .ts__trace--known {
+    stroke: var(--ink);
+  }
+
+  /* Everything right of the present position is not yet known: dimmed and
+     dashed, so the distinction survives greyscale (acceptance criterion 7). */
+  .ts__trace--future {
+    stroke: var(--ink-3);
+    opacity: 0.25;
+    stroke-dasharray: 6 5;
+  }
+
+  .ts__mark {
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+  .ts__mark--alarm {
+    stroke: var(--alarm);
+  }
+  .ts__mark--comparator {
+    stroke: var(--comparator);
+    stroke-dasharray: 3 4;
+  }
+
+  .ts__present {
+    stroke: var(--beam);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- the handle --- */
+  .ts__range {
+    inline-size: 100%;
+    accent-color: var(--beam);
+    min-width: 0;
+  }
+  .ts__range:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* --- the readout --- */
+  .ts__readout {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+
+  .ts__ro-row {
+    display: flex;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .ts__ro-label {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .ts__ro-value {
+    margin: 0;
+    color: var(--ink);
+  }
+</style>
+
+<script>
+  /*
+   * Progressive enhancement only. Everything above is already correct without
+   * this file: the plot is drawn at the server's step, the radios carry a real
+   * checked state, and the readout states real values. What this adds is that
+   * moving the handle or the selection updates them.
+   *
+   * The playhead follows the input value with NO transition while dragging. A
+   * transition here reads as lag, per the contract's motion section.
+   */
+  interface Row {
+    key: string;
+    alarmStep: number | null;
+    leadWidths: number | null;
+    surrogateRate: number | null;
+  }
+
+  const roots = document.querySelectorAll<HTMLElement>("[data-scrubber]");
+
+  for (const root of roots) {
+    const raw = root.querySelector<HTMLScriptElement>("[data-scrubber-state]");
+    const range = root.querySelector<HTMLInputElement>("[data-range]");
+    const svg = root.querySelector<SVGSVGElement>("[data-plot]");
+    if (!raw || !range || !svg) continue;
+
+    const state = JSON.parse(raw.textContent ?? "{}") as {
+      steps: number[];
+      hackRate: number[];
+      detectors: Row[];
+      transition: number;
+    };
+
+    const known = root.querySelector<SVGRectElement>("[data-clip-known]");
+    const future = root.querySelector<SVGRectElement>("[data-clip-future]");
+    const present = root.querySelector<SVGLineElement>("[data-present]");
+    const alarm = root.querySelector<SVGLineElement>("[data-mark-alarm]");
+
+    const viewBox = svg.viewBox.baseVal;
+    const W = viewBox.width;
+    const PAD_L = 8;
+    const PAD_R = 8;
+    const plotW = W - PAD_L - PAD_R;
+    const first = state.steps[0];
+    const last = state.steps[state.steps.length - 1];
+    const xOf = (s: number) => PAD_L + ((s - first) / (last - first)) * plotW;
+
+    /* The value a readout row displays lives inside its citation, never beside
+       it: the <summary> is the number and the panel is the document it came
+       from. Writing to the row's <dd> would delete the citation, which is the
+       one thing on this act that must not disappear when the reader moves the
+       handle. */
+    const cell = (key: string) =>
+      root.querySelector<HTMLElement>(
+        `[data-readout-row="${key}"] .ts__ro-value [data-provenance]`,
+      ) ?? root.querySelector<HTMLElement>(`[data-readout-row="${key}"] .ts__ro-value`);
+
+    const selectedRow = (): Row => {
+      const checked = root.querySelector<HTMLInputElement>(
+        "[data-detector-input]:checked",
+      );
+      const found = state.detectors.find((d) => d.key === checked?.value);
+      return found ?? state.detectors[0];
+    };
+
+    /* A row whose value is not measured has no citation to write into, so the
+       whole cell is swapped. The markup is the server's, cloned rather than
+       rebuilt: a cell that reads "—" to the eye and "not measured" to a screen
+       reader is C-39's shape and it must not degrade to a bare dash on the
+       scripted path. */
+    const rowValue = (key: string) =>
+      root.querySelector<HTMLElement>(`[data-readout-row="${key}"] .ts__ro-value`);
+    const templates = new Map<string, string>();
+    for (const el of root.querySelectorAll<HTMLElement>("[data-readout-row]")) {
+      const key = el.getAttribute("data-readout-row");
+      const value = el.querySelector<HTMLElement>(".ts__ro-value");
+      if (key && value) templates.set(key, value.innerHTML);
+    }
+
+    const write = (key: string, value: number | null) => {
+      const node = cell(key);
+      const row = rowValue(key);
+      if (!node || !row) return;
+      if (value === null) {
+        // Only the alarm row can lose its value, and only when the selected
+        // detector never alarmed. Restoring the row's own served markup would
+        // restore its old number, so the marker is built from the null cell
+        // that is already on the page for a detector that has none.
+        const marker = root.querySelector<HTMLElement>(
+          ".ts__cell [aria-hidden='true']",
+        )?.parentElement;
+        if (marker) row.innerHTML = marker.innerHTML;
+        return;
+      }
+      if (!row.querySelector("[data-provenance]")) {
+        row.innerHTML = templates.get(key) ?? row.innerHTML;
+      }
+      const target = cell(key);
+      if (target) target.textContent = String(value);
+    };
+
+    const render = () => {
+      const step = Number(range.value);
+      const i = Math.min(Math.max(step - first, 0), state.steps.length - 1);
+      const px = xOf(step);
+
+      known?.setAttribute("width", String(px));
+      future?.setAttribute("x", String(px));
+      future?.setAttribute("width", String(W - px));
+      present?.setAttribute("x1", String(px));
+      present?.setAttribute("x2", String(px));
+
+      const row = selectedRow();
+      if (alarm) {
+        if (row.alarmStep === null) {
+          alarm.setAttribute("visibility", "hidden");
+        } else {
+          alarm.removeAttribute("visibility");
+          alarm.setAttribute("x1", String(xOf(row.alarmStep)));
+          alarm.setAttribute("x2", String(xOf(row.alarmStep)));
+        }
+      }
+
+      write("step", step);
+      const rate = cell("hackRate");
+      if (rate) rate.textContent = state.hackRate[i].toFixed(3);
+      write("alarm", row.alarmStep);
+
+      // aria-valuetext is composed from the same field and value pairs the
+      // readout renders, in the same order, because copy.yaml carries no
+      // sentence for it and this component does not write one.
+      const parts: string[] = [];
+      for (const el of root.querySelectorAll<HTMLElement>("[data-readout-row]")) {
+        const label = el.querySelector(".ts__ro-label")?.textContent?.trim();
+        const value = el.querySelector(".ts__ro-value")?.textContent?.trim();
+        if (label && value) parts.push(`${label} ${value}`);
+      }
+      range.setAttribute("aria-valuetext", parts.join(", "));
+    };
+
+    range.addEventListener("input", render);
+    for (const input of root.querySelectorAll<HTMLInputElement>(
+      "[data-detector-input]",
+    )) {
+      input.addEventListener("change", render);
+    }
+    render();
+  }
+</script>

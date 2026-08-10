@@ -1,0 +1,79 @@
+---
+/**
+ * Pause motion. Persistent, and it works before the renderer exists.
+ *
+ * The control is in the document rather than inside the island because a reader
+ * who wants motion stopped wants it stopped whether or not the canvas
+ * hydrated, and because the island already listens for `rl:motion-pause`: the
+ * pause reaches the render loop through an event, so the two can hydrate in
+ * either order without a race.
+ *
+ * It is a toggle button and not a checkbox. The reader is not filling in a
+ * form; they are operating a switch whose current position matters, and
+ * `aria-pressed` is what reports that position. The label changes with the
+ * position as well, so the state is in the text and not only in the attribute.
+ *
+ * A reader who has asked the system for less motion starts paused. Their tier
+ * is `still` and no canvas mounts at all, so this is agreement with a decision
+ * already made rather than a second switch for the same thing.
+ */
+interface Props {
+  class?: string;
+}
+const { class: extraClass = "" } = Astro.props;
+
+const PAUSE = "Pause motion";
+const RESUME = "Resume motion";
+---
+
+<button
+  type="button"
+  class:list={["pause", extraClass]}
+  data-scene-pause
+  data-label-pause={PAUSE}
+  data-label-resume={RESUME}
+  aria-pressed="false"
+>
+  <span class="pause__dot" aria-hidden="true"></span>
+  <span data-scene-pause-label>{PAUSE}</span>
+</button>
+
+<style>
+  .pause {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: none;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding: var(--space-2) var(--space-3);
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-body-sm-size);
+    cursor: pointer;
+  }
+  .pause:hover,
+  .pause:focus-visible {
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+  .pause:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* Two shapes, not two colours: a filled square while motion is paused and an
+     outlined one while it runs. */
+  .pause__dot {
+    inline-size: var(--space-3);
+    block-size: var(--space-3);
+    border: var(--border-w-accent) solid currentColor;
+  }
+  .pause[aria-pressed="true"] .pause__dot {
+    background: currentColor;
+  }
+  .pause[aria-pressed="true"] {
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+</style>

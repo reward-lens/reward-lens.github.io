@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reward-lens.github.io/schemas/banned-terms.schema.json",
+  "title": "Banned internal identifiers",
+  "description": "Every internal identifier this project uses, parsed from the registries that define them by scripts/build_catalogue.py. DECISIONS.md D-05: the ban is mechanical, and the list is generated because a hand-kept one goes stale on the first identifier somebody adds. Consumed by the terminology gate, which packet P2 owns. Two exemptions that gate must carry: this file itself, and the routes where a frozen record's own identifier is the content rather than jargon standing in for prose.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "note",
+    "counts",
+    "families",
+    "terms"
+  ],
+  "properties": {
+    "note": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "byFamily"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 300,
+          "description": "A floor and not a target: the list can only be complete or short, and short is a gate that passes on text it should have caught. LOWERED FROM 600 AT BUILD TIME, and the reason is a correction rather than a relaxation. The generator was adding all 190 quantity ids and all 17 refusal reason names, neither of which is in DECISIONS.md D-05's family table, and both of which are PUBLIC VOCABULARY this site prints on purpose: /atlas/ is a catalogue of quantities and /docs/refusals/ is the page about those seventeen, so banning them banned two routes outright. Removing them takes the count from 606 to 399. The old floor was set from D-05's estimate of roughly 620, which GROUND-TRUTH.md C-31 had already shown does not reproduce from the registries D-05 names."
+        },
+        "byFamily": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "families": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "description": "Keyed by family so a gate failure can name the registry the term came from, which is the difference between a useful message and 'banned term found'."
+    },
+    "terms": {
+      "type": "array",
+      "minItems": 300,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "The flat union, sorted. This is what the gate matches against."
+    }
+  }
+}

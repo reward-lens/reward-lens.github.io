@@ -1,0 +1,262 @@
+---
+/**
+ * /start/  ·  install, ask what your access can answer, take a reading, meet a
+ * refusal, satisfy it.
+ *
+ * A procedure, not an essay. No prerequisites section: there is one
+ * prerequisite, it is a Python version, and it is one line in the strip.
+ *
+ * THE SCRIPT IS NOW HERE, AND THE ESCALATION THAT SAID IT WAS NOT IS CLOSED.
+ * The previous version of this page described a script it did not show, on the
+ * grounds that `pages/start.md` §2 requires real output "generated at build
+ * time, not transcribed" and no generator emits one. `scripts/**` belongs to
+ * another packet, so this page cannot add a generator. What it does instead is
+ * the next best thing and it is stated rather than implied: every command below
+ * was run in a virtualenv created outside every checkout in this repository and
+ * populated by `pip install reward-lens` from the package index, and the output
+ * panes are contiguous runs of lines from what it printed. The capture, its
+ * date, its interpreter and its provenance live in `components/start/transcript.ts`.
+ * `verified` stays FALSE on every block on this page, because nothing in CI
+ * re-runs them yet, and `verified: true` is a claim about a gate rather than
+ * about a capture. Asserting it would be exactly the defect this page just
+ * removed, one level up.
+ *
+ * WHY A GRADER AND NOT A REWARD MODEL. The whole path is CPU-only, needs no
+ * model download and makes no network call after the install. A first reading
+ * that needs eight gigabytes of weights is a first reading nobody takes.
+ *
+ * SECTION 4 IS THE HIGHEST-VALUE SECTION ON THE PAGE and it is the one a
+ * conventional getting-started page would not have at all. Thirteen of the
+ * thirteen fields refuse on the first run. A reader who meets that without
+ * warning concludes the library is broken and stops. The card is blue and
+ * bounded with its remedy open, the remedy is the one the library itself
+ * printed, and the section ends by satisfying it and reading two real fields.
+ * The word "error" does not appear.
+ *
+ * COPY.YAML SHORTFALLS, REPORTED RATHER THAN PAPERED OVER. Two strings this
+ * page would otherwise use are not renderable as written and the file is
+ * reserved, so they are omitted here and reported with proposed text:
+ *   - `install.python_note` ends "The base install pulls nothing compiled",
+ *     which the wheel contradicts: the base install pulls numpy, scipy, pandas,
+ *     scikit-learn and pydantic-core, all of which are compiled. The first
+ *     sentence is true and is stated by the install strip already.
+ *   - `home.install_next.tutorial` reads "Follow one example end to end", which
+ *     gate 6's `end-to-end-across-cases` rule fails on this route. The four
+ *     destinations below come from `nav.footer_groups` instead, which section 4
+ *     of `pages/about.md` already establishes as the pattern for reusing nav
+ *     labels as link text.
+ */
+import Base from "@layouts/Base.astro";
+import PageHeader from "@components/PageHeader.astro";
+import CodeBlock from "@components/base/code-block.astro";
+import InstallStrip from "@components/base/install-strip.astro";
+import RefusalCard from "@components/base/refusal-card.astro";
+import * as transcript from "@components/start/transcript";
+import { fill } from "@components/base/data";
+import { copy, nav, ui } from "../copy";
+
+const start = copy.start as Record<string, string>;
+const install = copy.install as Record<string, string>;
+const home = copy.home as Record<string, Record<string, string>>;
+
+/* The four destinations. `nav.footer_groups` already groups the site by what a
+   reader came to do, and "Use it" is this page's group, so the labels are read
+   off it rather than written again here. The back-reference to /see/ is the one
+   link that is not in that group, and it has its own key. */
+const useIt = nav.footer_groups.find((g) => g.heading === "Use it");
+if (!useIt) {
+  throw new Error(
+    "/start/: copy.yaml:nav.footer_groups has no group headed \"Use it\". " +
+      "Section 4 reads its destinations off that group rather than typing four " +
+      "strings, per pages/about.md §4's pattern.",
+  );
+}
+const destinations = useIt.items.filter((i) => i.href !== "/start/");
+
+/* Guard the capture the same way the components guard their inputs. An empty
+   pane is the failure this page exists to remove, so it fails the build rather
+   than rendering a section that describes output it does not show. */
+for (const [name, value] of Object.entries(transcript)) {
+  const empty =
+    typeof value === "string" ? value.trim() === "" : value === null || value === undefined;
+  if (empty) {
+    throw new Error(
+      `/start/: components/start/transcript.ts exports an empty \`${name}\`. ` +
+        `Every pane on this page is a capture from a wheel-built environment; ` +
+        `a section that describes output it does not show is the defect this ` +
+        `page was rebuilt to remove.`,
+    );
+  }
+}
+
+const versionCommand = 'python -c "import reward_lens; print(reward_lens.__version__)"';
+const capabilitiesCommand = "reward-lens capabilities --substrate NEURAL_GEN";
+const extraCommand = "pip install 'reward-lens[verifier]'";
+
+/* The accessible name for an output pane that scrolls. Both halves are the
+   component's own strings: its scroll-region sentence, filled with its own
+   label for an output pane. */
+const regionAria = fill(ui.code_region_aria, { name: ui.code_output_label });
+---
+
+<Base title={`${start.title} · reward-lens`} description={start.heading}>
+  <div class="wrap st">
+    <PageHeader eyebrow={start.title} title={start.heading} />
+
+    <section class="st__section" aria-labelledby="st-install">
+      <h2 class="visually-hidden" id="st-install">{start.title}</h2>
+      <InstallStrip size="lead" />
+      <div class="st__block">
+        <CodeBlock
+          code={versionCommand}
+          lang="bash"
+          label={install.command}
+          output={transcript.version}
+        />
+      </div>
+    </section>
+
+    <section class="st__section" aria-labelledby="st-capabilities">
+      <h2 class="type-h3" id="st-capabilities">{home.install_next.heading}</h2>
+      <p class="type-body measure st__lede">{home.install_next.body}</p>
+      <div class="st__block">
+        <CodeBlock
+          code={capabilitiesCommand}
+          lang="bash"
+          label={capabilitiesCommand}
+          output={transcript.capabilities}
+        />
+      </div>
+    </section>
+
+    <section class="st__section" aria-labelledby="st-first">
+      <h2 class="type-h3" id="st-first">{start.first_reading_heading}</h2>
+      <p class="type-body measure st__lede">{start.first_reading_body}</p>
+      <div class="st__block">
+        <CodeBlock
+          code={transcript.graderSource}
+          lang="python"
+          filename="grader.py"
+        />
+      </div>
+      <div class="st__block">
+        <CodeBlock
+          code={transcript.planSource}
+          lang="python"
+          filename="plan.py"
+          output={transcript.planOutput}
+        />
+      </div>
+    </section>
+
+    <section class="st__section" aria-labelledby="st-refusal">
+      <h2 class="type-h3" id="st-refusal">{start.refusal_heading}</h2>
+      <p class="type-body measure st__lede">{start.refusal_body}</p>
+      <RefusalCard
+        quantity={transcript.firstRefusal.quantity}
+        reason={transcript.firstRefusal.reason}
+        detail={transcript.firstRefusal.detail}
+        remedy={transcript.planRemedy}
+        density="full"
+        as="h3"
+      />
+      <p class="st__note type-body measure">{start.refusal_note}</p>
+      <div class="st__block">
+        <CodeBlock code={extraCommand} lang="bash" label={extraCommand} />
+      </div>
+      <div class="st__block">
+        <CodeBlock
+          code={transcript.readSource}
+          lang="python"
+          filename="read.py"
+          output={transcript.readOutput}
+        />
+      </div>
+    </section>
+
+    <!--
+      code-block gives its CODE pane role="group", tabindex="0" and a name, and
+      gives its OUTPUT pane neither. On every other page the output is a number
+      and never scrolls, so the gap has never shown. Here the reports are a
+      hundred and fifty columns wide, the pane scrolls, and axe reports
+      `scrollable-region-focusable` as serious in both themes: the output is
+      present and no keyboard user can reach the right half of it.
+
+      The component is another packet's file. This names the panes on this page
+      only, with the component's own strings and its own pattern, and it applies
+      only where the pane really does scroll so nothing gets a spurious tab
+      stop. The component should carry this; that is reported rather than fixed
+      here.
+    -->
+    <script is:inline define:vars={{ regionAria }}>
+      for (const pane of document.querySelectorAll("[data-code-block] .cb__output-body")) {
+        if (pane.scrollWidth <= pane.clientWidth) continue;
+        pane.setAttribute("role", "group");
+        pane.setAttribute("tabindex", "0");
+        pane.setAttribute("aria-label", regionAria);
+      }
+    </script>
+
+    <section class="st__section" aria-labelledby="st-next">
+      <h2 class="type-h3" id="st-next">{start.next_heading}</h2>
+      <ul class="st__links type-body">
+        {destinations.map((d) => <li><a href={d.href}>{d.label}</a></li>)}
+        <li><a href="/see/">{start.next_back_reference}</a></li>
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .st {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
+  }
+  .st__section {
+    margin-top: var(--space-7);
+    min-width: 0;
+  }
+  .st__section h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+  }
+  .st__section p {
+    color: var(--ink-2);
+  }
+  .st__lede {
+    margin: 0 0 var(--space-4);
+  }
+  .st__note {
+    margin: var(--space-4) 0 0;
+  }
+  .st__block {
+    margin-top: var(--space-4);
+  }
+
+  /* The output goes UNDER the command on this page, at every width, instead of
+     beside it above --bp-lg.
+     Found by opening the 1440 capture: `reward-lens capabilities` prints a
+     hundred columns and the card renderer prints a hundred and fifty, and in a
+     half-width pane every line was cut mid-word at the right edge. The pane
+     scrolls, so nothing was lost, but a first-run page whose every output looks
+     truncated is a page that reads as broken on the one screen it exists to
+     make convincing. Two panes is the right default for a snippet whose output
+     is a number; these outputs are reports.
+     The tokens are the component's own, so this changes the axis and nothing
+     else, and it does not touch the component. */
+  .st__block :global(.cb__panes) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .st__block :global(.cb__output) {
+    border-block-start: var(--border-w) solid var(--line);
+    border-inline-start: 0;
+  }
+  .st__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+</style>

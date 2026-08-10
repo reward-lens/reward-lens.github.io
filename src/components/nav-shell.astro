@@ -1,0 +1,293 @@
+---
+import ThemeToggle from "./theme-toggle.astro";
+import { nav, copy } from "../copy";
+
+// The mark is the split beam, DECISIONS.md D-16: a square-bracket aperture
+// emitting two diverging rays. Upper ray is the objective as written, lower ray
+// is the objective as realized, and both are live tokens, which is why it is
+// inlined rather than loaded as an <img>.
+//
+// The wordmark is set live in IBM Plex Mono. The three outlined wordmark SVGs
+// carried the same letterforms at 10 KB each and are deleted.
+//
+// Labels, hrefs and the two landmark names come from copy.yaml `nav:`. Nothing
+// in this file is a typed string.
+//
+// THIS is the header that renders. `SiteHeader.astro` is a v1 twin that nothing
+// imports; the same is true of `site-footer.astro` against `SiteFooter.astro`
+// and of `theme-toggle.astro` against `ThemeToggle.astro`. The pairs are
+// distinguishable only by case, so check `layouts/Base.astro` before editing
+// either one.
+
+const sections = nav.primary;
+
+// The repository link's accessible name is the label copy.yaml already gives
+// that destination in nav.footer_groups, matched by href so the two can never
+// disagree.
+const repoLabel =
+  nav.footer_groups
+    .flatMap((g) => g.items)
+    .find((i) => i.href === copy.urls.repo)?.label ?? copy.urls.repo;
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="nav-shell">
+  <div class="nav-shell__inner wrap">
+    <a href="/" class="nav-shell__home" aria-label={nav.home_aria}>
+      <svg
+        class="nav-shell__mark"
+        viewBox="0 0 32 32"
+        fill="none"
+        aria-hidden="true"
+      >
+        <g stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path class="nav-shell__aperture" d="M7 8.5 L4 8.5 L4 23.5 L7 23.5"
+          ></path>
+          <path class="nav-shell__ray-written" d="M8.8 16 L27 10.5"></path>
+          <path class="nav-shell__ray-realized" d="M8.8 16 L27 21.5"></path>
+        </g>
+        <circle class="nav-shell__origin" cx="8.8" cy="16" r="1.6"></circle>
+      </svg>
+      <span class="nav-shell__wordmark type-mono-lg">{copy.meta.site_name}</span>
+    </a>
+
+    <nav class="nav-shell__nav" aria-label={nav.primary_aria}>
+      {
+        sections.map((s) => (
+          <a
+            href={s.href}
+            class="nav-shell__link type-body-sm"
+            aria-current={isCurrent(s.href) ? "page" : undefined}
+          >
+            {s.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="nav-shell__controls">
+      <a
+        href={copy.urls.repo}
+        class="nav-shell__control"
+        aria-label={repoLabel}
+      >
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+          ></path>
+        </svg>
+      </a>
+
+      <ThemeToggle />
+
+      <details class="nav-shell__menu">
+        <summary class="nav-shell__control" aria-label={nav.primary_aria}>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M3 6h18M3 12h18M3 18h18"></path>
+          </svg>
+        </summary>
+        <nav class="nav-shell__drawer" aria-label={nav.primary_aria}>
+          {
+            sections.map((s) => (
+              <a
+                href={s.href}
+                class="nav-shell__drawer-link type-body"
+                aria-current={isCurrent(s.href) ? "page" : undefined}
+              >
+                {s.label}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav-shell {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background: var(--ground);
+    border-bottom: var(--border-w) solid var(--line);
+  }
+  .nav-shell__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding-block: var(--space-2);
+  }
+
+  /* --- the mark and the wordmark --- */
+  .nav-shell__home {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .nav-shell__mark {
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+    flex: none;
+  }
+  .nav-shell__aperture,
+  .nav-shell__origin {
+    stroke: var(--ink);
+  }
+  .nav-shell__origin {
+    fill: var(--ink);
+  }
+  .nav-shell__ray-written {
+    stroke: var(--written);
+  }
+  .nav-shell__ray-realized {
+    stroke: var(--realized);
+  }
+  .nav-shell__wordmark {
+    white-space: nowrap;
+  }
+
+  /* Below --bp-xs the wordmark and the controls do not both fit, and what the
+     browser did about it was let them overlap: measured at 320, the wordmark's
+     box runs 56..154 and the controls begin at 140, so the last letter of
+     "reward-lens" sat under the GitHub button on every page of the site.
+     `.nav-shell__home` carries min-width: 0, so its box shrank as flexbox asks;
+     the wordmark inside it is `white-space: nowrap` and spilled out of it.
+
+     The arithmetic, at the smallest width the overflow gate tests: 20 page pad
+     + 24 mark + 12 mark-to-wordmark gap + 98 wordmark + 24 inner gap + 160
+     controls + 20 page pad = 358px. Every term is a token at its floor already
+     (--page-pad clamps to 1.25rem at 320, the control gap is --space-2), so no
+     rearrangement of gaps reaches 320 and something has to go. The mark is the
+     identity and the three controls are the only navigation at this width, so
+     it is the word that goes. --bp-xs is 360 rather than 358 for the two pixels
+     of margin, and the token records the same arithmetic. */
+  @media (max-width: 22.4375rem) /* --bp-xs */ {
+    .nav-shell__wordmark {
+      display: none;
+    }
+  }
+
+  /* --- the sections --- */
+  .nav-shell__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-inline-start: auto;
+    min-width: 0;
+  }
+  .nav-shell__link {
+    color: var(--ink-2);
+    text-decoration: none;
+    padding-block: var(--space-2);
+    white-space: nowrap;
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .nav-shell__link:hover {
+    color: var(--ink);
+  }
+  .nav-shell__link[aria-current="page"] {
+    color: var(--ink);
+    box-shadow: inset 0 calc(-1 * var(--border-w-accent)) 0 var(--ink);
+  }
+
+  /* --- the controls --- */
+  .nav-shell__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: none;
+  }
+  .nav-shell__control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--space-7);
+    block-size: var(--space-7);
+    color: var(--ink-2);
+    background: transparent;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-2);
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+    transition: color var(--dur-1) var(--curve-ui),
+      background-color var(--dur-1) var(--curve-ui);
+  }
+  .nav-shell__control:hover {
+    color: var(--ink);
+    background: var(--surface-3);
+  }
+  .nav-shell__control svg {
+    /* 24px inside a 48px box. At 16px the glyph floated in its border and the
+       control read as empty. */
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+  }
+  .nav-shell__control::-webkit-details-marker {
+    display: none;
+  }
+
+  /* --- the small-screen drawer. A <details>, so it opens with scripting off --- */
+  .nav-shell__menu {
+    display: none;
+  }
+  .nav-shell__drawer {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--ground);
+    border-bottom: var(--border-w) solid var(--line);
+    padding: var(--space-3) var(--page-pad) var(--space-5);
+    z-index: var(--z-overlay);
+  }
+  /* No divider rule between these. They are focusable, and a rule drawn on a
+     focusable edge has to be --line-control, which at 3:1 is far too loud for
+     six stacked separators. Vertical space does the same job. */
+  .nav-shell__drawer-link {
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    /* min-block-size already guarantees the 48px target; padding on top of it
+       made six items 384px tall, which is most of a phone screen. */
+    min-block-size: var(--space-7);
+  }
+  .nav-shell__drawer-link[aria-current="page"] {
+    color: var(--ink);
+    box-shadow: inset var(--border-w-accent) 0 0 var(--ink);
+    padding-inline-start: var(--space-3);
+  }
+
+  /* Below --bp-md the six sections stop fitting beside the mark. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .nav-shell__nav {
+      display: none;
+    }
+    .nav-shell__controls {
+      margin-inline-start: auto;
+    }
+    .nav-shell__menu {
+      display: block;
+    }
+  }
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .nav-shell__controls {
+      margin-inline-start: var(--space-5);
+    }
+  }
+</style>

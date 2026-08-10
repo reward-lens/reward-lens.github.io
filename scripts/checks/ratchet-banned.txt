@@ -1,0 +1,32 @@
+# Gate 7's ratchet: banned identifiers in rendered output that this repository cannot fix.
+#
+# One line per hit: owning packet | date recorded | upstream source | route | identifier.
+#
+# Every entry is on /docs/api/, which scripts/build_api_ref.py generates by
+# running griffe over the shipped reward_lens source and rendering its docstrings
+# verbatim. The identifiers below are the LIBRARY's, in the library's own
+# docstrings, and they are what help() prints for anyone who pip-installed it.
+# Editing the site's copy would make the API reference disagree with the package
+# and would be undone by the next generator run. C-10, which gates 5 and 9 both
+# carry at this same route: the site does not silently correct the prose of a
+# page it ports.
+#
+# They are still defects. D-05 is right that a reader cannot resolve "(E16)".
+# The fix is a docstring change in reward-lens/reward-lens, and each line below
+# names the file to change.
+#
+# THIS LIST MAY SHRINK AND MUST NOT GROW. A hit that is not here fails the build.
+# It is a ratchet and not an allow-list: an allow-list would also swallow the
+# (E20) that the next release's docstrings introduce.
+#
+# Re-record after an upstream release lands:  node scripts/checks/banned.mjs --record
+
+qual/docs-vocab | 2026-08-11 | src/reward_lens/core/types.py, core/gates.py | /docs/api/core/ | E19
+qual/docs-vocab | 2026-08-11 | src/reward_lens/interventions/edit.py | /docs/api/interventions/ | E17
+qual/docs-vocab | 2026-08-11 | src/reward_lens/measure/battery/feature.py | /docs/api/measure/ | E12
+qual/docs-vocab | 2026-08-11 | src/reward_lens/measure/battery/patch.py, path.py | /docs/api/measure/ | E15
+qual/docs-vocab | 2026-08-11 | src/reward_lens/measure/battery/snr.py | /docs/api/measure/ | E16
+qual/docs-vocab | 2026-08-11 | src/reward_lens/measure/battery/geometry.py | /docs/api/measure/ | E18
+qual/docs-vocab | 2026-08-11 | src/reward_lens/measure/base.py | /docs/api/measure/ | R3
+qual/docs-vocab | 2026-08-11 | src/reward_lens/signals/base.py, classifier.py | /docs/api/signals/ | R3
+qual/docs-vocab | 2026-08-11 | src/reward_lens/signals/base.py, process.py | /docs/api/signals/ | R4

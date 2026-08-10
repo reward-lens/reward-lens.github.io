@@ -1,0 +1,94 @@
+{
+ "generator": "build_grader_cards",
+ "source": "scripts/build_grader_cards.py",
+ "values": {
+  "bare_handlers": {
+   "is_equiv": 3,
+   "swebench": 0,
+   "verl_gsm8k": 0,
+   "verl_search_r1": 0
+  },
+  "field_order": [
+   "coverage",
+   "surviving mutants",
+   "metamorphic violations",
+   "sensitivity profile",
+   "false-positive catalogue",
+   "silent-zero rate",
+   "flakiness spread",
+   "exploit-family accounting",
+   "variance components",
+   "effective group size",
+   "curl mass",
+   "Afriat index",
+   "abstention channel"
+  ],
+  "fields_per_card": 13,
+  "full_access_by_reason": {
+   "ABOVE_LOD_BELOW_LOQ": 1,
+   "RECORD_INCOMPLETE": 21,
+   "SUBSTRATE_MISMATCH": 8
+  },
+  "full_access_totals": {
+   "fields": 52,
+   "read": 22,
+   "refused": 30
+  },
+  "killed_mutants": {
+   "is_equiv": 0,
+   "swebench": 2,
+   "verl_gsm8k": 24,
+   "verl_search_r1": 26
+  },
+  "log_only_by_reason": {
+   "ABOVE_LOD_BELOW_LOQ": 1,
+   "ACCESS_INSUFFICIENT": 32,
+   "RECORD_INCOMPLETE": 13,
+   "SUBSTRATE_MISMATCH": 4
+  },
+  "log_only_read_per_card": {
+   "is_equiv": 0,
+   "swebench": 0,
+   "verl_gsm8k": 1,
+   "verl_search_r1": 1
+  },
+  "log_only_surviving_fields": [
+   "exploit-family accounting"
+  ],
+  "log_only_totals": {
+   "fields": 52,
+   "read": 2,
+   "refused": 50
+  },
+  "metamorphic_applicable_pairs": {
+   "is_equiv": 378,
+   "swebench": 0,
+   "verl_gsm8k": 430,
+   "verl_search_r1": 362
+  },
+  "metamorphic_violations": {
+   "is_equiv": 259,
+   "swebench": 0,
+   "verl_gsm8k": 122,
+   "verl_search_r1": 2
+  },
+  "mutation_scores": {
+   "is_equiv": 0.0,
+   "swebench": 0.033,
+   "verl_gsm8k": 0.4,
+   "verl_search_r1": 0.433
+  },
+  "source_lines": {
+   "is_equiv": 152,
+   "swebench": 295,
+   "verl_gsm8k": 72,
+   "verl_search_r1": 156
+  },
+  "subjects": [
+   "is_equiv",
+   "swebench",
+   "verl_gsm8k",
+   "verl_search_r1"
+  ]
+ }
+}

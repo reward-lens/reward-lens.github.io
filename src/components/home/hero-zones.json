@@ -1,0 +1,63 @@
+{
+  "$comment": [
+    "The hero's text safe zones. DECISIONS.md D-22 puts DOM type over the room,",
+    "and type over a rendered scene needs a contrast guarantee that a token pair",
+    "cannot give: --ground means nothing when the pixels behind the words are",
+    "floor catching spill. So the guarantee is made against rendered pixels, and",
+    "scripts/checks/hero-luminance.mjs (gate 21) reads this file.",
+    "",
+    "WHY THE RECTANGLES ARE WIDER THAN THE TEXT. The gate applies one set of",
+    "fractions at both 1440x900 and 390x844, so each rectangle here is the UNION",
+    "of the measured text box at those two viewports. At 1440 the headline is",
+    "1030x206 at 40,172; at 390 it is 350x158 at 20,137. Neither fraction set",
+    "covers the other, so the union is what actually contains the words at both,",
+    "and it is a stricter constraint than either one alone. Measured in built",
+    "output, not computed from the stylesheet.",
+    "",
+    "WHEN A ZONE FAILS, MOVE THE LIGHT. In order: raise the optical axis, dim",
+    "--hero-fill (0.22, may go to 0.16), narrow HERO_Y.fanExtent, move the",
+    "headline further into the upper left. Adding a panel or a scrim behind the",
+    "type is not on the list and never becomes one."
+  ],
+  "route": "/",
+  "zones": [
+    {
+      "id": "headline-zone",
+      "selector": "h1[data-hero-zone='headline']",
+      "x": 0.027,
+      "y": 0.16,
+      "w": 0.922,
+      "h": 0.258,
+      "padPx": 24
+    },
+    {
+      "id": "subhead-zone",
+      "selector": "[data-hero-zone='subhead']",
+      "x": 0.027,
+      "y": 0.368,
+      "w": 0.922,
+      "h": 0.14,
+      "padPx": 16
+    },
+    {
+      "id": "version-zone",
+      "selector": ".install-strip__version",
+      "x": 0.027,
+      "y": 0.64,
+      "w": 0.852,
+      "h": 0.057,
+      "padPx": 12
+    }
+  ],
+  "ceilings": {
+    "meanLinearLuminance": 0.08,
+    "p95PixelLuminance": 0.16
+  },
+  "lightThemeFloors": {
+    "meanLinearLuminance": 0.82
+  },
+  "exempt": {
+    "selector": "[data-install-strip]",
+    "why": "The install strip carries its own opaque surface and is the one element that is meant to be the brightest thing in the frame."
+  }
+}

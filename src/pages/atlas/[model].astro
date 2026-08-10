@@ -1,192 +1,383 @@
 ---
+/**
+ * /atlas/<subject>/  ·  what the archive holds about one reward model.
+ *
+ * WHAT THIS PAGE USED TO BE, AND WHY IT CHANGED.
+ *
+ * It rendered one row per stored record: 1,231 rows across ten pages whose
+ * first column was a store key. That is 1,231 of the site's machine
+ * identifiers, the single largest concentration anywhere on it, and D-40 ruled
+ * against extending the evidence record's allowance to the atlas because a
+ * catalogue is exactly where the ban does its work.
+ *
+ * The table was also not telling a reader anything. Every one of the 1,231
+ * records is at the same evidence strength, on the same gauge, uncalibrated,
+ * with no interval and no readout, so three of the six columns held the same
+ * word in every row on the site, and 968 rows repeated one key. The remaining
+ * information in it was: how many records of each payload kind exist.
+ *
+ * So it states that, once, and the four constant facts once, and lists the
+ * records the store gave a name to. `scripts/build_atlas.mjs` counts all of it
+ * and withholds any name built out of a campaign identifier, case-insensitively
+ * and with the hyphen optional, because `adjavp organism` is `ADJ-AVP` with the
+ * hyphen dropped and gate 7 would not have caught it.
+ *
+ * THE HEADLINE SLICES ARE THE PAGE'S CONTENT AND THEY STAY. They are real
+ * measured values with a record behind each one, which is the opposite of the
+ * dump they were buried under.
+ *
+ * WHAT IS NOT HERE: the store's exact keys. There is no detail route for these
+ * 1,231 records, so under D-40 the key has nowhere on this site it may be
+ * rendered. The record count, the payload kind and the spend are what the site
+ * can honestly say it holds.
+ *
+ * COPY. Every sentence on this page is bound to `copy.yaml:atlas`. The six that
+ * were typed into this file, and the heading that borrowed `log.cards_heading`
+ * and therefore put "The cards" over a count of stored records, now render from
+ * `subject_*` keys of their own. The numbers inside them are placeholders
+ * filled from atlas.json at the point of use, so this file still types no
+ * measurement and no longer types the prose around one either.
+ */
 import Base from "@layouts/Base.astro";
 import PageHeader from "@components/PageHeader.astro";
-import DataTable from "@components/DataTable.astro";
-import TrustBadge from "@components/TrustBadge.astro";
 import EvidenceChip from "@components/EvidenceChip.astro";
+import { fill } from "@components/base/data";
+import { copy } from "../../copy";
 
 export async function getStaticPaths() {
-  const models = import.meta.glob("../../data/fleet/*.json", { eager: true });
-  return Object.entries(models)
-    .filter(([path]) => !path.endsWith("index.json"))
-    .map(([path, mod]) => ({
-      params: { model: path.split("/").pop()!.replace(".json", "") },
-      props: { model: (mod as any).default ?? mod },
-    }));
+  const { subjects } = await import("@data/atlas.json").then((m) => m.default ?? m);
+  return subjects.map((subject: any) => ({
+    params: { model: subject.slug },
+    props: { subject },
+  }));
 }
 
-const { model } = Astro.props;
+const { subject } = Astro.props;
+const log = copy.log as Record<string, string>;
+const ev = copy.evidence as Record<string, string>;
+const atlasCopy = copy.atlas as Record<string, string>;
+
 const trustLetter = (t: string) =>
-  (({ EXPLORATORY: "E", CALIBRATED: "C", REGISTERED: "R", ADJUDICATED: "A" })[
-    t
+  (({ exploratory: "E", calibrated: "C", registered: "R", adjudicated: "A" })[
+    String(t).toLowerCase()
   ] ?? "E") as "E" | "C" | "R" | "A";
+
+const number = (n: number) => Math.round(n).toLocaleString("en-US");
+
+/* Every number below is read off atlas.json. Nothing is counted here and
+   nothing is typed: the generator counts, this file renders. */
+const { records, named, withheld, kinds, headline } = subject;
+const kindsWithNames = kinds.filter((k: any) => k.names.length > 0);
+
+/* The page's four bound sentences. Each placeholder is filled from the numbers
+   destructured above, so the string lives in copy.yaml and the measurement
+   lives in atlas.json, and neither is typed in this file. */
+const counts = {
+  record_count: number(records),
+  named_count: number(named),
+  withheld_count: number(withheld),
+  gpu_seconds: number(Math.round(subject.gpuSeconds)),
+};
+const lede = fill(atlasCopy.subject_lede, counts);
+const holdsBody = fill(atlasCopy.subject_holds_body, counts);
+const uniformNote = fill(atlasCopy.subject_uniform_note, counts);
+const withheldNote = fill(atlasCopy.subject_withheld_note, counts);
+
+/* The provenance sentence names two routes and has to link them. Splitting the
+   string on its own placeholders keeps the whole sentence in copy.yaml and the
+   link text bound to the pages' own titles: the alternative is three fragments
+   in three keys, which is the same sentence typed twice the moment one of them
+   is edited. The captured group is kept by `split`, so the parts alternate
+   between prose and placeholder name. */
+const provenanceLinks: Record<string, { href: string; label: string }> = {
+  evidence_link: { href: "/evidence/", label: ev.title },
+  archive_link: { href: "/log/", label: log.title },
+};
+const provenanceParts = atlasCopy.subject_provenance.split(
+  /\{\{(evidence_link|archive_link)\}\}/,
+);
+for (const name of Object.keys(provenanceLinks)) {
+  if (!provenanceParts.includes(name)) {
+    throw new Error(
+      `/atlas/${subject.slug}/: copy.yaml:atlas.subject_provenance no longer ` +
+        `carries {{${name}}}. That sentence is the only thing on this page ` +
+        `pointing a reader at the record and the study behind these counts, ` +
+        `and a missing placeholder would drop the link silently rather than ` +
+        `fail the build.`,
+    );
+  }
+}
 ---
 
 <Base
-  title={`${model.slug} · atlas · reward-lens`}
-  description={`Every stored measurement of ${model.slug}, with trust levels and evidence ids.`}
+  title={`${subject.slug} · atlas · reward-lens`}
+  description={`What the v2 campaign archive holds about ${subject.slug}: ${records} records, ${named} of them named.`}
 >
-  <div class="model-wrap">
-    <PageHeader
-      eyebrow="atlas"
-      title={model.slug}
-      lede={`${model.n_entries} stored measurements; ${Math.round(model.total_gpu_seconds).toLocaleString("en-US")} GPU-seconds metered, summed over this model\u2019s records (the method page groups spend by arc, a different total).`}
-    />
+  <div class="wrap sub">
+    <PageHeader eyebrow={atlasCopy.title} title={subject.slug} lede={lede} />
 
-    <p class="model-hf">
-      weights:{" "}
-      <a href={`https://huggingface.co/${model.hf_id}`}
-        ><code>{model.hf_id}</code></a
-      >
+    <p class="sub__hf type-body-sm">
+      <a href={`https://huggingface.co/${subject.hfId}`}>{subject.hfId}</a>
     </p>
 
     {
-      model.headline.filter((h: any) => h.rows.length > 0).map((h: any) => (
-        <section class="headline-block">
-          <h2>{h.name}</h2>
-          <DataTable compact>
-            <table>
-              <thead>
-                <tr>
-                  <th>Metric</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
+      headline.length > 0 && (
+        <section class="sub__section" aria-labelledby="sub-readings">
+          <h2 class="type-h3" id="sub-readings">{atlasCopy.subject_readings_heading}</h2>
+          {headline.map((h: any) => (
+            <div class="sub__slice">
+              <h3 class="sub__slice-name type-mono-label">{h.name}</h3>
+              <dl class="sub__metrics">
                 {h.rows.map((r: any) => (
-                  <tr>
-                    <td>
-                      <code>{r.metric}</code>
-                    </td>
-                    <td>
+                  <div class="sub__metric">
+                    <dt class="type-body-sm">{r.metric}</dt>
+                    <dd>
                       <EvidenceChip
                         value={r.value}
                         trust={trustLetter(h.trust)}
-                        evidenceId={h.evidence_id}
+                        evidenceId={h.evidenceId}
                         observable={h.name}
-                        subject={model.slug}
+                        subject={subject.slug}
                       />
-                    </td>
-                  </tr>
+                    </dd>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </DataTable>
+              </dl>
+            </div>
+          ))}
         </section>
-      ))
+      )
     }
 
-    <section class="entries-block">
-      <h2>Every stored observable</h2>
-      <p class="entries-note">
-        The full card: one row per stored Evidence about this model, built with
-        <code>reward_lens.artifacts.card.build_card</code> against the merged
-        campaign store. Values that are payloads (vectors, tables, captures)
-        show their shape. These ids name records in the store itself, whose
-        payload arrays are too large to host; the records this site cites as
-        receipts resolve at <a href="/evidence/">/evidence/</a>.
-      </p>
-      <details class="entries-details">
-      <summary>Show all rows</summary>
-      <DataTable compact stickyFirst>
-        <table>
-          <thead>
-            <tr>
-              <th>Observable</th>
-              <th>Value</th>
-              <th>Trust</th>
-              <th>Gauge</th>
-              <th>Calibrated</th>
-              <th>Evidence</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              model.entries.map((e: any) => (
-                <tr>
-                  <td>
-                    <code>{e.observable}</code>
-                  </td>
-                  <td class="entry-value">
-                    <code>{e.value_repr}</code>
-                  </td>
-                  <td>
-                    <TrustBadge trust={trustLetter(e.trust)} />
-                  </td>
-                  <td>{e.gauge}</td>
-                  <td>{e.calibrated ? "yes" : "no"}</td>
-                  <td>
-                    <code class="entry-ev">{e.evidence_id}</code>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </DataTable>
-      </details>
+    <section class="sub__section" aria-labelledby="sub-holds">
+      <h2 class="type-h3" id="sub-holds">{atlasCopy.subject_holds_heading}</h2>
+      <p class="sub__lede type-body measure">{holdsBody}</p>
+
+      {/* A table again. It was a description list for one reason: a count
+          column needs a header, copy.yaml had no word for "how many", and
+          borrowing `atlas.status_implemented` put IMPLEMENTED over a column of
+          record counts, which reads as a claim that 242 things are implemented.
+          `atlas.count_label` is that word. The corner cell is empty because the
+          row headers are named by the caption, which is the section's own
+          heading rather than a second string saying the same thing. */}
+      <table class="sub__kinds">
+        <caption class="visually-hidden">{atlasCopy.subject_holds_heading}</caption>
+        <thead>
+          <tr>
+            <td class="sub__kind-corner"></td>
+            <th scope="col" class="sub__kind-th type-mono-label">
+              {atlasCopy.count_label}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            kinds.map((k: any) => (
+              <tr class="sub__kind">
+                <th scope="row" class="sub__kind-name type-body-sm">
+                  {k.kind}
+                </th>
+                <td class="sub__kind-count type-mono-base">{number(k.count)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <p class="sub__note type-body-sm measure">{uniformNote}</p>
+      {
+        withheld > 0 && (
+          <p class="sub__note type-body-sm measure">{withheldNote}</p>
+        )
+      }
     </section>
 
-    <p class="model-provenance">
-      Source: the merged campaign evidence store, opened read-only; card built
-      at site build time. The store itself is not published; its projections
-      and provenance manifest are in the
-      <a href="https://github.com/reward-lens/reward-lens.github.io"
-        >site repository</a
-      >.
+    {
+      kindsWithNames.length > 0 && (
+        <section class="sub__section" aria-labelledby="sub-named">
+          <h2 class="type-h3" id="sub-named">{atlasCopy.subject_named_heading}</h2>
+          <dl class="sub__named">
+            {kindsWithNames.map((k: any) => (
+              <div class="sub__named-row">
+                <dt class="sub__named-kind type-mono-sm">{k.kind}</dt>
+                <dd class="sub__named-list">
+                  <ul>
+                    {k.names.map((n: string) => (
+                      <li class="type-body-sm">{n}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    <p class="sub__provenance type-body-sm measure">
+      {
+        provenanceParts.map((part) =>
+          part in provenanceLinks ? (
+            <a href={provenanceLinks[part].href}>{provenanceLinks[part].label}</a>
+          ) : (
+            part
+          ),
+        )
+      }
     </p>
   </div>
 </Base>
 
 <style>
-  .model-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .sub {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
   }
-  .model-hf {
-    margin: 0 0 var(--sp-8);
-    font-size: var(--text-sm);
+  .sub__hf {
+    margin: 0 0 var(--space-6);
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .sub__section {
+    margin-top: var(--space-7);
+    min-width: 0;
+  }
+  .sub__section h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+  }
+  .sub__lede {
+    margin: 0 0 var(--space-5);
     color: var(--ink-2);
   }
-  .headline-block {
-    margin-bottom: var(--sp-8);
-    max-width: 40rem;
-  }
-  .headline-block h2 {
-    font-size: var(--text-base);
-    font-weight: 600;
-    margin: 0 0 var(--sp-3);
-    font-family: var(--font-mono);
-  }
-  .entries-block h2 {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    margin: var(--sp-12) 0 var(--sp-2);
-  }
-  .entries-note {
+  .sub__note {
+    margin: var(--space-4) 0 0;
     color: var(--ink-2);
-    font-size: var(--text-sm);
-    max-width: var(--measure-prose);
-    margin: 0 0 var(--sp-4);
   }
-  .entries-details summary {
-    cursor: pointer;
-    font-size: var(--text-sm);
-    color: var(--info);
-    padding: var(--sp-2) 0;
+
+  .sub__slice {
+    margin-bottom: var(--space-6);
+    min-width: 0;
   }
-  .entry-value code {
-    font-size: var(--text-xs);
+  .sub__slice-name {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+  .sub__metrics {
+    margin: 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .sub__metric {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .sub__metric dt {
+    margin: 0;
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .sub__metric dd {
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* Two columns and no horizontal scroll: the payload kind is a short word and
+     the count is at most four digits, so this sits inside the prose measure at
+     every width and the failure /atlas/'s catalogue had cannot arise here. */
+  .sub__kinds {
+    inline-size: 100%;
+    max-inline-size: min(var(--measure-prose), 100%);
+    border-collapse: collapse;
+    text-align: start;
+    min-width: 0;
+  }
+  .sub__kind-corner {
+    border-bottom: var(--border-w) solid var(--line-strong);
+  }
+  .sub__kind-th {
+    text-align: end;
+    padding: var(--space-2) 0 var(--space-2) var(--space-4);
+    border-bottom: var(--border-w) solid var(--line-strong);
+    color: var(--ink-3);
+    vertical-align: bottom;
+  }
+  .sub__kind-name {
+    text-align: start;
+    font-weight: inherit;
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .sub__kind-count {
+    text-align: end;
+    padding: var(--space-2) 0 var(--space-2) var(--space-4);
+    border-bottom: var(--border-w) solid var(--line);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .sub__named {
+    margin: 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .sub__named-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .sub__named-kind {
+    margin: 0;
+    color: var(--ink-3);
+    min-width: 0;
+  }
+  .sub__named-list {
+    margin: 0;
+    min-width: 0;
+  }
+  .sub__named-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .sub__named-list li {
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  .sub__provenance {
+    margin-top: var(--space-7);
     color: var(--ink-3);
   }
-  .entry-ev {
-    font-size: var(--text-xs);
-  }
-  .model-provenance {
-    margin-top: var(--sp-8);
-    font-size: var(--text-sm);
-    color: var(--ink-3);
-    max-width: var(--measure-prose);
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .sub__metric {
+      grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+      align-items: baseline;
+    }
+    .sub__named-row {
+      grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
   }
 </style>

@@ -1,0 +1,132 @@
+---
+/**
+ * Trace one rollout.
+ *
+ * Pressing it takes one exact recorded rollout out of the fan and says what the
+ * record holds about it: the advantage the estimator computed, the group mean
+ * that advantage was measured against, and the spread of that group. The id is
+ * built from the record's own step index, group ordinal and position within the
+ * group, so it identifies one row of one artifact and not the nth thing drawn.
+ *
+ * WHERE THE TRACE STOPS, WHICH IS THE POINT. A reader following one rollout
+ * into the update expects the next line to be that rollout's share of the
+ * gradient. It does not exist. The record stores no per-rollout gradient, no
+ * per-token advantage and no token count, so the trace ends at the advantage
+ * and the control says so rather than continuing into a number that was never
+ * measured. That sentence is the honest half of this control and it is
+ * rendered, not implied.
+ *
+ * The rollouts are the eight of one recorded step. `EVIDENCE-VERDICTS.md` §4
+ * verified that step's eight signed values against the fixture by hand, so it
+ * is the one step in the record whose contents were checked outside the
+ * generator.
+ *
+ * The button steps through them in the record's own order. Its accessible name
+ * says so, the currently traced rollout is named in text beside it, and every
+ * row is in the document, so a reader with no scripting reads all eight.
+ */
+import { tracedRollouts, updateStepFacts, signed, group } from "./facts";
+
+interface Props {
+  class?: string;
+}
+const { class: extraClass = "" } = Astro.props;
+
+const rows = tracedRollouts(0);
+const step = updateStepFacts(0);
+const summaryId = "scene-trace-summary";
+---
+
+<div class:list={["trace", extraClass]}>
+  <div class="trace__actions">
+    <button type="button" class="trace__button" data-scene-trace-step aria-describedby={summaryId}>
+      Trace one rollout
+    </button>
+    <button type="button" class="trace__button trace__button--quiet" data-scene-trace-clear hidden>
+      Clear the trace
+    </button>
+  </div>
+
+  <div class="trace__summary" id={summaryId} aria-live="polite">
+    <p class="type-body-sm" data-scene-trace-empty>
+      {rows.length} rollouts were recorded at this step, in {new Set(rows.map((r) => r.groupOrdinal)).size}
+      groups. Tracing one isolates its ray and reads its row out of the record. Press
+      <kbd>Escape</kbd> to clear a trace.
+    </p>
+
+    {
+      rows.map((row) => (
+        <p class="type-body-sm" data-scene-trace-row={row.id} hidden>
+          Rollout <code>{row.id}</code>: recorded advantage {signed(row.advantage)}, against a group
+          mean of {row.groupMean.toFixed(3)} with a standard deviation of {row.groupStd.toFixed(3)} over{" "}
+          {row.groupSize} rollouts. That advantage is what the optimizer saw for this rollout.
+        </p>
+      ))
+    }
+
+    <p class="trace__limit type-body-sm">
+      The trace stops there. This record stores the clipped gradient norm for the whole step,{" "}
+      {step.gradNormClipped.toFixed(3)} over {step.trajectoryCount} rollouts, and no per-rollout gradient
+      at all. Per-token advantage is empty on all {group(1600)} rollouts and the recorded token count is
+      zero throughout, so there is no position inside this rollout to point at and none is drawn.
+    </p>
+  </div>
+</div>
+
+<style>
+  .trace {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .trace__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .trace__button {
+    background: none;
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    padding: var(--space-2) var(--space-4);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: var(--type-body-sm-size);
+    cursor: pointer;
+  }
+  .trace__button--quiet {
+    color: var(--ink-2);
+  }
+  .trace__button[hidden] {
+    display: none;
+  }
+  .trace__button:hover,
+  .trace__button:focus-visible {
+    border-color: var(--line-strong);
+  }
+  .trace__button:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .trace__summary {
+    display: grid;
+    gap: var(--space-3);
+    border-inline-start: var(--border-w-accent) solid var(--line-strong);
+    padding-inline-start: var(--space-4);
+    min-width: 0;
+  }
+  .trace__summary p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .trace__summary p[hidden] {
+    display: none;
+  }
+  .trace__summary code {
+    font-family: var(--font-mono);
+  }
+  .trace__limit {
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+</style>

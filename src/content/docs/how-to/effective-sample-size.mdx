@@ -4,6 +4,8 @@ description: Your eval set has thirty rows. How many independent data points is 
 section: how-to
 order: 15
 source: docs/content/how-to/effective-sample-size.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -52,4 +54,4 @@ The figure shows the thirty rows on the left folding into six distinct observati
 
 This is why every measurement in reward-lens carries its effective sample size on its uncertainty, not just a raw $n$. A number computed on thirty clones and a number computed on thirty independent rows are not the same evidence, and the receipt says so.
 
-See also: [the evidence store](/docs/discipline/evidence-store/), [the anatomy of evidence](/docs/discipline/anatomy-of-evidence/), [`effective_sample_size`](/docs/reference/stats/#reward_lens.stats.ess.effective_sample_size), [`detect_clones`](/docs/reference/stats/#reward_lens.stats.ess.detect_clones).
+See also: [the evidence store](/docs/discipline/evidence-store/), [the anatomy of evidence](/docs/discipline/anatomy-of-evidence/), [`effective_sample_size`](/docs/api/stats/#reward_lens.stats.ess.effective_sample_size), [`detect_clones`](/docs/api/stats/#reward_lens.stats.ess.detect_clones).

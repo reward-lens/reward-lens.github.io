@@ -37,15 +37,27 @@ for (const page of pages) {
     ref = ref.split("#")[0].split("?")[0];
     if (!ref) continue;
     if (!ref.startsWith("/")) continue; // relative refs are not used
+    // C-42: `existsSync(file)` is true for a bare DIRECTORY, so any route whose
+    // directory exists for some other reason passed while serving nothing.
+    // `/see/` was green with no dist/see/index.html the moment P4 built
+    // /see/run/, and every unbuilt route family passes the same way. It is the
+    // same shape as the redirect gate asserting that destinations exist instead
+    // of that sources resolve (C-3): a check confirming a path is present
+    // rather than that a reader gets a page.
+    //
+    // A reference resolves only if it reaches a FILE. A directory resolves
+    // through its index.html and through nothing else.
     const file = join(dist, decodeURIComponent(ref));
-    const ok =
-      existsSync(file) ||
-      existsSync(join(file, "index.html")) ||
-      existsSync(file + ".html");
+    const isFile = (p) => existsSync(p) && statSync(p).isFile();
+    const ok = isFile(file) || isFile(join(file, "index.html")) || isFile(file + ".html");
     if (!ok) {
       const key = ref;
       if (!seenMissing.has(key)) {
-        console.error(`FAIL broken internal ref ${ref} (first seen in ${page})`);
+        const why =
+          existsSync(file) && statSync(file).isDirectory()
+            ? ` (dist${ref} is a directory with no index.html, so it serves nothing)`
+            : "";
+        console.error(`FAIL broken internal ref ${ref}${why} (first seen in ${page})`);
         seenMissing.add(key);
         failures += 1;
       }

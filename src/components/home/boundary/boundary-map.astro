@@ -1,0 +1,153 @@
+---
+/**
+ * What this has earned, and what it has not. A map, not an apology.
+ *
+ * The two columns are built identically and weighted identically: same type,
+ * same rule, same measure, same ink. Neither is styled as a warning and neither
+ * is styled as a win. A reader deciding whether to spend an afternoon on this
+ * library needs both halves at the same resolution, and putting the right-hand
+ * column in smaller or greyer type would be the one treatment that makes a
+ * stated limit read as an embarrassment rather than as a specification.
+ *
+ * Every line comes from copy.yaml:home.boundary. Nothing is added, reordered or
+ * summarised here.
+ */
+import { copy } from "../../../copy";
+
+interface Props {
+  /** The section's own heading tag. The two column heads sit below it. */
+  headingLevel?: 2 | 3;
+  id?: string;
+  /** Where "Everything this does not do" goes. */
+  href?: string;
+  class?: string;
+}
+
+const {
+  headingLevel = 2,
+  id = "boundary",
+  href = "/limits/",
+  class: extraClass = "",
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const ColumnHeading = `h${headingLevel + 1}` as "h3" | "h4";
+const headingId = `${id}-heading`;
+
+const home = copy.home as Record<string, any>;
+const boundary = home.boundary;
+
+const columns = [
+  { key: "works", label: boundary.works_label, items: boundary.works as string[] },
+  { key: "not-yet", label: boundary.not_label, items: boundary.not_yet as string[] },
+];
+---
+
+<section
+  class:list={["boundary", extraClass]}
+  id={id}
+  aria-labelledby={headingId}
+>
+  <Heading class="boundary__heading type-h2" id={headingId}>
+    {boundary.heading}
+  </Heading>
+
+  <div class="boundary__map">
+    {
+      columns.map((column) => (
+        <section
+          class="boundary__column"
+          aria-labelledby={`${id}-${column.key}`}
+          data-column={column.key}
+        >
+          <ColumnHeading
+            class="boundary__label type-mono-label"
+            id={`${id}-${column.key}`}
+          >
+            {column.label}
+          </ColumnHeading>
+          <ul class="boundary__list">
+            {column.items.map((item) => (
+              <li class="boundary__item type-body">{item}</li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <p class="boundary__more type-body">
+    <a href={href}>{boundary.link}</a>
+  </p>
+</section>
+
+<style>
+  .boundary {
+    display: grid;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+  .boundary__heading {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+
+  .boundary__map {
+    display: grid;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .boundary__map {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--grid-margin-gap);
+      align-items: start;
+    }
+  }
+
+  .boundary__column {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    min-width: 0;
+    border-block-start: var(--border-w) solid var(--line-strong);
+    padding-block-start: var(--space-4);
+  }
+
+  .boundary__label {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .boundary__list {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 0;
+  }
+  /* One row per capability, separated by the rule rather than by a bullet: the
+     two columns are read across as much as down, and a marker glyph on one
+     side would have to mean something on the other. */
+  .boundary__item {
+    margin: 0;
+    color: var(--ink);
+    padding-block-end: var(--space-4);
+    border-block-end: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .boundary__item:last-child {
+    padding-block-end: 0;
+    border-block-end: none;
+  }
+
+  .boundary__more {
+    margin: 0;
+  }
+  /* A link tabbed to must not land under the sticky header. */
+  .boundary__more a {
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+  }
+</style>

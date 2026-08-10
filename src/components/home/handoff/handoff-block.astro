@@ -1,0 +1,133 @@
+---
+/**
+ * The end of the page: install it, ask it what your own run can support, and
+ * three routes onward.
+ *
+ * TWO COMMANDS, AND THEY ARE NOT THE SAME KIND OF THING. The install command
+ * is the site's, and it lives in copy.yaml. The capability report is the
+ * library's, and it is read back out of generated data rather than typed here:
+ * the library prints it inside its own refusal remedies, every one of which
+ * ships in `src/data/grader-cards.json`. If the library renames the command
+ * this follows it, and if it stops naming it the row disappears rather than
+ * going stale.
+ *
+ * The routes are three because there are three real destinations. The hosted
+ * notebook has a label in copy.yaml and no URL anywhere in it, so it is not
+ * rendered: a link that goes nowhere is worse than a route a reader never sees.
+ */
+import InstallStrip from "@components/base/install-strip.astro";
+import CodeBlock from "@components/base/code-block.astro";
+import { copy, urls } from "../../../copy";
+import { capabilityCommand } from "../proof/proof-data";
+
+interface Props {
+  headingLevel?: 2 | 3;
+  id?: string;
+  /** Where "Follow one example end to end" goes. */
+  tutorialHref?: string;
+  /** Where "Inspect the instrument atlas" goes. */
+  atlasHref?: string;
+  /** Where "Read the documentation" goes. Defaults to copy.yaml:urls.docs. */
+  docsHref?: string;
+  class?: string;
+}
+
+const {
+  headingLevel = 2,
+  id = "start",
+  tutorialHref = "/start/",
+  atlasHref = "/atlas/",
+  docsHref = urls.docs,
+  class: extraClass = "",
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const headingId = `${id}-heading`;
+
+const home = copy.home as Record<string, any>;
+const next = home.install_next;
+const command = capabilityCommand();
+
+const routes = [
+  { label: next.tutorial, href: tutorialHref },
+  { label: next.docs, href: docsHref },
+  { label: next.evidence, href: atlasHref },
+];
+---
+
+<section class:list={["handoff", extraClass]} id={id} aria-labelledby={headingId}>
+  <Heading class="handoff__heading type-display-2" id={headingId}>
+    {next.heading}
+  </Heading>
+
+  <div class="handoff__commands">
+    <InstallStrip size="lead" />
+    {
+      command && (
+        <CodeBlock
+          code={command}
+          lang="bash"
+          copyable={false}
+          class="handoff__capability"
+        />
+      )
+    }
+  </div>
+
+  <p class="handoff__body type-body">{next.body}</p>
+
+  <ul class="handoff__routes">
+    {
+      routes.map((route) => (
+        <li class="handoff__route type-body">
+          <a href={route.href}>{route.label}</a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .handoff {
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+    min-width: 0;
+  }
+  .handoff__heading {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+
+  .handoff__commands {
+    display: grid;
+    gap: var(--space-4);
+    width: 100%;
+    max-width: min(var(--measure-command), 100%);
+    min-width: 0;
+  }
+
+  .handoff__body {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-prose), 100%);
+  }
+
+  .handoff__routes {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 0;
+  }
+  .handoff__route {
+    margin: 0;
+    min-width: 0;
+  }
+  /* A link tabbed to must not land under the sticky header. */
+  .handoff__route a {
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+  }
+</style>

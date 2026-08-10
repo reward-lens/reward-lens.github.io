@@ -2,8 +2,10 @@
 title: Tilt and susceptibility
 description: Which feature drifts first when you optimize against the reward model?
 section: training-loops
-order: 46
+order: 71
 source: docs/content/training-loops/tilt-susceptibility.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -52,7 +54,7 @@ Both features are susceptible. The proxy rewards quality and length, so under pr
 
 ## The hack modes are the disagreements
 
-Susceptibility on its own does not tell you which drift is a problem. Growing quality is fine, because the objective you actually want grows with it. Growing length is not, because the objective does not. A hack mode is exactly that disagreement: a feature the proxy loves while the gold objective does not, $\chi_i > 0$ and $\mathrm{Cov}_0(f_i, \text{gold}) \le 0$. Hand [`flag_hack_modes`](/docs/reference/dynamics-loops/#reward_lens.loops.tilt.flag_hack_modes) the gold covariances and it names them:
+Susceptibility on its own does not tell you which drift is a problem. Growing quality is fine, because the objective you actually want grows with it. Growing length is not, because the objective does not. A hack mode is exactly that disagreement: a feature the proxy loves while the gold objective does not, $\chi_i > 0$ and $\mathrm{Cov}_0(f_i, \text{gold}) \le 0$. Hand [`flag_hack_modes`](/docs/api/dynamics-loops/#reward_lens.loops.tilt.flag_hack_modes) the gold covariances and it names them:
 
 ```python
 gold_cov = np.mean((feats - feats.mean(0)) * (gold - gold.mean())[:, None], axis=0)
@@ -66,7 +68,7 @@ Quality has positive susceptibility and positive gold covariance, so it is not f
 
 ## How far the preview holds
 
-The tilt is only a faithful emulator of real optimization while the importance weights have not collapsed onto a handful of samples. Two things break it: pushing $\lambda$ past about half the critical pressure $\lambda_c$, and the effective sample size of the reweighting falling too low. [`critical_lambda_from_tail`](/docs/reference/dynamics-loops/#reward_lens.loops.tilt.critical_lambda_from_tail) estimates the ceiling from the reward's right tail:
+The tilt is only a faithful emulator of real optimization while the importance weights have not collapsed onto a handful of samples. Two things break it: pushing $\lambda$ past about half the critical pressure $\lambda_c$, and the effective sample size of the reweighting falling too low. [`critical_lambda_from_tail`](/docs/api/dynamics-loops/#reward_lens.loops.tilt.critical_lambda_from_tail) estimates the ceiling from the reward's right tail:
 
 ```python
 lam_c = critical_lambda_from_tail(r)
@@ -74,7 +76,7 @@ print(round(lam_c, 4), round(lam_c / 2, 4))
 # 1.1604 0.5802
 ```
 
-The full sweep, [`tilt_sweep`](/docs/reference/dynamics-loops/#reward_lens.loops.tilt.tilt_sweep), emulates the whole $\lambda$ grid by self-normalized importance sampling and refuses, with an `ESSGuardError`, when a requested $\lambda$ exceeds $\lambda_c/2$ or the effective sample size collapses. It would rather name the guard that fired than return a confident number extrapolated from three samples. For the far end of the frontier, past where the tilt is trustworthy, use [best-of-N](/docs/training-loops/best-of-n/), which prices the whole curve exactly.
+The full sweep, [`tilt_sweep`](/docs/api/dynamics-loops/#reward_lens.loops.tilt.tilt_sweep), emulates the whole $\lambda$ grid by self-normalized importance sampling and refuses, with an `ESSGuardError`, when a requested $\lambda$ exceeds $\lambda_c/2$ or the effective sample size collapses. It would rather name the guard that fired than return a confident number extrapolated from three samples. For the far end of the frontier, past where the tilt is trustworthy, use [best-of-N](/docs/training-loops/best-of-n/), which prices the whole curve exactly.
 
 ## What the number is and is not
 

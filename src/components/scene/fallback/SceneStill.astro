@@ -1,0 +1,737 @@
+---
+/**
+ * One case, drawn as the composed still.  ·  DECISIONS.md D-24, SCENE.md §9
+ *
+ * WHAT THIS DRAWS AND WHAT IT DELIBERATELY DOES NOT.
+ * It draws the dispersion and the readout. It does not draw the bench. The
+ * room, the rail, the source, the beam and the dispersing element are the
+ * hand-authored room's, one component over, and the still sits inside that room
+ * rather than repainting it. That is what D-24's ladder actually means: there
+ * is ONE composition and the fidelities differ in what they can render, so a
+ * second bench drawn from a second set of numbers would be two compositions
+ * pretending to be one, and gate 20's 8px agreement would be measuring a
+ * coincidence.
+ *
+ * It also keeps the hero's luminance envelope intact. Gate 21 reads the install
+ * strip's border against the pixels either side of it and C-15 leaves no
+ * headroom at all in the 3.02:1 it currently holds. A still that painted its
+ * own floor and its own rail over the authored ones would double every one of
+ * those surfaces.
+ *
+ * THE UPGRADE OVER THE ROOM IS THE ONLY THING THAT CHANGES. The room draws a
+ * schematic fan: five evenly spaced rays that assert nothing, because the
+ * subject behind the old coloured bands was withdrawn. This draws the fan the
+ * scene manifest actually has a record for, at the geometry
+ * `scripts/dev/build-scene-stills.mjs` derived from that record, with the
+ * transform, the downsample and the source stated beside it.
+ *
+ * THE VERTICAL SCALE IS PINNED, as it is in the room. The fan's viewBox is
+ * 1000 across so an x reads as per-mille of the run, and its height is the
+ * fan's real pixel extent while the element is sized to exactly that many CSS
+ * pixels. A mark's height at the detector is therefore the same number of
+ * pixels at every width, which is what makes it a measurement rather than a
+ * proportion of the window.
+ */
+import { HERO_Y } from "../../home/hero-geometry";
+import type { Still, StillMark } from "./still-data";
+
+interface Props {
+  still: Still;
+  /** True for the case a state shows before a reader chooses. */
+  isDefault?: boolean;
+}
+
+const { still, isDefault = false } = Astro.props;
+
+/*
+ * The fan's viewBox, established by the hand-authored room and reproduced here
+ * rather than re-chosen: 1000 across so a band's x reads as per-mille of the
+ * run, and a height equal to the fan's real pixel extent. Both files write
+ * these two lines because they are the coordinate system the drawing is
+ * expressed in, not a design value; every quantity that lands in it comes from
+ * the generated index.
+ */
+const FAN_W = 1000;
+const fanH = HERO_Y.fanExtent;
+
+/** Generator space (y up from the axis, 0..1) into the viewBox (y down). */
+const vx = (x: number) => (x * FAN_W).toFixed(2);
+const vy = (y: number) => (fanH - y * fanH).toFixed(2);
+
+/**
+ * The plate's first line and the truth mode, as words.
+ *
+ * The truth contract's own rule is that `truthMode` decides what geometry may
+ * exist, so it is stated in text and not carried by styling alone: a reader has
+ * to be able to tell a construction from a measurement without knowing that a
+ * particular grey means one of them.
+ */
+const drawnNote = still.drawn
+  ? `${still.drawn.outputCount} of ${still.drawn.inputCount} drawn, ${still.drawn.method}`
+  : null;
+
+const captionId = `still-caption-${still.caseId}`;
+
+/** Ribbon and trace both become one path; rays and marks stay as many. */
+const ribbonPath = (m: Extract<StillMark, { kind: "ribbon" }>): string => {
+  const top = m.points.map(([x, y, h]) => `${vx(x)},${vy(y + h)}`);
+  const bottom = [...m.points].reverse().map(([x, y, h]) => `${vx(x)},${vy(y - h)}`);
+  return `M${top.join("L")}L${bottom.join("L")}Z`;
+};
+const tracePoints = (points: [number, number][]): string =>
+  points.map(([x, y]) => `${vx(x)},${vy(y)}`).join(" ");
+
+/**
+ * The access gates, taken out of the template.
+ *
+ * A narrowing predicate written inline in an Astro expression is parsed by the
+ * template compiler before the type checker sees it, and `m is Extract<...>`
+ * inside a `{}` block produced eighteen errors that all pointed at the same
+ * arrow. Hoisting it is the fix and it reads better anyway: the template asks
+ * for a list, not for a type assertion.
+ */
+const gates = still.marks.filter(
+  (m): m is Extract<StillMark, { kind: "gate" }> => m.kind === "gate",
+);
+---
+
+<figure
+  class="still"
+  data-scene-still
+  data-case={still.caseId}
+  data-state={still.state}
+  data-truth-mode={still.truthMode}
+  data-default={isDefault ? "true" : undefined}
+  aria-describedby={captionId}
+>
+  {/* --- the dispersion, measured -------------------------------------------
+         Same box as the room's own fan, so the two occupy one place and only
+         one of them is ever painted. --- */}
+  <svg
+    class="still__fan"
+    viewBox={`0 0 ${FAN_W} ${fanH}`}
+    preserveAspectRatio="none"
+    fill="none"
+    focusable="false"
+    aria-hidden="true"
+  >
+    {
+      still.marks.map((m) => {
+        if (m.kind === "xband") {
+          return (
+            <rect
+              class="still__xband"
+              x={vx(m.x0)}
+              y="0"
+              width={vx(m.x1 - m.x0)}
+              height={fanH}
+              style={`--mark:var(${m.token})`}
+            />
+          );
+        }
+        if (m.kind === "band") {
+          return (
+            <rect
+              class="still__band"
+              x="0"
+              y={vy(m.y1)}
+              width={FAN_W}
+              height={Math.max(0.5, (m.y1 - m.y0) * fanH).toFixed(2)}
+              style={`--mark:var(${m.token})`}
+            />
+          );
+        }
+        if (m.kind === "zero") {
+          return (
+            <line
+              class="still__zero"
+              x1="0"
+              y1={vy(m.y)}
+              x2={FAN_W}
+              y2={vy(m.y)}
+              style={`--mark:var(${m.token})`}
+              vector-effect="non-scaling-stroke"
+            />
+          );
+        }
+        if (m.kind === "ribbon") {
+          return <path class="still__ribbon" d={ribbonPath(m)} style={`--mark:var(${m.token})`} />;
+        }
+        if (m.kind === "trace") {
+          return (
+            <polyline
+              class="still__trace"
+              points={tracePoints(m.points)}
+              style={`--mark:var(${m.token})`}
+              vector-effect="non-scaling-stroke"
+            />
+          );
+        }
+        if (m.kind === "rays") {
+          /* Every ray starts at the element's exit face on the axis, which is
+             where the room's beam ends, and lands where the record puts it. */
+          return (
+            <g class="still__rays" style={`--mark:var(${m.token})`}>
+              {m.points.map(([x, y]) => (
+                <line
+                  x1="0"
+                  y1={vy(0)}
+                  x2={vx(x)}
+                  y2={vy(y)}
+                  vector-effect="non-scaling-stroke"
+                />
+              ))}
+            </g>
+          );
+        }
+        if (m.kind === "marks") {
+          /* A third field, where a mark carries one, is the promoted flag. The
+             promoted detector is the one that shipped, and it is the only mark
+             in the room permitted to use the beam's own near-white. */
+          return (
+            <g class="still__marks" style={`--mark:var(${m.token})`}>
+              {m.points.map(([x, y, flag]) => (
+                <line
+                  class:list={["still__mark", flag === 1 && "still__mark--promoted"]}
+                  x1={vx(x)}
+                  y1={vy(y)}
+                  x2={vx(x)}
+                  y2={vy(0)}
+                  vector-effect="non-scaling-stroke"
+                />
+              ))}
+            </g>
+          );
+        }
+        if (m.kind === "ticks") {
+          /* The count IS the reading, so all of them are drawn and the lit ones
+             are lit. They run along the detector's own scale rather than up it:
+             sixty ticks in the fan's 128px of height would be two pixels apart
+             and would read as a texture, which is the same mistake the rail's
+             twelve ticks avoid below --bp-md. */
+          return (
+            <g class="still__ticks" style={`--mark:var(${m.token})`}>
+              {Array.from({ length: m.count }, (_, i) => (
+                <line
+                  class:list={["still__tick", i < m.lit && "still__tick--lit"]}
+                  x1={vx((i + 0.5) / m.count)}
+                  y1={vy(0.34)}
+                  x2={vx((i + 0.5) / m.count)}
+                  y2={vy(i < m.lit ? 0.94 : 0.52)}
+                  vector-effect="non-scaling-stroke"
+                />
+              ))}
+            </g>
+          );
+        }
+        if (m.kind === "absent") {
+          /* Nothing was measured. The detector is drawn empty, which is the
+             true figure: the alternative is a construction that looks like a
+             reading, and the truth contract exists to forbid exactly that. */
+          return (
+            <line
+              class="still__absent"
+              x1="0"
+              y1={vy(0)}
+              x2={FAN_W}
+              y2={vy(0)}
+              style={`--mark:var(${m.token})`}
+              vector-effect="non-scaling-stroke"
+            />
+          );
+        }
+        return null;
+      })
+    }
+  </svg>
+
+  {/* --- the readout, on the floor below the rail ---------------------------
+         Not on the light. D-22 gives the half below the axis to the readout,
+         and the fan is the half above it. --- */}
+  <div class="still__readout" data-still-readout>
+    <p class="still__plate type-mono-label">
+      <span class="still__plate-kind">{still.plateKind}</span>
+      <span class="still__plate-mode" data-truth-mode={still.truthMode}>{still.truthMode}</span>
+    </p>
+    <p class="still__subject type-body-sm">{still.publicLabel}</p>
+
+    <div class="still__measures">
+    {
+      still.readout.length > 0 && (
+        <dl class="still__key" data-rows={still.readout.length}>
+          {still.readout.map((row) => (
+            <div class="still__key-row">
+              <dt class="type-mono-label">{row.label}</dt>
+              <dd class="type-mono-label">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    {
+      gates.map((m) => (
+          <p class="still__gate type-mono-label">
+            <span class="still__gate-label">{m.label}</span>
+            <span class="still__gate-bar" style={`--read:${m.read};--total:${m.total}`}>
+              <span class="still__gate-read"></span>
+            </span>
+            <span>
+              {m.read} of {m.total}
+            </span>
+          </p>
+        ))
+    }
+    </div>
+
+    {/* The sentence and where it came from, in one column.
+        They were two grid children both placed at `grid-row: 3 / span 4`, so
+        they were laid out on top of each other and the capture at 1440 showed
+        the source path printed through the caption's second line. One wrapper
+        is the fix, and it is also the honest structure: a statement and its
+        provenance are one block. */}
+    <div class="still__note">
+      <p class="still__caption type-body-sm" id={captionId}>
+        {still.caption}
+        {drawnNote && <span class="still__drawn"> {drawnNote}.</span>}
+      </p>
+      {
+        still.sourcePath && (
+          <p class="still__source type-mono-label">
+            {still.sourcePath}
+            {still.sourceArtifact && <span class="still__artifact"> · {still.sourceArtifact}</span>}
+          </p>
+        )
+      }
+    </div>
+    <p class="still__caveat visually-hidden">{still.caveat}</p>
+  </div>
+</figure>
+
+<style>
+  /* The still's own box is a zero-height line on the optical axis, exactly as
+     the hand-authored room's is, because it is placed in the same slot and its
+     parent centres it there. Every offset below is measured from that line and
+     uses the custom properties heroCssVars() already put on the layer, so the
+     fan lands in the same place as the room's own to the pixel. */
+  .still {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    block-size: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  /* --- the dispersion ---------------------------------------------------
+     The same box as .optics__fan. Both are stated rather than shared, because
+     the two components are the two fidelities and a shared stylesheet would
+     make a drift in one invisible in the other; gate 20 is what holds them
+     together, and it measures rendered pixels. */
+  .still__fan {
+    position: absolute;
+    left: calc(var(--prism-x) + var(--prism-w) / 2);
+    inline-size: calc(100% - var(--prism-x) - var(--prism-w) / 2 - var(--page-pad));
+    block-size: var(--fan-draw);
+    bottom: 0;
+    overflow: visible;
+  }
+
+  .still__ribbon {
+    fill: var(--mark);
+    opacity: calc(var(--fill, 0.22) * 1.7);
+  }
+  .still__trace {
+    stroke: var(--mark);
+    stroke-width: var(--border-w-accent);
+    stroke-linejoin: round;
+    fill: none;
+    opacity: 0.9;
+  }
+  .still__rays line {
+    stroke: var(--mark);
+    stroke-width: var(--border-w);
+    opacity: calc(var(--fill, 0.22) * 1.5);
+  }
+  .still__zero {
+    stroke: var(--mark);
+    stroke-width: var(--border-w);
+    opacity: 0.75;
+  }
+  .still__band {
+    fill: var(--mark);
+    opacity: 0.5;
+  }
+  .still__xband {
+    fill: var(--mark);
+    opacity: 0.45;
+  }
+  .still__mark {
+    stroke: var(--comparator);
+    stroke-width: var(--border-w-accent);
+    opacity: 0.8;
+  }
+  .still__mark--promoted {
+    stroke: var(--mark);
+    opacity: 1;
+  }
+  .still__tick {
+    stroke: var(--line-strong);
+    stroke-width: var(--border-w);
+  }
+  .still__tick--lit {
+    stroke: var(--mark);
+    stroke-width: var(--border-w-accent);
+  }
+  /* An empty detector. A dashed line is the one place on this site where a
+     stroke style carries meaning rather than colour: there is no value here to
+     colour, and a solid line would read as a reading of zero. */
+  .still__absent {
+    stroke: var(--mark);
+    stroke-width: var(--border-w);
+    stroke-dasharray: var(--space-1) var(--space-2);
+    opacity: 0.7;
+  }
+
+  /* --- the readout ------------------------------------------------------
+     On the floor, right of the install strip's version row, below the rail.
+     The room's own key sits here at narrow widths for the same reason: it is
+     the half of the frame D-22 gives to the readout. */
+  /* THE FLOOR IS SHORTER THAN THE READOUT WANTS TO BE, AND IT IS MEASURED.
+     At 1440x900 the hero is 835px tall, the rail sits 104px under the axis and
+     the axis lands at 58% of it, so everything below the rail has about 250px.
+     A one-column readout came to 279 and the last two lines of the caption
+     were cut off by the hero's own `overflow: hidden`. Nobody saw that in a
+     rule; a capture and a rectangle did.
+
+     So the readout is two columns wherever there is width for two: the key on
+     the left, the sentence on the right, the plate across the top. The tallest
+     part is then the taller of the two rather than their sum. Below --bp-lg
+     there is no width for that, so it stacks and the compression happens in
+     the key instead. */
+  .still__readout {
+    position: absolute;
+    /* --space-4 and not --space-5, with a --space-1 row gap: the public
+       training series' readout ran 13px past the bottom of the room and the
+       policy response 3px, measured with the real face loaded. `--measure-
+       caption` is 84ch and is what actually bounds this column at 1440, so
+       widening the percentage buys nothing; the 20px come from the offset and
+       the two row gaps. */
+    top: calc(var(--rail-y) + var(--space-4));
+    right: var(--page-pad);
+    /* 58% and not 52%: the tallest case here is the public training series,
+       whose key has seven rows and whose caption is nine lines at 480px. That
+       ran to 902 against a room that ends at 900, so the caption's last line
+       was inside `overflow: hidden`. A wider column is the fix rather than a
+       shorter sentence, because the sentence is the part that states what the
+       figure does not establish. */
+    inline-size: min(var(--measure-caption), 58%);
+    display: grid;
+    grid-template-columns: minmax(0, 20ch) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    row-gap: var(--space-1);
+    justify-items: start;
+    align-items: start;
+    text-align: start;
+  }
+  .still__plate,
+  .still__subject {
+    grid-column: 1 / -1;
+  }
+  /* TWO CHILDREN IN ROW THREE, NOT SEVEN AUTO-PLACED ONES.
+     The key, the access bars and the note were separate grid children, so the
+     row track count was whatever the tallest case happened to produce and the
+     note's `grid-row: 3 / span 5` did not cover it: the public training series
+     put its source line past the bottom of the room while the container's own
+     rectangle stayed inside it, so the overflow assertion saw nothing. One
+     wrapper per column makes the readout's height the taller of two things,
+     which is what it was supposed to be. */
+  .still__measures {
+    grid-column: 1;
+    grid-row: 3;
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    inline-size: 100%;
+  }
+  .still__note {
+    grid-column: 2;
+    grid-row: 3;
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+
+  .still__plate {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, below the fan's reach */
+  }
+  .still__plate-kind {
+    color: var(--ink-2);
+  }
+  /* The truth mode is a word, and the border is a second reading of the same
+     word rather than the only one. A construction and a measurement have to be
+     distinguishable in text. */
+  .still__plate-mode {
+    padding-inline: var(--space-2);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-1);
+    color: var(--ink-2);
+  }
+  .still__plate-mode[data-truth-mode="schematic"] {
+    border-style: dashed;
+  }
+
+  .still__subject {
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .still__key {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    inline-size: 100%;
+  }
+  .still__key-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  /* NOTHING READ OUT OF THE RECORD IS RE-CASED.
+     `.type-mono-label` carries `text-transform: uppercase`, which is right for
+     a label someone wrote and wrong for anything the payload supplies. A
+     capture at 1440 showed the source rendered as
+     REWARD-LENS-ASSAY/TESTS/FIXTURES/GRPO_RUN/... which is not the path: paths
+     are case sensitive, and a leaf named `length_reward` is not named
+     LENGTH_REWARD. The type stays mono, at the label's size and tracking; only
+     the transform is refused, and only where a value came from the record. */
+  .still__key dt,
+  .still__key dd,
+  .still__gate,
+  .still__source {
+    text-transform: none;
+  }
+
+  .still__key dt {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground */
+  }
+  .still__key dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .still__gate {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground */
+  }
+  .still__gate-label {
+    inline-size: var(--space-9);
+  }
+  /* What a reader at this access level got, against what the record holds. The
+     unread part is a refusal and refusals are blue, never red. */
+  .still__gate-bar {
+    position: relative;
+    display: block;
+    inline-size: var(--space-8);
+    block-size: var(--space-1);
+    background: var(--state-refusal);
+    opacity: 0.9;
+  }
+  .still__gate-read {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: calc(100% * var(--read) / var(--total));
+    background: var(--state-evidence);
+  }
+
+  .still__caption {
+    margin: 0;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .still__drawn,
+  .still__artifact {
+    color: var(--ink-3); /* ink3-ok: on --ground */
+  }
+  .still__source {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground */
+    overflow-wrap: anywhere;
+  }
+
+  /* --- below --bp-lg ----------------------------------------------------
+     No width for two columns, so the readout stacks and drops below the state
+     controls rather than beside them. Measured at 768x900: the controls run
+     670 to 878 and the readout 670 to 949, which is two blocks in one place
+     and one of them off the bottom of the room. */
+  @media (max-width: 63.9375rem) /* --bp-lg */ {
+    .still__readout {
+      inset-inline: var(--page-pad);
+      inline-size: auto;
+      /* Below the controls. Measured at 768x900, where the two group labels
+         and eleven chips wrap to two rows: controls 654 to 704, readout 710 to
+         897, hero bottom 900. --space-9 put the caption's last line inside the
+         hero's own `overflow: hidden` and --space-7 put the readout on the
+         controls; --space-8 is the one that clears both, with 6px above and
+         3px below. Narrow enough that the assertion in
+         tests/scene/fallback/_shoot.mjs is what keeps it honest. */
+      top: calc(var(--rail-y) + var(--space-8));
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--space-5);
+      row-gap: var(--space-1);
+    }
+    .still__measures,
+    .still__note {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    /* The key becomes two columns of rows rather than one, which halves its
+       height. Nothing leaves it: five rows in two columns is five rows. */
+    .still__key {
+      grid-column: 1 / -1;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--space-6);
+    }
+    /* The access bars go. Their two numbers are already key rows in words, so
+       this drops a second drawing of a measurement and not a measurement. */
+    .still__gate {
+      display: none;
+    }
+  }
+
+  /* --- below --bp-md ----------------------------------------------------
+     THE PHONE GETS AN AUTHORED COMPOSITION, NOT A CROP.
+
+     The room's own narrow state drops the prism and the wedge because a 94px
+     run cannot disperse through, and collapses the fan onto the detector plate
+     at the gutter. The still does the same and for the same reason, so the two
+     fidelities still agree about what the phone shows: the marks land on the
+     plate at the same relative scale, the run is not drawn, and the readout
+     goes under the rail at full width where it can hold whole sentences.
+
+     Nothing is lost by this. Every quantity the fan encodes is also a row in
+     the key, which is why the key is a description list rather than a legend:
+     it is the same measurement in the other modality, at every width. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    /* --space-3, WHICH IS THE ROOM'S OWN NARROW FAN WIDTH, NOT A NEW ONE.
+       It was --space-6, twice as wide, and gate 21 measured the consequence:
+       at 390 the plate reached x 338 while the install strip's right border
+       sits at 343, so the arrival mark lit 25 scanlines of that border and
+       took it to 1.52:1 against a 3:1 floor, in the dark theme and again at
+       2.35:1 in the light. The hand-authored room collapses its fan to
+       --space-3 at this breakpoint and clears the strip by 15px. One
+       composition means the same number, not a similar one. */
+    .still__fan {
+      left: auto;
+      right: var(--page-pad);
+      inline-size: var(--space-3);
+    }
+    .still__readout {
+      inset-inline: var(--page-pad);
+      inline-size: auto;
+      /* Below the state controls, which take the first band under the rail. */
+      top: calc(var(--rail-y) + var(--space-9));
+      gap: var(--space-3);
+    }
+    /* Rays and traces need a run to be drawn along. With none, only the
+       arrivals are true, so only the arrivals are drawn. */
+    .still__rays line,
+    .still__trace,
+    .still__ticks {
+      display: none;
+    }
+    /* WHAT IS LEFT IS AN ARRIVAL, SO IT IS DRAWN AS ONE.
+       The run compresses to 32px, which turns the ribbon into a vertical band
+       whose extent is the measured range: that is the correct collapse, and it
+       is what the room's own narrow state does with its arrival marks. But the
+       wash opacity that reads as a lit fan across 700px reads as a smudge
+       across 32, and a capture at 390 showed a barely visible speck at the
+       gutter. The arrival is a crisp statement, so it is drawn at the weight
+       the room draws its own arrivals at. */
+    .still__ribbon,
+    .still__band,
+    .still__xband {
+      opacity: 0.95;
+    }
+    .still__absent {
+      opacity: 0.9;
+    }
+
+    /* AT 390 A TWO-COLUMN KEY BREAKS ITS OWN VALUES.
+       "0.62 to 3.36" in a 170px column wraps onto three lines, so the fold
+       that saves height below --bp-lg costs more of it here than it saves.
+       One column, except where the case has enough rows that one column would
+       run past the bottom of the room: the floor under the rail is about 227px
+       on a 390x844 phone and a five-row key plus its plate is 128 of it before
+       the hero's own secondary action takes 22 in the middle.
+
+       The count is an attribute rather than a guess, because CSS cannot count
+       children and a rule tuned to whichever case happened to be open would be
+       wrong for the next one. */
+    .still__key {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .still__key[data-rows="4"],
+    .still__key[data-rows="5"] {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--space-4);
+    }
+    /* One line for the subject. The plate above it already states the kind and
+       the caption states the whole thing to a screen reader at every width. */
+    .still__subject {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-inline-size: 100%;
+    }
+  }
+
+  /* A SHORT VIEWPORT HAS NO FLOOR TO PUT A PARAGRAPH ON.
+     The hero is `clamp(560px, 100svh - nav, 1080px)`, so at 700px of viewport
+     the floor under the rail is about 90px and the caption alone is five lines
+     of it. The sentence yields and the measurements do not: the key above it is
+     the same numbers, and the caption stays in the document as this figure's
+     accessible description at every height. */
+  @media (max-height: 47.5rem) {
+    .still__caption,
+    .still__source {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /* At the narrowest widths the caption's own sentence is longer than the
+     floor can hold above the fold, and the key carries the same numbers. The
+     sentence stays in the document and stays the still's accessible
+     description; it is the paragraph that yields, never a measurement. */
+  @media (max-width: 29.9375rem) /* --bp-sm */ {
+    .still__caption,
+    .still__source {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+</style>

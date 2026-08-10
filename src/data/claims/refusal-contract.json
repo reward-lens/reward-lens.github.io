@@ -1,0 +1,16 @@
+{
+ "artifact": "src/data/refusals.json",
+ "contentHash": "6026c04a6d2ee910614525c4d7fccdc2",
+ "humanSource": "The refusal enum in the released library, read at build time rather than restated here.",
+ "immutableIds": [
+  "copy.yaml:refusals",
+  "src/data/refusals.json"
+ ],
+ "label": "When an instrument declines",
+ "limitation": "A refusal carries a remedy written as an instruction rather than a diagnosis, and it cannot be constructed without one, because a refusal with no remedy is a tool that looks broken instead of a tool that looks careful.",
+ "scope": "The 17 reasons the library can decline a reading, of which 3 are sorted by where the remedy is answerable.",
+ "slug": "refusal-contract",
+ "sourceUrl": "/docs/refusals/",
+ "statement": "A reading is evidence or a refusal. A refusal is a value, not an exception. It is never a None, never a zero, and never a silent fall back to a worse estimator, because a confident wrong number is the only output this design treats as unforgivable.",
+ "type": "definition"
+}

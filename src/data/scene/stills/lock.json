@@ -1,0 +1,23 @@
+{
+ "note": "What the stills on disk were generated from. `npm run build:scene-stills -- --check` recomputes these and fails when one has moved, so a changed upstream artifact cannot leave a stale still in the one path a reader without WebGL actually sees.",
+ "manifestDigest": "e88993cb52f0cd46d8073b39b6ddccbd4f0cc8b097f8eb37d42df6a0c10a4beb",
+ "payloadFormatVersion": 1,
+ "composition": {
+  "src/components/home/hero-geometry.ts": "5140843d8ec338683e6786918c0ed577563d512f377d74d4b5fb1dfcef8086da",
+  "src/components/scene/core/layout.ts": "7dec0a730d6b299e36614124db3c05df5cdada54577071e91ea120cdc9e6177b",
+  "src/components/scene/types/truth.ts": "5298c5d11fb1ab75fea9e61b980e142c5fe968bf60179f391a3cda720eb6765b"
+ },
+ "cases": {
+  "scorer-score-tree": "cea46dd7295b21110d38d0ebdbbece28170800f8bdc0c808b9fd10b8404742f4",
+  "scorer-verifier-is-equiv": "8f2a2b9ef228a1cfb4b8381bde1ac14caf95d4ac0fa6186acaca6158c78aa936",
+  "scorer-verifier-swebench": "bca5c56e6deb8bb6dc9ceea524d5a481ed164efd74a45f27cb0cf1503fdb8f90",
+  "scorer-verifier-verl-gsm8k": "7ffe8307c434dcc2b9d57a2eccb0792552dc352e8d54628b1eab001292f33ef5",
+  "scorer-verifier-verl-search-r1": "6ba1aa308f315061a6de199466c480473e88e8a324f1275d11b7324bc51edd16",
+  "scorer-attribution-patching": "4eb514880c5bb6172a44787c5880f2427144e0e6ffe3451147cc865c3b33f2c7",
+  "selection-advantages": "69159e1488fefaf7a66245dcd2f430dd13e64290320fd485428632f60df997db",
+  "update-step": "28a7d041cad9be31f8c12374cba507d0a488584a64b2f57b9c6ca778660019a3",
+  "response-unresolved": "edbc662fac2e74d28e01b76353e6e108ded588b12253e0661bebf35bc44322cd",
+  "run-boundary-series": "9ce1d10a7b4fd83d6029ad8ca6977899c4b601a0433dbb1316dac4445f08d303"
+ },
+ "indexDigest": "5caaca6a510cc208c9ddfa0e62cb75a2185c8029732f38ec8829d0bac2ab084e"
+}

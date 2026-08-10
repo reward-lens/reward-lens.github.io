@@ -1,6 +1,13 @@
 ---
-// VerdictChip: a status verdict rendered as a pill carrying a status color, a
-// glyph and the word together. Status color never appears without the word.
+// VerdictChip: an outcome rendered as a pill carrying a colour, a glyph and the
+// word together. Colour never appears without the word.
+//
+// NOT IMPORTED BY ANYTHING today. Its four words are already the public
+// vocabulary the repositioning asks for, so unlike KillBadge it is a component
+// to keep: `confirmed / refuted / mixed / inconclusive` say what happened,
+// where `adjudicated` says only that a process ran. Its words are typed here
+// rather than read from copy.yaml, which is the one thing about it that has to
+// change before it renders anywhere.
 
 interface Props {
   verdict: "confirmed" | "refuted" | "mixed" | "inconclusive";

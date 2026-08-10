@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.05",
+ "contentHash": "ebd587d18553edb3ac8f06baa879a5d4",
+ "humanSource": "The frozen study \"The RM knows it is being tested, and steering along that direction inflates reward\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:54fb272fd011c8ca07a4959f553341ab",
+  "campaign.adjudication.EVAL-AWARE",
+  "study:campaign-eval-aware@v1#3671c68e",
+  "spec:3671c68e023554a042cd340ae8dded8e",
+  "H-aware-steer"
+ ],
+ "label": "The RM knows it is being tested, and steering along that direction inflates reward",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "delta_r_per_steer",
+  "unit": null,
+  "value": -0.0002095085858637909
+ },
+ "scope": "One frozen study, adjudicated once, on evalaware-rms, over evalaware-paired and wildchat-organic and arena-organic.",
+ "slug": "measured-eval-aware-delta-r-per-steer",
+ "sourceUrl": "/evidence/54fb272fd011c8ca07a4959f553341ab/",
+ "statement": "steering along the direction inflates the score.",
+ "status": "refuted",
+ "subject": "evalaware-rms, over evalaware-paired and wildchat-organic and arena-organic",
+ "type": "measured-result"
+}

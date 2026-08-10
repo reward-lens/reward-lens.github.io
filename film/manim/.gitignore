@@ -1,0 +1,13 @@
+__pycache__/
+
+# Rendered frame sequences. One PNG per frame at 30fps, which is the rate the
+# Remotion timeline indexes them at, and one render per aspect ratio: the two
+# inserts come to 1,647 files. They are reproducible from `npm run film` and do
+# not belong in source.
+#
+# 30 and not the 60 brief §5.2 asks for. Remotion consumes the sequence by frame
+# number against a 30fps composition, so a 60fps sequence would either play at
+# half speed or drop every second frame, and neither is a thing anybody would
+# choose. Manim's own rounding is why the counts are read back off disk rather
+# than computed: an 8-second insert is 255 frames, not 240.
+out/

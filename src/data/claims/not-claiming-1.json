@@ -1,0 +1,14 @@
+{
+ "contentHash": "420e3805c51a17fde54e14c9c2a55b4a",
+ "humanSource": "The project's own statement of what it is not claiming, carried on the limits page.",
+ "immutableIds": [
+  "copy.yaml:limits.not_claiming[0]"
+ ],
+ "label": "Not the Goodhart turning point.",
+ "limitation": "Not the Goodhart turning point.",
+ "scope": "What is not being claimed.",
+ "slug": "not-claiming-1",
+ "sourceUrl": "/limits/",
+ "statement": "That is occupied, with a solver. What is measured here is the turn in a named gold signal, and if that signal is itself a proxy for something inexpressible, which it always is, then a measured turn is the turn for that signal.",
+ "type": "limitation"
+}

@@ -1,0 +1,47 @@
+{
+  "_what_this_is": "Gate 11's destination assertions. A 2xx is not enough: the personal fork published as the project's PyPI Homepage returns 200 while being the wrong destination (C-5). `expected` is the URL each copy.yaml:urls key must resolve to after redirects. `published_elsewhere` is the set of URLs the project publishes on other surfaces, checked here so their state is on the record. THIS IS NOT AN ALLOW-LIST. Entries in published_elsewhere are expected to FAIL, and the failure is the point: it is the standing record that the metadata is still wrong somewhere the site does not control. Do not add anything here to make the gate green.",
+
+  "expected": {
+    "site": "https://reward-lens.github.io/",
+    "repo": "https://github.com/reward-lens/reward-lens",
+    "docs": "https://reward-lens.github.io/docs/",
+    "pypi": "https://pypi.org/project/reward-lens/",
+    "preprint": "https://arxiv.org/abs/2604.26130",
+    "issues": "https://github.com/reward-lens/reward-lens/issues"
+  },
+
+  "published_elsewhere": [
+    {
+      "url": "https://reward-lens.github.io/reward-lens/",
+      "published_as": "site_url, the v3 documentation link",
+      "published_at": "reward-lens-assay/docs/mkdocs.yml:15 and the v3 README",
+      "why": "404. The old Pages deployment served this path and it is gone. The site must not link it (D-06).",
+      "should_be": null,
+      "must_not_be_linked": true
+    },
+    {
+      "url": "https://reward-lens.readthedocs.io",
+      "published_as": "Documentation",
+      "published_at": "PyPI metadata on the published 2.0.1 artifact",
+      "why": "404. Never existed. Fixed in assay/pyproject.toml:167 and ships when 3.0.0 ships (C-9).",
+      "should_be": null,
+      "must_not_be_linked": true
+    },
+    {
+      "url": "https://github.com/suhailnadaf509/reward-lens",
+      "published_as": "Homepage",
+      "published_at": "PyPI metadata on the published 2.0.1 artifact",
+      "why": "Returns 200 and is a personal fork, not the project repository. This is the URL a status-only gate cannot catch, and the reason gate 11 asserts destinations (C-5).",
+      "should_be": "https://github.com/reward-lens/reward-lens",
+      "must_not_be_linked": true
+    },
+    {
+      "url": "https://arxiv.org/abs/2604.26130",
+      "published_as": "copy.yaml:urls.preprint",
+      "published_at": "design/copy.yaml:25",
+      "why": "C-23: a fourth published URL that nobody had ever checked. It is not among C-5's three, so its state was unknown until this gate reached it.",
+      "should_be": "https://arxiv.org/abs/2604.26130",
+      "must_not_be_linked": false
+    }
+  ]
+}

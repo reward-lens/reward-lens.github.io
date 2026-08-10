@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "a486b06a6f6401c6ac33f074bff2dec6",
+ "humanSource": "The frozen study \"The fleet decodes a property it does not price\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:a34316feccee3beaed93c05ce5888567",
+  "campaign.adjudication.FACT-KUI",
+  "study:campaign-fact-kui@v1#dcdc401f",
+  "spec:dcdc401fbbe744065b8f175de0384372"
+ ],
+ "label": "The fleet decodes a property it does not price",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one.",
+ "quantity": {
+  "name": "kui_gap",
+  "unit": null,
+  "value": 0.15152288168283162
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "measured-fact-kui-kui-gap",
+ "sourceUrl": "/evidence/a34316feccee3beaed93c05ce5888567/",
+ "statement": "A supporting measurement from the frozen study \"The fleet decodes a property it does not price\", with no prediction registered against it in advance.",
+ "subject": "fleet, over rb2-full",
+ "type": "measured-result"
+}

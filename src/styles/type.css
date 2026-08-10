@@ -1,0 +1,100 @@
+/* =============================================================================
+   TYPE ROLES  -  one class per role, per DECISIONS.md D-28.
+
+   tokens.css states each role as four sub-tokens (-size, -lh, -track,
+   -weight). There is no composite `--type-display-1` and there must not be
+   one: the CSS `font` shorthand does not carry letter-spacing, so
+   `font: var(--type-display-1)` silently drops -0.028em from the homepage
+   headline and still renders. Display tracking is load-bearing at 66px
+   (DESIGN.md §6.5 sets a -0.03em numeric floor precisely because of this).
+
+   A contract that says "set at --type-display-1" means "apply .type-display-1".
+   No file in src/** writes a bare font-size, line-height or letter-spacing.
+
+   Three roles (body-sm, mono-base, mono-sm) have no -weight sub-token in the
+   frozen token file. DESIGN.md §6.2 states 400 for all three, so that is the
+   fallback here; if the token is ever added the class picks it up with no edit.
+   ============================================================================= */
+
+.type-display-1 {
+  font-family: var(--font-sans);
+  font-size: var(--type-display-1-size);
+  line-height: var(--type-display-1-lh);
+  letter-spacing: var(--type-display-1-track);
+  font-weight: var(--type-display-1-weight);
+}
+
+.type-display-2 {
+  font-family: var(--font-sans);
+  font-size: var(--type-display-2-size);
+  line-height: var(--type-display-2-lh);
+  letter-spacing: var(--type-display-2-track);
+  font-weight: var(--type-display-2-weight);
+}
+
+.type-h2 {
+  font-family: var(--font-sans);
+  font-size: var(--type-h2-size);
+  line-height: var(--type-h2-lh);
+  letter-spacing: var(--type-h2-track);
+  font-weight: var(--type-h2-weight);
+}
+
+.type-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--type-h3-size);
+  line-height: var(--type-h3-lh);
+  letter-spacing: var(--type-h3-track);
+  font-weight: var(--type-h3-weight);
+}
+
+/* body is also the document default: one declaration, not two. */
+body,
+.type-body {
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-track);
+  font-weight: var(--type-body-weight);
+}
+
+.type-body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--type-body-sm-size);
+  line-height: var(--type-body-sm-lh);
+  letter-spacing: var(--type-body-sm-track);
+  font-weight: var(--type-body-sm-weight, 400); /* DESIGN.md §6.2 */
+}
+
+.type-mono-lg {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-lg-size);
+  line-height: var(--type-mono-lg-lh);
+  letter-spacing: var(--type-mono-lg-track);
+  font-weight: var(--type-mono-lg-weight);
+}
+
+.type-mono-base {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-base-size);
+  line-height: var(--type-mono-base-lh);
+  letter-spacing: var(--type-mono-base-track);
+  font-weight: var(--type-mono-base-weight, 400); /* DESIGN.md §6.2 */
+}
+
+.type-mono-sm {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-sm-size);
+  line-height: var(--type-mono-sm-lh);
+  letter-spacing: var(--type-mono-sm-track);
+  font-weight: var(--type-mono-sm-weight, 400); /* DESIGN.md §6.2 */
+}
+
+.type-mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-label-size);
+  line-height: var(--type-mono-label-lh);
+  letter-spacing: var(--type-mono-label-track);
+  font-weight: var(--type-mono-label-weight);
+  text-transform: var(--type-mono-label-transform);
+}

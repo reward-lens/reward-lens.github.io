@@ -1,0 +1,19 @@
+{
+ "comparator": "> 0.6",
+ "contentHash": "0a0f30ea221d17d37c2b84120e23ca0e",
+ "humanSource": "The frozen study \"Canonical cross-family angles predict pairwise disagreement\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:095096260d9209c4fb9935cbb215812b",
+  "H-xfam",
+  "study:campaign-gauge-xfam@v1#092fef0f"
+ ],
+ "label": "Canonical cross-family angles predict pairwise disagreement",
+ "limitation": "The study returned no value because its registered subject could not be read when the study ran.",
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-helpfulness-512 and rb2-full.",
+ "slug": "open-gauge-xfam-spearman-canonical-angle-vs-disagreement",
+ "sourceUrl": "/evidence/095096260d9209c4fb9935cbb215812b/",
+ "statement": "Registered prediction, not resolved: the canonical angle between two RMs' reward directions predicts their held-out disagreement rate.",
+ "status": "unrun",
+ "subject": "fleet, over rb2-helpfulness-512 and rb2-full",
+ "type": "open-hypothesis"
+}

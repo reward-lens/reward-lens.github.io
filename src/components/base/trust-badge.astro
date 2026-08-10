@@ -1,0 +1,164 @@
+---
+/**
+ * trust-badge  ·  design/components/trust-badge.md
+ *
+ * How much a reading has been put through, in the library's own four-rung
+ * vocabulary. The four names come from copy.yaml:trust_ladder.levels, never
+ * from here (criterion 6).
+ *
+ * Two things this component deliberately does not do. It does not change size,
+ * weight or icon per rung, because tokens.css already raises lightness and
+ * chroma monotonically across --trust-1 to --trust-4 and two encodings of one
+ * order compete. And it never carries the level in colour alone: the rung name
+ * is always present as text, which is what makes a greyscale rendering lose
+ * nothing.
+ *
+ * It imports provenance-chip and provenance-chip does not import it. The panel
+ * in provenance-chip draws its own trust marker from the same tokens rather
+ * than reaching back here, because a static import cycle between two .astro
+ * components is a fragile thing to introduce for eight lines of CSS.
+ */
+import { trustRung, trustLadder } from "./data";
+import ProvenanceChip from "./provenance-chip.astro";
+import type { EvidenceRecord } from "./data";
+
+interface Props {
+  level: string;
+  form?: "inline" | "chip";
+  /** false renders the hollow dot the ladder uses for a rung nothing reached. */
+  occupied?: boolean;
+  evidenceId?: string | null;
+  /** Passed through to provenance-chip when evidenceId is set. */
+  record?: EvidenceRecord;
+  class?: string;
+}
+
+const {
+  level,
+  form = "inline",
+  occupied = true,
+  evidenceId = null,
+  record = {},
+  class: extraClass = "",
+} = Astro.props;
+
+// A level outside the four fails the build naming the value (criterion 1).
+const rung = trustRung(level, "trust-badge");
+
+const badgeClass = [
+  "trust-badge",
+  `trust-badge--${form}`,
+  form === "chip" ? "type-mono-label" : "type-body-sm",
+  occupied ? "" : "trust-badge--unoccupied",
+  extraClass,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{
+  evidenceId ? (
+    <ProvenanceChip evidenceId={evidenceId} record={record} display={level}>
+      <span class={badgeClass} data-rung={rung}>
+        <span class="trust-badge__dot" aria-hidden="true" />
+        <span class="trust-badge__label">{level}</span>
+        {!occupied && (
+          <span class="visually-hidden">{`, ${trustLadder.unoccupied_note}`}</span>
+        )}
+      </span>
+    </ProvenanceChip>
+  ) : (
+    <span class={badgeClass} data-rung={rung}>
+      <span class="trust-badge__dot" aria-hidden="true" />
+      <span class="trust-badge__label">{level}</span>
+      {!occupied && (
+        <span class="visually-hidden">{`, ${trustLadder.unoccupied_note}`}</span>
+      )}
+    </span>
+  )
+}
+
+<style>
+  .trust-badge {
+    /* Not a widget. A span with no role, whose visible text is its name. */
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  /* 6px, the same optical size as the provenance-chip marker, so the two read
+     as one family (trust-badge.md anatomy). Derived from the spacing scale
+     rather than written as a length. */
+  .trust-badge__dot {
+    inline-size: calc(var(--space-1) * 1.5);
+    block-size: calc(var(--space-1) * 1.5);
+    border-radius: var(--radius-pill);
+    flex: none;
+  }
+
+  .trust-badge[data-rung="1"] .trust-badge__dot {
+    background: var(--trust-1);
+  }
+  .trust-badge[data-rung="2"] .trust-badge__dot {
+    background: var(--trust-2);
+  }
+  .trust-badge[data-rung="3"] .trust-badge__dot {
+    background: var(--trust-3);
+  }
+  .trust-badge[data-rung="4"] .trust-badge__dot {
+    background: var(--trust-4);
+  }
+
+  /* --- inline, the default: a dot and lowercase text --- */
+  .trust-badge--inline {
+    color: var(--ink-2);
+  }
+  .trust-badge--inline .trust-badge__label {
+    text-transform: lowercase;
+  }
+
+  /* --- chip: bordered, mono-label, label at --ink ---
+     The trust colour is carried by the dot and the border only. --trust-1 as
+     text on --surface-2 does not clear AA-body, and a chip is used in table
+     cells and caption rows where the surface underneath is not fixed. */
+  .trust-badge--chip {
+    color: var(--ink);
+    border: var(--border-w) solid;
+    border-radius: var(--radius-1);
+    padding: var(--space-1) var(--space-2);
+    background: transparent;
+  }
+  .trust-badge--chip[data-rung="1"] {
+    border-color: var(--trust-1);
+  }
+  .trust-badge--chip[data-rung="2"] {
+    border-color: var(--trust-2);
+  }
+  .trust-badge--chip[data-rung="3"] {
+    border-color: var(--trust-3);
+  }
+  .trust-badge--chip[data-rung="4"] {
+    border-color: var(--trust-4);
+  }
+
+  /* --- the unoccupied rung ---
+     A 1px ring in --trust-4 with no fill, and the label one step quieter. The
+     hollow dot is not the only carrier: a visually hidden note states that the
+     rung is empty, so a screen reader learns what the shape says. */
+  .trust-badge--unoccupied .trust-badge__dot,
+  .trust-badge--unoccupied[data-rung="4"] .trust-badge__dot {
+    background: transparent;
+    /* ink3-ok: not --ink-3; this is the ring the hollow dot is drawn with. */
+    border: var(--border-w) solid var(--trust-4);
+  }
+  .trust-badge--unoccupied .trust-badge__label {
+    /* ink3-ok: the ladder renders on --ground or --surface-1, where --ink-3 is
+       5.25:1 and 4.85:1. This file paints no raised surface. */
+    color: var(--ink-3);
+  }
+  .trust-badge--unoccupied.trust-badge--chip {
+    color: var(--ink-2);
+    border-color: var(--line-strong);
+  }
+</style>

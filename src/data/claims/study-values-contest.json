@@ -1,0 +1,19 @@
+{
+ "contentHash": "b03c7b668096538f29f9fe7a66c3174b",
+ "humanSource": "The frozen study \"Contested-direction loading predicts human rater disagreement\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:e036326c47c7a0f52330559479e03790",
+  "campaign.adjudication.VALUES-CONTEST",
+  "study:campaign-values-contest@v1#2a1ead40",
+  "spec:2a1ead40948d8a58ae00bf095cad321f"
+ ],
+ "label": "Contested-direction loading predicts human rater disagreement",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on skywork-v2-llama31-8b and ensemble-5, over helpsteer3-pref-2000.",
+ "slug": "study-values-contest",
+ "sourceUrl": "/evidence/e036326c47c7a0f52330559479e03790/",
+ "statement": "The frozen study \"Contested-direction loading predicts human rater disagreement\" was adjudicated inconclusive, over 2 registered predictions of which 2 returned no value.",
+ "status": "unrun",
+ "subject": "skywork-v2-llama31-8b and ensemble-5, over helpsteer3-pref-2000",
+ "type": "interpretation"
+}

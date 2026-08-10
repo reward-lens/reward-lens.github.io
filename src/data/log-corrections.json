@@ -1,0 +1,32 @@
+{
+ "corrections": [
+  {
+   "card": "topo-hodge",
+   "storedVerdict": "confirmed",
+   "storedValue": 0.2139761313773256,
+   "threshold": 0.03,
+   "comparator": ">",
+   "triangles": 186378,
+   "cyclicTriples": 0,
+   "tournaments": 10000,
+   "acyclicTournaments": 10000,
+   "comparisonsAScalarReproduces": 130129,
+   "floor": 0.21397613137732557,
+   "observedMinusFloor": 2.7755575615628914e-17,
+   "everyMinimiserIsAcyclic": true,
+   "everyMinimumIsTheClosedForm": true,
+   "everyMinimiserIsTransitive": true,
+   "evidence": {
+    "census": "ev:8e43f2202c3595251fcc39cf591ea9b0",
+    "floor": "ev:5422da47f40d11ac24c916637d6fca1b",
+    "bounds": "ev:6d4bf4160fffa947ce67522c439cf646"
+   },
+   "source": {
+    "experiment": "reward-lens-assay/experiments/x7_intransitivity",
+    "evidence": "evidence/evidence.jsonl",
+    "gitSha": "0059024c65173998b5a77b43f1f6048d7a6573dd",
+    "published": "reward-lens/docs/content/findings.md"
+   }
+  }
+ ]
+}

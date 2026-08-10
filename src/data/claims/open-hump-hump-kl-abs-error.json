@@ -1,0 +1,19 @@
+{
+ "comparator": "< 0.5",
+ "contentHash": "1c03036c058d66066742ae147ef724ec",
+ "humanSource": "The frozen study \"The Goodhart hump located from a base-policy tail index\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:02a1669641150750737afc8291255bf9",
+  "H-hump-loc",
+  "study:campaign-hump@v1#ec094a50"
+ ],
+ "label": "The Goodhart hump located from a base-policy tail index",
+ "limitation": "The study returned no value because an input it needs was not produced by the run that was supposed to produce it.",
+ "scope": "One frozen study, adjudicated once, on policy-qwen25-1.5b and skywork-v2-qwen3-0.6b and skywork-v2-llama31-8b, over hump-prompts and ppe-human.",
+ "slug": "open-hump-hump-kl-abs-error",
+ "sourceUrl": "/evidence/02a1669641150750737afc8291255bf9/",
+ "statement": "Registered prediction, not resolved: the tail-predicted hump location matches the observed one within 0.5 nats.",
+ "status": "unrun",
+ "subject": "policy-qwen25-1.5b and skywork-v2-qwen3-0.6b and skywork-v2-llama31-8b, over hump-prompts and ppe-human",
+ "type": "open-hypothesis"
+}

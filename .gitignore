@@ -6,3 +6,11 @@ dist-design/
 .DS_Store
 screenshots/
 .lighthouseci/
+__pycache__/
+
+# The PUBLIC_SCENE=off build, produced by gate 18 to prove the site still
+# passes accessibility and its budgets without the scene.
+dist-noscene/
+
+# Agent worktrees, created and removed by the harness.
+.claude/

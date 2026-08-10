@@ -1,20 +1,8 @@
 ---
 import "@styles/global.css";
-import "@fontsource/instrument-serif/latin-400.css";
-import "@fontsource/instrument-serif/latin-400-italic.css";
-import "@fontsource/ibm-plex-sans/latin-400.css";
-import "@fontsource/ibm-plex-sans/latin-600.css";
-import "@fontsource/ibm-plex-serif/latin-400.css";
-import "@fontsource/ibm-plex-serif/latin-400-italic.css";
-import "@fontsource/ibm-plex-serif/latin-600.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
-import "@fontsource/ibm-plex-mono/latin-500.css";
-import SiteHeader from "@components/SiteHeader.astro";
-import SiteFooter from "@components/SiteFooter.astro";
-import monoWoff from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url";
-import sansWoff from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
-import sansSemiWoff from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2?url";
-import displayWoff from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
+import NavShell from "@components/nav-shell.astro";
+import SiteFooter from "@components/site-footer.astro";
+import SkipLink from "@components/skip-link.astro";
 
 interface Props {
   title: string;
@@ -33,7 +21,19 @@ const ogUrl = new URL(ogImage, Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>
+      // Runs before first paint. Two jobs.
+      //
+      // 1. data-theme. tokens.css carries dark on the bare :root, flips to
+      //    light inside prefers-color-scheme, and lets [data-theme] override
+      //    both in either direction. This line only ever states a preference
+      //    that has already been chosen; with scripting off nothing is set and
+      //    the OS preference governs, which is why both themes render without
+      //    it.
+      // 2. data-js. Controls that cannot work without scripting hide when it
+      //    is absent, rather than sitting there dead.
       (() => {
+        const root = document.documentElement;
+        root.dataset.js = "on";
         let t;
         try {
           t = localStorage.getItem("theme");
@@ -43,13 +43,41 @@ const ogUrl = new URL(ogImage, Astro.site);
             ? "light"
             : "dark";
         }
-        document.documentElement.dataset.theme = t;
+        root.dataset.theme = t;
       })();
     </script>
-    <link rel="preload" href={sansWoff} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={sansSemiWoff} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={monoWoff} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={displayWoff} as="font" type="font/woff2" crossorigin />
+
+    <!-- Four faces, two families, latin subset, woff2 only. @font-face rules
+         are in src/styles/fonts.css; these preloads are the same four files. -->
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-latin-600-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-mono-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-mono-latin-500-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -65,14 +93,18 @@ const ogUrl = new URL(ogImage, Astro.site);
     <meta property="og:image" content={ogUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <slot name="head" />
-    <!-- Analytics intentionally absent. If wanted later, a privacy-respecting
-         option (self-hosted Plausible or GoatCounter) mounts here; see
-         SITE_REPORT.md. -->
+    <!-- Analytics intentionally absent, and the footer says so. -->
   </head>
   <body>
-    <a href="#main" class="skip-link">Skip to content</a>
-    <SiteHeader />
-    <main id="main">
+    <SkipLink />
+    <NavShell />
+    {/* tabindex="-1" and not decoration. A fragment link to a non-focusable
+        element sets the sequential focus navigation starting point but leaves
+        document.activeElement on <body>, so the next Tab lands in the right
+        place while a screen reader's virtual cursor has not moved and the
+        reader is told nothing. -1 makes <main> a programmatic focus target
+        without adding a tab stop. */}
+    <main id="main" tabindex="-1">
       <slot />
     </main>
     <SiteFooter />

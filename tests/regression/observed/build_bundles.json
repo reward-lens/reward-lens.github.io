@@ -1,0 +1,32 @@
+{
+ "generator": "build_bundles",
+ "source": "scripts/build_bundles.py",
+ "values": {
+  "bundle_entry_counts": {
+   "grader": 14,
+   "reward-model": 4,
+   "run": 4
+  },
+  "bundle_sha256": {
+   "grader": "4cc0f432a37baf218b0e2b5cf5348f8dd1a6383ad4f60675746e15dabba62a30",
+   "reward-model": "ed9073f8c4343668fa4091a25fe62c6f5b18a642f78629ec3b087787b0bd6661",
+   "run": "ba9b5eba3ac2161016b5bdcec24d2a39cd6a7dff496792805f3438f7dd3852ad"
+  },
+  "bundle_sizes": {
+   "grader": 34620,
+   "reward-model": 298367,
+   "run": 120253
+  },
+  "bundles": [
+   "grader",
+   "reward-model",
+   "run"
+  ],
+  "expected_output_lines": {
+   "grader": 23,
+   "reward-model": 20,
+   "run": 22
+  },
+  "reproductions_recorded": 0
+ }
+}

@@ -1,133 +1,546 @@
 ---
+/**
+ * /atlas/  ·  the instrument catalogue, organised by what a reader is trying
+ * to do. Replaces /science/, which redirects here under D-26.
+ *
+ * THE QUESTIONS THE PAGE IS BUILT AROUND, in the order a reader meets them:
+ * what am I inspecting, what object do I have, what access do I have, what
+ * phase am I in, what will it cost, and is this implemented or only specified.
+ * Each is a column of the table and the first four are also filters. Nothing is
+ * grouped by the registry's own series letters, because a letter is an
+ * identifier and the question it answers is "how did the author file this".
+ *
+ * THREE HARD CONSTRAINTS.
+ *
+ * 1. NO INTERNAL IDENTIFIER IS RENDERED, PRIMARY OR SECONDARY. The instrument
+ *    number, the series letter and the work package are the worst instance of
+ *    the banned-vocabulary problem on the old site. D-40 considered extending
+ *    the evidence record's allowance here and refused: the atlas is a catalogue
+ *    a stranger browses and its primary name is what an instrument measures.
+ *
+ * 2. AN UNIMPLEMENTED ENTRY IS LABELLED, IN TEXT, IN THE SAME TABLE, AT THE
+ *    SAME WEIGHT. Not greyed, not sorted down, not filtered out by default.
+ *    Code execution, a qualified instrument and a scientific result are three
+ *    different states and this page is only competent to report the first.
+ *
+ * 3. FOUR REGISTRY STRINGS ARE RENDERED IN DIFFERENT WORDS, AND THE PAGE SAYS
+ *    SO. Two series titles and two instrument names trip the terminology lock.
+ *    `scripts/build_atlas.mjs` substitutes them, using the lock's own canonical
+ *    form or the registry's own vocabulary, and emits the substitution as data.
+ *    It is published at the foot of the page: a rewrite a reader cannot see is
+ *    a rewrite, and one they can see is an editorial note.
+ *
+ * THE FILTERS ARE CSS, NOT JAVASCRIPT. Radio inputs plus attribute selectors,
+ * so they work with scripting off, they are real form controls, and they are
+ * keyboard operable for free. Every filter value and count comes from
+ * atlas.json, counted from the rows, so a value with no rows cannot be offered.
+ *
+ * WHAT IS STILL NOT BUILT. `copy.yaml:atlas` has six `filter_*` keys and this
+ * page binds five of them: status, measures, access, object and phase. The last
+ * two were rendered as unlabelled facets until `filter_object` and
+ * `filter_phase` existed, because a filter needs a legend and a legend is a
+ * string. `filter_returns` still has no data to bind. Nothing in the registry
+ * states what an instrument returns beyond the general contract in
+ * `atlas.intro`, which is that every instrument returns a reading with its
+ * evidence strength or a refusal naming what was missing, and that is the same
+ * sentence for all 95.
+ */
 import Base from "@layouts/Base.astro";
 import PageHeader from "@components/PageHeader.astro";
-import DataTable from "@components/DataTable.astro";
-import TrustBadge from "@components/TrustBadge.astro";
-import fleetIndex from "@data/fleet/index.json";
+import atlas from "@data/atlas.json";
+import quantities from "@data/quantities.json";
+import openTargets from "@data/open-targets.json";
+import { fill } from "@components/base/data";
+import { copy } from "../../copy";
 
-const models = Object.fromEntries(
-  Object.entries(
-    import.meta.glob("../../data/fleet/*.json", { eager: true }),
-  ).map(([path, mod]) => [path.split("/").pop()!.replace(".json", ""), mod]),
-) as Record<string, any>;
+const at = copy.atlas as Record<string, string>;
+const collaborate = copy.collaborate as Record<string, string>;
 
-const rows = fleetIndex.map((m) => {
-  const detail = models[m.slug];
-  const indexTable = detail?.headline?.find((h: any) =>
-    h.name?.includes("index table"),
-  );
-  const metric = (name: string) =>
-    indexTable?.rows?.find((r: any) => r.metric === name)?.value ?? null;
-  return {
-    ...m,
-    crystallization: metric("crystallization"),
-    snr: metric("snr"),
-    evidenceId: indexTable?.evidence_id,
-  };
+/* Section 3. Every number derives; none is typed. `estimator_count` is the
+   count of quantities that HAVE an estimator, deliberately not
+   quantities.counts.estimators, which counts estimator steps (64) and not
+   quantities (43). */
+const gapBody = fill(at.gap_body, {
+  quantity_count: String(quantities.counts.quantities),
+  estimator_count: String(
+    quantities.quantities.filter((q) => q.estimators.length > 0).length,
+  ),
+  open_target_count: String(openTargets.counts.open),
 });
 
-const fmt = (n: number | null) =>
-  n === null ? "–" : String(Number(n.toPrecision(3)));
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+/* The three filter groups, built from the generated facets so a value that no
+   instrument carries is never offered. `id` is the input id the CSS keys on. */
+const groups = [
+  {
+    name: "status",
+    legend: at.filter_status,
+    options: [
+      { id: "st-built", value: "built", label: at.status_implemented, count: atlas.counts.implemented },
+      { id: "st-open", value: "open", label: at.status_open, count: atlas.counts.open },
+    ],
+  },
+  {
+    name: "measures",
+    legend: at.filter_measures,
+    options: atlas.facets.measures.map((f) => ({
+      id: `me-${slug(String(f.value))}`,
+      value: slug(String(f.value)),
+      label: String(f.value),
+      count: f.count,
+    })),
+  },
+  {
+    name: "access",
+    legend: at.filter_access,
+    options: atlas.facets.access.map((f) => ({
+      id: `ac-${slug(String(f.value))}`,
+      value: slug(String(f.value)),
+      label: String(f.value).toLowerCase(),
+      count: f.count,
+    })),
+  },
+  {
+    name: "objects",
+    legend: at.filter_object,
+    options: atlas.facets.objects.map((f) => ({
+      id: `ob-${slug(String(f.value))}`,
+      value: slug(String(f.value)),
+      label: String(f.value).toLowerCase(),
+      count: f.count,
+    })),
+  },
+  {
+    name: "phases",
+    legend: at.filter_phase,
+    options: atlas.facets.phases.map((f) => ({
+      id: `ph-${slug(String(f.value))}`,
+      value: slug(String(f.value)),
+      label: String(f.value).toLowerCase(),
+      count: f.count,
+    })),
+  },
+];
+
+/* One rule per selectable value, generated rather than typed, so adding a
+   registry series does not need a hand-written CSS line that nobody adds. */
+const filterCss = groups
+  .flatMap((g) =>
+    g.options.map(
+      (o) =>
+        `.at .at__filters:has(#${o.id}:checked) ~ .at__scroll .at__tr:not([data-${g.name}~="${o.value}"]) { display: none }`,
+    ),
+  )
+  .join("\n");
+
+const rows = atlas.instruments.map((i) => ({
+  ...i,
+  statusLabel: i.implemented ? at.status_implemented : at.status_open,
+  measuresValue: slug(i.series),
+  accessValue: i.access.map((a) => slug(a)).join(" "),
+  objectsValue: i.objects.map((o) => slug(o)).join(" "),
+  phasesValue: i.phases.map((p) => slug(p)).join(" "),
+}));
+
+const substitutionNote = fill(at.substitution_note, {
+  substitution_count: String(atlas.substitutions.length),
+});
 ---
 
-<Base
-  title="Atlas · reward-lens"
-  description="Ten reward models, measured with the same instruments, wearing the same badges."
->
-  <div class="atlas-wrap">
-    <PageHeader
-      display
-      eyebrow="the atlas"
-      title="The fleet"
-      lede="Ten reward models, measured with the same instruments, wearing the same badges."
-    />
+<Base title={`${at.title} · reward-lens`} description={at.intro}>
+  <div class="wrap at">
+    <PageHeader eyebrow={at.title} title={at.heading} lede={at.intro} />
 
-    <p class="atlas-note">
-      Every number below is a view over the campaign's evidence store. The
-      per-model captures are exploratory by construction (the calibration
-      gates were exercised by the campaign cards, not by these fleet sweeps),
-      and the trust badges say so rather than hiding it.
-    </p>
+    <section class="at__section" aria-labelledby="at-catalogue">
+      <h2 class="type-h3" id="at-catalogue">{at.catalogue_heading}</h2>
 
-    <DataTable compact stickyFirst>
-      <table>
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Weights</th>
-            <th>
-              <a href="/docs/instruments/lens-crystallization/">crystallization</a>
-            </th>
-            <th><a href="/docs/instruments/prompt-snr/">snr</a></th>
-            <th>Records</th>
-            <th>GPU-seconds</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            rows.map((m) => (
-              <tr>
-                <td>
-                  <a href={`/atlas/${m.slug}/`}>
-                    <code>{m.slug}</code>
-                  </a>
-                </td>
-                <td class="atlas-hf">
-                  <a href={`https://huggingface.co/${m.hf_id}`}>{m.hf_id}</a>
-                </td>
-                <td>
-                  <code>{fmt(m.crystallization)}</code>
-                  {m.crystallization !== null && <TrustBadge trust="E" />}
-                </td>
-                <td>
-                  <code>{fmt(m.snr)}</code>
-                  {m.snr !== null && <TrustBadge trust="E" />}
-                </td>
-                <td>
-                  <code>{m.n_entries}</code>
-                </td>
-                <td>
-                  <code>{Math.round(m.total_gpu_seconds).toLocaleString("en-US")}</code>
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    </DataTable>
+      <form class="at__filters" method="get" action="/atlas/">
+        {
+          groups.map((g) => (
+            <fieldset class="at__group">
+              <legend class="at__legend type-mono-label">{g.legend}</legend>
+              <div class="at__options">
+                <span class="at__opt">
+                  <input
+                    type="radio"
+                    name={g.name}
+                    id={`${g.name}-all`}
+                    value=""
+                    checked
+                    class="at__radio"
+                  />
+                  <label class="at__label type-body-sm" for={`${g.name}-all`}>
+                    {atlas.counts.instruments}
+                  </label>
+                </span>
+                {g.options.map((o) => (
+                  <span class="at__opt">
+                    <input
+                      type="radio"
+                      name={g.name}
+                      id={o.id}
+                      value={o.value}
+                      class="at__radio"
+                    />
+                    <label class="at__label type-body-sm" for={o.id}>
+                      {o.label} · {o.count}
+                    </label>
+                  </span>
+                ))}
+              </div>
+            </fieldset>
+          ))
+        }
+      </form>
 
-    <p class="atlas-footnote">
-      crystallization and snr come from each model's
-      <code>campaign.index.table</code> on the rb2-full slice; models without
-      a merged index table show a dash. The column headers link the docs that
-      define each instrument, and
-      <a href="/docs/instruments/index-library/">the index library</a> defines
-      the rest of the per-model metrics. The per-model pages carry the full
-      observable tables with evidence ids.
-    </p>
+      <p class="at__open-note type-body-sm measure">{at.status_open_note}</p>
+
+      <div
+        class="at__scroll"
+        role="group"
+        tabindex="0"
+        aria-labelledby="at-catalogue"
+      >
+        <table class="at__table">
+          <caption class="visually-hidden">{at.catalogue_heading}</caption>
+          {/* Fixed layout with stated columns. `inline-size: max-content` put
+              this table at 3,683px inside a 1,104px scroll container, which
+              parked the status column 2,500px off the right edge: exactly the
+              failure constraint 2 forbids, and invisible in the markup. Found
+              by measuring the cell boxes after opening the 1440 capture. */}
+          <colgroup>
+            <col class="at__col--name" />
+            <col class="at__col--facets" />
+            <col class="at__col--status" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col" class="at__th type-mono-label">{at.filter_measures}</th>
+              <th scope="col" class="at__th type-mono-label">{at.filter_access}</th>
+              <th scope="col" class="at__th type-mono-label">{at.filter_status}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              rows.map((i) => (
+                <tr
+                  class="at__tr"
+                  data-status={i.implemented ? "built" : "open"}
+                  data-measures={i.measuresValue}
+                  data-access={i.accessValue}
+                  data-objects={i.objectsValue}
+                  data-phases={i.phasesValue}
+                >
+                  <td class="at__td">
+                    <span class="at__name type-body">{i.name}</span>
+                    {i.headline && (
+                      <span class="at__headline type-body-sm">{i.headline}</span>
+                    )}
+                  </td>
+                  <td class="at__td at__td--facets">
+                    {/* An instrument whose access line names no channel has an
+                        UNSTATED requirement. It used to render nothing at all,
+                        because the only word available was `ui.no_value`, "not
+                        measured", which is a stronger and different claim: it
+                        says somebody looked. 30 of the 95 rows are in this
+                        state, so the blank was the commonest thing in the
+                        column. `ui.not_stated` is the word for it. */}
+                    {/* Three facets share one column under one header, so each
+                        line names itself for anyone who cannot see which of the
+                        three it is. The column header is `filter_access` and it
+                        is true of the first line only; that is reported rather
+                        than repaired here, because the header set and the
+                        column widths are this page's stated contract. */}
+                    <span class="at__facets type-mono-sm">
+                      <span class="visually-hidden">{at.filter_access}: </span>
+                      {i.access.length > 0
+                        ? i.access.map((a) => a.toLowerCase()).join(", ")
+                        : copy.ui.not_stated}
+                    </span>
+                    {i.objects.length > 0 && (
+                      <span class="at__facets type-mono-sm">
+                        <span class="visually-hidden">{at.filter_object}: </span>
+                        {i.objects.map((o) => o.toLowerCase()).join(", ")}
+                      </span>
+                    )}
+                    {i.phases.length > 0 && (
+                      <span class="at__facets type-mono-sm">
+                        <span class="visually-hidden">{at.filter_phase}: </span>
+                        {i.phases.map((p) => p.toLowerCase()).join(", ")}
+                      </span>
+                    )}
+                    {i.cost && (
+                      <span class="at__cost type-body-sm">{i.cost}</span>
+                    )}
+                    <span class="at__series type-mono-sm">{i.series}</span>
+                  </td>
+                  <td class="at__td at__td--status">
+                    <span class="at__status type-mono-label">{i.statusLabel}</span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="at__section" aria-labelledby="at-gap">
+      <h2 class="type-h3" id="at-gap">{at.gap_heading}</h2>
+      <p class="type-body measure">{gapBody}</p>
+      <p class="at__note type-body-sm measure">{at.gap_note}</p>
+      <p class="type-body">
+        <a href="/collaborate/">{collaborate.open_problems_heading}</a>
+      </p>
+
+      {/* Its own top margin, because it sat hard against the /collaborate/ link
+          above it and the link read as its heading. Seen in the 1440 capture. */}
+      <p class="at__note at__subs-note type-body-sm measure">{substitutionNote}</p>
+      <dl class="at__subs">
+        {
+          atlas.substitutions.map((s) => (
+            <div class="at__sub">
+              <dt class="at__sub-to type-body-sm">{s.to}</dt>
+              <dd class="at__sub-why type-mono-sm">
+                {s.scope} {s.field}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
   </div>
 </Base>
 
+<style is:global set:html={filterCss}></style>
+
 <style>
-  .atlas-wrap {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--page-pad) var(--sp-12);
+  .at {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
   }
-  .atlas-note {
-    max-width: var(--measure-prose);
-    color: var(--ink-2);
-    line-height: 1.7;
-    margin: 0 0 var(--sp-6);
+  .at__section {
+    margin-top: var(--space-7);
+    min-width: 0;
   }
-  .atlas-hf a {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
+  .at__section h2 {
+    margin: 0 0 var(--space-4);
+    color: var(--ink);
   }
-  .atlas-footnote {
-    margin-top: var(--sp-4);
-    font-size: var(--text-sm);
+
+  .at__filters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-4);
+    min-width: 0;
+  }
+  .at__group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .at__legend {
+    padding: 0;
+    margin-bottom: var(--space-2);
     color: var(--ink-3);
-    max-width: var(--measure-prose);
+  }
+  .at__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .at__opt {
+    display: inline-flex;
+    min-width: 0;
+  }
+  /* The control stays in the accessibility tree and stays focusable; the label
+     is the visible target and it carries the focus ring. */
+  .at__radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .at__label {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    border: var(--border-w) solid var(--line-control);
+    border-radius: var(--radius-pill);
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .at__radio:checked + .at__label {
+    border-color: var(--ink-2);
+    color: var(--ink);
+  }
+  .at__radio:focus-visible + .at__label {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  .at__open-note {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-2);
+  }
+
+  .at__scroll {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    min-width: 0;
+  }
+  .at__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+  .at__table {
+    inline-size: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    text-align: start;
+  }
+  .at__col--name {
+    inline-size: 52%;
+  }
+  .at__col--facets {
+    inline-size: 32%;
+  }
+  .at__col--status {
+    inline-size: 16%;
+  }
+  .at__th {
+    text-align: start;
+    padding: var(--space-2) var(--space-4) var(--space-2) 0;
+    border-bottom: var(--border-w) solid var(--line-strong);
+    color: var(--ink-3);
+    vertical-align: bottom;
+  }
+  .at__td {
+    padding: var(--space-3) var(--space-4) var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    vertical-align: baseline;
+    min-width: 0;
+  }
+  .at__name {
+    display: block;
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+  .at__headline {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--ink-2);
+    max-width: min(var(--measure-prose), 100%);
+  }
+  .at__series {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+  .at__td--facets {
+    min-width: 0;
+  }
+  .at__facets {
+    display: block;
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+  }
+  .at__cost {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--ink-3);
+  }
+  .at__td--status {
+    white-space: nowrap;
+  }
+  /* Same weight as any other cell. No fill, no grey-out, no icon: the
+     difference between shipped and specified is a word. */
+  .at__status {
+    color: var(--ink-2);
+  }
+  .at__note {
+    color: var(--ink-2);
+  }
+  .at__subs-note {
+    margin-top: var(--space-6);
+  }
+
+  .at__subs {
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+    max-width: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+  .at__sub {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .at__sub-to {
+    margin: 0;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .at__sub-why {
+    margin: 0;
+    color: var(--ink-3);
+    min-width: 0;
+  }
+
+  /* At 390 the row stacks and the status moves first, so it survives the
+     horizontal scroll instead of sitting off the right edge where a reader
+     never meets it. */
+  @media (max-width: 47.4375rem) /* --bp-md */ {
+    .at__table,
+    .at__tbody,
+    .at__tr,
+    .at__td {
+      display: block;
+      inline-size: auto;
+    }
+    .at__thead,
+    .at__th,
+    .at__col--name,
+    .at__col--facets,
+    .at__col--status {
+      display: none;
+    }
+    .at__tr {
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-3) 0;
+      border-bottom: var(--border-w) solid var(--line);
+    }
+    .at__td {
+      padding: 0;
+      border-bottom: 0;
+      max-width: none;
+    }
+    .at__td--status {
+      order: -1;
+      margin-bottom: var(--space-1);
+    }
+    .at__td--facets {
+      margin-top: var(--space-2);
+    }
+  }
+
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .at__sub {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 10rem);
+      align-items: baseline;
+    }
   }
 </style>

@@ -1,0 +1,26 @@
+{
+ "comparator": "== 1",
+ "contentHash": "21da99d9ba2868710d2cb8d910885484",
+ "humanSource": "The frozen study \"Do the indices carry information beyond size, accuracy, and lineage\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:491f7f378d0b58dfdadebc9aaee7c983",
+  "campaign.adjudication.CONF-PARTIAL",
+  "study:campaign-conf-partial@v1#3ecef7c0",
+  "spec:3ecef7c08cb489d49083f607184717bc",
+  "H-partial-lineage"
+ ],
+ "label": "Do the indices carry information beyond size, accuracy, and lineage",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "lineage_check_pass",
+  "unit": null,
+  "value": 0
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "measured-conf-partial-lineage-check-pass",
+ "sourceUrl": "/evidence/491f7f378d0b58dfdadebc9aaee7c983/",
+ "statement": "the surviving index also survives the within-lineage check.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full",
+ "type": "measured-result"
+}

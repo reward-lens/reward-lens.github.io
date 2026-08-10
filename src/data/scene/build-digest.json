@@ -1,0 +1,96 @@
+{
+ "note": "Content hashes for cache invalidation and for proving a rebuild is byte-identical. `manifestDigest` covers the manifest with its timestamp blanked and the captions in full, so two runs over unchanged sources agree. A changed source hash invalidates the cases listed beside it.",
+ "manifestVersion": 1,
+ "payloadFormatVersion": 1,
+ "manifestDigest": "e88993cb52f0cd46d8073b39b6ddccbd4f0cc8b097f8eb37d42df6a0c10a4beb",
+ "sources": {
+  "run-series": {
+   "path": "src/data/run-series.json",
+   "sha256": "7cb3bb297a10e15c49f0256de09773fc5f4d6cec267d88757fd113a97629dc98"
+  },
+  "grader-cards": {
+   "path": "src/data/grader-cards.json",
+   "sha256": "13b392adb6092f7aeaeeba58c9eb645297eb536063ab3f6b897fd2f1727042cb"
+  },
+  "intervention": {
+   "path": "src/data/intervention.json",
+   "sha256": "d839f93ff6fbc38c5f5f8e143c0e7534a4868ef3f057f298268629592ddfec57"
+  }
+ },
+ "runRecord": {
+  "path": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+  "sha256": "5f5d4f56d9e61509535121cacc68456660b518f619bf48a15c4c43f0c68f50ae",
+  "counts": {
+   "steps": 200,
+   "groups": 400,
+   "trajectories": 1600,
+   "turns": 3200
+  }
+ },
+ "truthContract": {
+  "path": "src/components/scene/types/truth.ts",
+  "sha256": "5298c5d11fb1ab75fea9e61b980e142c5fe968bf60179f391a3cda720eb6765b"
+ },
+ "cases": {
+  "scorer-score-tree": {
+   "contentHash": "cea46dd7295b21110d38d0ebdbbece28170800f8bdc0c808b9fd10b8404742f4",
+   "payloadBytes": 15720,
+   "arrays": 7,
+   "encodings": 5
+  },
+  "scorer-verifier-is-equiv": {
+   "contentHash": "8f2a2b9ef228a1cfb4b8381bde1ac14caf95d4ac0fa6186acaca6158c78aa936",
+   "payloadBytes": 840,
+   "arrays": 8,
+   "encodings": 8
+  },
+  "scorer-verifier-swebench": {
+   "contentHash": "bca5c56e6deb8bb6dc9ceea524d5a481ed164efd74a45f27cb0cf1503fdb8f90",
+   "payloadBytes": 648,
+   "arrays": 6,
+   "encodings": 6
+  },
+  "scorer-verifier-verl-gsm8k": {
+   "contentHash": "7ffe8307c434dcc2b9d57a2eccb0792552dc352e8d54628b1eab001292f33ef5",
+   "payloadBytes": 848,
+   "arrays": 8,
+   "encodings": 8
+  },
+  "scorer-verifier-verl-search-r1": {
+   "contentHash": "6ba1aa308f315061a6de199466c480473e88e8a324f1275d11b7324bc51edd16",
+   "payloadBytes": 848,
+   "arrays": 8,
+   "encodings": 8
+  },
+  "scorer-attribution-patching": {
+   "contentHash": "4eb514880c5bb6172a44787c5880f2427144e0e6ffe3451147cc865c3b33f2c7",
+   "payloadBytes": 13448,
+   "arrays": 9,
+   "encodings": 7
+  },
+  "selection-advantages": {
+   "contentHash": "69159e1488fefaf7a66245dcd2f430dd13e64290320fd485428632f60df997db",
+   "payloadBytes": 25360,
+   "arrays": 8,
+   "encodings": 6
+  },
+  "update-step": {
+   "contentHash": "28a7d041cad9be31f8c12374cba507d0a488584a64b2f57b9c6ca778660019a3",
+   "payloadBytes": 5256,
+   "arrays": 7,
+   "encodings": 5
+  },
+  "response-unresolved": {
+   "contentHash": "edbc662fac2e74d28e01b76353e6e108ded588b12253e0661bebf35bc44322cd",
+   "payloadBytes": 56,
+   "arrays": 0,
+   "encodings": 0
+  },
+  "run-boundary-series": {
+   "contentHash": "9ce1d10a7b4fd83d6029ad8ca6977899c4b601a0433dbb1316dac4445f08d303",
+   "payloadBytes": 10472,
+   "arrays": 12,
+   "encodings": 10
+  }
+ }
+}

@@ -1,0 +1,68 @@
+---
+/**
+ * act-layout  ·  the shell all three acts share
+ *
+ * There is one layout and there are three acts, and that is the whole point of
+ * this file. DESIGN.md §16.2 gives every act the same six-part structure so a
+ * reader learns the pattern once; the failure mode named in the build brief
+ * §11.1 is that the three acts become an anthology, three visual treatments of
+ * one idea, which is what happens when three routes each grow their own
+ * spacing, their own heading rhythm and their own margin column. So the acts
+ * own no layout CSS of their own: everything structural lives here and in
+ * act-section.astro, and a route file is a list of parts and their contents.
+ *
+ * The grid is DESIGN.md §7: a real margin track of --grid-margin-col beside a
+ * body track, collapsing below --bp-md to a wrapped metadata row above the
+ * body. The margin carries metadata a reader needs and never a decorative
+ * label; the test is in §7.1 and act-meta.astro repeats it.
+ *
+ * The <title> composition follows src/pages/gallery.astro:22, which is the
+ * established form on this site.
+ */
+import Base from "@layouts/Base.astro";
+import { copy } from "../../copy";
+
+interface Props {
+  /** The act's own title. From copy.yaml:acts.<act>.title. Never typed here. */
+  title: string;
+  /**
+   * The meta description. Every act binds its own question, which is the one
+   * sentence that says what the page is for. There is no per-act description
+   * key in copy.yaml and a route may not invent one.
+   */
+  description: string;
+  class?: string;
+}
+
+const { title, description, class: extraClass = "" } = Astro.props;
+---
+
+<Base title={`${title} · ${copy.meta.site_name}`} description={description}>
+  <div class:list={["act", "wrap", extraClass]} data-act>
+    {
+      /* version-chip's banner form, above the page's content
+         (components/version-chip.md:52 and :106). It is page metadata rather
+         than part 1's content, which is why it sits here and not inside a
+         part: part 1's acceptance is that nothing competes with the question
+         in the first viewport except the page header, and this is that. */
+    }
+    <slot name="banner" />
+    <slot />
+  </div>
+</Base>
+
+<style>
+  /* The page frame comes from .wrap in global.css: --grid-max, --page-pad and
+     the centring. What this adds is the act's vertical inset. --space-9 is
+     "between acts, and the hero's top inset" and it is the right value at the
+     end of the page too, where the footer follows. */
+  .act {
+    padding-block: var(--space-8) var(--space-9);
+  }
+
+  /* The banner is one quiet line of page metadata, so it sits closer to the
+     content it describes than a part does to its neighbour. */
+  .act > :global(.version-chip--banner) {
+    margin-block-end: var(--space-6);
+  }
+</style>

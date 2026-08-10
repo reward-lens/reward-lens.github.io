@@ -4,6 +4,8 @@ description: Does your reward model pay more for a longer answer that says the s
 section: how-to
 order: 11
 source: docs/content/how-to/detect-length-bias.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -54,4 +56,4 @@ Cohen's d is dimensionless, which is why the gauge is `invariant`: a d of 0.8 is
 On a trained 8B classifier RM, the same call reads a real bias per axis: wrap the model with [`wrap_hf_model`](/docs/how-to/load-a-reward-model/), build a view over the axes you care about, and run `BiasBattery` exactly as above. The sign on the length axis tells you whether that model rewards padding or docks it. The [bias battery instrument page](/docs/instruments/bias-battery/) carries the measured-model reading.
 
 </Callout>
-See also: [Bias battery](/docs/instruments/bias-battery/), [A measurement you can trust](/docs/concepts/measurement-you-can-trust/). API: [`BiasBattery`](/docs/reference/measure/#reward_lens.measure.battery.bias.BiasBattery).
+See also: [Bias battery](/docs/instruments/bias-battery/), [A measurement you can trust](/docs/concepts/measurement-you-can-trust/). API: [`BiasBattery`](/docs/api/measure/#reward_lens.measure.battery.bias.BiasBattery).

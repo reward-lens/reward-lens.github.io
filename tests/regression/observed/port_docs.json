@@ -1,0 +1,13 @@
+{
+ "generator": "port_docs",
+ "source": "scripts/port_docs.py",
+ "values": {
+  "docs_nav_hrefs": 102,
+  "generated_routes": 18,
+  "library_version": "3.0.0",
+  "pages_naming_an_older_version": 9,
+  "ported_pages": 84,
+  "redirects": 117,
+  "source_corpus": "reward-lens-assay/docs"
+ }
+}

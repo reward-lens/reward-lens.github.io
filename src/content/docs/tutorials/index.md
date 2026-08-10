@@ -4,6 +4,9 @@ description: Two ways in, and they answer different questions. One takes a singl
 section: tutorials
 order: 3
 source: docs/content/tutorials/index.md
+libraryVersion: 3.0.0
+staleMarkers:
+- '2.0'
 ---
 
 # Tutorials

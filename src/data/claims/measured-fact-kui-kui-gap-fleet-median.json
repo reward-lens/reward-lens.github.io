@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.2",
+ "contentHash": "0f079972930f7c05fbe4799c419f4709",
+ "humanSource": "The frozen study \"The fleet decodes a property it does not price\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:a34316feccee3beaed93c05ce5888567",
+  "campaign.adjudication.FACT-KUI",
+  "study:campaign-fact-kui@v1#dcdc401f",
+  "spec:dcdc401fbbe744065b8f175de0384372",
+  "H-kui-gap"
+ ],
+ "label": "The fleet decodes a property it does not price",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "kui_gap_fleet_median",
+  "unit": null,
+  "value": 0.15152288168283162
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "measured-fact-kui-kui-gap-fleet-median",
+ "sourceUrl": "/evidence/a34316feccee3beaed93c05ce5888567/",
+ "statement": "the fleet-median KUI gap for the star property exceeds its permuted null.",
+ "status": "refuted",
+ "subject": "fleet, over rb2-full",
+ "type": "measured-result"
+}

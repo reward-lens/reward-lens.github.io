@@ -1,0 +1,119 @@
+---
+import { nav, copy } from "../copy";
+
+// Four groups, sixteen items, all from copy.yaml `nav.footer_groups`. The two
+// external hrefs are written there as {{urls.repo}} and {{urls.pypi}} and are
+// resolved against the `urls:` block by src/copy.ts, so neither is typed twice.
+//
+// The three notes are copy.yaml `footer.privacy`, `footer.built_note` and
+// `footer.licence_note`. The privacy sentence is required.
+//
+// The footer sits on --ground, which is one of the two surfaces --ink-3 is
+// permitted on (DESIGN.md §5.3). On --surface-2 or above it would be --ink-2.
+//
+// THIS is the footer that renders, from `layouts/Base.astro`.
+// `SiteFooter.astro` is a v1 twin that nothing imports. There is no link to
+// `/campaign/method/` here and there must not be one: D-26 keeps that URL
+// working as a redirect, and a redirect exists so an old link does not break,
+// not so the site can point at it.
+
+const groups = nav.footer_groups;
+const { privacy, built_note, licence_note } = copy.footer;
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner wrap">
+    <nav class="site-footer__groups" aria-label={nav.footer_aria}>
+      {
+        groups.map((group) => (
+          <div class="site-footer__group">
+            <h2 class="site-footer__heading type-mono-label">
+              {group.heading}
+            </h2>
+            <ul class="site-footer__list">
+              {group.items.map((item) => (
+                <li>
+                  <a class="site-footer__link type-body-sm" href={item.href}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+
+    <div class="site-footer__notes">
+      <p class="site-footer__note type-body-sm">{built_note}</p>
+      <p class="site-footer__quiet type-body-sm">{licence_note}</p>
+      <p class="site-footer__quiet type-body-sm">{privacy}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-block-start: var(--space-9);
+    border-top: var(--border-w) solid var(--line);
+    padding-block: var(--space-6) var(--space-7);
+    color: var(--ink-2);
+  }
+  .site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .site-footer__groups {
+    display: grid;
+    /* Four groups at the wide end, fewer as the viewport narrows. The track
+       floor is the metadata column width, which is the narrowest track this
+       grid system defines. */
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--grid-margin-col), 100%), 1fr)
+    );
+    gap: var(--space-5) var(--space-6);
+  }
+  .site-footer__group {
+    min-width: 0;
+  }
+  .site-footer__heading {
+    margin: 0 0 var(--space-3);
+    color: var(--ink-3);
+  }
+  .site-footer__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-footer__link {
+    color: var(--ink-2);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    /* 48px, so every footer link is a touch target at every width. */
+    min-block-size: var(--space-7);
+    transition: color var(--dur-1) var(--curve-ui);
+  }
+  .site-footer__link:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  .site-footer__notes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .site-footer__note {
+    margin: 0;
+    max-width: min(var(--measure-caption), 100%);
+  }
+  .site-footer__quiet {
+    margin: 0;
+    color: var(--ink-3);
+    max-width: min(var(--measure-caption), 100%);
+  }
+</style>

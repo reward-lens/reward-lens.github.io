@@ -1,0 +1,244 @@
+---
+/**
+ * The instrument story: five states in scroll order, in a narrative column
+ * beside a sticky visual region.
+ *
+ * WHAT THIS IS FOR. A score has to pass through a training process before it
+ * can change a model, and the five states are the stages of that passage:
+ * what scored the rollout, what the optimizer actually saw, where the update
+ * came from, what the policy became, and what can be seen while a run is still
+ * changeable. The order is the argument.
+ *
+ * THE DOM IS THE WHOLE ARGUMENT. The sticky region is a slot. With no scene in
+ * it, and with scripting off, the five states read top to bottom as a complete
+ * piece of writing and the region is not rendered at all: an empty sticky box
+ * is worse than no box. This was built and verified in that state first.
+ *
+ * NO SCROLL HIJACKING. There is no wheel handler, no touch handler, no scroll
+ * handler and no scroll-snap. An IntersectionObserver marks whichever state is
+ * crossing the middle band of the viewport and publishes it on
+ * `data-instrument-state`, on this element and on the document element, plus
+ * an `instrumentstate` event. That is a read of where the reader already is,
+ * not a change to how scrolling behaves. Every intermediate scroll position is
+ * legible because nothing is hidden until a state becomes active.
+ *
+ * THE STATE IDS ARE FROZEN ELSEWHERE. `src/components/scene/types/truth.ts`
+ * owns them; `story-copy.ts` pairs each with the copy.yaml key that carries its
+ * words and fails the build if one is missing.
+ */
+import StoryState from "./story-state.astro";
+import { states, sectionLabel, sectionHeadline } from "./story-copy";
+
+interface Props {
+  /**
+   * The section's own heading tag. The states are one level below it. The
+   * homepage h1 is the hero's, so this defaults to h2.
+   */
+  headingLevel?: 2 | 3;
+  /** The id the section heading carries, for a skip target or a nav anchor. */
+  id?: string;
+  class?: string;
+}
+
+const {
+  headingLevel = 2,
+  id = "instrument-story",
+  class: extraClass = "",
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const stateHeadingLevel = (headingLevel + 1) as 3 | 4;
+const headingId = `${id}-heading`;
+
+/**
+ * The visual region exists only if something was passed for it. A slot with a
+ * scene in it gets a sticky column; an empty slot gets no column and the
+ * narrative takes the full measure, which is also the reduced-motion and
+ * no-canvas state rather than a degraded version of one.
+ */
+const hasVisual = Astro.slots.has("visual");
+
+/**
+ * A state's control, when it has one, is passed in on a named slot. The parent
+ * page owns the controls; this component owns where they sit and how many
+ * there may be, which is one.
+ */
+const controlSlot = (stateId: string) => `control-${stateId}`;
+const controlled = new Map(
+  states.map((s) => [s.id, Astro.slots.has(controlSlot(s.id))]),
+);
+---
+
+<section
+  class:list={["story", extraClass]}
+  id={id}
+  aria-labelledby={headingId}
+  data-instrument-story
+  data-active-state={states[0].id}
+>
+  <header class="story__intro">
+    <p class="story__label type-mono-label">{sectionLabel}</p>
+    <Heading class="story__headline type-display-2" id={headingId}>
+      {sectionHeadline}
+    </Heading>
+  </header>
+
+  <div class="story__grid" data-has-visual={hasVisual ? "true" : undefined}>
+    {
+      hasVisual && (
+        <div class="story__visual">
+          <slot name="visual" />
+        </div>
+      )
+    }
+
+    <ol class="story__states">
+      {
+        states.map((s) => (
+          <li class="story__item">
+            <StoryState
+              state={s.id}
+              kicker={s.kicker}
+              heading={s.heading}
+              body_1={s.body_1}
+              body_2={s.body_2}
+              caveat={s.caveat}
+              headingLevel={stateHeadingLevel}
+              hasControl={controlled.get(s.id)}
+            >
+              {/* A slot name must be a static string, so the five are written
+                  out and each renders only in its own state. */}
+              {s.id === "scorer" && <slot name="control-scorer" />}
+              {s.id === "selection" && <slot name="control-selection" />}
+              {s.id === "update" && <slot name="control-update" />}
+              {s.id === "response" && <slot name="control-response" />}
+              {s.id === "run-boundary" && <slot name="control-run-boundary" />}
+            </StoryState>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .story {
+    display: grid;
+    gap: var(--space-7);
+    min-width: 0;
+  }
+
+  .story__intro {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .story__label {
+    margin: 0;
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+  .story__headline {
+    margin: 0;
+    color: var(--ink);
+    max-width: min(var(--measure-prose), 100%);
+    text-wrap: balance;
+  }
+
+  .story__grid {
+    display: grid;
+    gap: var(--space-7);
+    min-width: 0;
+  }
+
+  .story__states {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 0;
+  }
+  .story__item {
+    min-width: 0;
+  }
+  /* The rail is continuous, so the last state closes it rather than leaving a
+     hairline running into the section below. */
+  .story__item:last-child {
+    border-block-end: var(--border-w) solid var(--line);
+  }
+
+  /* Two columns only where a prose column and a visual column both fit at
+     their own natural sizes. Below this the visual sits above the narrative
+     in the same source order. */
+  @media (min-width: 64rem) /* --bp-lg */ {
+    .story__grid[data-has-visual] {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--grid-margin-gap);
+      align-items: start;
+    }
+    .story__grid[data-has-visual] .story__visual {
+      position: sticky;
+      /* The site header is sticky at the top; a sticky sibling starts below
+         it, the same offset the docs rail uses. */
+      top: var(--space-7);
+      max-block-size: calc(100dvh - var(--space-9));
+      min-width: 0;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Publish which state the reader is in. Read-only: no scroll, wheel or touch
+   * handler exists here, and nothing about scrolling changes.
+   *
+   * The band is the middle tenth of the viewport. A state is active while it
+   * crosses that band, which is what makes the marker agree with what a reader
+   * would say they are reading. Where two states overlap the band, the earlier
+   * one wins, so the sequence never runs backwards while scrolling forwards.
+   *
+   * The last active state is kept when nothing is in the band, which happens at
+   * the very top and the very bottom of the movement. Clearing it there would
+   * make the scene fall back to nothing at the two positions where a reader is
+   * most likely to be looking at it.
+   */
+  const stories = document.querySelectorAll<HTMLElement>("[data-instrument-story]");
+
+  for (const story of stories) {
+    const states = Array.from(
+      story.querySelectorAll<HTMLElement>("[data-instrument-state]"),
+    );
+    if (states.length === 0 || !("IntersectionObserver" in window)) continue;
+
+    let active: HTMLElement | null = null;
+    const inBand = new Set<HTMLElement>();
+
+    const publish = (el: HTMLElement) => {
+      if (el === active) return;
+      active = el;
+      for (const s of states) s.toggleAttribute("data-active", s === el);
+      const id = el.dataset.instrumentState ?? "";
+      story.dataset.activeState = id;
+      document.documentElement.dataset.instrumentState = id;
+      document.dispatchEvent(
+        new CustomEvent("instrumentstate", {
+          detail: { state: id, index: states.indexOf(el) },
+        }),
+      );
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const el = entry.target as HTMLElement;
+          if (entry.isIntersecting) inBand.add(el);
+          else inBand.delete(el);
+        }
+        const first = states.find((s) => inBand.has(s));
+        if (first) publish(first);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+
+    for (const s of states) observer.observe(s);
+  }
+</script>

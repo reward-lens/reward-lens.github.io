@@ -1,0 +1,46 @@
+---
+/**
+ * Proof bench, second place: change the reward, and watch the update change
+ * with it.
+ *
+ * THIS EXHIBIT DRAWS NOTHING, ON PURPOSE, AND THAT IS THE HONEST STATE.
+ * design/scene/EVIDENCE-VERDICTS.md §5 rules on the counterfactual behind this
+ * paragraph: the computation runs at test time against a store outside both
+ * published repositories, and no per-rollout before-and-after array ships with
+ * either. The claim may be made in prose with its limitation and it may not
+ * become geometry, so no bar, width or count here encodes it. A figure would be
+ * the third time in this build's history that a central picture turned out to
+ * have no measured instance behind it.
+ *
+ * The two other exhibits on this bench are figures over complete artifacts.
+ * Leaving the middle one as prose is what tells a reader which of the three
+ * this site can actually show them, without a sentence claiming as much.
+ */
+import ProofExhibit from "./proof-exhibit.astro";
+import { copy } from "../../../copy";
+
+interface Props {
+  /** Where "Follow a training update" goes. */
+  href?: string;
+  headingLevel?: 3 | 4;
+  id?: string;
+}
+
+const {
+  href = "/see/run/",
+  headingLevel = 3,
+  id = "proof-training",
+} = Astro.props;
+
+const home = copy.home as Record<string, any>;
+const block = home.proof.training;
+---
+
+<ProofExhibit
+  id={id}
+  heading={block.heading}
+  body={block.body}
+  link={block.link}
+  href={href}
+  headingLevel={headingLevel}
+/>

@@ -2,8 +2,10 @@
 title: Bias battery
 description: Which surface feature is the reward quietly paying for?
 section: instruments
-order: 33
+order: 34
 source: docs/content/instruments/bias-battery.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 import ThemedFigure from "@components/ThemedFigure.astro";
@@ -111,4 +113,4 @@ And a small-$n$ caution: an effect size on eight pairs is barely an estimate. Th
 
 The number arrives at trust level **EXPLORATORY**. Cohen's d is a clean statistic and the effective-$n$ accounting is honest, but no calibration provider is wired in this release, so no scorecard yet ties a given effect size to a hacking rate under real optimization pressure. Exploratory means unaudited, not wrong. Use the battery to rank a model's biases and to compare biases across models, since the gauge is invariant; do not yet promise that a d below some threshold is safe. The organisms that would calibrate that threshold, planted-bias generators with a known ground-truth channel, are described in [calibration and organisms](/docs/discipline/calibration-and-organisms/).
 
-Full signatures and return fields: [`BiasBattery`](/docs/reference/measure/#reward_lens.measure.battery.bias.BiasBattery). For a task-shaped walkthrough, see [detect length bias](/docs/how-to/detect-length-bias/).
+Full signatures and return fields: [`BiasBattery`](/docs/api/measure/#reward_lens.measure.battery.bias.BiasBattery). For a task-shaped walkthrough, see [detect length bias](/docs/how-to/detect-length-bias/).

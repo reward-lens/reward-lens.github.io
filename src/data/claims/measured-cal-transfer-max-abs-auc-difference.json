@@ -1,0 +1,26 @@
+{
+ "comparator": "< 0.15",
+ "contentHash": "e5723c508feebc9820da5b37bd4cb2a4",
+ "humanSource": "The frozen study \"Instrument calibration transfers from CPU toy trunks to a real 0.6B trunk\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:b37f71c015ebfd697d7deb2a7efb5f7e",
+  "campaign.adjudication.CAL-TRANSFER",
+  "study:campaign-cal-transfer@v1#31f5b67b",
+  "spec:31f5b67bc4168dab4b55ec6a9a588279",
+  "H-transfer"
+ ],
+ "label": "Instrument calibration transfers from CPU toy trunks to a real 0.6B trunk",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "max_abs_auc_difference",
+  "unit": null,
+  "value": 0.41898333333333326
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-0.6b, over caltransfer-organisms.",
+ "slug": "measured-cal-transfer-max-abs-auc-difference",
+ "sourceUrl": "/evidence/b37f71c015ebfd697d7deb2a7efb5f7e/",
+ "statement": "instrument scorecard AUCs on a real 0.6B trunk match the CPU-organism AUCs within 0.15.",
+ "status": "refuted",
+ "subject": "skywork-v2-qwen3-0.6b, over caltransfer-organisms",
+ "type": "measured-result"
+}

@@ -1,0 +1,135 @@
+---
+/**
+ * A reading that was produced: the evidence half of the pair beside a refusal.
+ *
+ * Deliberately built as the twin of `base/refusal-card.astro`, at the same
+ * elevation, with the same head row, the same accent construction and the same
+ * type. The two cards differ in exactly the two things that are different
+ * about them: the accent takes the evidence colour instead of the refusal
+ * colour, and where the refusal has a remedy this has what the reading was
+ * supported by. Making them look like two kinds of card would say the library
+ * has one real outcome and one failure mode, and it has two outcomes.
+ *
+ * Every field on it is read out of `src/data/grader-cards.json`. The quantity
+ * is the field's own name, the sentence is the reading the instrument printed,
+ * and the trust level is the one the gates computed for it, not one chosen
+ * here.
+ */
+import TrustBadge from "@components/base/trust-badge.astro";
+import { refusalCopy } from "@components/base/data";
+
+interface Props {
+  /** The field name as the library renders it. Never invented. */
+  quantity: string;
+  /** The reading the instrument printed, verbatim from the generated file. */
+  headline: string;
+  /** What the reading rests on. Rendered, never summarised. */
+  supporting?: string[];
+  /** The computed trust level. One of the four names in copy.yaml. */
+  trust?: string | null;
+  /** Heading level for the quantity name, so a page keeps one outline. */
+  as?: "h2" | "h3" | "h4";
+  class?: string;
+}
+
+const {
+  quantity,
+  headline,
+  supporting = [],
+  trust = null,
+  as: Heading = "h3",
+  class: extraClass = "",
+} = Astro.props;
+
+const uid = `reading-${quantity.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`;
+const quantityId = `${uid}-quantity`;
+---
+
+<article class:list={["reading", extraClass]} aria-labelledby={quantityId}>
+  <div class="reading__head">
+    <Heading class="reading__quantity type-h3" id={quantityId}>
+      {quantity}
+    </Heading>
+    <span class="reading__state type-body-sm">
+      {refusalCopy.state_labels.evidence}
+    </span>
+    {trust && <TrustBadge level={trust} form="chip" class="reading__trust" />}
+  </div>
+
+  <p class="reading__detail type-body">{headline}</p>
+
+  {
+    supporting.length > 0 && (
+      <ul class="reading__supporting">
+        {/* Annotated because the `= []` default widens to any[] through the
+            destructure, and the checker loses the Props type it came from. */}
+        {supporting.map((s: string) => (
+          <li class="reading__support type-body-sm">{s}</li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .reading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    background: var(--surface-1);
+    border: var(--border-w) solid var(--line-strong);
+    /* The accent is a shape as well as a colour, which is what keeps the card
+       readable in greyscale and in print. */
+    border-inline-start: var(--border-w-accent) solid var(--state-evidence);
+    border-radius: var(--radius-2);
+    padding: var(--space-5);
+  }
+
+  .reading__head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    min-width: 0;
+  }
+  .reading__quantity {
+    margin: 0;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .reading__state {
+    color: var(--ink-2);
+    min-width: 0;
+  }
+  .reading__trust {
+    flex: none;
+    align-self: center;
+  }
+
+  .reading__detail {
+    margin: 0;
+    color: var(--ink);
+    max-inline-size: min(var(--measure-prose), 100%);
+    min-width: 0;
+  }
+
+  /* The same dashed rule the refusal card uses for its remedy: decorative
+     separation inside a card, so --line rather than --line-strong. */
+  .reading__supporting {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    padding-block-start: var(--space-4);
+    list-style: none;
+    border-block-start: var(--border-w) dashed var(--line);
+    min-width: 0;
+  }
+  .reading__support {
+    color: var(--ink-2);
+    max-inline-size: min(var(--measure-prose), 100%);
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+</style>

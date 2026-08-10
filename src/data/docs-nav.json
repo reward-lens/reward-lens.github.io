@@ -72,6 +72,10 @@
         "href": "/docs/how-to/effective-sample-size/"
       },
       {
+        "title": "Effective group size of a GRPO group",
+        "href": "/docs/how-to/effective-group-size/"
+      },
+      {
         "title": "Calibrate a detector on an organism",
         "href": "/docs/how-to/calibrate-on-an-organism/"
       },
@@ -194,8 +198,50 @@
         ]
       },
       {
+        "title": "On a training run",
+        "children": [
+          {
+            "title": "The cost book",
+            "href": "/docs/instruments/cost-book/"
+          },
+          {
+            "title": "Credit geometry",
+            "href": "/docs/instruments/credit/"
+          },
+          {
+            "title": "The four books",
+            "href": "/docs/instruments/reconciliation/"
+          },
+          {
+            "title": "Feature heritability",
+            "href": "/docs/instruments/heritability/"
+          },
+          {
+            "title": "The reward covector",
+            "href": "/docs/instruments/covector/"
+          }
+        ]
+      },
+      {
+        "title": "On a grader",
+        "children": [
+          {
+            "title": "The grader card",
+            "href": "/docs/instruments/grader-card/"
+          },
+          {
+            "title": "Reference materials and selection",
+            "href": "/docs/instruments/reference-materials/"
+          }
+        ]
+      },
+      {
         "title": "The index library",
         "href": "/docs/instruments/index-library/"
+      },
+      {
+        "title": "The full catalogue",
+        "href": "/atlas/"
       }
     ]
   },
@@ -256,6 +302,10 @@
     "href": "/docs/discipline/",
     "children": [
       {
+        "title": "The kernel",
+        "href": "/docs/discipline/the-kernel/"
+      },
+      {
         "title": "The anatomy of evidence",
         "href": "/docs/discipline/anatomy-of-evidence/"
       },
@@ -272,6 +322,10 @@
         "href": "/docs/discipline/gauge-and-frames/"
       },
       {
+        "title": "Generalizability theory",
+        "href": "/docs/discipline/generalizability/"
+      },
+      {
         "title": "Studies and preregistration",
         "href": "/docs/discipline/studies-and-preregistration/"
       },
@@ -282,12 +336,20 @@
     ]
   },
   {
+    "title": "When it refuses",
+    "href": "/docs/refusals/"
+  },
+  {
     "title": "The sciences",
     "href": "/docs/sciences/"
   },
   {
     "title": "Interpreting results honestly",
     "href": "/docs/caveats/"
+  },
+  {
+    "title": "What 3.0 does not do",
+    "href": "/docs/not-in-3-0/"
   },
   {
     "title": "Background & theory",
@@ -321,64 +383,64 @@
   },
   {
     "title": "API reference",
-    "href": "/docs/reference/",
+    "href": "/docs/api/",
     "children": [
       {
         "title": "Core and evidence",
-        "href": "/docs/reference/core/"
+        "href": "/docs/api/core/"
       },
       {
         "title": "Stats",
-        "href": "/docs/reference/stats/"
+        "href": "/docs/api/stats/"
       },
       {
         "title": "Signals",
-        "href": "/docs/reference/signals/"
+        "href": "/docs/api/signals/"
       },
       {
         "title": "Data",
-        "href": "/docs/reference/data/"
+        "href": "/docs/api/data/"
       },
       {
         "title": "Measure and indices",
-        "href": "/docs/reference/measure/"
+        "href": "/docs/api/measure/"
       },
       {
         "title": "Interventions",
-        "href": "/docs/reference/interventions/"
+        "href": "/docs/api/interventions/"
       },
       {
         "title": "Geometry",
-        "href": "/docs/reference/geometry/"
+        "href": "/docs/api/geometry/"
       },
       {
         "title": "Concepts",
-        "href": "/docs/reference/concepts/"
+        "href": "/docs/api/concepts/"
       },
       {
         "title": "Organisms",
-        "href": "/docs/reference/organisms/"
+        "href": "/docs/api/organisms/"
       },
       {
         "title": "Dynamics and loops",
-        "href": "/docs/reference/dynamics-loops/"
+        "href": "/docs/api/dynamics-loops/"
       },
       {
         "title": "Studies",
-        "href": "/docs/reference/studies/"
+        "href": "/docs/api/studies/"
       },
       {
         "title": "Artifacts and operate",
-        "href": "/docs/reference/artifacts-operate/"
+        "href": "/docs/api/artifacts-operate/"
       },
       {
         "title": "Legacy (1.0 API)",
-        "href": "/docs/reference/legacy/"
+        "href": "/docs/api/legacy/"
       }
     ]
   },
   {
-    "title": "Coming from 1.0",
+    "title": "Coming from v1.0",
     "href": "/docs/migration/"
   },
   {

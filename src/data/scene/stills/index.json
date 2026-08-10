@@ -1,0 +1,3816 @@
+{
+ "version": 1,
+ "generatedBy": "scripts/dev/build-scene-stills.mjs",
+ "manifestVersion": 1,
+ "payloadFormatVersion": 1,
+ "manifestDigest": "e88993cb52f0cd46d8073b39b6ddccbd4f0cc8b097f8eb37d42df6a0c10a4beb",
+ "budget": {
+  "rays": 128,
+  "series": 101,
+  "discrete": 64
+ },
+ "note": "Geometry for the composed stills, normalised into the room's own coordinates: x runs 0 at the dispersing element's exit face to 1 at the detector plane, y runs 0 on the optical axis to 1 at the top of the fan's extent. Where the bench sits is not here; the component reads that from hero-geometry.ts, which is the same module the hand-authored room and the live scene read, and is what lets gate 20 hold the three fidelities to 8px.",
+ "states": [
+  {
+   "id": "scorer",
+   "defaultCase": "scorer-score-tree",
+   "cases": [
+    "scorer-score-tree",
+    "scorer-verifier-is-equiv",
+    "scorer-verifier-swebench",
+    "scorer-verifier-verl-gsm8k",
+    "scorer-verifier-verl-search-r1",
+    "scorer-attribution-patching"
+   ]
+  },
+  {
+   "id": "selection",
+   "defaultCase": "selection-advantages",
+   "cases": [
+    "selection-advantages"
+   ]
+  },
+  {
+   "id": "update",
+   "defaultCase": "update-step",
+   "cases": [
+    "update-step"
+   ]
+  },
+  {
+   "id": "response",
+   "defaultCase": "response-unresolved",
+   "cases": [
+    "response-unresolved"
+   ]
+  },
+  {
+   "id": "run-boundary",
+   "defaultCase": "run-boundary-series",
+   "cases": [
+    "run-boundary-series"
+   ]
+  }
+ ],
+ "stills": {
+  "scorer-score-tree": {
+   "caseId": "scorer-score-tree",
+   "state": "scorer",
+   "plateKind": "RECORDED SCORE TREE",
+   "publicLabel": "Reference GRPO run, one grader leaf, 1,600 rollouts",
+   "truthMode": "measured",
+   "contentHash": "cea46dd7295b21110d38d0ebdbbece28170800f8bdc0c808b9fd10b8404742f4",
+   "caption": "The score tree on this run has one leaf, named length_reward. 1,400 of 1,600 rollouts carry a value between 0.62 and 3.36; on the other 200 the grader abstained and the leaf holds nothing. One leaf is not a decomposition, and the spectrum here has one band for that reason.",
+   "scope": "200 recorded steps, 2 groups of 4 rollouts each, 1,600 rollouts in total. One grader, called once for the whole batch. Immediate update credit only: the trajectories are two turns long and the record holds no tool call.",
+   "caveat": "This run's score tree has exactly one leaf, so the spectrum here shows what a decomposition looks like when there is nothing to decompose. It establishes nothing about how a reward built from several components divides between them. On 200 of the 1,600 rollouts the grader abstained, and an abstention is an absent value rather than a low score.",
+   "sourcePath": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+   "sourceArtifact": "the run record's step, group and trajectory tables, in two shards of 100 steps",
+   "drawn": {
+    "method": "uniform stride over the recorded values, first and last kept, no randomness",
+    "inputCount": 200,
+    "outputCount": 101
+   },
+   "note": null,
+   "readout": [
+    {
+     "label": "leaves",
+     "value": "1"
+    },
+    {
+     "label": "length_reward",
+     "value": "0.62 to 3.36"
+    },
+    {
+     "label": "abstained",
+     "value": "200 of 1600"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "ribbon",
+     "token": "--comp-1",
+     "label": "length_reward",
+     "points": [
+      [
+       0,
+       0.25202,
+       0.01514
+      ],
+      [
+       0.01005,
+       0.47615,
+       0.03863
+      ],
+      [
+       0.0201,
+       0.48488,
+       0.02178
+      ],
+      [
+       0.03015,
+       0.3277,
+       0.03479
+      ],
+      [
+       0.0402,
+       0.4616,
+       0.02274
+      ],
+      [
+       0.05025,
+       0.35972,
+       0.03316
+      ],
+      [
+       0.0603,
+       0.34225,
+       0.02993
+      ],
+      [
+       0.07035,
+       0.50817,
+       0.05786
+      ],
+      [
+       0.0804,
+       0.45577,
+       0.02178
+      ],
+      [
+       0.09045,
+       0.36263,
+       0.02589
+      ],
+      [
+       0.1005,
+       0.56347,
+       0.05456
+      ],
+      [
+       0.11055,
+       0.4354,
+       0.01796
+      ],
+      [
+       0.1206,
+       0.44704,
+       0.02135
+      ],
+      [
+       0.13065,
+       0.47324,
+       0.00307
+      ],
+      [
+       0.1407,
+       0.51108,
+       0.01517
+      ],
+      [
+       0.15075,
+       0.45577,
+       0.00457
+      ],
+      [
+       0.1608,
+       0.40629,
+       0.02279
+      ],
+      [
+       0.17085,
+       0.29568,
+       0.05053
+      ],
+      [
+       0.1809,
+       0.42376,
+       0.01289
+      ],
+      [
+       0.19095,
+       0.36554,
+       0.01978
+      ],
+      [
+       0.20101,
+       0.55474,
+       0.02333
+      ],
+      [
+       0.21106,
+       0.37718,
+       0.04131
+      ],
+      [
+       0.22111,
+       0.55765,
+       0.11429
+      ],
+      [
+       0.23116,
+       0.3015,
+       0.03489
+      ],
+      [
+       0.24121,
+       0.51108,
+       0.00232
+      ],
+      [
+       0.25126,
+       0.44122,
+       0.02568
+      ],
+      [
+       0.26131,
+       0.38009,
+       0.02123
+      ],
+      [
+       0.27136,
+       0.35972,
+       0.01033
+      ],
+      [
+       0.28141,
+       0.46742,
+       0.01243
+      ],
+      [
+       0.29146,
+       0.46742,
+       0.02586
+      ],
+      [
+       0.30151,
+       0.4907,
+       0.08014
+      ],
+      [
+       0.31156,
+       0.31897,
+       0.03347
+      ],
+      [
+       0.32161,
+       0.64789,
+       0.08344
+      ],
+      [
+       0.33166,
+       0.52272,
+       0.03072
+      ],
+      [
+       0.34171,
+       0.45869,
+       0.00771
+      ],
+      [
+       0.35176,
+       0.48779,
+       0.03768
+      ],
+      [
+       0.36181,
+       0.47324,
+       0.04477
+      ],
+      [
+       0.37186,
+       0.46742,
+       0.0417
+      ],
+      [
+       0.38191,
+       0.37136,
+       0.039
+      ],
+      [
+       0.39196,
+       0.36554,
+       0.03338
+      ],
+      [
+       0.40201,
+       0.33061,
+       0.01522
+      ],
+      [
+       0.41206,
+       0.50526,
+       0.04537
+      ],
+      [
+       0.42211,
+       0.43249,
+       0.0416
+      ],
+      [
+       0.43216,
+       0.28695,
+       0.03843
+      ],
+      [
+       0.44221,
+       0.40629,
+       0.03511
+      ],
+      [
+       0.45226,
+       0.58676,
+       0.04289
+      ],
+      [
+       0.46231,
+       0.32188,
+       0.0253
+      ],
+      [
+       0.47236,
+       0.4907,
+       0.00773
+      ],
+      [
+       0.48241,
+       0.38592,
+       0.03069
+      ],
+      [
+       0.49246,
+       0.51399,
+       0.03823
+      ],
+      [
+       0.50251,
+       0.37718,
+       0.02752
+      ],
+      [
+       0.50754,
+       0.28404,
+       0.04206
+      ],
+      [
+       0.51759,
+       0.46742,
+       0.05092
+      ],
+      [
+       0.52764,
+       0.43249,
+       0.04018
+      ],
+      [
+       0.53769,
+       0.44995,
+       0.01011
+      ],
+      [
+       0.54774,
+       0.28695,
+       0.03002
+      ],
+      [
+       0.55779,
+       0.40629,
+       0.02978
+      ],
+      [
+       0.56784,
+       0.5169,
+       0.02516
+      ],
+      [
+       0.57789,
+       0.32479,
+       0.00468
+      ],
+      [
+       0.58794,
+       0.71484,
+       0.05304
+      ],
+      [
+       0.59799,
+       0.53728,
+       0.08272
+      ],
+      [
+       0.60804,
+       0.32188,
+       0.013
+      ],
+      [
+       0.61809,
+       0.45286,
+       0.02152
+      ],
+      [
+       0.62814,
+       0.48779,
+       0.0202
+      ],
+      [
+       0.63819,
+       0.2462,
+       0.02496
+      ],
+      [
+       0.64824,
+       0.44122,
+       0.03549
+      ],
+      [
+       0.65829,
+       0.28404,
+       0.03661
+      ],
+      [
+       0.66834,
+       0.42958,
+       0.01879
+      ],
+      [
+       0.67839,
+       0.3277,
+       0.0187
+      ],
+      [
+       0.68844,
+       0.56347,
+       0.02848
+      ],
+      [
+       0.69849,
+       0.40629,
+       0.01086
+      ],
+      [
+       0.70854,
+       0.23455,
+       0.03606
+      ],
+      [
+       0.71859,
+       0.36845,
+       0.02164
+      ],
+      [
+       0.72864,
+       0.53728,
+       0.03651
+      ],
+      [
+       0.73869,
+       0.5431,
+       0.01033
+      ],
+      [
+       0.74874,
+       0.44995,
+       0.03086
+      ],
+      [
+       0.75879,
+       0.26948,
+       0.03949
+      ],
+      [
+       0.76884,
+       0.5431,
+       0.0302
+      ],
+      [
+       0.77889,
+       0.31606,
+       0.0323
+      ],
+      [
+       0.78894,
+       0.47033,
+       0.03676
+      ],
+      [
+       0.79899,
+       0.31897,
+       0.01895
+      ],
+      [
+       0.80905,
+       0.47033,
+       0.03596
+      ],
+      [
+       0.8191,
+       0.50526,
+       0.01963
+      ],
+      [
+       0.82915,
+       0.45577,
+       0.04083
+      ],
+      [
+       0.8392,
+       0.38883,
+       0.04361
+      ],
+      [
+       0.84925,
+       0.29568,
+       0.05182
+      ],
+      [
+       0.8593,
+       0.45577,
+       0.04203
+      ],
+      [
+       0.86935,
+       0.58676,
+       0.05289
+      ],
+      [
+       0.8794,
+       0.36263,
+       0.00532
+      ],
+      [
+       0.88945,
+       0.34807,
+       0.04106
+      ],
+      [
+       0.8995,
+       0.58094,
+       0.0526
+      ],
+      [
+       0.90955,
+       0.39465,
+       0.01621
+      ],
+      [
+       0.9196,
+       0.43831,
+       0.02131
+      ],
+      [
+       0.92965,
+       0.44122,
+       0.01981
+      ],
+      [
+       0.9397,
+       0.42084,
+       0.02517
+      ],
+      [
+       0.94975,
+       0.35972,
+       0.02968
+      ],
+      [
+       0.9598,
+       0.40629,
+       0.03801
+      ],
+      [
+       0.96985,
+       0.4092,
+       0.02626
+      ],
+      [
+       0.9799,
+       0.36845,
+       0.12083
+      ],
+      [
+       0.98995,
+       0.39756,
+       0.0236
+      ],
+      [
+       1,
+       0.39465,
+       0.01213
+      ]
+     ]
+    }
+   ]
+  },
+  "scorer-verifier-is-equiv": {
+   "caseId": "scorer-verifier-is-equiv",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "MATH equivalence checker, MATH-500 gold answers, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "contentHash": "8f2a2b9ef228a1cfb4b8381bde1ac14caf95d4ac0fa6186acaca6158c78aa936",
+   "caption": "MATH equivalence checker: 0 of 60 competent mutants killed over 2,400 grader calls on MATH-500 gold answers, 240 rollouts. A reader with full access to this grader gets 5 of its 13 card fields; a reader with only the training log gets 0.",
+   "scope": "60 competent mutants over 2,400 grader calls on MATH-500 gold answers, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "Zero of 60 is an absence of detection on this one subject. It is not a population estimate and it is not a general defect rate for verifiers. Metamorphic violations are counted against this card's own denominator of 378 applicable pairs; a differently defined count of the same name exists elsewhere and is not mixed with this one.",
+   "sourcePath": "src/data/grader-cards.json",
+   "sourceArtifact": "the audit card for is_equiv, with its full-access and log-only readings",
+   "drawn": null,
+   "note": null,
+   "readout": [
+    {
+     "label": "killed",
+     "value": "0 of 60"
+    },
+    {
+     "label": "grader calls",
+     "value": "2400"
+    },
+    {
+     "label": "read, full access",
+     "value": "5 of 13"
+    },
+    {
+     "label": "read, training log only",
+     "value": "0 of 13"
+    },
+    {
+     "label": "metamorphic violations",
+     "value": "259 of 378"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "ticks",
+     "token": "--beam",
+     "count": 60,
+     "lit": 0,
+     "label": "killed"
+    },
+    {
+     "kind": "gate",
+     "label": "full",
+     "read": 5,
+     "refused": 8,
+     "total": 13
+    },
+    {
+     "kind": "gate",
+     "label": "log only",
+     "read": 0,
+     "refused": 13,
+     "total": 13
+    },
+    {
+     "kind": "bar",
+     "token": "--state-bounded",
+     "label": "violations",
+     "value": 259,
+     "total": 378
+    }
+   ]
+  },
+  "scorer-verifier-swebench": {
+   "caseId": "scorer-verifier-swebench",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "SWE-bench test-report grader, SWE-bench Lite gold test lists, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "contentHash": "bca5c56e6deb8bb6dc9ceea524d5a481ed164efd74a45f27cb0cf1503fdb8f90",
+   "caption": "SWE-bench test-report grader: 2 of 60 competent mutants killed over 2,400 grader calls on SWE-bench Lite gold test lists, 240 rollouts. A reader with full access to this grader gets 5 of its 13 card fields; a reader with only the training log gets 0.",
+   "scope": "60 competent mutants over 2,400 grader calls on SWE-bench Lite gold test lists, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "2 of 60 is a reading on this one subject and this one corpus. It is not a population estimate. No metamorphic relation applied to this subject, so no violation bar is drawn.",
+   "sourcePath": "src/data/grader-cards.json",
+   "sourceArtifact": "the audit card for swebench, with its full-access and log-only readings",
+   "drawn": null,
+   "note": null,
+   "readout": [
+    {
+     "label": "killed",
+     "value": "2 of 60"
+    },
+    {
+     "label": "grader calls",
+     "value": "2400"
+    },
+    {
+     "label": "read, full access",
+     "value": "5 of 13"
+    },
+    {
+     "label": "read, training log only",
+     "value": "0 of 13"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "ticks",
+     "token": "--beam",
+     "count": 60,
+     "lit": 2,
+     "label": "killed"
+    },
+    {
+     "kind": "gate",
+     "label": "full",
+     "read": 5,
+     "refused": 8,
+     "total": 13
+    },
+    {
+     "kind": "gate",
+     "label": "log only",
+     "read": 0,
+     "refused": 13,
+     "total": 13
+    }
+   ]
+  },
+  "scorer-verifier-verl-gsm8k": {
+   "caseId": "scorer-verifier-verl-gsm8k",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "GSM8K answer grader, GSM8K test split, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "contentHash": "7ffe8307c434dcc2b9d57a2eccb0792552dc352e8d54628b1eab001292f33ef5",
+   "caption": "GSM8K answer grader: 24 of 60 competent mutants killed over 2,400 grader calls on GSM8K test split, 240 rollouts. A reader with full access to this grader gets 6 of its 13 card fields; a reader with only the training log gets 1.",
+   "scope": "60 competent mutants over 2,400 grader calls on GSM8K test split, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "24 of 60 is a reading on this one subject and this one corpus. It is not a population estimate. Metamorphic violations are counted against this card's own denominator of 430 applicable pairs; a differently defined count of the same name exists elsewhere and is not mixed with this one.",
+   "sourcePath": "src/data/grader-cards.json",
+   "sourceArtifact": "the audit card for verl_gsm8k, with its full-access and log-only readings",
+   "drawn": null,
+   "note": null,
+   "readout": [
+    {
+     "label": "killed",
+     "value": "24 of 60"
+    },
+    {
+     "label": "grader calls",
+     "value": "2400"
+    },
+    {
+     "label": "read, full access",
+     "value": "6 of 13"
+    },
+    {
+     "label": "read, training log only",
+     "value": "1 of 13"
+    },
+    {
+     "label": "metamorphic violations",
+     "value": "122 of 430"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "ticks",
+     "token": "--beam",
+     "count": 60,
+     "lit": 24,
+     "label": "killed"
+    },
+    {
+     "kind": "gate",
+     "label": "full",
+     "read": 6,
+     "refused": 7,
+     "total": 13
+    },
+    {
+     "kind": "gate",
+     "label": "log only",
+     "read": 1,
+     "refused": 12,
+     "total": 13
+    },
+    {
+     "kind": "bar",
+     "token": "--state-bounded",
+     "label": "violations",
+     "value": 122,
+     "total": 430
+    }
+   ]
+  },
+  "scorer-verifier-verl-search-r1": {
+   "caseId": "scorer-verifier-verl-search-r1",
+   "state": "scorer",
+   "plateKind": "VERIFIER AUDIT",
+   "publicLabel": "Open-domain QA exact-match grader, NQ-Open validation split, 240 rollouts, 60 mutations",
+   "truthMode": "measured",
+   "contentHash": "6ba1aa308f315061a6de199466c480473e88e8a324f1275d11b7324bc51edd16",
+   "caption": "Open-domain QA exact-match grader: 26 of 60 competent mutants killed over 2,400 grader calls on NQ-Open validation split, 240 rollouts. A reader with full access to this grader gets 6 of its 13 card fields; a reader with only the training log gets 1.",
+   "scope": "60 competent mutants over 2,400 grader calls on NQ-Open validation split, 240 rollouts. The card is read twice, once with full access to the grader and once with only the training log.",
+   "caveat": "26 of 60 is a reading on this one subject and this one corpus. It is not a population estimate. Metamorphic violations are counted against this card's own denominator of 362 applicable pairs; a differently defined count of the same name exists elsewhere and is not mixed with this one.",
+   "sourcePath": "src/data/grader-cards.json",
+   "sourceArtifact": "the audit card for verl_search_r1, with its full-access and log-only readings",
+   "drawn": null,
+   "note": null,
+   "readout": [
+    {
+     "label": "killed",
+     "value": "26 of 60"
+    },
+    {
+     "label": "grader calls",
+     "value": "2400"
+    },
+    {
+     "label": "read, full access",
+     "value": "6 of 13"
+    },
+    {
+     "label": "read, training log only",
+     "value": "1 of 13"
+    },
+    {
+     "label": "metamorphic violations",
+     "value": "2 of 362"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "ticks",
+     "token": "--beam",
+     "count": 60,
+     "lit": 26,
+     "label": "killed"
+    },
+    {
+     "kind": "gate",
+     "label": "full",
+     "read": 6,
+     "refused": 7,
+     "total": 13
+    },
+    {
+     "kind": "gate",
+     "label": "log only",
+     "read": 1,
+     "refused": 12,
+     "total": 13
+    },
+    {
+     "kind": "bar",
+     "token": "--state-bounded",
+     "label": "violations",
+     "value": 2,
+     "total": 362
+    }
+   ]
+  },
+  "scorer-attribution-patching": {
+   "caseId": "scorer-attribution-patching",
+   "state": "scorer",
+   "plateKind": "INTERVENTION FIXTURE",
+   "publicLabel": "Skywork-Reward-Llama-3.1-8B-v0.2, 12 dimensions, 64 components, two localizers",
+   "truthMode": "measured",
+   "contentHash": "4eb514880c5bb6172a44787c5880f2427144e0e6ffe3451147cc865c3b33f2c7",
+   "caption": "Two ways of asking which part of a reward model produced a score, on the same 12 dimensions and the same 64 components. Their rank correlation averages -0.170885 across the dimensions, and on code correctness it reaches -0.441117. The largest single patching movement is 7.71 times the pair margin, and it is drawn at that size rather than clamped.",
+   "scope": "12 dimensions, 30 pairs each, patching in noising mode, null threshold 0.02.",
+   "caveat": "The attributed set holds 65 components and the patched set holds 64; the embed is attributed and not patched, and the 64 drawn here are the ones both localizers cover. This is a disagreement measured on one reward model. On another model in the same fixture the same correlation is near zero, which is why it is not stated as a general result about attribution.",
+   "sourcePath": "src/data/intervention.json",
+   "sourceArtifact": "the per-component attribution and patching table, both ranks on every component of every dimension",
+   "drawn": null,
+   "note": "null threshold 0.02",
+   "readout": [
+    {
+     "label": "dimensions",
+     "value": "12"
+    },
+    {
+     "label": "components",
+     "value": "64"
+    },
+    {
+     "label": "mean rank correlation",
+     "value": "-0.170885"
+    },
+    {
+     "label": "code correctness",
+     "value": "-0.441117"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "zero",
+     "token": "--line-strong",
+     "y": 0.5,
+     "label": "no agreement"
+    },
+    {
+     "kind": "band",
+     "token": "--line",
+     "y0": 0.49,
+     "y1": 0.51,
+     "label": "null"
+    },
+    {
+     "kind": "marks",
+     "token": "--comp-1",
+     "points": [
+      [
+       0.04167,
+       0.27944
+      ],
+      [
+       0.125,
+       0.3094
+      ],
+      [
+       0.20833,
+       0.55891
+      ],
+      [
+       0.29167,
+       0.37054
+      ],
+      [
+       0.375,
+       0.5381
+      ],
+      [
+       0.45833,
+       0.34701
+      ],
+      [
+       0.54167,
+       0.50755
+      ],
+      [
+       0.625,
+       0.57645
+      ],
+      [
+       0.70833,
+       0.32308
+      ],
+      [
+       0.79167,
+       0.35517
+      ],
+      [
+       0.875,
+       0.33279
+      ],
+      [
+       0.95833,
+       0.47625
+      ]
+     ],
+     "label": "dimensions"
+    }
+   ]
+  },
+  "selection-advantages": {
+   "caseId": "selection-advantages",
+   "state": "selection",
+   "plateKind": "RECORDED SELECTION",
+   "publicLabel": "Reference GRPO step, 8 rollouts in 2 groups, real advantages",
+   "truthMode": "measured",
+   "contentHash": "69159e1488fefaf7a66245dcd2f430dd13e64290320fd485428632f60df997db",
+   "caption": "Each ray is one rollout and its offset is that rollout's recorded advantage, the value the estimator actually applied. Across 200 steps the 1,600 advantages run from -1.49161 to 1.493695. 220 of them are exactly zero, and 200 of those are rollouts the grader abstained on, which this estimator forces to zero rather than dropping.",
+   "scope": "1,600 rollouts across 200 recorded steps. Advantage here is the group-centred, group-standard-deviation-normalised value this estimator computes, not a general definition of advantage.",
+   "caveat": "Nothing here is per token. The per-token advantage column is empty on all 1,600 rollouts and the recorded token count is zero throughout, so this record supports no per-position geometry and none is drawn. 220 rays sit on the axis because zero is what was recorded for them, which for 200 of them means the grader abstained rather than that the rollout was average.",
+   "sourcePath": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+   "sourceArtifact": "the trajectory table's advantage column and the group table's mean and standard deviation",
+   "drawn": {
+    "method": "uniform stride over the recorded values, first and last kept, no randomness",
+    "inputCount": 1600,
+    "outputCount": 128
+   },
+   "note": null,
+   "readout": [
+    {
+     "label": "rollouts",
+     "value": "1600"
+    },
+    {
+     "label": "advantage",
+     "value": "-1.49161 to 1.493695"
+    },
+    {
+     "label": "exactly zero",
+     "value": "220"
+    },
+    {
+     "label": "abstained",
+     "value": "200"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "zero",
+     "token": "--line-strong",
+     "y": 0.49965,
+     "label": "zero advantage"
+    },
+    {
+     "kind": "rays",
+     "token": "--comp-2",
+     "points": [
+      [
+       0,
+       0.85425
+      ],
+      [
+       0.00503,
+       0.42096
+      ],
+      [
+       0.01508,
+       0.70629
+      ],
+      [
+       0.0201,
+       0.27323
+      ],
+      [
+       0.03015,
+       0.12204
+      ],
+      [
+       0.03518,
+       0.67255
+      ],
+      [
+       0.04523,
+       0.29102
+      ],
+      [
+       0.05528,
+       0.73659
+      ],
+      [
+       0.0603,
+       0.87249
+      ],
+      [
+       0.07035,
+       0.86397
+      ],
+      [
+       0.07538,
+       0.08816
+      ],
+      [
+       0.08543,
+       0.1837
+      ],
+      [
+       0.09045,
+       0.81697
+      ],
+      [
+       0.1005,
+       0.90426
+      ],
+      [
+       0.11055,
+       0.80337
+      ],
+      [
+       0.11558,
+       0.60053
+      ],
+      [
+       0.12563,
+       0.33754
+      ],
+      [
+       0.13065,
+       0.41024
+      ],
+      [
+       0.1407,
+       0.49965
+      ],
+      [
+       0.14573,
+       0.95675
+      ],
+      [
+       0.15578,
+       0.19716
+      ],
+      [
+       0.16583,
+       0.16971
+      ],
+      [
+       0.17085,
+       0.52066
+      ],
+      [
+       0.1809,
+       0.59243
+      ],
+      [
+       0.18593,
+       0.25482
+      ],
+      [
+       0.19598,
+       0.49965
+      ],
+      [
+       0.20101,
+       0.80488
+      ],
+      [
+       0.21106,
+       0.31846
+      ],
+      [
+       0.22111,
+       0.49965
+      ],
+      [
+       0.22613,
+       0.07968
+      ],
+      [
+       0.23618,
+       0.30659
+      ],
+      [
+       0.24121,
+       0.09189
+      ],
+      [
+       0.25126,
+       0.49965
+      ],
+      [
+       0.25628,
+       0.1988
+      ],
+      [
+       0.26633,
+       0.28512
+      ],
+      [
+       0.27638,
+       0.19428
+      ],
+      [
+       0.28141,
+       0.55452
+      ],
+      [
+       0.29146,
+       0.27337
+      ],
+      [
+       0.29648,
+       0.10323
+      ],
+      [
+       0.30653,
+       0.49965
+      ],
+      [
+       0.31658,
+       0.11405
+      ],
+      [
+       0.32161,
+       0.51144
+      ],
+      [
+       0.33166,
+       0.74242
+      ],
+      [
+       0.33668,
+       0.15195
+      ],
+      [
+       0.34673,
+       0.27145
+      ],
+      [
+       0.35176,
+       0.45906
+      ],
+      [
+       0.36181,
+       0.49965
+      ],
+      [
+       0.37186,
+       0.83442
+      ],
+      [
+       0.37688,
+       0.30567
+      ],
+      [
+       0.38693,
+       0.1569
+      ],
+      [
+       0.39196,
+       0.28788
+      ],
+      [
+       0.40201,
+       0.75928
+      ],
+      [
+       0.40704,
+       0.00417
+      ],
+      [
+       0.41709,
+       0.49965
+      ],
+      [
+       0.42714,
+       0.85436
+      ],
+      [
+       0.43216,
+       0.84237
+      ],
+      [
+       0.44221,
+       0.63299
+      ],
+      [
+       0.44724,
+       0.49403
+      ],
+      [
+       0.45729,
+       0.43493
+      ],
+      [
+       0.46231,
+       0.11382
+      ],
+      [
+       0.47236,
+       0.49965
+      ],
+      [
+       0.48241,
+       0.62864
+      ],
+      [
+       0.48744,
+       0.84556
+      ],
+      [
+       0.49749,
+       0.41693
+      ],
+      [
+       0.50251,
+       0.77508
+      ],
+      [
+       0.51256,
+       0.87924
+      ],
+      [
+       0.51759,
+       0.33313
+      ],
+      [
+       0.52764,
+       0.84669
+      ],
+      [
+       0.53769,
+       0.57271
+      ],
+      [
+       0.54271,
+       0.76916
+      ],
+      [
+       0.55276,
+       0.32262
+      ],
+      [
+       0.55779,
+       0.6184
+      ],
+      [
+       0.56784,
+       0.49965
+      ],
+      [
+       0.57286,
+       0.02665
+      ],
+      [
+       0.58291,
+       0.74232
+      ],
+      [
+       0.59296,
+       0.18216
+      ],
+      [
+       0.59799,
+       0.00149
+      ],
+      [
+       0.60804,
+       0.83444
+      ],
+      [
+       0.61307,
+       0.89799
+      ],
+      [
+       0.62312,
+       0.49965
+      ],
+      [
+       0.62814,
+       0.01639
+      ],
+      [
+       0.63819,
+       0.96251
+      ],
+      [
+       0.64824,
+       0.86639
+      ],
+      [
+       0.65327,
+       0.69601
+      ],
+      [
+       0.66332,
+       0.11869
+      ],
+      [
+       0.66834,
+       0.17524
+      ],
+      [
+       0.67839,
+       0.49965
+      ],
+      [
+       0.68342,
+       0.21429
+      ],
+      [
+       0.69347,
+       0.54985
+      ],
+      [
+       0.70352,
+       0.82481
+      ],
+      [
+       0.70854,
+       0.41033
+      ],
+      [
+       0.71859,
+       0.80992
+      ],
+      [
+       0.72362,
+       0.14744
+      ],
+      [
+       0.73367,
+       0.49965
+      ],
+      [
+       0.74372,
+       0.18753
+      ],
+      [
+       0.74874,
+       0.08962
+      ],
+      [
+       0.75879,
+       0.45531
+      ],
+      [
+       0.76382,
+       0.57403
+      ],
+      [
+       0.77387,
+       0.18193
+      ],
+      [
+       0.77889,
+       0.94247
+      ],
+      [
+       0.78894,
+       0.49965
+      ],
+      [
+       0.79899,
+       0.88624
+      ],
+      [
+       0.80402,
+       0.74793
+      ],
+      [
+       0.81407,
+       0.13225
+      ],
+      [
+       0.8191,
+       0.16905
+      ],
+      [
+       0.82915,
+       0.77798
+      ],
+      [
+       0.83417,
+       0.34797
+      ],
+      [
+       0.84422,
+       0.49965
+      ],
+      [
+       0.85427,
+       0.34271
+      ],
+      [
+       0.8593,
+       0.7187
+      ],
+      [
+       0.86935,
+       0.42659
+      ],
+      [
+       0.87437,
+       0.94405
+      ],
+      [
+       0.88442,
+       0.83862
+      ],
+      [
+       0.88945,
+       0.30128
+      ],
+      [
+       0.8995,
+       0.49965
+      ],
+      [
+       0.90955,
+       0.14869
+      ],
+      [
+       0.91457,
+       0.89611
+      ],
+      [
+       0.92462,
+       0.76597
+      ],
+      [
+       0.92965,
+       0.24496
+      ],
+      [
+       0.9397,
+       0.19768
+      ],
+      [
+       0.94472,
+       0.22764
+      ],
+      [
+       0.95477,
+       0.49965
+      ],
+      [
+       0.96482,
+       0.87876
+      ],
+      [
+       0.96985,
+       0.42384
+      ],
+      [
+       0.9799,
+       0.16486
+      ],
+      [
+       0.98492,
+       0.43912
+      ],
+      [
+       0.99497,
+       0.88255
+      ],
+      [
+       1,
+       0.5147
+      ]
+     ],
+     "label": "rollouts"
+    }
+   ]
+  },
+  "update-step": {
+   "caseId": "update-step",
+   "state": "update",
+   "plateKind": "RECORDED UPDATE",
+   "publicLabel": "Reference GRPO step, 8 rollouts, immediate credit",
+   "truthMode": "measured",
+   "contentHash": "28a7d041cad9be31f8c12374cba507d0a488584a64b2f57b9c6ca778660019a3",
+   "caption": "Across 200 recorded steps the clipped gradient norm runs from 0.253293 to 0.441912, on batches of 8 rollouts each. What the record does not hold is any per rollout gradient, so how much of that norm survived cancellation between the eight rollouts is not drawable from it.",
+   "scope": "200 recorded optimizer steps, one update per step, 8 rollouts per update. Immediate update credit only, never long-run causal credit: the trajectories are two turns long and there is no tool call in the record.",
+   "caveat": "No per-rollout gradient is stored anywhere in this record, so the share of gradient mass that cancels within a step cannot be drawn from it. The project reports residual figures for immediate credit from a separate experiment; those exist as prose and as test assertions with no persisted array behind them, so they are stated in the text and are not encoded in any geometry here.",
+   "sourcePath": "reward-lens-assay/tests/fixtures/grpo_run/long/runs/run_f77bf75940ab982bbc35407af99cc094",
+   "sourceArtifact": "the step table and its optimizer payload",
+   "drawn": {
+    "method": "uniform stride over the recorded values, first and last kept, no randomness",
+    "inputCount": 200,
+    "outputCount": 101
+   },
+   "note": null,
+   "readout": [
+    {
+     "label": "steps",
+     "value": "200"
+    },
+    {
+     "label": "rollouts per step",
+     "value": "8"
+    },
+    {
+     "label": "clipped gradient norm",
+     "value": "0.253293 to 0.441912"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "ribbon",
+     "token": "--comp-3",
+     "label": "reward",
+     "points": [
+      [
+       0,
+       0.07549,
+       0.00473
+      ],
+      [
+       0.01005,
+       0.18394,
+       0.01207
+      ],
+      [
+       0.0201,
+       0.18817,
+       0.00681
+      ],
+      [
+       0.03015,
+       0.11211,
+       0.01087
+      ],
+      [
+       0.0402,
+       0.1769,
+       0.00711
+      ],
+      [
+       0.05025,
+       0.12761,
+       0.01036
+      ],
+      [
+       0.0603,
+       0.11915,
+       0.00935
+      ],
+      [
+       0.07035,
+       0.19944,
+       0.01808
+      ],
+      [
+       0.0804,
+       0.17408,
+       0.00681
+      ],
+      [
+       0.09045,
+       0.12901,
+       0.00809
+      ],
+      [
+       0.1005,
+       0.2262,
+       0.01705
+      ],
+      [
+       0.11055,
+       0.16423,
+       0.00561
+      ],
+      [
+       0.1206,
+       0.16986,
+       0.00667
+      ],
+      [
+       0.13065,
+       0.18254,
+       0.00096
+      ],
+      [
+       0.1407,
+       0.20085,
+       0.00474
+      ],
+      [
+       0.15075,
+       0.17408,
+       0.00143
+      ],
+      [
+       0.1608,
+       0.15014,
+       0.00712
+      ],
+      [
+       0.17085,
+       0.09662,
+       0.01579
+      ],
+      [
+       0.1809,
+       0.15859,
+       0.00403
+      ],
+      [
+       0.19095,
+       0.13042,
+       0.00618
+      ],
+      [
+       0.20101,
+       0.22197,
+       0.00729
+      ],
+      [
+       0.21106,
+       0.13606,
+       0.01291
+      ],
+      [
+       0.22111,
+       0.22338,
+       0.03572
+      ],
+      [
+       0.23116,
+       0.09944,
+       0.0109
+      ],
+      [
+       0.24121,
+       0.20085,
+       0.00072
+      ],
+      [
+       0.25126,
+       0.16704,
+       0.00802
+      ],
+      [
+       0.26131,
+       0.13746,
+       0.00663
+      ],
+      [
+       0.27136,
+       0.12761,
+       0.00323
+      ],
+      [
+       0.28141,
+       0.17972,
+       0.00388
+      ],
+      [
+       0.29146,
+       0.17972,
+       0.00808
+      ],
+      [
+       0.30151,
+       0.19099,
+       0.02504
+      ],
+      [
+       0.31156,
+       0.10789,
+       0.01046
+      ],
+      [
+       0.32161,
+       0.26704,
+       0.02607
+      ],
+      [
+       0.33166,
+       0.20648,
+       0.0096
+      ],
+      [
+       0.34171,
+       0.17549,
+       0.00241
+      ],
+      [
+       0.35176,
+       0.18958,
+       0.01178
+      ],
+      [
+       0.36181,
+       0.18254,
+       0.01399
+      ],
+      [
+       0.37186,
+       0.17972,
+       0.01303
+      ],
+      [
+       0.38191,
+       0.13324,
+       0.01219
+      ],
+      [
+       0.39196,
+       0.13042,
+       0.01043
+      ],
+      [
+       0.40201,
+       0.11352,
+       0.00475
+      ],
+      [
+       0.41206,
+       0.19803,
+       0.01418
+      ],
+      [
+       0.42211,
+       0.16282,
+       0.013
+      ],
+      [
+       0.43216,
+       0.09239,
+       0.01201
+      ],
+      [
+       0.44221,
+       0.15014,
+       0.01097
+      ],
+      [
+       0.45226,
+       0.23746,
+       0.0134
+      ],
+      [
+       0.46231,
+       0.1093,
+       0.00791
+      ],
+      [
+       0.47236,
+       0.19099,
+       0.00242
+      ],
+      [
+       0.48241,
+       0.14028,
+       0.00959
+      ],
+      [
+       0.49246,
+       0.20225,
+       0.01195
+      ],
+      [
+       0.50251,
+       0.13606,
+       0.0086
+      ],
+      [
+       0.50754,
+       0.09099,
+       0.01314
+      ],
+      [
+       0.51759,
+       0.17972,
+       0.01591
+      ],
+      [
+       0.52764,
+       0.16282,
+       0.01256
+      ],
+      [
+       0.53769,
+       0.17127,
+       0.00316
+      ],
+      [
+       0.54774,
+       0.09239,
+       0.00938
+      ],
+      [
+       0.55779,
+       0.15014,
+       0.00931
+      ],
+      [
+       0.56784,
+       0.20366,
+       0.00786
+      ],
+      [
+       0.57789,
+       0.1107,
+       0.00146
+      ],
+      [
+       0.58794,
+       0.29944,
+       0.01657
+      ],
+      [
+       0.59799,
+       0.21352,
+       0.02585
+      ],
+      [
+       0.60804,
+       0.1093,
+       0.00406
+      ],
+      [
+       0.61809,
+       0.17268,
+       0.00672
+      ],
+      [
+       0.62814,
+       0.18958,
+       0.00631
+      ],
+      [
+       0.63819,
+       0.07268,
+       0.0078
+      ],
+      [
+       0.64824,
+       0.16704,
+       0.01109
+      ],
+      [
+       0.65829,
+       0.09099,
+       0.01144
+      ],
+      [
+       0.66834,
+       0.16141,
+       0.00587
+      ],
+      [
+       0.67839,
+       0.11211,
+       0.00584
+      ],
+      [
+       0.68844,
+       0.2262,
+       0.0089
+      ],
+      [
+       0.69849,
+       0.15014,
+       0.00339
+      ],
+      [
+       0.70854,
+       0.06704,
+       0.01127
+      ],
+      [
+       0.71859,
+       0.13183,
+       0.00676
+      ],
+      [
+       0.72864,
+       0.21352,
+       0.01141
+      ],
+      [
+       0.73869,
+       0.21634,
+       0.00323
+      ],
+      [
+       0.74874,
+       0.17127,
+       0.00964
+      ],
+      [
+       0.75879,
+       0.08394,
+       0.01234
+      ],
+      [
+       0.76884,
+       0.21634,
+       0.00944
+      ],
+      [
+       0.77889,
+       0.10648,
+       0.01009
+      ],
+      [
+       0.78894,
+       0.18113,
+       0.01149
+      ],
+      [
+       0.79899,
+       0.10789,
+       0.00592
+      ],
+      [
+       0.80905,
+       0.18113,
+       0.01124
+      ],
+      [
+       0.8191,
+       0.19803,
+       0.00613
+      ],
+      [
+       0.82915,
+       0.17408,
+       0.01276
+      ],
+      [
+       0.8392,
+       0.14169,
+       0.01363
+      ],
+      [
+       0.84925,
+       0.09662,
+       0.01619
+      ],
+      [
+       0.8593,
+       0.17408,
+       0.01313
+      ],
+      [
+       0.86935,
+       0.23746,
+       0.01653
+      ],
+      [
+       0.8794,
+       0.12901,
+       0.00166
+      ],
+      [
+       0.88945,
+       0.12197,
+       0.01283
+      ],
+      [
+       0.8995,
+       0.23465,
+       0.01644
+      ],
+      [
+       0.90955,
+       0.14451,
+       0.00507
+      ],
+      [
+       0.9196,
+       0.16563,
+       0.00666
+      ],
+      [
+       0.92965,
+       0.16704,
+       0.00619
+      ],
+      [
+       0.9397,
+       0.15718,
+       0.00787
+      ],
+      [
+       0.94975,
+       0.12761,
+       0.00928
+      ],
+      [
+       0.9598,
+       0.15014,
+       0.01188
+      ],
+      [
+       0.96985,
+       0.15155,
+       0.00821
+      ],
+      [
+       0.9799,
+       0.13183,
+       0.03776
+      ],
+      [
+       0.98995,
+       0.14592,
+       0.00737
+      ],
+      [
+       1,
+       0.14451,
+       0.00379
+      ]
+     ]
+    },
+    {
+     "kind": "trace",
+     "token": "--comp-2",
+     "label": "clipped gradient norm",
+     "points": [
+      [
+       0,
+       0.56277
+      ],
+      [
+       0.01005,
+       0.62857
+      ],
+      [
+       0.0201,
+       0.60417
+      ],
+      [
+       0.03015,
+       0.67899
+      ],
+      [
+       0.0402,
+       0.5507
+      ],
+      [
+       0.05025,
+       0.60317
+      ],
+      [
+       0.0603,
+       0.59425
+      ],
+      [
+       0.07035,
+       0.51241
+      ],
+      [
+       0.0804,
+       0.73818
+      ],
+      [
+       0.09045,
+       0.53339
+      ],
+      [
+       0.1005,
+       0.5251
+      ],
+      [
+       0.11055,
+       0.5823
+      ],
+      [
+       0.1206,
+       0.55784
+      ],
+      [
+       0.13065,
+       0.76059
+      ],
+      [
+       0.1407,
+       0.53753
+      ],
+      [
+       0.15075,
+       0.5622
+      ],
+      [
+       0.1608,
+       0.58176
+      ],
+      [
+       0.17085,
+       0.64074
+      ],
+      [
+       0.1809,
+       0.62529
+      ],
+      [
+       0.19095,
+       0.51758
+      ],
+      [
+       0.20101,
+       0.59077
+      ],
+      [
+       0.21106,
+       0.65711
+      ],
+      [
+       0.22111,
+       0.59236
+      ],
+      [
+       0.23116,
+       0.61323
+      ],
+      [
+       0.24121,
+       0.66919
+      ],
+      [
+       0.25126,
+       0.57101
+      ],
+      [
+       0.26131,
+       0.60654
+      ],
+      [
+       0.27136,
+       0.57776
+      ],
+      [
+       0.28141,
+       0.67069
+      ],
+      [
+       0.29146,
+       0.58634
+      ],
+      [
+       0.30151,
+       0.60062
+      ],
+      [
+       0.31156,
+       0.5882
+      ],
+      [
+       0.32161,
+       0.78542
+      ],
+      [
+       0.33166,
+       0.6918
+      ],
+      [
+       0.34171,
+       0.53239
+      ],
+      [
+       0.35176,
+       0.63256
+      ],
+      [
+       0.36181,
+       0.55893
+      ],
+      [
+       0.37186,
+       0.55175
+      ],
+      [
+       0.38191,
+       0.56944
+      ],
+      [
+       0.39196,
+       0.60493
+      ],
+      [
+       0.40201,
+       0.5836
+      ],
+      [
+       0.41206,
+       0.9045
+      ],
+      [
+       0.42211,
+       0.58454
+      ],
+      [
+       0.43216,
+       0.57687
+      ],
+      [
+       0.44221,
+       0.54152
+      ],
+      [
+       0.45226,
+       0.60725
+      ],
+      [
+       0.46231,
+       0.58621
+      ],
+      [
+       0.47236,
+       0.76
+      ],
+      [
+       0.48241,
+       0.58382
+      ],
+      [
+       0.49246,
+       0.64707
+      ],
+      [
+       0.50251,
+       0.65672
+      ],
+      [
+       0.50754,
+       0.5781
+      ],
+      [
+       0.51759,
+       0.59198
+      ],
+      [
+       0.52764,
+       0.5493
+      ],
+      [
+       0.53769,
+       0.62626
+      ],
+      [
+       0.54774,
+       0.60403
+      ],
+      [
+       0.55779,
+       0.63645
+      ],
+      [
+       0.56784,
+       0.64312
+      ],
+      [
+       0.57789,
+       0.52897
+      ],
+      [
+       0.58794,
+       0.53783
+      ],
+      [
+       0.59799,
+       0.52953
+      ],
+      [
+       0.60804,
+       0.70177
+      ],
+      [
+       0.61809,
+       0.72937
+      ],
+      [
+       0.62814,
+       0.67356
+      ],
+      [
+       0.63819,
+       0.67429
+      ],
+      [
+       0.64824,
+       0.61188
+      ],
+      [
+       0.65829,
+       0.61257
+      ],
+      [
+       0.66834,
+       0.56077
+      ],
+      [
+       0.67839,
+       0.71543
+      ],
+      [
+       0.68844,
+       0.55862
+      ],
+      [
+       0.69849,
+       0.59593
+      ],
+      [
+       0.70854,
+       0.57692
+      ],
+      [
+       0.71859,
+       0.64498
+      ],
+      [
+       0.72864,
+       0.65046
+      ],
+      [
+       0.73869,
+       0.58168
+      ],
+      [
+       0.74874,
+       0.56573
+      ],
+      [
+       0.75879,
+       0.58933
+      ],
+      [
+       0.76884,
+       0.78259
+      ],
+      [
+       0.77889,
+       0.54048
+      ],
+      [
+       0.78894,
+       0.77217
+      ],
+      [
+       0.79899,
+       0.5
+      ],
+      [
+       0.80905,
+       0.51793
+      ],
+      [
+       0.8191,
+       0.63172
+      ],
+      [
+       0.82915,
+       0.71106
+      ],
+      [
+       0.8392,
+       0.53165
+      ],
+      [
+       0.84925,
+       0.51703
+      ],
+      [
+       0.8593,
+       0.70415
+      ],
+      [
+       0.86935,
+       0.60147
+      ],
+      [
+       0.8794,
+       0.50798
+      ],
+      [
+       0.88945,
+       0.52809
+      ],
+      [
+       0.8995,
+       0.6247
+      ],
+      [
+       0.90955,
+       0.54835
+      ],
+      [
+       0.9196,
+       0.94166
+      ],
+      [
+       0.92965,
+       0.64072
+      ],
+      [
+       0.9397,
+       0.61303
+      ],
+      [
+       0.94975,
+       0.56275
+      ],
+      [
+       0.9598,
+       0.61415
+      ],
+      [
+       0.96985,
+       0.56078
+      ],
+      [
+       0.9799,
+       0.69842
+      ],
+      [
+       0.98995,
+       0.54445
+      ],
+      [
+       1,
+       0.60822
+      ]
+     ]
+    }
+   ]
+  },
+  "response-unresolved": {
+   "caseId": "response-unresolved",
+   "state": "response",
+   "plateKind": "NO MEASUREMENT",
+   "publicLabel": "Policy response, nothing recorded",
+   "truthMode": "schematic",
+   "contentHash": "edbc662fac2e74d28e01b76353e6e108ded588b12253e0661bebf35bc44322cd",
+   "caption": "Nothing was measured here. The reconciliation this state would have illustrated does close on the 200-step run, and the closure is carried by the sampling noise of two batches of eight rollouts. On the worst feature-run pair the test's own detection floor is 3.760 against a first-order prediction of 5.647e-06, a ratio of 665,862; the median ratio over the six pairs is 854,374. Monte Carlo uncertainty is effectively all of the composed variance, and five of the nine uncertainty terms were computed while four are named absent. Neither verdict could have failed meaningfully, and that is the result this state shows.",
+   "scope": "A construction. It carries no recorded quantity, no run, and no number from any measurement. Nothing in it may be read off.",
+   "caveat": "The negative is the content. A response geometry drawn here would be an invention, and three times in this build's history a central visual claim turned out to have no measured instance behind it. The figures in the caption come from the project's own reconciliation report and are prose: they are stated, cited, and never encoded as a width, a count or a distance.",
+   "sourcePath": "reward-lens-assay/FINDINGS.md",
+   "sourceArtifact": "the project's own findings record, which states the detection floor, declines the flattering verdict, and names the four budget terms it could not compute",
+   "drawn": null,
+   "note": null,
+   "readout": [],
+   "marks": [
+    {
+     "kind": "absent",
+     "token": "--line-strong"
+    }
+   ]
+  },
+  "run-boundary-series": {
+   "caseId": "run-boundary-series",
+   "state": "run-boundary",
+   "plateKind": "PUBLIC TRAINING SERIES",
+   "publicLabel": "Public reward-hacking run, 25,664 labelled rollouts, one scalar-series warning result",
+   "truthMode": "measured",
+   "contentHash": "9ce1d10a7b4fd83d6029ad8ca6977899c4b601a0433dbb1316dac4445f08d303",
+   "caption": "25,664 labelled rollouts, 64 at each of 401 recorded step indices. The labelled series crosses its midpoint at step 106 with a ten-to-ninety width of 23.9 steps. The promoted signal alarms at step 90 and fires on 24.3% of in-control surrogates. The signal recorded as \"Within-group reward variance, level\" alarms earlier, at step 70, and fires on 60.7%, which is why it was rejected. The figure draws 401 points. The frozen ledger states 400 steps for this run and the published rollout table carries 401 distinct step indices; the site states the lower number and does not assert which record is right.",
+   "scope": "25,664 rollouts, 64 at every recorded step index, one run, one model, one seed. The detector rows come from the study's frozen prediction ledger because the published table carries no optimizer telemetry and the gradient comparator cannot be recomputed from it.",
+   "caveat": "Two records of this same run disagree on its length: the frozen ledger says 400 steps and the published rollout table carries 401 distinct step indices. The figure draws 401 points and the site does not assert which record is right. The earliest alarm here is not the best detector: the signal that fires first is the one the study rejected, at a surrogate false-alarm rate of 60.7%. One run does not establish a detection rate.",
+   "sourcePath": "src/data/run-series.json",
+   "sourceArtifact": "the per-step means of the published rollout table, with the fitted transition and the four evaluated detectors",
+   "drawn": {
+    "method": "uniform stride over the recorded values, first and last kept, no randomness",
+    "inputCount": 401,
+    "outputCount": 101
+   },
+   "note": null,
+   "readout": [
+    {
+     "label": "labelled rollouts",
+     "value": "25664"
+    },
+    {
+     "label": "drawn points",
+     "value": "101"
+    },
+    {
+     "label": "transition midpoint",
+     "value": "step 106"
+    },
+    {
+     "label": "promoted signal alarms",
+     "value": "step 90"
+    },
+    {
+     "label": "fires on in-control surrogates",
+     "value": "24.3%"
+    },
+    {
+     "label": "detectors drawn",
+     "value": "2 of 4"
+    },
+    {
+     "label": "no alarm or rate recorded",
+     "value": "2 of 4"
+    }
+   ],
+   "marks": [
+    {
+     "kind": "xband",
+     "token": "--line",
+     "x0": 0.23263,
+     "x1": 0.29237,
+     "label": "transition"
+    },
+    {
+     "kind": "trace",
+     "token": "--written",
+     "label": "written",
+     "points": [
+      [
+       0,
+       0.07375
+      ],
+      [
+       0.01,
+       0.07375
+      ],
+      [
+       0.02,
+       0.07375
+      ],
+      [
+       0.03,
+       0.06
+      ],
+      [
+       0.04,
+       0.06
+      ],
+      [
+       0.05,
+       0.07375
+      ],
+      [
+       0.06,
+       0.06
+      ],
+      [
+       0.07,
+       0.06
+      ],
+      [
+       0.08,
+       0.07375
+      ],
+      [
+       0.09,
+       0.06
+      ],
+      [
+       0.1,
+       0.06
+      ],
+      [
+       0.11,
+       0.06
+      ],
+      [
+       0.12,
+       0.06
+      ],
+      [
+       0.13,
+       0.06
+      ],
+      [
+       0.14,
+       0.06
+      ],
+      [
+       0.15,
+       0.07375
+      ],
+      [
+       0.16,
+       0.07375
+      ],
+      [
+       0.17,
+       0.06
+      ],
+      [
+       0.18,
+       0.06
+      ],
+      [
+       0.19,
+       0.06
+      ],
+      [
+       0.2,
+       0.07375
+      ],
+      [
+       0.21,
+       0.07375
+      ],
+      [
+       0.22,
+       0.10125
+      ],
+      [
+       0.23,
+       0.0875
+      ],
+      [
+       0.24,
+       0.1425
+      ],
+      [
+       0.25,
+       0.15625
+      ],
+      [
+       0.26,
+       0.5
+      ],
+      [
+       0.27,
+       0.54125
+      ],
+      [
+       0.28,
+       0.7475
+      ],
+      [
+       0.29,
+       0.81625
+      ],
+      [
+       0.3,
+       0.84375
+      ],
+      [
+       0.31,
+       0.7475
+      ],
+      [
+       0.32,
+       0.83
+      ],
+      [
+       0.33,
+       0.885
+      ],
+      [
+       0.34,
+       0.885
+      ],
+      [
+       0.35,
+       0.92625
+      ],
+      [
+       0.36,
+       0.94
+      ],
+      [
+       0.37,
+       0.9125
+      ],
+      [
+       0.38,
+       0.94
+      ],
+      [
+       0.39,
+       0.92625
+      ],
+      [
+       0.4,
+       0.94
+      ],
+      [
+       0.41,
+       0.9125
+      ],
+      [
+       0.42,
+       0.94
+      ],
+      [
+       0.43,
+       0.94
+      ],
+      [
+       0.44,
+       0.94
+      ],
+      [
+       0.45,
+       0.94
+      ],
+      [
+       0.46,
+       0.9125
+      ],
+      [
+       0.47,
+       0.92625
+      ],
+      [
+       0.48,
+       0.92625
+      ],
+      [
+       0.49,
+       0.94
+      ],
+      [
+       0.5,
+       0.92625
+      ],
+      [
+       0.51,
+       0.92625
+      ],
+      [
+       0.52,
+       0.9125
+      ],
+      [
+       0.53,
+       0.9125
+      ],
+      [
+       0.54,
+       0.94
+      ],
+      [
+       0.55,
+       0.94
+      ],
+      [
+       0.56,
+       0.94
+      ],
+      [
+       0.57,
+       0.92625
+      ],
+      [
+       0.58,
+       0.94
+      ],
+      [
+       0.59,
+       0.94
+      ],
+      [
+       0.6,
+       0.94
+      ],
+      [
+       0.61,
+       0.92625
+      ],
+      [
+       0.62,
+       0.94
+      ],
+      [
+       0.63,
+       0.94
+      ],
+      [
+       0.64,
+       0.94
+      ],
+      [
+       0.65,
+       0.94
+      ],
+      [
+       0.66,
+       0.94
+      ],
+      [
+       0.67,
+       0.94
+      ],
+      [
+       0.68,
+       0.94
+      ],
+      [
+       0.69,
+       0.94
+      ],
+      [
+       0.7,
+       0.94
+      ],
+      [
+       0.71,
+       0.92625
+      ],
+      [
+       0.72,
+       0.92625
+      ],
+      [
+       0.73,
+       0.92625
+      ],
+      [
+       0.74,
+       0.94
+      ],
+      [
+       0.75,
+       0.94
+      ],
+      [
+       0.76,
+       0.94
+      ],
+      [
+       0.77,
+       0.92625
+      ],
+      [
+       0.78,
+       0.94
+      ],
+      [
+       0.79,
+       0.94
+      ],
+      [
+       0.8,
+       0.94
+      ],
+      [
+       0.81,
+       0.94
+      ],
+      [
+       0.82,
+       0.92625
+      ],
+      [
+       0.83,
+       0.94
+      ],
+      [
+       0.84,
+       0.94
+      ],
+      [
+       0.85,
+       0.92625
+      ],
+      [
+       0.86,
+       0.94
+      ],
+      [
+       0.87,
+       0.94
+      ],
+      [
+       0.88,
+       0.94
+      ],
+      [
+       0.89,
+       0.94
+      ],
+      [
+       0.9,
+       0.94
+      ],
+      [
+       0.91,
+       0.92625
+      ],
+      [
+       0.92,
+       0.94
+      ],
+      [
+       0.93,
+       0.92625
+      ],
+      [
+       0.94,
+       0.92625
+      ],
+      [
+       0.95,
+       0.94
+      ],
+      [
+       0.96,
+       0.94
+      ],
+      [
+       0.97,
+       0.94
+      ],
+      [
+       0.98,
+       0.92625
+      ],
+      [
+       0.99,
+       0.94
+      ],
+      [
+       1,
+       0.92625
+      ]
+     ]
+    },
+    {
+     "kind": "trace",
+     "token": "--realized",
+     "label": "realized",
+     "points": [
+      [
+       0,
+       0.06
+      ],
+      [
+       0.01,
+       0.06
+      ],
+      [
+       0.02,
+       0.06
+      ],
+      [
+       0.03,
+       0.06
+      ],
+      [
+       0.04,
+       0.06
+      ],
+      [
+       0.05,
+       0.07375
+      ],
+      [
+       0.06,
+       0.06
+      ],
+      [
+       0.07,
+       0.06
+      ],
+      [
+       0.08,
+       0.07375
+      ],
+      [
+       0.09,
+       0.06
+      ],
+      [
+       0.1,
+       0.06
+      ],
+      [
+       0.11,
+       0.06
+      ],
+      [
+       0.12,
+       0.06
+      ],
+      [
+       0.13,
+       0.06
+      ],
+      [
+       0.14,
+       0.06
+      ],
+      [
+       0.15,
+       0.07375
+      ],
+      [
+       0.16,
+       0.07375
+      ],
+      [
+       0.17,
+       0.06
+      ],
+      [
+       0.18,
+       0.06
+      ],
+      [
+       0.19,
+       0.06
+      ],
+      [
+       0.2,
+       0.07375
+      ],
+      [
+       0.21,
+       0.07375
+      ],
+      [
+       0.22,
+       0.10125
+      ],
+      [
+       0.23,
+       0.0875
+      ],
+      [
+       0.24,
+       0.1425
+      ],
+      [
+       0.25,
+       0.15625
+      ],
+      [
+       0.26,
+       0.5
+      ],
+      [
+       0.27,
+       0.54125
+      ],
+      [
+       0.28,
+       0.7475
+      ],
+      [
+       0.29,
+       0.81625
+      ],
+      [
+       0.3,
+       0.84375
+      ],
+      [
+       0.31,
+       0.7475
+      ],
+      [
+       0.32,
+       0.83
+      ],
+      [
+       0.33,
+       0.885
+      ],
+      [
+       0.34,
+       0.885
+      ],
+      [
+       0.35,
+       0.92625
+      ],
+      [
+       0.36,
+       0.94
+      ],
+      [
+       0.37,
+       0.9125
+      ],
+      [
+       0.38,
+       0.94
+      ],
+      [
+       0.39,
+       0.92625
+      ],
+      [
+       0.4,
+       0.94
+      ],
+      [
+       0.41,
+       0.9125
+      ],
+      [
+       0.42,
+       0.92625
+      ],
+      [
+       0.43,
+       0.94
+      ],
+      [
+       0.44,
+       0.94
+      ],
+      [
+       0.45,
+       0.94
+      ],
+      [
+       0.46,
+       0.9125
+      ],
+      [
+       0.47,
+       0.92625
+      ],
+      [
+       0.48,
+       0.92625
+      ],
+      [
+       0.49,
+       0.94
+      ],
+      [
+       0.5,
+       0.92625
+      ],
+      [
+       0.51,
+       0.92625
+      ],
+      [
+       0.52,
+       0.9125
+      ],
+      [
+       0.53,
+       0.9125
+      ],
+      [
+       0.54,
+       0.94
+      ],
+      [
+       0.55,
+       0.94
+      ],
+      [
+       0.56,
+       0.94
+      ],
+      [
+       0.57,
+       0.92625
+      ],
+      [
+       0.58,
+       0.94
+      ],
+      [
+       0.59,
+       0.94
+      ],
+      [
+       0.6,
+       0.94
+      ],
+      [
+       0.61,
+       0.92625
+      ],
+      [
+       0.62,
+       0.94
+      ],
+      [
+       0.63,
+       0.94
+      ],
+      [
+       0.64,
+       0.94
+      ],
+      [
+       0.65,
+       0.94
+      ],
+      [
+       0.66,
+       0.92625
+      ],
+      [
+       0.67,
+       0.94
+      ],
+      [
+       0.68,
+       0.94
+      ],
+      [
+       0.69,
+       0.94
+      ],
+      [
+       0.7,
+       0.94
+      ],
+      [
+       0.71,
+       0.92625
+      ],
+      [
+       0.72,
+       0.92625
+      ],
+      [
+       0.73,
+       0.92625
+      ],
+      [
+       0.74,
+       0.94
+      ],
+      [
+       0.75,
+       0.9125
+      ],
+      [
+       0.76,
+       0.94
+      ],
+      [
+       0.77,
+       0.92625
+      ],
+      [
+       0.78,
+       0.94
+      ],
+      [
+       0.79,
+       0.94
+      ],
+      [
+       0.8,
+       0.94
+      ],
+      [
+       0.81,
+       0.94
+      ],
+      [
+       0.82,
+       0.92625
+      ],
+      [
+       0.83,
+       0.94
+      ],
+      [
+       0.84,
+       0.94
+      ],
+      [
+       0.85,
+       0.92625
+      ],
+      [
+       0.86,
+       0.94
+      ],
+      [
+       0.87,
+       0.94
+      ],
+      [
+       0.88,
+       0.94
+      ],
+      [
+       0.89,
+       0.94
+      ],
+      [
+       0.9,
+       0.94
+      ],
+      [
+       0.91,
+       0.92625
+      ],
+      [
+       0.92,
+       0.94
+      ],
+      [
+       0.93,
+       0.92625
+      ],
+      [
+       0.94,
+       0.92625
+      ],
+      [
+       0.95,
+       0.94
+      ],
+      [
+       0.96,
+       0.94
+      ],
+      [
+       0.97,
+       0.94
+      ],
+      [
+       0.98,
+       0.92625
+      ],
+      [
+       0.99,
+       0.94
+      ],
+      [
+       1,
+       0.9125
+      ]
+     ]
+    },
+    {
+     "kind": "trace",
+     "token": "--comp-2",
+     "label": "format ok",
+     "points": [
+      [
+       0,
+       0.555
+      ],
+      [
+       0.01,
+       0.59625
+      ],
+      [
+       0.02,
+       0.73375
+      ],
+      [
+       0.03,
+       0.84375
+      ],
+      [
+       0.04,
+       0.9125
+      ],
+      [
+       0.05,
+       0.87125
+      ],
+      [
+       0.06,
+       0.83
+      ],
+      [
+       0.07,
+       0.8575
+      ],
+      [
+       0.08,
+       0.885
+      ],
+      [
+       0.09,
+       0.885
+      ],
+      [
+       0.1,
+       0.87125
+      ],
+      [
+       0.11,
+       0.9125
+      ],
+      [
+       0.12,
+       0.89875
+      ],
+      [
+       0.13,
+       0.885
+      ],
+      [
+       0.14,
+       0.92625
+      ],
+      [
+       0.15,
+       0.92625
+      ],
+      [
+       0.16,
+       0.94
+      ],
+      [
+       0.17,
+       0.9125
+      ],
+      [
+       0.18,
+       0.885
+      ],
+      [
+       0.19,
+       0.9125
+      ],
+      [
+       0.2,
+       0.92625
+      ],
+      [
+       0.21,
+       0.94
+      ],
+      [
+       0.22,
+       0.89875
+      ],
+      [
+       0.23,
+       0.94
+      ],
+      [
+       0.24,
+       0.92625
+      ],
+      [
+       0.25,
+       0.94
+      ],
+      [
+       0.26,
+       0.9125
+      ],
+      [
+       0.27,
+       0.92625
+      ],
+      [
+       0.28,
+       0.9125
+      ],
+      [
+       0.29,
+       0.94
+      ],
+      [
+       0.3,
+       0.9125
+      ],
+      [
+       0.31,
+       0.87125
+      ],
+      [
+       0.32,
+       0.9125
+      ],
+      [
+       0.33,
+       0.92625
+      ],
+      [
+       0.34,
+       0.89875
+      ],
+      [
+       0.35,
+       0.92625
+      ],
+      [
+       0.36,
+       0.94
+      ],
+      [
+       0.37,
+       0.9125
+      ],
+      [
+       0.38,
+       0.94
+      ],
+      [
+       0.39,
+       0.94
+      ],
+      [
+       0.4,
+       0.94
+      ],
+      [
+       0.41,
+       0.9125
+      ],
+      [
+       0.42,
+       0.92625
+      ],
+      [
+       0.43,
+       0.94
+      ],
+      [
+       0.44,
+       0.94
+      ],
+      [
+       0.45,
+       0.94
+      ],
+      [
+       0.46,
+       0.9125
+      ],
+      [
+       0.47,
+       0.92625
+      ],
+      [
+       0.48,
+       0.92625
+      ],
+      [
+       0.49,
+       0.94
+      ],
+      [
+       0.5,
+       0.92625
+      ],
+      [
+       0.51,
+       0.92625
+      ],
+      [
+       0.52,
+       0.9125
+      ],
+      [
+       0.53,
+       0.9125
+      ],
+      [
+       0.54,
+       0.94
+      ],
+      [
+       0.55,
+       0.94
+      ],
+      [
+       0.56,
+       0.94
+      ],
+      [
+       0.57,
+       0.92625
+      ],
+      [
+       0.58,
+       0.94
+      ],
+      [
+       0.59,
+       0.94
+      ],
+      [
+       0.6,
+       0.94
+      ],
+      [
+       0.61,
+       0.92625
+      ],
+      [
+       0.62,
+       0.94
+      ],
+      [
+       0.63,
+       0.94
+      ],
+      [
+       0.64,
+       0.94
+      ],
+      [
+       0.65,
+       0.94
+      ],
+      [
+       0.66,
+       0.92625
+      ],
+      [
+       0.67,
+       0.94
+      ],
+      [
+       0.68,
+       0.94
+      ],
+      [
+       0.69,
+       0.94
+      ],
+      [
+       0.7,
+       0.94
+      ],
+      [
+       0.71,
+       0.92625
+      ],
+      [
+       0.72,
+       0.92625
+      ],
+      [
+       0.73,
+       0.92625
+      ],
+      [
+       0.74,
+       0.92625
+      ],
+      [
+       0.75,
+       0.9125
+      ],
+      [
+       0.76,
+       0.94
+      ],
+      [
+       0.77,
+       0.92625
+      ],
+      [
+       0.78,
+       0.94
+      ],
+      [
+       0.79,
+       0.94
+      ],
+      [
+       0.8,
+       0.94
+      ],
+      [
+       0.81,
+       0.94
+      ],
+      [
+       0.82,
+       0.92625
+      ],
+      [
+       0.83,
+       0.94
+      ],
+      [
+       0.84,
+       0.94
+      ],
+      [
+       0.85,
+       0.92625
+      ],
+      [
+       0.86,
+       0.94
+      ],
+      [
+       0.87,
+       0.94
+      ],
+      [
+       0.88,
+       0.94
+      ],
+      [
+       0.89,
+       0.94
+      ],
+      [
+       0.9,
+       0.94
+      ],
+      [
+       0.91,
+       0.92625
+      ],
+      [
+       0.92,
+       0.94
+      ],
+      [
+       0.93,
+       0.92625
+      ],
+      [
+       0.94,
+       0.92625
+      ],
+      [
+       0.95,
+       0.94
+      ],
+      [
+       0.96,
+       0.94
+      ],
+      [
+       0.97,
+       0.94
+      ],
+      [
+       0.98,
+       0.92625
+      ],
+      [
+       0.99,
+       0.94
+      ],
+      [
+       1,
+       0.92625
+      ]
+     ]
+    },
+    {
+     "kind": "marks",
+     "token": "--alarm",
+     "label": "detectors",
+     "points": [
+      [
+       0.1725,
+       0.59416,
+       0
+      ],
+      [
+       0.2225,
+       0.27384,
+       1
+      ]
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,2408 @@
+{
+ "counts": {
+  "quantities": 190,
+  "wedge": 112,
+  "open": 147,
+  "estimators": 64
+ },
+ "quantities": [
+  {
+   "id": "artifact.distillation_delta",
+   "definition": null,
+   "unit": "percentage_points",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "baseline.best_score",
+   "definition": "The discrimination achieved on a claim's own task by the strongest member of the six-baseline bank: the area under the ROC curve of that baseline's per-item scores against the claim's labels.",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "The floor a claim has to clear. A claim whose own discrimination does not exceed this has not been shown to detect anything a zero-parameter comparator could not.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "baseline.margin",
+   "definition": "A claim's own discrimination minus the strongest baseline's, computed on the same items with the pairing preserved, so the interval on the difference is narrower than the two marginal intervals would suggest.",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Positive with an interval excluding zero is a win. An interval containing zero is a match, and a match reported as a win is the failure the bank exists to catch.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "books.budget_closure",
+   "definition": null,
+   "unit": "bool",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "books.budget_closure.bootstrap_ratio",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "books.reconciliation_residual",
+   "definition": null,
+   "unit": "feature",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "books.reconciliation_residual.record_and_metric",
+     "access": null
+    },
+    {
+     "name": "books.reconciliation_residual.gum_itemised",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "calibration.transfer_t32",
+   "definition": null,
+   "unit": "auc_difference",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "credit.by_tool_call",
+   "definition": null,
+   "unit": "1 [normalised]",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "credit.turn_mass.by_tool_call",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "credit.by_turn",
+   "definition": null,
+   "unit": "1 [normalised]",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "credit.turn_mass.by_turn",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "credit.conservation_error",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "credit.disintegration.closure",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "credit.implicit_prm",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "credit.implicit_prm.prefix_trie",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "credit.localiser_quality",
+   "definition": null,
+   "unit": "auc",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "credit.measure",
+   "definition": null,
+   "unit": "OPEN/token",
+   "support": null,
+   "invariance": "tokenization",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "credit.disintegration.masked_backward",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "credit.successor_representation",
+   "definition": "The discounted state-visitation structure of the policy, M(s,s') = E[sum gamma^t 1(s_t = s')].",
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "env.attack_cheapness",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "env.attack_cheapness.measured_ratio",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "env.attack_surface",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "env.attack_surface.inventory",
+     "access": null
+    },
+    {
+     "name": "env.attack_surface.boundary",
+     "access": null
+    },
+    {
+     "name": "env.attack_surface.costed",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "env.flakiness",
+   "definition": null,
+   "unit": "percentage_points",
+   "support": null,
+   "invariance": "group.permutation",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "env.replay_fidelity",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "env.replay_fidelity.regrade",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "estimator.allfail_fraction",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "estimator.amplifier_safety",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "estimator.clip_fraction_effect",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "estimator.degenerate_fraction",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "estimator.noise_attribution",
+   "definition": null,
+   "unit": "1 [normalised]",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "estimator.noise_share",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "estimator.spec",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "exploit.transfer_matrix",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "forecast.brier_score",
+   "definition": "the mean squared error of a set of probability forecasts against their realised binary outcomes, on the half-Brier convention of one term per forecast. Void resolutions are excluded from the numerator and from n, and the count of them travels with the score, because scoring an unresolvable call as a miss and dropping it are different numbers and the reader has to see which was done.",
+   "unit": "probability/forecast [raw]",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "lower is better and the number alone means nothing. A Brier score is only interpretable against the base rate of its own reference class, which is why the uncertainty term of the Murphy decomposition ships beside it.",
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "forecast.brier.half_brier",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "forecast.calibration_reliability",
+   "definition": "the reliability term of the Murphy decomposition, the binned mean squared gap between a forecast probability and the realised frequency at that probability. Lower is better and zero means the stated probabilities are the observed frequencies.",
+   "unit": "probability/forecast [raw]",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "forecast.brier.murphy_reliability",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "forecast.calibration_resolution",
+   "definition": "the resolution term of the Murphy decomposition, how far the binned outcome frequencies sit from the overall base rate. Higher is better, and it is the term that separates a forecaster who says something from one who is merely well calibrated to the climatology.",
+   "unit": "probability/forecast [raw]",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "forecast.brier.murphy_resolution",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "forecast.decision_value",
+   "definition": "the expected loss saved per event by acting on the forecast rather than on the best mandatory baseline, under the forecast's own DecisionSpec. Covariant under a rescaling of the loss, which is why the group is units and not none.",
+   "unit": "1/forecast [raw]",
+   "support": null,
+   "invariance": "units",
+   "interpretation": "the number that answers \"so what\", and nobody in this field computes it. It can be exactly zero while the Brier score looks informative, which happens whenever the forecast and the baseline act identically at every threshold the DecisionSpec admits.",
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "forecast.decision.expected_loss_saved",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "frontier.concomitant_bon",
+   "definition": "The expected gold score of the response that maximises the proxy among n draws, which is the concomitant of the nth order statistic, computed from the finite-n distribution theory rather than by simulation.",
+   "unit": "reward/sequence [raw]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Best-of-n Goodhart is a concomitant problem, and the exact finite-n answer has been available for forty years. The reading is exact at the stated n rather than asymptotic.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "frontier.gold_vs_kl",
+   "definition": "E_lambda[g] as a function of KL(pi_lambda || pi_0) over the exponential tilt family, estimated on n base-policy rollouts scored by both the proxy r and the gold channel g with w_i = exp(lambda r_i). Both axes are ratios of weighted means, so the curve needs no optimisation run to exist.",
+   "unit": "reward/sequence [raw]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Where the curve turns is where further optimisation against the proxy stops buying gold. It is a statement about g, not about anything g stands for, and it is only defined out to the visibility horizon.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "frontier.prentice_checklist",
+   "definition": "A per-criterion pass, fail or untestable verdict on the four surrogate-endpoint conditions under which optimising the proxy cannot harm the gold. They are Prentice (1989), Freedman's proportion of treatment effect explained (1992), Buyse and Molenberghs individual-level against trial-level association (1998), and VanderWeele's monotonicity conditions excluding the surrogate paradox (2013).",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "A failed criterion names the condition the proxy violates, which is a stronger and more actionable statement than a predicted turning point. Criterion 4 usually returns untestable without an intervention, and reporting that honestly is the point rather than a shortfall.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "frontier.tail_index",
+   "definition": "The extreme value index of the reward's upper tail, reported with the estimator's plot over the threshold choice rather than as a point estimate at one k. Hill is reported because section 3.0.1 names it and because it is what makes us comparable to the one published measurement; Pickands carries the LIGHT_TAILED verdict, because Hill is exactly scale invariant and not location invariant, and its support is positive so it can never return evidence of light-tailedness.",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "The LIGHT_TAILED precondition the whole tilt layer rests on, because K(lambda) is finite only if the moment generating function exists. Strictly the condition is gamma <= 0, and an exactly Gaussian tail gives a Hill estimate near 0.196 at these thresholds, which is what the cited 0.20 is consistent with. A defensible estimate needs about 1,570 exceedances, which is 31,400 prompts at q = 0.95; below that the instrument refuses rather than reporting a number from 200 prompts.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "frontier.visibility_horizon",
+   "definition": "The largest KL(pi_lambda || pi_0) at which the Kish effective sample size ESS(lambda) = (sum w_i)^2 / sum w_i^2 still clears a stated floor, default 0.05 of n. Reported in nats rather than in lambda because lambda carries the reciprocal of the reward's scale and is not comparable across graders; the instrument reports lambda_max and n/ESS alongside.",
+   "unit": "nats/sequence",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Past this point the tilt estimate is carried by a handful of rollouts and the instrument declines to answer. It is the reciprocal of the best-of-n coverage coefficient C = 1 + chi^2(pi* || pi_ref) = n/ESS, which the coverage literature leaves unmeasured.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "gate.bunching_elasticity",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "gate.deadzone_fraction",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "gate.mccrary_statistic",
+   "definition": null,
+   "unit": "z",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.abstention_rate",
+   "definition": "The fraction of grader calls that declined to score, counting a leaf whose value is None with abstained set. It is not the silent-zero rate. A silent zero is the subset where a number was substituted for the decline, so a grader with a working abstention channel has a silent-zero rate of zero and an abstention rate that is not.",
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "A rollout whose grader abstained must receive no advantage. Section 3.3 line 1050 calls this a first-class reported quantity and Appendix A registers only its subset.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.afriat_index",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "grader.afriat.garp_count",
+     "access": null
+    },
+    {
+     "name": "grader.afriat.bisect",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "grader.allocation",
+   "definition": "The four-tuple (n prompts, K rollouts per prompt, s grader draws per rollout, m repeat calls per draw) that minimises a stated error variance subject to a stated cost constraint, together with the error variance it achieves and the error variance the current allocation achieves. The error variance is one of three: the batch relative error (sigma2(p) + sigma2(delta; s, m)) / (n*K), the batch absolute error which adds sigma2(Delta) - sigma2(delta), or the per-advantage error sigma2(delta; s, m) * (1 - 1/K). sigma2(delta) and sigma2(Delta) are the D-study relative and absolute error variances of the crossed design that produced the components. The plan is a decision and not a measurement: it is exact arithmetic on estimated components and inherits their uncertainty.",
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "units",
+   "interpretation": "Read the ratio, not the tuple. A plan that moves 30% of the spend from rollouts to grader replications and cuts the error variance by 22% is a 22% cut for free; the same plan on a grader whose sigma2(delta) is already small will move nothing, and that is the answer too.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.attenuation",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.blackwell_order",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.card",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.circuit_overlap",
+   "definition": "The Jaccard index of the top-k attributed components of two reward models on the same view, matched by component name.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether two reward models route the preference through the same parts of the network. Requires a shared architecture.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.component_attribution",
+   "definition": "The signed contribution of one additive residual-stream component to the chosen-minus-rejected reward differential, as that component''s output projected onto the reward direction. Exact: the contributions sum to the differential.",
+   "unit": "reward/component [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Which parts of the network carry the preference, observationally. It is not a causal claim and it does not survive compensation by other components.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.component_patch_effect",
+   "definition": "The reduction in the chosen-minus-rejected reward differential when one component's activation is replaced by the rejected side's, holding everything else clean.",
+   "unit": "reward/component [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Which components are causally necessary for the preference. Necessity only: it tests nothing about sufficiency and carries no rescue arm.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.composition",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "reward.null",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.concept_dose_slope",
+   "definition": "The least-squares slope of the reward against steering strength along a unit concept direction added at the final-token residual.",
+   "unit": "reward/unit_steer [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "How much reward one unit of a concept buys. A concept with a large slope is a lever an optimiser can pull.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.condorcet_rate",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "group.permutation",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "grader.condorcet.direct",
+     "access": null
+    },
+    {
+     "name": "grader.condorcet.copeland_vs_slater",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "grader.contested_axis",
+   "definition": "The correlation between the disagreement signal and its projection onto the covariance direction of the per-pair activation difference with that signal.",
+   "unit": "correlation",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "How much annotator disagreement is organised along a single representation axis rather than scattered.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.counterfactual_score",
+   "definition": null,
+   "unit": "reward",
+   "support": null,
+   "invariance": "reward.null",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.coverage_disparity",
+   "definition": "The spread of per-property reward coverage across a battery: the range, the standard deviation, and the mean absolute difference.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "How unequally a reward covers the properties in a battery. This is v1's coverage statistic, not Wang-Huang distortion.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.criterion_coherence",
+   "definition": "The Gram matrix of unit-normalised criterion directions, with the Welch floor for (K, d) and the participation ratio d_eff of the spanned subspace.",
+   "unit": "correlation/pair",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether a reward is carrying more criteria than its effective dimension supports, past which the criteria must contaminate one another.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.crystallization_depth",
+   "definition": "The layer index, as a fraction of depth, at which the chosen-minus-rejected projection of the residual stream onto the reward direction first reaches half its final value.",
+   "unit": "fraction [depth]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "How deep in the network the preference forms. Near 0 means the reward is decided at the embedding; near 1 means it is decided in the last blocks.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.curl_mass",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.dark_fraction",
+   "definition": "One minus the R-squared of the reward regressed on the named-channel contributions, with a constant term.",
+   "unit": "fraction [variance]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "The share of reward variance no named channel explains. A residual: it attributes nothing, it only says something is unaccounted for.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.design_balance",
+   "definition": "the fraction of cells of a fully crossed measurement design that were actually observed. One means every subject was scored by every rater at every occasion, which is the design the expected-mean-square inversion is derived for. Below one the inversion is being applied to a design it does not describe.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "what DESIGN_CROSSED is measured by. It is a property of a measurement design and not of a training run, so it is not determinable from a bare record and `measure_regime` reports it as unknown rather than as a pass, which is the third state that exists for exactly this case.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.distortion_index",
+   "definition": "Per-dimension distortion D(P) = sensitivity(P) * (1 - coverage(P)), with sensitivity defaulting to the linear proxy |w_r . v_P| and coverage supplied by the knowledge-utilization mediation term.",
+   "unit": "reward/unit_direction [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Where a reward is sensitive to a property it does not intend to price. High sensitivity that is fully covered is intended pricing, not distortion.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.effective_group_size",
+   "definition": "For a group of K rollouts scored on one prompt under one grader configuration: the number of noiselessly scored rollouts that would carry the same amount of signal as the K observed scores. It is K times the generalizability coefficient of a single observed score over the declared universe of grader draws, sigma2(tau) / (sigma2(tau) + sigma2(delta)) at one draw of every facet, which is 1 for a noiseless grader and falls toward 0 as measurement error takes over the observed spread. Every rung of the ladder estimates this one number and differs only in which error terms its design can see, so rung 0, which can see none, returns exactly K. The shape of the reward distribution inside the group does not enter: how unevenly a group spends its gradient is a fact about the policy and the reward, not about the grader, and it is reported separately as the group's Kish shape factor.",
+   "unit": "count/group",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Compare it to K. n_eff = 4.2 at K = 16 means eleven point eight rollouts' worth of compute bought grader noise rather than an independent gradient-relevant observation. The rung tells you how much of the grader's error the number could see: below rung 3 some error terms are invisible and are counted as signal, so the reading is an upper bound and the invisible terms are named on it.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.eval_awareness",
+   "definition": "The held-out balanced accuracy of a mean-difference linear probe discriminating benchmark-style from organic inputs on the grader's activations.",
+   "unit": "probability [balanced]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether the grader can tell a test from real traffic. Presence of the information, not use of it; the causal half needs a steering arm.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.feature_alignment",
+   "definition": "The per-feature inner product of a sparse autoencoder's decoder columns with the reward direction, W_dec @ w_r.",
+   "unit": "reward/feature [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Which dictionary features move the reward and in which direction. It says nothing about whether those features ever fire.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.flip_rate",
+   "definition": "The probability that a pairwise verdict disagrees with its own modal verdict, as a U-statistic over all repeat combinations rather than over a diagonal pairing. The diagonal depends on an ordering the data does not carry unless the caller declares `paired_occasions`, which is why it is not the default.",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "How often re-running the same comparison changes which side wins, which is the pairwise cost of the spread `grader.score_sigma` reports. Invariant under `reward.affine`: an affine rescaling of the scores cannot change which of two is larger.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.graph_lambda2",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "group.permutation",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "grader.lambda2.laplacian",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "grader.grr_percent",
+   "definition": "100 * sigma_GRR / sigma_total, where sigma_total is the standard deviation of a single score and sigma_GRR is the square root of the total variance minus the variance of the object of measurement. Everything that is not the object is gauge: facet main effects, object-by-facet interactions, facet-by-facet interactions and the residual. A ratio of standard deviations, following the automotive convention, and not of variances.",
+   "unit": "percent",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Under 10% the measurement system is acceptable, 10 to 30 is conditional on what the measurement is for, over 30 is not acceptable for process control. At 61% most of what you are ranking on is the measurement rather than the thing measured.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.harmonic_mass",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.houtman_maks_index",
+   "definition": "The fraction of recorded pairwise verdicts that lie in the largest subset a single utility can order. `measure/composition/revealed.py:838` computes it exactly up to eight items per set and brackets it above that, reporting `lower_fraction` and `upper_fraction` rather than a point when the exact search is out of reach.",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "One minus this is the share of the record that has to be thrown away before the grader looks like it is maximising anything. It stays informative on purely ordinal data, where the Afriat index cannot, which is why B2's refusal path points here.",
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "grader.houtman_maks.feedback_arcs",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "grader.induced_variance",
+   "definition": "The reward variance a policy's own samples induce, w_r' Sigma_pi w_r, decomposable by layer and over the eigenbasis of Sigma.",
+   "unit": "variance [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether a reward model is a usable teacher for a given policy. A reward whose scores barely move across a policy's samples teaches it nothing.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.knowledge_utilization",
+   "definition": "The signed distance from the diagonal in the (decodability, mediation) plane, both axes standardised to percentile-within-battery before subtraction.",
+   "unit": "percentile [within_battery]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Which properties a reward represents but does not price. Relative to the battery supplied, so two batteries give incomparable numbers.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.legibility_frontier",
+   "definition": "The Spearman rank agreement between the reward and a least-squares program built from predicates within a description-length budget, as a function of that budget, with its knee and the tacit residual.",
+   "unit": "correlation [spearman]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "How short a program has to be before it stops tracking the reward. Bounded by the predicate library supplied, not by what is expressible.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.money_pump_index",
+   "definition": "The mean margin around each of the grader's own preference cycles, averaged over the cycles enumerated. `measure/composition/revealed.py:925` walks each simple cycle x1 > x2 > ... > xk > x1 and takes the mean of its step margins, so a cycle decided by hairs costs nearly nothing and one decided by wide margins all the way round costs a great deal.",
+   "unit": "reward [raw]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "What an arbitrageur could extract per trade by walking the grader in a circle. It is in the grader's own reward units, so it is not comparable across graders without a common scale, and it is a magnitude rather than a rate. Covariant under `reward.affine`, scaling by |a|, because a margin is a difference of scores and the offset cancels.",
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "grader.money_pump.cycle_mean",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "grader.ndc",
+   "definition": "1.41 * sigma_part / sigma_GRR, truncated to an integer: the number of distinct non-overlapping categories the measurement system can sort the population of objects into. The 1.41 is the square root of two, from the width of the distribution of true values relative to the width of the measurement error.",
+   "unit": "count",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Five or more is the threshold for using a gauge to control a process. Two means the gauge can tell good from bad and nothing finer, so it cannot resolve two adjacent models. One means it cannot do that either.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.null_reach",
+   "definition": "The fraction of rollouts whose composed score moved when a per-prompt constant was added below a named node of the composition tree. `measure/composition/composition.py:508` computes it as n_reached / n over the rollouts that are comparable; an abstaining rollout has no advantage in either arm and is counted in neither direction, because folding it in would make an all-abstaining group look like a perfectly cancelling one.",
+   "unit": "1",
+   "support": null,
+   "invariance": "group.permutation",
+   "interpretation": "Zero or one means the constant reached none of the group or all of it, the group mean moved by the same amount, and the `reward.null` invariance is exact. Anything strictly between them is the invariance failing, and a hard override is the thing that makes it happen, because a constant added below an override never reaches the rollouts the override pinned.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.objective_geometry",
+   "definition": "The pairwise cosine matrix of a multi-objective head's per-objective readout vectors, never the row-mean composite.",
+   "unit": "correlation/pair",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether a multi-objective reward's objectives cooperate or conflict in weight space. Weight geometry only; it never looks at an activation.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.path_effect",
+   "definition": "The reduction in the reward differential when only the sender-head to receiver path carries the source-side activation and every other path stays clean.",
+   "unit": "reward [raw]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether a component's effect flows through one particular downstream route rather than through the network at large.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.prompt_snr",
+   "definition": "The power ratio mean(delta)^2 / var(delta) of the chosen-minus-rejected reward delta across one axis's stimuli.",
+   "unit": "ratio [power]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether an axis's preference signal rises above the spread of that signal. A lower bound on the robustness SNR, not an estimate of it.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.receipt_reliance",
+   "definition": "The share of the corruption reward effect attributable to receipt spans, as the ratio of the falsify-receipt arm delta to the total corruption delta.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether a reward grounds its judgment in the receipts or in the narrative gloss around them.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.robustness_snr",
+   "definition": "The variance of the paraphrase-cluster reward means over the mean within-cluster reward variance.",
+   "unit": "ratio [variance]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether a reward's between-condition ordering survives meaning-preserving perturbation. Near one, any ranking read off it is fragile.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.score_distribution",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "group.permutation",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.score_sigma",
+   "definition": "The pooled within-item standard deviation of a grader's repeated scores at fixed input, on the grader's own scale. `measure/metrology/distribution.py` computes it from the within-item variance with the per-item spreads kept beside it, because a grader at sigma = 0.18 on average and sigma = 0.7 on its worst decile is a different instrument from one at 0.25 everywhere.",
+   "unit": "reward [raw]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "How much of the score is the grader arguing with itself. Covariant under `reward.affine`, scaling by |a|, which is the whole reason this is not one id with the flip rate.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.sep_distance",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.silent_zero_rate",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.skepticism",
+   "definition": "S = r(claim, receipt absent) - r(claim, receipt showing failure) at matched narrative.",
+   "unit": "reward [raw]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether a missing receipt is read as failure (S near 0, skeptical) or rewarded over disclosure (S well above 0, credulous). Carries reward-scale units.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.smith_set_size",
+   "definition": null,
+   "unit": "count",
+   "support": null,
+   "invariance": "group.permutation",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "grader.smith.scc_closure",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "grader.style_share",
+   "definition": "The fraction of the reward change w_r . delta_h carried by the projection of delta_h onto the style subspace.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "How much of a correctness reward gap the reward is reading off style. Does not partition with the verification score; the remainder is unexplained.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.surface_bias_d",
+   "definition": "One-sample Cohen's d of the chosen-minus-rejected reward delta on one surface axis, reported beside the lineage-honest effective sample size of its seeds.",
+   "unit": "effect_size [standardised]",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "How strongly the grader prices a surface change that should not matter. Standardised, so it is comparable across graders.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.tail_index",
+   "definition": "The generalized-Pareto shape parameter of the reward's right tail, fitted by the method of moments over peaks above a quantile threshold and cross-checked against a Hill estimate.",
+   "unit": "shape",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether optimisation pressure against this reward has a finite safe budget. A polynomial tail puts the critical pressure at zero.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.term_conflict",
+   "definition": "The pairwise cosine between reward-term directions, each estimated as the mean chosen-minus-rejected activation difference for one quality axis.",
+   "unit": "correlation/pair",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether two quality axes cooperate, are independent, or pull against each other inside one model's representation.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.value_convergence_excess",
+   "definition": "The reward-subspace alignment of a reward-model pair minus their matched capability-subspace alignment, both on frame-canonicalised subspaces at the same layers, read against the random-utility identifiability null.",
+   "unit": "alignment [canonicalised]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "Whether two reward models agree on what they reward beyond how much they agree on what they know.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.variance_components",
+   "definition": "The decomposition of the variance of a single grader score into additive components, one per source of variation in a fully crossed design: the object of measurement, each facet of the measurement procedure, every interaction among them, and a residual. In a crossed object-by-rater-by-occasion design with one observation per cell the components are sigma2(p), sigma2(r), sigma2(o), sigma2(pr), sigma2(po), sigma2(ro) and sigma2(pro,e), estimated by inverting the expected mean squares. The three-way interaction and the residual are one term because a design with one observation per cell cannot separate them. Components are truncated at zero and every truncation is recorded, because a negative estimate means the true component is near zero and the design could not resolve it, which is a different statement from an established zero.",
+   "unit": "variance",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Read the shares, not the values: the values are in the square of whatever units the grader emits and are not comparable across graders. A large sigma2(r) share means the score depends on which judge you drew. A large sigma2(pr) share means the judges disagree about which response is better, which is the term a group-relative estimator cannot cancel.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "grader.verification_score",
+   "definition": "The share of the clean-versus-corrupted reward gap causally attributable to the labelled error span, by patching the clean twin's error-span activations into the corrupted run.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether a process reward is checking the work or reacting to surface style. Rises with span width for reasons unrelated to verification.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "instrument.effect",
+   "definition": null,
+   "unit": "OPEN/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "instrument.error_correlation",
+   "definition": null,
+   "unit": "correlation",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "instrument.incremental_validity",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "instrument.interp_coverage",
+   "definition": "The share of attributed reward magnitude carried by interpretable feature nodes rather than by reconstruction-error nodes.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "How much of a reward an attribution graph actually explains. It measures reconstruction and is routinely read as interpretability.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "instrument.recovery_auc",
+   "definition": null,
+   "unit": "auc",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "instrument.shelf_life",
+   "definition": null,
+   "unit": "count/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.acute_effect",
+   "definition": null,
+   "unit": "effect",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.att_staggered",
+   "definition": "The average effect on the treated of an intervention introduced partway through a run, where different arms adopt at different steps.",
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.chronic_effect",
+   "definition": null,
+   "unit": "effect",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.dissociation",
+   "definition": null,
+   "unit": "bool",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.ec50",
+   "definition": null,
+   "unit": "dose",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.emax",
+   "definition": null,
+   "unit": "effect",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.erasure_cost",
+   "definition": null,
+   "unit": "percentage_points",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.hill_n",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.rescue_fraction",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "intervention.therapeutic_index",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "judge.commitment_position",
+   "definition": "The position at which a judge's verdict direction becomes fixed, as a fraction of its own generated sequence: 0.0 if it is committed before generating anything and 1.0 if the verdict is only determined at the final token. Reported as a fraction rather than as a token index because the quantity is declared invariant under retokenisation and an index is not.",
+   "unit": "fraction/sequence",
+   "support": null,
+   "invariance": "tokenization",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "judge.verdict_direction",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "labels.corrupt_success_rate",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "labels.error_rate",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "labels.false_success_rate",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "labels.fs_signal_locality",
+   "definition": null,
+   "unit": "auc",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "labels.position_prior",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "labels.score_ceiling",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "ladder.rung_disagreement",
+   "definition": null,
+   "unit": "difference",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.arl0",
+   "definition": null,
+   "unit": "count/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.check_standard_drift",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.confidence_sequence",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.conjunction_alarm",
+   "definition": null,
+   "unit": "bool",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.degradation_curve",
+   "definition": null,
+   "unit": "auc/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.detection_delay",
+   "definition": null,
+   "unit": "1/transition_window",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.evalue",
+   "definition": null,
+   "unit": "e_value",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.half_life",
+   "definition": null,
+   "unit": "count/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.operating_point",
+   "definition": null,
+   "unit": "threshold",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "monitor.ppv_curve",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "placebo.effect_ratio",
+   "definition": "The effect of a coherent semantically irrelevant direction, applied at the same norm and the same dose, divided by the effect of the claimed direction on the same outcome.",
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "1.0 means a direction with no relation to the claim did the intervention's work, so the claim does not describe what happened. Near 0 means the effect is specific to the claimed direction. Values above 1 happen and mean the placebo did more.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "policy.readout_recoverability",
+   "definition": "how much of a held-out outcome a linear readout of the policy's own residual stream recovers, cross-fitted, scored against the black-box baseline bank on the same items. A fraction because it is an accuracy, and it travels with the four numbers of an IncrementalValidity rather than alone.",
+   "unit": "fraction",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": "the number is uninterpretable without its baseline, which is why the instrument refuses to emit one without it. The bar for a white-box method is decorrelation plus signal rather than superiority. A probe ten points worse than the best black-box baseline and uncorrelated with it is worth more than one two points better and redundant.",
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "policy.readout_recoverability.ridge_cross_fitted",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "policy.train_infer_logprob_mismatch",
+   "definition": null,
+   "unit": "nats/token",
+   "support": null,
+   "invariance": "tokenization",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "policy.update_sparsity_vs_staleness",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reference.u_characterisation",
+   "definition": null,
+   "unit": "dose",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reference.u_homogeneity",
+   "definition": null,
+   "unit": "dose",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reference.u_stability",
+   "definition": null,
+   "unit": "dose",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reward.component_congruity",
+   "definition": "Congruity = cos of the angle between M-transpose alpha and B', per reward component, with Distortion = 1 - Congruity travelling beside it.",
+   "unit": "correlation/component",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Every reward component needs at least two numbers, a noise and an angle, and no RLHF tooling separates them. A noisy but congruent measure wants a lower weight; a precise but distorted measure wants a different measure. Those are different remedies and one number cannot distinguish them.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reward.equal_compensation_ratio",
+   "definition": "The information coefficient varrho(k) = n(k)/t(k) with n(k) = sigma^2(k)/mu'(t(k),k)^2, per component of a composite reward. After dividing each signal by its own sensitivity mu', the commissions must be equal, so the raw weights must satisfy alpha_i proportional to mu'_i.",
+   "unit": "ratio/component",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Whether the reward is mis-weighted, and if so which component is being starved: the one with the lowest alpha_i/mu'_i. The phrase \"equal compensation principle\" is Milgrom and Roberts (1992) and does not appear in Holmstrom and Milgrom (1991). Section 3.5.2 states the principle backwards and the correct direction names the opposite end on a real panel; see SPEC-ERRATA E46.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reward.optimal_weights",
+   "definition": "The weight a reward component should carry in a composite reward given its measured noise: alpha* = (I + r C'' Sigma)^-1 B', and in the diagonal case alpha*_i = B_i / (1 + r C_ii sigma_i^2). Holmstrom and Milgrom (1991) under CARA and Brownian noise, with the ordering C'' before Sigma, since matrix products do not commute and at least one transcription in this project's own corpus has them the other way round.",
+   "unit": "1/component",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "A component's optimal weight falls as its measurement noise rises, and the shrinkage factor is the same object as the regressional-Goodhart factor Var(X)/(Var(X)+Var(Z)), derived by contract theory as what the principal should do and by the Goodhart literature as what happens if you do not. Ships as a design check with its five assumptions printed, not as a law.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "reward.sorting_cutoff",
+   "definition": "The value of the information coefficient varrho at which components should be separated into different incentive contracts rather than summed into one.",
+   "unit": "ratio/component",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "Do not put a noisy judge and a crisp unit test in the same weighted sum. Split them across separate optimisation stages, separate models, or separate gradient paths. The optimum is provably asymmetric, so symmetric treatment of components whose noise differs at all is suboptimal.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.adiabaticity",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "run.adiabaticity.record",
+     "access": null
+    },
+    {
+     "name": "run.adiabaticity.perturb_and_hold",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "run.compaction_events",
+   "definition": "The number of lossy compaction events strictly inside a measurement window.",
+   "unit": "count",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "The NO_COMPACTION precondition. Above zero, per-token importance ratios crossing the boundary are undefined rather than stale.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.cot_faithfulness_under_kl",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.curriculum_response",
+   "definition": "The rank-biserial correlation between a task's mean score at a step and its presence at the next, pooled over consecutive step pairs in a window.",
+   "unit": "correlation",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "The EXOGENOUS_CURRICULUM precondition. Nonzero means the score is on both sides of any estimate taken over this window.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.group_shape_factor",
+   "definition": "For a group of K rollouts, Kish's shape factor on the group's centred scores, (sum w)^2 / (K * sum w^2), which is 1 when every rollout deviates from the group mean by the same magnitude and falls toward 0 as the group's gradient signal concentrates in fewer and fewer rollouts. It is computed on the observed scores, so it carries grader noise, and it is reported as a property of the group rather than of the grader for that reason.",
+   "unit": "ratio/group",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": "How evenly a group spends its gradient. A value near 1 means every rollout in the group is contributing comparably to the advantage; a low value means a few rollouts carry the update and the rest are close to the mean. Measured across eleven real reward models it runs 0.7346 to 0.7562 with a spread of 0.0216, which is where the per-grader variation in the old effective-group-size reading was coming from.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.hysteresis_area",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "run.hysteresis_area.raw_single_rate",
+     "access": null
+    },
+    {
+     "name": "run.hysteresis_area.rate_extrapolated",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "run.importance_ess",
+   "definition": "Kish's effective sample size over the exponentiated difference of the training and sampling logprobs, as a fraction of the tokens carrying both streams.",
+   "unit": "1/token [normalised]",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "The ESS_ADEQUATE precondition. It conflates policy drift with the train-inference engine mismatch E6 measures and cannot separate them, which the reading says.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.mask_signature",
+   "definition": "The number of distinct loss-mask states recorded for any single turn role across a window.",
+   "unit": "count",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "The MASK_STABLE precondition. Above one, per-token quantities in the window are not on a common basis.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.max_staleness",
+   "definition": "The largest staleness in optimizer steps over the segment provenance and the staleness histograms of a window.",
+   "unit": "count/step",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": "The NEAR_POLICY precondition. Above the bound, the importance weights an estimator would need are not in the record.",
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "run.rate_dependence",
+   "definition": null,
+   "unit": "bool",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "run.rate_dependence.two_arm_lambda_collapse",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "run.regime",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "run.regime.record",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "run.tau_relax",
+   "definition": null,
+   "unit": "count/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "run.tau_relax.ar1_bias_corrected",
+     "access": null
+    },
+    {
+     "name": "run.tau_relax.perturb_and_hold",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "run.transition_width",
+   "definition": null,
+   "unit": "count/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "run.transition_width.logistic_10_90",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "run.variance_derivative",
+   "definition": null,
+   "unit": "variance/step",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.G_conditioning",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.autonomy",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.covector",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.differential_S",
+   "definition": null,
+   "unit": "covariance",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.dimensionality",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.eta_eff",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "selection.eta_eff.record_series",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "selection.evolvability",
+   "definition": null,
+   "unit": "feature_squared",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.explained_fraction",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "selection.explained_fraction.record_series",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "selection.gradient_beta",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.heritability_h2",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.lande_slope",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "selection.lande_slope.through_origin_window",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "selection.residual",
+   "definition": null,
+   "unit": "feature",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "selection.residual.record_pair",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "selection.response_Gbeta",
+   "definition": null,
+   "unit": "feature",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.spectrum",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.stable_rank",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "selection.term",
+   "definition": null,
+   "unit": "feature",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "selection.term.record_pair",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "study.mde",
+   "definition": null,
+   "unit": "effect",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "study.pooled_effect",
+   "definition": "The random-effects pooled estimate over a set of studies, with the estimator of the between-study variance named on the reading.",
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "units",
+   "interpretation": "The confidence interval is about the mean effect and the prediction interval is about the effect in a new study. Reporting only the first overstates what is known, and with real heterogeneity the two differ a lot.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "study.power",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "study.prediction_interval_ratio",
+   "definition": "The width of the prediction interval divided by the width of the confidence interval, on the analysis scale.",
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": "One means the two coincide, which happens exactly when the between-study variance is estimated at zero and is where a reader following a package default prints the same pair twice and ends up with no interval about a new study at all.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "study.resolution_ratio",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "study.tau2",
+   "definition": "The between-study variance of a random-effects meta-analysis, by DerSimonian-Laird, Paule-Mandel or restricted maximum likelihood, reported with a Q-profile interval.",
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "units",
+   "interpretation": "An estimate of zero is not evidence of homogeneity. At small k, Cochran's Q detects heterogeneity equal to the typical within-study variance well under half the time, so the interval carries the information the point estimate does not.",
+   "wedge": false,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "substrate.lod",
+   "definition": null,
+   "unit": "effect",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "substrate.loq",
+   "definition": null,
+   "unit": "effect",
+   "support": null,
+   "invariance": "units",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "substrate.noise_floor",
+   "definition": null,
+   "unit": "1 [relative]",
+   "support": null,
+   "invariance": "repr.basis",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "update.efficiency",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "update.efficiency.ratio",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "update.kl_min",
+   "definition": null,
+   "unit": "nats/sequence",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "update.kl_min.quadratic_form",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "update.kl_share",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": false,
+   "estimators": [
+    {
+     "name": "update.kl_share.eigenbasis",
+     "access": null
+    },
+    {
+     "name": "update.kl_share.shapley",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "update.kl_spent",
+   "definition": null,
+   "unit": "nats/sequence",
+   "support": null,
+   "invariance": "policy.reparam",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "update.kl_spent.record",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.cfg",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.cfg.ast",
+     "access": null
+    },
+    {
+     "name": "verifier.cfg.graph",
+     "access": null
+    },
+    {
+     "name": "verifier.cfg.dataflow",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.decision_coverage",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.decision_coverage.statement",
+     "access": null
+    },
+    {
+     "name": "verifier.decision_coverage.branch",
+     "access": null
+    },
+    {
+     "name": "verifier.decision_coverage.path",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.false_positive_rate",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "verifier.fp_catalogue",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "verifier.metamorphic_violations",
+   "definition": null,
+   "unit": "count",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "verifier.mutation_score",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.mutation_score.r0",
+     "access": null
+    },
+    {
+     "name": "verifier.mutation_score.r1",
+     "access": null
+    },
+    {
+     "name": "verifier.mutation_score.r2",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.reliability_growth_beta",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.reliability_growth_beta.duane_ols",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.sobol_ST",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "reward.affine",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [],
+   "open": true
+  },
+  {
+   "id": "verifier.surviving_mutants",
+   "definition": null,
+   "unit": "count",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.surviving_mutants.r0",
+     "access": null
+    },
+    {
+     "name": "verifier.surviving_mutants.r1",
+     "access": null
+    },
+    {
+     "name": "verifier.surviving_mutants.r2",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.trusted_inputs",
+   "definition": null,
+   "unit": "OPEN/OPEN",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.trusted_inputs.ast",
+     "access": null
+    },
+    {
+     "name": "verifier.trusted_inputs.dominance",
+     "access": null
+    },
+    {
+     "name": "verifier.trusted_inputs.dataflow",
+     "access": null
+    }
+   ],
+   "open": false
+  },
+  {
+   "id": "verifier.unseen_exploit_mass",
+   "definition": null,
+   "unit": "1",
+   "support": null,
+   "invariance": "trivial",
+   "interpretation": null,
+   "wedge": true,
+   "estimators": [
+    {
+     "name": "verifier.unseen_exploit_mass.good_turing",
+     "access": null
+    },
+    {
+     "name": "verifier.unseen_exploit_mass.growth",
+     "access": null
+    },
+    {
+     "name": "verifier.unseen_exploit_mass.chao1",
+     "access": null
+    }
+   ],
+   "open": false
+  }
+ ],
+ "provenance": {
+  "generatedBy": "scripts/build_catalogue.py",
+  "libraryVersion": "3.0.0",
+  "librarySource": "reward-lens/src/reward_lens",
+  "quantitySource": "reward-lens/spec/QUANTITIES.json",
+  "skippedModules": [
+   "reward_lens.sae"
+  ]
+ }
+}

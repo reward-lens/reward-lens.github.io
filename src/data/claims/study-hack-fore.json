@@ -1,0 +1,19 @@
+{
+ "contentHash": "0dc57ce566a2ed7fa5845d75ff2e7197",
+ "humanSource": "The frozen study \"Weights-derived indices flag the exploitable hack family before any attack\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:137077efe204a6daddd359f54c494453",
+  "campaign.adjudication.HACK-FORE",
+  "study:campaign-hack-fore@v1#ced8526c",
+  "spec:ced8526cafe47e6f1efe7c6a7ed9d04a"
+ ],
+ "label": "Weights-derived indices flag the exploitable hack family before any attack",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "scope": "One frozen study, adjudicated once, on fleet, over diagnostic-v3 and hack-probes.",
+ "slug": "study-hack-fore",
+ "sourceUrl": "/evidence/137077efe204a6daddd359f54c494453/",
+ "statement": "The frozen study \"Weights-derived indices flag the exploitable hack family before any attack\" was adjudicated inconclusive, over 1 registered predictions of which 1 returned no value.",
+ "status": "unrun",
+ "subject": "fleet, over diagnostic-v3 and hack-probes",
+ "type": "interpretation"
+}

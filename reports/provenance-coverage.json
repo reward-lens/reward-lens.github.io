@@ -1,0 +1,17 @@
+{
+  "_what_this_is": "Gate 5's own sweep, transcribed from the summary line scripts/checks/provenance.mjs prints. Nothing here is counted by this file. /evidence/ section 3 renders these numbers and nothing else, so the page cannot disagree with the gate; it can only be one build behind it, which `sweptPages` and `recordedAt` make visible. Regenerate with: node scripts/dev/record-provenance-coverage.mjs",
+  "_the_total_is_numerals_not_distinct_values": "`numerals` counts numeric TOKENS in rendered text, which is what gate 5 measures and what it fails the build on. It is not a count of distinct values. copy.yaml:evidence.coverage_body used to say 'distinct numbers', which does not describe this figure; escalated by packet P6 and RESOLVED 2026-08-11 by the build lead, who changed the copy to say what is counted rather than changing what is counted.",
+  "_ported_is_exempt_not_covered": "`ported` numerals are on /docs/api/**, generated verbatim from the library's docstrings by scripts/build_api_ref.py. The site does not edit a page it ports (C-10) and cannot bind the library's numbers to this archive's evidence store, so they are exempt. They are counted and published rather than skipped: gate 5 used to `continue` over the whole route, which took them out of the DENOMINATOR too, so the coverage ratio quietly improved by removing pages instead of binding numbers.",
+  "_ratcheted_is_not_covered": "`ratcheted` numerals are on routes gate 5 defers entirely. They are neither bound nor exempt: they are unchecked. Any surface publishing `bound` without publishing this beside it is quoting a coverage figure over a site with whole route families removed.",
+  "_context_allowances_are_exempt_not_covered": "`allowedByContext` numerals matched one of gate 5's context allowances: a published release version, the minimum Python version, a figure or section label, an arXiv identifier, a data table's reference-row baseline, or prose ported verbatim from the library's quantity registry. Like `allowedByPattern` these are exempt because they are not claims about the world, and unlike it the exemption is decided by the numeral's surroundings rather than its digits, so a measurement of the same shape still fails. Gate 5 prints the hits and routes each one covered on every run, and says so when one covers nothing.",
+  "sweptPages": 208,
+  "numerals": 5084,
+  "bound": 2419,
+  "allowedByPattern": 727,
+  "allowedByContext": 144,
+  "portedReference": 367,
+  "ratcheted": 1427,
+  "unbound": 0,
+  "recordedAt": "2026-08-10T22:08:27.366Z",
+  "gate": "scripts/checks/provenance.mjs"
+}

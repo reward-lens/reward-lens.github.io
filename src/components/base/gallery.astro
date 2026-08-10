@@ -1,0 +1,459 @@
+---
+/**
+ * The base-component gallery. A verification surface for packet F2, not a
+ * route the site means to publish: every number on it is a fixture and gate 5
+ * walks rendered HTML for unbound numerics, so this must be removed or
+ * excluded from the build before launch.
+ *
+ * It renders each of the nine components in every state its contract's state
+ * table names. States driven by script (copied, copy unavailable, an open
+ * panel, an open disclosure) are forced by the small script at the bottom of
+ * this file, which sets the same attributes the components' own scripts set,
+ * so what is on screen is the component's real CSS and not a mock of it.
+ */
+import Callout from "./callout.astro";
+import CodeBlock from "./code-block.astro";
+import DataTable from "./data-table.astro";
+import FigureFrame from "./figure-frame.astro";
+import InstallStrip from "./install-strip.astro";
+import ProvenanceChip from "./provenance-chip.astro";
+import RefusalCard from "./refusal-card.astro";
+import TrustBadge from "./trust-badge.astro";
+import VersionChip from "./version-chip.astro";
+import * as fx from "./_fixtures";
+import { trustLevels } from "./data";
+import { copy, ui } from "../../copy";
+
+const published = fx.release.releases.map((r) => r.version);
+
+const zebraRows = Array.from({ length: 13 }, (_, i) => ({
+  signal: `${fx.detectorRows[i % 5].signal} ${i + 1}`,
+  alarm: fx.detectorRows[i % 5].alarm,
+  lead: fx.detectorRows[i % 5].lead,
+  surrogates: fx.detectorRows[i % 5].surrogates,
+}));
+
+const refusals = copy.refusals as { answerable_heading: string; answerable_intro: string };
+const limits = copy.limits as { not_claiming_heading: string; early_note: string };
+const ladder = copy.trust_ladder as { limits_heading: string; ordering_note: string };
+const alt = (copy.a11y as { figure_alt: Record<string, string> }).figure_alt;
+---
+
+<div class="gal wrap">
+  <h1 class="type-display-2">Base components</h1>
+
+  <!-- ================= install-strip ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">install-strip</h2>
+
+    <p class="gal__state type-mono-label">lead · rest</p>
+    <InstallStrip
+      version={fx.release.latest}
+      preRelease={fx.release.unpublished}
+      changelogHref={fx.release.changelogUrl}
+    />
+
+    <p class="gal__state type-mono-label">inline · rest</p>
+    <InstallStrip
+      size="inline"
+      version={fx.release.latest}
+      preRelease={fx.release.unpublished}
+      changelogHref={fx.release.changelogUrl}
+    />
+
+    <p class="gal__state type-mono-label">lead · preRelease null</p>
+    <InstallStrip version={fx.release.latest} preRelease={null} />
+
+    <p class="gal__state type-mono-label">lead · copied</p>
+    <div data-force="done">
+      <InstallStrip version={fx.release.latest} preRelease={fx.release.unpublished} />
+    </div>
+
+    <p class="gal__state type-mono-label">lead · copy unavailable</p>
+    <div data-force="manual">
+      <InstallStrip version={fx.release.latest} preRelease={fx.release.unpublished} />
+    </div>
+  </section>
+
+  <!-- ================= provenance-chip ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">provenance-chip</h2>
+
+    <p class="gal__state type-mono-label">rest, in a sentence</p>
+    <p class="type-body gal__prose">
+      Attribution rank and patch-effect rank correlate at ρ ={" "}
+      <ProvenanceChip
+        evidenceId={fx.evidenceId}
+        field="metrics.mean_spearman"
+        display="−0.171"
+        record={fx.record}
+      />, averaged over twelve objective dimensions.
+    </p>
+
+    <p class="gal__state type-mono-label">open</p>
+    <p class="type-body gal__prose gal__prose--tall" data-force="prov-open">
+      Attribution rank and patch-effect rank correlate at ρ ={" "}
+      <ProvenanceChip
+        evidenceId={fx.evidenceId}
+        field="metrics.mean_spearman_open"
+        display="−0.171"
+        record={{ ...fx.record, stats: { "families found": 4 } }}
+      />, averaged over twelve objective dimensions.
+    </p>
+  </section>
+
+  <!-- ================= trust-badge ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">trust-badge</h2>
+
+    <p class="gal__state type-mono-label">the ladder · inline · fourth unoccupied</p>
+    <div class="gal__ladder">
+      {
+        trustLevels.map((level, i) => (
+          <TrustBadge level={level} occupied={i < trustLevels.length - 1} />
+        ))
+      }
+    </div>
+
+    <p class="gal__state type-mono-label">chip · four rungs</p>
+    <div class="gal__ladder">
+      {trustLevels.map((level) => <TrustBadge level={level} form="chip" />)}
+    </div>
+
+    <p class="gal__state type-mono-label">chip · unoccupied</p>
+    <div class="gal__ladder">
+      <TrustBadge level={trustLevels[3]} form="chip" occupied={false} />
+    </div>
+
+    <p class="gal__state type-mono-label">inline · with evidenceId, a provenance target</p>
+    <div class="gal__ladder">
+      <TrustBadge
+        level={trustLevels[0]}
+        evidenceId={fx.evidenceId}
+        record={fx.record}
+      />
+    </div>
+  </section>
+
+  <!-- ================= refusal-card ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">refusal-card</h2>
+
+    <p class="gal__state type-mono-label">full · bound present</p>
+    <RefusalCard {...fx.boundedRefusal} evidenceId={fx.evidenceId} record={fx.record} />
+
+    <p class="gal__state type-mono-label">full · rest</p>
+    <RefusalCard {...fx.plainRefusal} />
+
+    <p class="gal__state type-mono-label">row · disclosure closed</p>
+    <RefusalCard {...fx.plainRefusal} density="row" />
+
+    <p class="gal__state type-mono-label">row · disclosure open</p>
+    <div data-force="remedy-open">
+      <RefusalCard {...fx.boundedRefusal} density="row" />
+    </div>
+  </section>
+
+  <!-- ================= figure-frame ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">figure-frame</h2>
+
+    <p class="gal__state type-mono-label">static · trust chip, record link, downloads</p>
+    <FigureFrame
+      number="1.2"
+      title="Attribution rank vs patch-effect rank"
+      scope="N = 12 dimensions"
+      caption={alt.trust_ladder}
+      trust={trustLevels[0]}
+      evidenceId={fx.evidenceId}
+      downloads={[
+        { label: ui.download_data, href: "/figures/docs/attribution-bars-dark.svg" },
+      ]}
+    >
+      <svg
+        class="gal__chart"
+        viewBox="0 0 960 200"
+        role="img"
+        aria-label="Twelve bars. Eight fall below the zero line and four rise above it."
+      >
+        <line class="gal__axis" x1="0" y1="100" x2="960" y2="100"></line>
+        {
+          [-18, -14, -11, -9, -7, -5, -3, -2, 4, 7, 11, 15].map((v, i) => (
+            <rect
+              class={v < 0 ? "gal__bar gal__bar--neg" : "gal__bar gal__bar--pos"}
+              x={i * 80 + 16}
+              y={v < 0 ? 100 : 100 + v * 5}
+              width="48"
+              height={Math.abs(v) * 5}
+            />
+          ))
+        }
+      </svg>
+    </FigureFrame>
+
+    <p class="gal__state type-mono-label">bleed</p>
+    <FigureFrame
+      number="1.3"
+      title="Attribution rank vs patch-effect rank"
+      caption={alt.trust_ladder}
+      bleed
+    >
+      <svg
+        class="gal__chart"
+        viewBox="0 0 960 160"
+        role="img"
+        aria-label="The same twelve bars, edge to edge inside the frame."
+      >
+        <line class="gal__axis" x1="0" y1="80" x2="960" y2="80"></line>
+        {
+          [-12, -9, -7, -5, -3, -2, 3, 5, 7, 9, 11, 13].map((v, i) => (
+            <rect
+              class={v < 0 ? "gal__bar gal__bar--neg" : "gal__bar gal__bar--pos"}
+              x={i * 80 + 16}
+              y={v < 0 ? 80 : 80 + v * 5}
+              width="48"
+              height={Math.abs(v) * 5}
+            />
+          ))
+        }
+      </svg>
+    </FigureFrame>
+
+    <p class="gal__state type-mono-label">film · poster, does not autoplay</p>
+    <FigureFrame
+      number="1.4"
+      title="Attribution rank vs patch-effect rank"
+      caption={alt.trust_ladder}
+      kind="film"
+      src="/figures/campaign/cal-transfer.dark.mp4"
+      poster={fx.filmPoster}
+    />
+
+    <p class="gal__state type-mono-label">interactive · poster and the data beneath</p>
+    <FigureFrame
+      number="1.5"
+      title="Attribution rank vs patch-effect rank"
+      caption={alt.trust_ladder}
+      kind="interactive"
+      trust={trustLevels[1]}
+    >
+      <svg
+        class="gal__chart"
+        viewBox="0 0 960 120"
+        role="img"
+        aria-label="The static poster the island replaces on hydration."
+      >
+        <line class="gal__axis" x1="0" y1="60" x2="960" y2="60"></line>
+      </svg>
+      <DataTable
+        slot="fallback"
+        caption="Candidate detectors, the no-JavaScript fallback"
+        columns={fx.detectorColumns}
+        rows={fx.detectorRows}
+        referenceRow="labelled transition"
+        density="compact"
+      />
+    </FigureFrame>
+  </section>
+
+  <!-- ================= code-block ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">code-block</h2>
+
+    <p class="gal__state type-mono-label">rest · verified, output, one annotation</p>
+    <CodeBlock
+      code={fx.snippet}
+      output={fx.snippetOutput}
+      verified
+      annotations={[{ line: 4, text: "no GPU" }]}
+      label="The card plan snippet, verified"
+    />
+
+    <p class="gal__state type-mono-label">copied</p>
+    <div data-force="cb-done">
+      <CodeBlock code={fx.snippet} label="The card plan snippet, copied" />
+    </div>
+
+    <p class="gal__state type-mono-label">filename · not copyable</p>
+    <CodeBlock code={fx.snippet} filename="grade.py" copyable={false} />
+  </section>
+
+  <!-- ================= data-table ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">data-table</h2>
+
+    <p class="gal__state type-mono-label">rest · reference row, micro-bars, two null cells, one chipped number</p>
+    <DataTable
+      caption="Candidate detectors on one labelled run"
+      columns={fx.detectorColumns}
+      rows={fx.chippedDetectorRows}
+      referenceRow="labelled transition"
+      emphasisRow="variance derivative"
+    />
+
+    <p class="gal__state type-mono-label">compact</p>
+    <DataTable
+      caption="Candidate detectors, compact density"
+      columns={fx.detectorColumns}
+      rows={fx.detectorRows}
+      density="compact"
+    />
+
+    <p class="gal__state type-mono-label">zebra · more than twelve rows</p>
+    <DataTable
+      caption="Candidate detectors, more than twelve rows"
+      columns={fx.detectorColumns}
+      rows={zebraRows}
+    />
+
+    <p class="gal__state type-mono-label">empty</p>
+    <DataTable
+      caption="Candidate detectors, zero rows returned"
+      columns={fx.detectorColumns}
+      rows={[]}
+    />
+  </section>
+
+  <!-- ================= callout ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">callout</h2>
+
+    <p class="gal__state type-mono-label">note</p>
+    <Callout variant="note" label={refusals.answerable_heading}>
+      <p>{refusals.answerable_intro}</p>
+    </Callout>
+
+    <p class="gal__state type-mono-label">scope</p>
+    <Callout variant="scope" label={limits.not_claiming_heading}>
+      <p>{limits.early_note}</p>
+    </Callout>
+
+    <p class="gal__state type-mono-label">aside</p>
+    <Callout variant="aside" label={ladder.limits_heading}>
+      <p>{ladder.ordering_note}</p>
+    </Callout>
+  </section>
+
+  <!-- ================= version-chip ================= -->
+  <section class="gal__section">
+    <h2 class="type-h2">version-chip</h2>
+
+    <p class="gal__state type-mono-label">banner · unpublished, derived</p>
+    <VersionChip
+      describes="3.0.0"
+      released={fx.release.latest}
+      published={published}
+      href={fx.release.changelogUrl}
+    />
+
+    <p class="gal__state type-mono-label">banner · behind, derived from the same component</p>
+    <VersionChip describes="2.0.0" released={fx.release.latest} published={published} />
+
+    <p class="gal__state type-mono-label">inline</p>
+    <p class="type-body gal__prose">
+      The capability report can price a measurement<VersionChip
+        form="inline"
+        describes="3.0.0"
+        released={fx.release.latest}
+        published={published}
+      /> and route you to the cheapest one that would answer.
+    </p>
+
+    <p class="gal__state type-mono-label">describes equals released · zero nodes</p>
+    <div id="version-chip-silent"><VersionChip
+        describes={fx.release.latest}
+        released={fx.release.latest}
+        published={published}
+      /></div>
+  </section>
+</div>
+
+<script>
+  // Gallery only. Sets the same attributes the components' own scripts set, so
+  // the state on screen is the component's real CSS rather than a mock of it.
+  // Runs after the component scripts, which is why it is queued.
+  window.setTimeout(() => {
+    for (const box of document.querySelectorAll<HTMLElement>("[data-force]")) {
+      const what = box.dataset.force;
+      if (what === "done" || what === "manual") {
+        const strip = box.querySelector<HTMLElement>("[data-install-strip]");
+        if (strip) strip.dataset.state = what;
+      }
+      if (what === "cb-done") {
+        const button = box.querySelector<HTMLElement>("[data-cb-copy]");
+        if (button) button.dataset.state = "done";
+      }
+      if (what === "remedy-open") {
+        const toggle = box.querySelector<HTMLElement>("[data-remedy-toggle]");
+        const panel = box.querySelector<HTMLElement>("[data-remedy-panel]");
+        if (toggle && panel) {
+          toggle.setAttribute("aria-expanded", "true");
+          panel.hidden = false;
+        }
+      }
+      if (what === "prov-open") {
+        const root = box.querySelector<HTMLElement>("[data-prov]");
+        if (root) {
+          root.setAttribute("data-open", "true");
+          root
+            .querySelector(".prov__trigger")
+            ?.setAttribute("aria-expanded", "true");
+        }
+      }
+    }
+  }, 0);
+</script>
+
+<style>
+  .gal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-block: var(--space-7);
+    min-width: 0;
+  }
+  .gal__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+    border-block-start: var(--border-w) solid var(--line);
+    padding-block-start: var(--space-5);
+  }
+  .gal__section > h2 {
+    margin: 0;
+  }
+  .gal__state {
+    color: var(--ink-2);
+    margin: var(--space-4) 0 0;
+  }
+  .gal__prose {
+    max-inline-size: min(var(--measure-prose), 100%);
+    margin: 0;
+  }
+  .gal__prose--tall {
+    /* Room for the open panel, which is absolutely positioned. */
+    margin-block-end: var(--space-9);
+  }
+  .gal__ladder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    align-items: center;
+    min-width: 0;
+  }
+  .gal__chart {
+    inline-size: 100%;
+    block-size: auto;
+  }
+  .gal__axis {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+  }
+  .gal__bar--pos {
+    fill: var(--written);
+  }
+  .gal__bar--neg {
+    fill: var(--realized);
+  }
+</style>

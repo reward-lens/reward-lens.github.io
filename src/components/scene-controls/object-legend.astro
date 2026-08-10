@@ -1,0 +1,147 @@
+---
+/**
+ * The legend: the parts of the instrument, named, each one isolable.
+ *
+ * This is the affordance D-17 adopted the scene for. Naming a part in a
+ * sentence lights it up in the figure, and here the sentence is the legend's
+ * own gloss, which states what the part is and which recorded quantity drives
+ * it. The button is a native `button` with `aria-pressed`, so isolation is a
+ * state a screen reader reports rather than a brightness a sighted reader
+ * infers.
+ *
+ * KEYBOARD AND POINTER ARE THE SAME. Focus previews the isolation exactly as
+ * hover does, and both call one function in `controls.client.ts` with the same
+ * `data-scene-object`. Nothing here is hover-only, and nothing is conveyed by
+ * brightness alone: the pressed state is in the accessibility tree, the
+ * previewed one is marked by a rule down the entry's start edge, and the gloss
+ * beside every entry is always visible.
+ *
+ * The entries are derived from the generated manifest, so the legend for a case
+ * is exactly the objects that case's encodings drive.
+ */
+import { legendFor } from "./objects";
+
+interface Props {
+  cases: readonly string[];
+  active: string;
+  class?: string;
+}
+
+const { cases, active, class: extraClass = "" } = Astro.props;
+const blocks = cases.map((id) => ({ id, entries: legendFor(id) }));
+---
+
+<div class:list={["legend", extraClass]}>
+  {
+    blocks.map(({ id, entries }) => (
+      <div class="legend__block" data-scene-case={id} hidden={id !== active}>
+        {entries.length === 0 ? (
+          <p class="legend__none type-body-sm">
+            This state draws no measured object, so there is nothing to isolate.
+          </p>
+        ) : (
+          <ul class="legend__list">
+            {entries.map((entry) => (
+              <li class="legend__item">
+                <button
+                  type="button"
+                  class="legend__button"
+                  data-scene-object={entry.object}
+                  aria-pressed="false"
+                >
+                  <span class="legend__label">{entry.label}</span>
+                  <span class="legend__gloss type-body-sm">{entry.gloss}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .legend {
+    min-width: 0;
+  }
+  .legend__block[hidden] {
+    display: none;
+  }
+  .legend__none {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .legend__list {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .legend__item {
+    min-width: 0;
+  }
+
+  .legend__button {
+    display: grid;
+    gap: var(--space-1);
+    inline-size: 100%;
+    text-align: start;
+    background: none;
+    border: 0;
+    border-block-start: var(--border-w) solid var(--line);
+    border-inline-start: var(--border-w-accent) solid transparent;
+    padding-block: var(--space-3);
+    padding-inline-start: var(--space-3);
+    color: var(--ink-2);
+    cursor: pointer;
+    font: inherit;
+    min-width: 0;
+  }
+  .legend__item:last-child .legend__button {
+    border-block-end: var(--border-w) solid var(--line);
+  }
+
+  .legend__label {
+    color: var(--ink);
+  }
+  .legend__gloss {
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+  }
+
+  /* The previewed entry, from hover or from focus, identically. The marker is
+     a rule and a text colour, never brightness alone. */
+  .legend__button[data-isolated="true"],
+  .legend__button:hover,
+  .legend__button:focus-visible {
+    border-inline-start-color: var(--line-strong);
+    color: var(--ink);
+  }
+  .legend__button[aria-pressed="true"] {
+    border-inline-start-color: var(--ink);
+  }
+  .legend__button[aria-pressed="true"] .legend__label::after {
+    content: " · isolated";
+    color: var(--ink-3); /* ink3-ok: on --ground, 5.25:1 */
+    font-family: var(--font-mono);
+  }
+
+  .legend__button:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: calc(var(--focus-offset) * -1);
+  }
+
+  /* Reduced motion is decided in CSS, before anything hydrates, which is the
+     earliest this decision can be made. */
+  .legend__button {
+    transition: color var(--dur-1) var(--curve-ui),
+      border-color var(--dur-1) var(--curve-ui);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .legend__button {
+      transition: none;
+    }
+  }
+</style>

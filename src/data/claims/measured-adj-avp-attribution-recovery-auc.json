@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "269f14c2a98f5855f268f93667478580",
+ "humanSource": "The frozen study \"Attribution versus patching, adjudicated against planted ground truth\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:a34457e83cd4eec10d080804a2533e82",
+  "campaign.adjudication.ADJ-AVP",
+  "study:campaign-adj-avp@v1#8a5635a8",
+  "spec:8a5635a89a8d5730a7f4d11300db9cd9"
+ ],
+ "label": "Attribution versus patching, adjudicated against planted ground truth",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one.",
+ "quantity": {
+  "name": "attribution_recovery_auc",
+  "unit": null,
+  "value": 1
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-0.6b and skywork-v02, over adjavp-organism and rb2-patch-40.",
+ "slug": "measured-adj-avp-attribution-recovery-auc",
+ "sourceUrl": "/evidence/a34457e83cd4eec10d080804a2533e82/",
+ "statement": "A supporting measurement from the frozen study \"Attribution versus patching, adjudicated against planted ground truth\", with no prediction registered against it in advance.",
+ "subject": "skywork-v2-qwen3-0.6b and skywork-v02, over adjavp-organism and rb2-patch-40",
+ "type": "measured-result"
+}

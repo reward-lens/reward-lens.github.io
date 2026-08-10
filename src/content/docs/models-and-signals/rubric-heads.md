@@ -2,8 +2,10 @@
 title: Rubric heads
 description: Your grader scores against named criteria. Can you read each one, not just the total?
 section: models-and-signals
-order: 26
+order: 27
 source: docs/content/models-and-signals/rubric-heads.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -62,4 +64,4 @@ The rubric aggregate is only as principled as its weights, and the default is a 
 
 ## Reference
 
-[`RubricRM`](/docs/reference/signals/#reward_lens.signals.rubric.RubricRM) and its `RubricSpec`.
+[`RubricRM`](/docs/api/signals/#reward_lens.signals.rubric.RubricRM) and its `RubricSpec`.

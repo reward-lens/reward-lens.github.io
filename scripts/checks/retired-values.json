@@ -1,0 +1,61 @@
+{
+  "_what_this_is": "Deprecated public values, and where they are still allowed. DECISIONS.md D-02 states that a build check fails on `0.256` in rendered HTML outside /log/. GROUND-TRUTH.md C-55 records that the rule has been stated in three places and implemented in none since it was written, and that it is currently correct by construction rather than by check. This file is the check's data.",
+  "_ratchet_rule": "`deferredRoutes` is a ratchet in D-29's sense: each entry names the route, the packet that owns it and the date it was recorded. It may shrink and it must not grow. A value on the ratchet is REPORTED as deferred and recorded in reports/vacuous-gates.json; it is not forgiven.",
+  "_claims": "`retiredClaims` and `correctedClaims` are read by scripts/build_claims.mjs as well as by the gate, so the adapter and the check cannot disagree about which readings are dead. A retired claim is emitted as a `limitation`, which the type rules forbid from carrying a quantity or a status, so no renderer anywhere can give it the authority of a measured result. A corrected claim keeps its measurement and gains the correction in its limitation, which is what 'it appears as a correction' means for a number that is still a real share of a real decomposition.",
+  "retiredClaims": [
+    {
+      "slug": "measured-topo-hodge-intransitive-mass",
+      "why": "The intransitive-mass reading is dead: zero cyclic triples in 186,378 triangles, 10,000 of 10,000 sampled tournaments acyclic, and the measured value sits on the encoding floor. The store still carries the adjudication as confirmed, which is why this cannot be left to the outcome mapping: it would render as supported.",
+      "correction": "This reading is withdrawn. The study's own follow-up found no cyclic triple in any sampled tournament, which places the measured value on the floor the encoding imposes rather than on a property of the preferences.",
+      "citation": "design/scene/EVIDENCE-VERDICTS.md section 8"
+    }
+  ],
+  "correctedClaims": [
+    {
+      "slug": "derived-decomposition-curl",
+      "correction": "The curl part is a real share of this decomposition and the reading once placed on it is not: the intransitive-mass claim built from this number is withdrawn, because no cyclic triple was found in any sampled tournament.",
+      "citation": "design/scene/EVIDENCE-VERDICTS.md section 8"
+    },
+    {
+      "slug": "measured-topo-hodge-curl-mass",
+      "correction": "The curl part is a real share of this decomposition and the reading once placed on it is not: the intransitive-mass claim built from this number is withdrawn, because no cyclic triple was found in any sampled tournament.",
+      "citation": "design/scene/EVIDENCE-VERDICTS.md section 8"
+    }
+  ],
+  "values": [
+    {
+      "id": "deprecated-cost",
+      "pattern": "\\b0\\.256\\b",
+      "allowedRoutes": [
+        "/log/",
+        "/see/reward-model/"
+      ],
+      "why": "The superseded figure. It is the value the campaign first published and then corrected, so it may appear where the correction IS THE SUBJECT and nowhere else. Two routes qualify. /log/ carries the correction note. /see/reward-model/ renders the correction trail, which that route's own contract makes a MANDATORY disclosure: a block captioned \"the published correlation, and the correction to it\", prose saying the project published one correlation and then corrected it against its own fixtures, and a three-row table labelling this number \"published, then deprecated\" beside the superseding value and the recomputation, each with its own citation. That is the strongest corrected context on the site.",
+      "citation": "DECISIONS.md D-02; pages/log.md:117 and :121; GROUND-TRUTH.md C-55",
+      "deferredRoutes": [],
+      "note": "This route was NOT caught by this gate until 2026-08-11, and the reason is worth keeping. The page ran both quoted correlations through a formatter that pads to six places, so it rendered -0.256000, and \\b0\\.256\\b does not match inside it. The gate was green because the number was being printed with three digits of fabricated precision. Fixing the precision is what surfaced the route. A pattern anchored on word boundaries is only as good as the formatting it meets."
+    },
+    {
+      "id": "retired-intransitive-share",
+      "pattern": "\\b21\\.4\\s?%",
+      "allowedRoutes": [
+        "/log/"
+      ],
+      "why": "The intransitive-mass reading of the decomposition's curl share is retired. The curl mass itself is a real measured quantity and keeps its claim; what is retired is the public sentence asserting that share of a grader's comparison energy is intransitive. It may appear only where the correction is the subject.",
+      "citation": "the build lead's retirement of the 0.214 intransitive-mass claim; the curl mass keeps its derived-result claim at src/data/claims/derived-decomposition-curl.json",
+      "deferredRoutes": [],
+      "_ratchet_note": "The homepage margin note that rendered this share was withdrawn upstream, so the ratchet entry recorded for it on 2026-08-10 was deleted the same day. A ratchet only shrinks."
+    }
+  ],
+  "_stale_versions": "A page stating a version older than the one the package index serves. Same ratchet rule as deferredRoutes: it may shrink and must not grow, each entry names the owning packet and the date, and every deferral is recorded in reports/vacuous-gates.json. 3.0.0 has been on the index since 2026-08-07, so a page saying otherwise is stale rather than wrong-at-the-time.",
+  "staleVersions": [
+    {
+      "route": "/docs/contributing/",
+      "source": "src/content/docs/contributing/index.md:71",
+      "text": "If that passes, you have a working checkout of `reward-lens` 2.0.1.",
+      "packet": "P5, which owns the ported documentation corpus",
+      "recorded": "2026-08-11",
+      "note": "The ported corpus still describes the v2 checkout. D-04 repoints the port at the v3 corpus and this line goes with it. Not this packet's file."
+    }
+  ]
+}

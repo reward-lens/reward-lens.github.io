@@ -1,0 +1,435 @@
+---
+/**
+ * /log/cards/<card>/  ·  27 pages, one per frozen specification.
+ *
+ * Replaces /campaign/<card>/, which redirects here under D-26.
+ *
+ * THE RULE THIS PAGE IS CHECKED AGAINST. The internal identifier never appears
+ * as the page title, the heading, the breadcrumb or the <title> tag. The card's
+ * public title carries all four. The identifier appears once, in the frozen
+ * specification's own metadata block, as secondary metadata, which is the one
+ * placement pages/log.md allows.
+ *
+ * CONTRAST. This file is two of the six entries on the gate-14 ratchet
+ * (D-29): the old `campaign/[card].astro:281` put --ink-3 on the Campaign
+ * layout's raised surface, where it measures 4.29:1 and is AA-large rather
+ * than AA-body. The page now extends Base and sits on --ground, where --ink-3
+ * is 5.25:1 and permitted. The ratchet may shrink and must not grow.
+ *
+ * SELF-SUFFICIENT ON PAPER. A card is the unit somebody sends to somebody
+ * else, so every fact it asserts is on the sheet: the prediction, the frozen
+ * line, the observed value, the verdict, the trust rung, the freeze and
+ * adjudication dates, the specification hash and the record id.
+ */
+import Base from "@layouts/Base.astro";
+import atlasData from "@data/atlas.json";
+import { corrections as logCorrections } from "@data/log-corrections.json";
+import Callout from "@components/base/callout.astro";
+import ProvenanceChip from "@components/base/provenance-chip.astro";
+import TrustBadge from "@components/base/trust-badge.astro";
+import ThemedFigure from "@components/ThemedFigure.astro";
+import cards from "@data/cards.json";
+import { copy } from "../../../copy";
+import {
+  bareId,
+  chipRecord,
+  recordHref,
+  storeRecord,
+  trustName,
+} from "../../evidence/_store";
+import { day, fmt } from "../_campaign";
+
+export function getStaticPaths() {
+  return cards.map((card) => ({ params: { card: card.id }, props: { card } }));
+}
+
+const { card } = Astro.props;
+const log = copy.log as Record<string, string>;
+const ev = copy.evidence as Record<string, string>;
+
+const record = storeRecord(card.adjudication_ev);
+const trust = record ? trustName(record.trust, `/log/cards/${card.id}/`) : null;
+
+const firedCriterion = card.kill_fired
+  ? card.kill_criteria.find((k) => k.id === card.kill_fired)
+  : null;
+const companions = card.companion_metrics as Record<string, number>;
+const killObserved = firedCriterion
+  ? (card.hypotheses.find((h) => h.metric === firedCriterion.metric)?.observed ??
+    companions[firedCriterion.metric] ??
+    null)
+  : null;
+
+const index = cards.findIndex((c) => c.id === card.id);
+const prev = index > 0 ? cards[index - 1] : null;
+const next = index < cards.length - 1 ? cards[index + 1] : null;
+/* The archive's own filing area, in the site's vocabulary where the archive's
+   own name trips the terminology lock. /log/ keeps the campaign's formal
+   vocabulary; `ground truth` used of a grader's output is a claim-quality rule
+   rather than campaign vocabulary, and it is wrong in an archive too. */
+const areaNames = atlasData.areaNames as Record<string, string>;
+const areaName = card.science_name
+  ? (areaNames[card.science_name] ?? card.science_name)
+  : log.title;
+
+/* If this card has been corrected, the correction is the first thing on the
+   page, above the verdict it corrects. A correction a reader meets after the
+   result is a footnote; one they meet before it is the result. */
+/* Whole counts get their thousands separators; fmt is for measured
+   quantities and leaves an integer bare. */
+const count = (n: number) => n.toLocaleString("en-US");
+
+const correction = logCorrections.find((c) => c.card === card.id) ?? null;
+
+---
+
+<Base
+  title={`${card.title} · ${log.title} · reward-lens`}
+  description={`${card.title}. ${card.hypotheses[0].statement}.`}
+  ogImage={`/og/campaign-${card.id}.png`}
+>
+  <div class="wrap cd">
+    <nav class="cd__back type-body-sm" aria-label={log.title}>
+      <a href="/log/">{log.title}</a>
+    </nav>
+
+    <header class="cd__head">
+      <p class="cd__eyebrow type-mono-label">
+        {/* The archive's own filing area, in the site's vocabulary where the
+            archive's own name trips the terminology lock. `ground truth` used
+            of a grader's output is wrong in an archive too: /log/ keeps the
+            campaign's formal vocabulary, and this is a claim-quality rule
+            rather than campaign vocabulary. */}
+        {areaName}
+      </p>
+      <h1 class="cd__title type-h2">{card.title}</h1>
+      {
+        correction && (
+          <Callout variant="note" label={log.corrections_heading}>
+            <p>
+              This card is recorded as {correction.storedVerdict} and it does not
+              hold. A later analysis found {count(correction.cyclicTriples)} cyclic
+              triples in {count(correction.triangles)} triangles and
+              {" "}{count(correction.acyclicTournaments)} of {count(correction.tournaments)}
+              {" "}sampled tournaments acyclic, so one scalar score reproduces
+              all {count(correction.comparisonsAScalarReproduces)} recorded comparisons
+              exactly. The value below sits {fmt(correction.observedMinusFloor)} above
+              the floor its own comparison design imposes on every grader, so the
+              frozen threshold of {fmt(correction.threshold)} could not have failed.
+            </p>
+            <p>
+              The card is not retracted. A frozen prediction is not amendable
+              after the data is seen. Source:
+              {" "}<code>{correction.source.published}</code>.
+            </p>
+          </Callout>
+        )
+      }
+
+      <p class="cd__state">
+        <span class="cd__verdict type-mono-label">{card.verdict}</span>
+        {trust && <TrustBadge level={trust} form="chip" />}
+      </p>
+    </header>
+
+    <section class="cd__section" aria-labelledby="cd-predictions">
+      <h2 class="type-h3" id="cd-predictions">{ev.record_value_heading}</h2>
+      <ol class="cd__preds">
+        {
+          card.hypotheses.map((h) => (
+            <li class="cd__pred">
+              <p class="cd__statement type-body">{h.statement}</p>
+              <p class="cd__detail type-mono-sm">
+                <span class="cd__line">
+                  {h.metric} {h.comparator} {fmt(h.threshold)}
+                </span>
+                {h.registered_prob !== null && (
+                  <span class="cd__prob">{h.registered_prob}</span>
+                )}
+                {h.observed !== null ? (
+                  <ProvenanceChip
+                    evidenceId={card.adjudication_ev}
+                    field={h.metric}
+                    display={fmt(h.observed) ?? ""}
+                    record={chipRecord(card.adjudication_ev)}
+                  />
+                ) : (
+                  <span class="cd__none">{copy.ui.no_value}</span>
+                )}
+                <span class="cd__outcome">{h.outcome}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {
+      firedCriterion && (
+        <section class="cd__section" aria-labelledby="cd-kill">
+          <h2 class="type-h3" id="cd-kill">
+            {card.kill_note}
+          </h2>
+          <p class="cd__detail type-mono-sm">
+            <span class="cd__line">
+              {firedCriterion.metric} {firedCriterion.comparator}{" "}
+              {fmt(firedCriterion.threshold)}
+            </span>
+            {killObserved !== null && (
+              <ProvenanceChip
+                evidenceId={card.adjudication_ev}
+                field={firedCriterion.metric}
+                display={fmt(killObserved) ?? ""}
+                record={chipRecord(card.adjudication_ev)}
+              />
+            )}
+          </p>
+        </section>
+      )
+    }
+
+    {
+      card.inconclusive_reason && (
+        <Callout variant="scope" label={card.verdict}>
+          <p>{card.inconclusive_reason}</p>
+        </Callout>
+      )
+    }
+
+    {
+      card.figure && (
+        <ThemedFigure
+          light={`/figures/campaign/${card.figure}.light.png`}
+          dark={`/figures/campaign/${card.figure}.dark.png`}
+          alt={card.caption}
+          caption={card.caption}
+          loading="lazy"
+        />
+      )
+    }
+
+    {
+      Object.keys(companions).length > 0 && (
+        <section class="cd__section" aria-labelledby="cd-companions">
+          <h2 class="type-h3" id="cd-companions">
+            {ev.record_measurements_heading}
+          </h2>
+          <dl class="cd__dl">
+            {Object.entries(companions).map(([metric, value]) => (
+              <div class="cd__pair">
+                <dt class="cd__dt type-mono-sm">{metric}</dt>
+                <dd class="cd__dd type-mono-base">
+                  <ProvenanceChip
+                    evidenceId={card.adjudication_ev}
+                    field={metric}
+                    display={fmt(value) ?? ""}
+                    record={chipRecord(card.adjudication_ev)}
+                  />
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    <section class="cd__section" aria-labelledby="cd-provenance">
+      <h2 class="type-h3" id="cd-provenance">{ev.record_provenance_heading}</h2>
+      <dl class="cd__dl">
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">card</dt>
+          <dd class="cd__dd type-mono-base">{card.card}</dd>
+        </div>
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">frozen_at</dt>
+          <dd class="cd__dd type-mono-base">
+            <time datetime={day(card.frozen_at)}>{day(card.frozen_at)}</time>
+          </dd>
+        </div>
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">adjudicated_at</dt>
+          <dd class="cd__dd type-mono-base">
+            <time datetime={day(card.adjudicated_at)}>
+              {day(card.adjudicated_at)}
+            </time>
+          </dd>
+        </div>
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">spec_hash</dt>
+          <dd class="cd__dd type-mono-base cd__break">{card.spec_hash}</dd>
+        </div>
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">study_id</dt>
+          <dd class="cd__dd type-mono-base cd__break">{card.study_id}</dd>
+        </div>
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">{ev.title}</dt>
+          <dd class="cd__dd type-mono-base cd__break">
+            <a href={recordHref(card.adjudication_ev)}>
+              {bareId(card.adjudication_ev)}
+            </a>
+          </dd>
+        </div>
+        {
+          card.power_acceptance && (
+            <div class="cd__pair">
+              <dt class="cd__dt type-mono-sm">power_acceptance</dt>
+              <dd class="cd__dd type-body-sm">{card.power_acceptance.note}</dd>
+            </div>
+          )
+        }
+        <div class="cd__pair">
+          <dt class="cd__dt type-mono-sm">spec_file</dt>
+          <dd class="cd__dd type-mono-base cd__break">
+            <a href={`/specs/${card.spec_file}`}>{card.spec_file}</a>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <nav class="cd__nav type-body-sm" aria-label={log.cards_heading}>
+      {prev && <a href={`/log/cards/${prev.id}/`}>{prev.title}</a>}
+      {next && <a class="cd__next" href={`/log/cards/${next.id}/`}>{next.title}</a>}
+    </nav>
+  </div>
+</Base>
+
+<style>
+  /* Everything here sits on --ground. --ink-3 measures 5.25:1 against it and
+     is permitted; on --surface-2 it is 4.29 and is not, which is the defect
+     this file used to carry. GROUND-TRUTH.md C-15, DECISIONS.md D-29. */
+  .cd {
+    padding-block: var(--space-6) var(--space-8);
+    min-width: 0;
+  }
+  .cd__back {
+    margin: 0 0 var(--space-5);
+    color: var(--ink-2);
+  }
+  .cd__head {
+    padding-bottom: var(--space-5);
+    border-bottom: var(--border-w) solid var(--line-strong);
+  }
+  .cd__eyebrow {
+    margin: 0 0 var(--space-2);
+    color: var(--ink-3);
+  }
+  .cd__title {
+    margin: 0 0 var(--space-5);
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+  .cd__state {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+    margin: var(--space-4) 0 0;
+  }
+  .cd__verdict {
+    color: var(--ink-2);
+  }
+
+  .cd__section {
+    margin-top: var(--space-6);
+    min-width: 0;
+  }
+  .cd__section h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--ink);
+    max-width: min(var(--measure-heading), 100%);
+  }
+
+  .cd__preds {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: var(--border-w) solid var(--line);
+  }
+  .cd__pred {
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-w) solid var(--line);
+    min-width: 0;
+  }
+  .cd__statement {
+    margin: 0 0 var(--space-2);
+    color: var(--ink);
+    max-width: min(var(--measure-prose), 100%);
+  }
+  /* The detail line is a grid whose first column holds the provenance chip, at
+     the container's inline start. Any chip further right puts its closed,
+     hidden panel past the viewport at 768 and the page scrolls horizontally.
+     See the note in /log/index.astro; the defect is provenance-chip's. */
+  .cd__detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+    align-items: baseline;
+    margin: 0;
+    color: var(--ink-2);
+    min-width: 0;
+  }
+  .cd__detail > :global(.prov) {
+    order: -1;
+  }
+  .cd__line,
+  .cd__prob,
+  .cd__none {
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+
+  .cd__dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .cd__pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .cd__dt {
+    margin: 0;
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+  .cd__dd {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .cd__break {
+    overflow-wrap: anywhere;
+  }
+
+  .cd__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: space-between;
+    margin-top: var(--space-7);
+    padding-top: var(--space-4);
+    border-top: var(--border-w) solid var(--line);
+  }
+  .cd__next {
+    margin-inline-start: auto;
+    text-align: end;
+  }
+
+  /* Back at --bp-md. This waited for --bp-xl for one build, because a chip in
+     the value column started at roughly 368px at 768 and its closed panel was
+     `visibility: hidden` and still in layout, so the page scrolled to 911. The
+     repair on `main` makes a closed panel `display: none`. See the note in
+     /log/index.astro. */
+  @media (min-width: 47.5rem) /* --bp-md */ {
+    .cd__pair {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: var(--space-4);
+      align-items: baseline;
+    }
+  }
+</style>

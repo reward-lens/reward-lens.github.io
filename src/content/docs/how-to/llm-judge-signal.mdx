@@ -4,6 +4,8 @@ description: Your grader is a chat model that answers Yes or No, not a scalar he
 section: how-to
 order: 9
 source: docs/content/how-to/llm-judge-signal.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import Callout from "@components/Callout.astro";
 
@@ -52,4 +54,4 @@ The two verdicts sit almost on top of each other, which is exactly what a model 
 A real judge is an instruct model wrapped with `GenerativeJudge.from_causal_lm(model, tokenizer)`, optionally with `validate_with=` your own calibration prompts. On adequate hardware the detection confidence rises to reflect a model that genuinely emits verdicts, and the verdict spread becomes a real reward signal.
 
 </Callout>
-See also: [Generative judges](/docs/models-and-signals/generative-judges/). API: [`GenerativeJudge`](/docs/reference/signals/#reward_lens.signals.judge.GenerativeJudge).
+See also: [Generative judges](/docs/models-and-signals/generative-judges/). API: [`GenerativeJudge`](/docs/api/signals/#reward_lens.signals.judge.GenerativeJudge).

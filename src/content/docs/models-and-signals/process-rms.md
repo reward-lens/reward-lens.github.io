@@ -2,8 +2,10 @@
 title: Process reward models
 description: Which step did the reasoning go wrong at?
 section: models-and-signals
-order: 24
+order: 25
 source: docs/content/models-and-signals/process-rms.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 
 <div class="rl-chips">
@@ -69,4 +71,4 @@ The per-step scores inherit the classifier's gauge and trust: `INVARIANT`, and `
 
 ## Reference
 
-[`ProcessRM`](/docs/reference/signals/#reward_lens.signals.process.ProcessRM), and its `StepScores` result type.
+[`ProcessRM`](/docs/api/signals/#reward_lens.signals.process.ProcessRM), and its `StepScores` result type.

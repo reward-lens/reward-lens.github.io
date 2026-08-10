@@ -1,0 +1,4224 @@
+{
+ "counts": {
+  "instruments": 95,
+  "wedge": 51,
+  "series": 14,
+  "scheduled": 90
+ },
+ "series": [
+  {
+   "letter": "A",
+   "title": "Signal metrology: the grader as a measurement device",
+   "instruments": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7"
+   ]
+  },
+  {
+   "letter": "B",
+   "title": "Grader structure: is this thing a scalar, and what is it made of?",
+   "instruments": [
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6"
+   ]
+  },
+  {
+   "letter": "C",
+   "title": "Grader white-box: the existing battery, re-typed",
+   "instruments": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9"
+   ]
+  },
+  {
+   "letter": "D",
+   "title": "Verifier and environment science",
+   "instruments": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6",
+    "D7",
+    "D8",
+    "D9",
+    "D10"
+   ]
+  },
+  {
+   "letter": "E",
+   "title": "The estimator: where a good reward becomes a bad gradient",
+   "instruments": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6"
+   ]
+  },
+  {
+   "letter": "F",
+   "title": "The four books",
+   "instruments": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6"
+   ]
+  },
+  {
+   "letter": "G",
+   "title": "Credit geometry",
+   "instruments": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+   ]
+  },
+  {
+   "letter": "H",
+   "title": "Rate and regime",
+   "instruments": [
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5"
+   ]
+  },
+  {
+   "letter": "I",
+   "title": "Adversarial pressure, and the monitor as a target",
+   "instruments": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "I7"
+   ]
+  },
+  {
+   "letter": "J",
+   "title": "Monitoring",
+   "instruments": [
+    "J1",
+    "J2",
+    "J3",
+    "J4",
+    "J5",
+    "J6"
+   ]
+  },
+  {
+   "letter": "K",
+   "title": "Transfer and survival",
+   "instruments": [
+    "K1",
+    "K2",
+    "K3",
+    "K4"
+   ]
+  },
+  {
+   "letter": "L",
+   "title": "Reference materials and label metrology",
+   "instruments": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5"
+   ]
+  },
+  {
+   "letter": "M",
+   "title": "Meta-instruments: measurements about measurements",
+   "instruments": [
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "M6",
+    "M7",
+    "M8",
+    "M9",
+    "M10",
+    "M11"
+   ]
+  },
+  {
+   "letter": "N",
+   "title": "The frontier: what would happen if we optimised",
+   "instruments": [
+    "N1",
+    "N2",
+    "N3",
+    "N4",
+    "N5",
+    "N6",
+    "N7",
+    "N8"
+   ]
+  }
+ ],
+ "instruments": [
+  {
+   "id": "A1",
+   "series": "A",
+   "name": "Effective group size",
+   "headline": "How many independent gradient-relevant observations a group of K rollouts actually gives you.",
+   "quantities": [
+    "grader.effective_group_size",
+    "run.group_shape_factor"
+   ],
+   "headlineQuantity": "grader.effective_group_size",
+   "accessMin": "GRADER:RECORD (r0), REPLICATE (r2+)",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN",
+    "POST_RUN"
+   ],
+   "invarianceGroup": "`reward.affine`, `group.permutation`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [
+     "GROUP_NONDEGENERATE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "Kish ESS on observed score spread",
+     "access": "`GRADER: RECORD`",
+     "bias": "Upward. Ignores correlated grader error entirely.",
+     "cost": "Free"
+    },
+    {
+     "rung": 1,
+     "estimator": "Test-retest on repeated calls, same input",
+     "access": "`GRADER: REPLICATE`",
+     "bias": "Upward. Captures occasion but not rater or rubric.",
+     "cost": "R calls per item"
+    },
+    {
+     "rung": 2,
+     "estimator": "Crossed G-study, item \u00d7 rater \u00d7 occasion",
+     "access": "`GRADER: REPLICATE` with facet control",
+     "bias": "Approximately unbiased if the design is fully crossed",
+     "cost": "n\u00b7r\u00b7o calls"
+    },
+    {
+     "rung": 3,
+     "estimator": "Rung 2 plus the item-by-rater interaction `\u03c3\u00b2(p\u00d7r)`",
+     "access": "as rung 2, with \u22652 raters",
+     "bias": "Unbiased; this is the term that governs co-directional gradients",
+     "cost": "n\u00b7r\u00b7o calls, r \u2265 2"
+    }
+   ],
+   "baselines": [
+    "group size K itself",
+    "a single-rater design"
+   ],
+   "killCondition": "if r0 and r3 agree within their intervals on five graders, the ladder is decoration and only r0 ships.",
+   "says": "\"Your effective group size is 4.2, not 16. You are paying H100-hours for 12 rollouts of grader noise.\"",
+   "priorArt": []
+  },
+  {
+   "id": "A2",
+   "series": "A",
+   "name": "Variance components and gauge R&R",
+   "headline": "Facet decomposition of `Var(r)`.",
+   "quantities": [
+    "grader.variance_components",
+    "grader.grr_percent",
+    "grader.ndc",
+    "grader.design_balance"
+   ],
+   "headlineQuantity": "grader.variance_components",
+   "accessMin": "GRADER:REPLICATE with facet control",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "`reward.affine` (covariant: components scale with the square of the affine parameter, CALIPER line 1415), `group.permutation`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [
+     "DESIGN_CROSSED",
+     "MASK_STABLE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "two-facet nested",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "fully crossed item \u00d7 rater \u00d7 occasion",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "plus rubric facet",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "plus finite-universe correction `(1 \u2212 n_i/N_i)` for fixed facets",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a single-draw point estimate, to show what it hides"
+   ],
+   "killCondition": "if `ndc \u2265 5` on every grader tested, the gauge is adequate and the instrument is a formality.",
+   "says": "\"44% of your score variance is which judge you drew. %GRR = 61%, ndc = 2. This gauge cannot resolve two adjacent models.\"",
+   "priorArt": []
+  },
+  {
+   "id": "A3",
+   "series": "A",
+   "name": "Attenuation factor",
+   "headline": "How much grader error shrinks the selection signal.",
+   "quantities": [
+    "grader.attenuation"
+   ],
+   "headlineQuantity": "grader.attenuation",
+   "accessMin": "GRADER:REPLICATE",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`, `group.permutation`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [
+     "GROUP_NONDEGENERATE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "`\u221a(\u03c3\u00b2_true/(\u03c3\u00b2_true+\u03c3\u00b2_err))` from A2",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "the errors-in-variables correction `\u03b2_corr = (C_obs \u2212 C_err)\u207b\u00b9S` with `C_err` from within-prompt rollout variance",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "uncorrected `\u03b2`"
+   ],
+   "killCondition": "if the correction never changes a feature ranking, report it once and stop.",
+   "says": "\"Your measured selection gradient is 0.71 of the true one. Correcting for it moves feature 3 from rank 7 to rank 2.\"",
+   "priorArt": []
+  },
+  {
+   "id": "A4",
+   "series": "A",
+   "name": "Blackwell order and deficiency",
+   "headline": "Rank graders by informativeness rather than accuracy.",
+   "quantities": [
+    "grader.blackwell_order"
+   ],
+   "headlineQuantity": "grader.blackwell_order",
+   "accessMin": "GRADER:QUERY on a shared labelled slice",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine` (invariant by construction: the order is over channels rather than scores, CALIPER line 1435), `group.permutation`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1634 prints \"Env `SCALAR_REPRESENTABLE` not required\", a negation the merge read as a requirement. The Blackwell order is over channels rather than scores (CALIPER A4 line 1435), so a grader with curl mass above the bound is still orderable and this instrument is the one that says so."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "pairwise accuracy (the wrong thing, shown for contrast)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "garbling LP",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "Le Cam deficiency",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "group-ranking regret at the real K",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "RewardBench-style accuracy"
+   ],
+   "killCondition": "if the Blackwell order and accuracy rank identically on ten graders.",
+   "says": "\"Grader B is a garbling of grader A. B is dominated: no downstream use can prefer it.\"",
+   "priorArt": []
+  },
+  {
+   "id": "A5",
+   "series": "A",
+   "name": "Decision study: optimal allocation",
+   "headline": "Where the next dollar goes.",
+   "quantities": [
+    "grader.allocation"
+   ],
+   "headlineQuantity": "grader.allocation",
+   "accessMin": "A2 output",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "equal split",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "closed-form `\u03c3\u00b2(\u03b4; n,K,m,s)` minimisation",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "current allocation"
+   ],
+   "killCondition": "if the optimum is always the current practice.",
+   "says": "\"At your budget, move 30% from rollouts to grader replications; expected `\u03c3\u00b2(\u03b4)` falls 22%.\"",
+   "priorArt": []
+  },
+  {
+   "id": "A6",
+   "series": "A",
+   "name": "Grader stochasticity profile",
+   "headline": "The grader as a distribution, not a number.",
+   "quantities": [
+    "grader.score_distribution",
+    "grader.score_sigma",
+    "grader.flip_rate"
+   ],
+   "headlineQuantity": "grader.score_distribution",
+   "accessMin": "GRADER:REPLICATE",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`group.permutation`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1640 prints `Env none`. A stochasticity profile of a grader holds in any regime."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "repeat variance",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "per-facet attribution",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "flip-rate at the pair level",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "assume determinism, and show the error that induces"
+   ],
+   "killCondition": "if \u03c3 \u2248 0 for the grader class in question, which is true for a deterministic scalar head and is the honest scope limit.",
+   "says": "\"At fixed input this grader has \u03c3 = 0.18 and flips its pairwise verdict 13.6% of the time. Eleven repeats are needed for a majority vote to match a 50-trial reference at 95%.\"",
+   "priorArt": []
+  },
+  {
+   "id": "A7",
+   "series": "A",
+   "name": "Environment flakiness",
+   "headline": "Score variance attributable to the environment, not the model.",
+   "quantities": [
+    "env.flakiness"
+   ],
+   "headlineQuantity": "env.flakiness",
+   "accessMin": "TASK:QUERY, replay capability",
+   "substrates": [
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "`group.permutation`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.2",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1643 prints \"determinism claim under test\"; the claim is the reading rather than a precondition."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "N replays, report the range",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "occasion facet in the A2 design",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "attribute to sandbox, network, timeout, ordering",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the single-run number that would otherwise be reported"
+   ],
+   "killCondition": "if flakiness is under 1 point on ten environments.",
+   "says": "\"The same policy on the same task scores 57.9% to 76.8% across 23 identical runs. Your 3-point improvement is inside the environment's own spread.\"",
+   "priorArt": []
+  },
+  {
+   "id": "B1",
+   "series": "B",
+   "name": "Curl mass and the harmonic split",
+   "headline": "How much preference structure no scalar can carry, and how much of that is fixable.",
+   "quantities": [
+    "grader.curl_mass",
+    "grader.harmonic_mass"
+   ],
+   "headlineQuantity": "grader.curl_mass",
+   "accessMin": "GRADER:QUERY, k-wise comparisons",
+   "substrates": [
+    "NEURAL_GEN",
+    "PROCEDURAL"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "`reward.affine`, `group.permutation` (not invariant under a change of the comparison design, which must be reported: CALIPER line 1459)",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1650 prints \"at least 11 replications per pair for the nulls\", which is a sample-size requirement and therefore a refusal with a stated n rather than a regime condition. E23 settles that distinction for N3 and it holds here."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "curl mass from a single pass",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "with Null C split-half",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "with Nulls A, D, E",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the transitive baseline, MANDATORY and reported on every reading. A comparison recorded as a bare win is a sign and not a margin, so a transitive \u00b11 tournament on `K_n` already carries curl mass exactly `(n-2)/(3n)`, which is 5/21 at seven items. A curl mass without this floor beside it is uninterpretable, and the campaign's 0.214 sits on the floor to fifteen significant figures with zero cyclic triples in the corpus. SPEC-ERRATA E32.",
+    "a Bradley-Terry fit's residual",
+    "the random-profile null, by simulation through the identical pipeline. The `(5/6)|E|` constant printed in \u00a73.6 is unsourced and could not be derived or reproduced, so it is not used and not quoted. SPEC-ERRATA E33.",
+    "a transitive-plus-measured-flip-rate simulation"
+   ],
+   "killCondition": "if Null C shows the curl component does not replicate across split halves, in which case 0.214 is measurement error and the instrument reports a noise level instead.",
+   "says": "\"21.4% of this grader's preference structure is not expressible by any scalar. Of that, 6 points are curl (the judge is locally cyclic) and 15 are harmonic (your comparison design has holes and could be fixed by comparing different pairs).\"",
+   "priorArt": []
+  },
+  {
+   "id": "B2",
+   "series": "B",
+   "name": "Afriat efficiency index",
+   "headline": "Rationalizability, from revealed-preference theory.",
+   "quantities": [
+    "grader.afriat_index",
+    "grader.houtman_maks_index",
+    "grader.money_pump_index"
+   ],
+   "headlineQuantity": "grader.afriat_index",
+   "accessMin": "GRADER:RECORD, comparison data",
+   "substrates": [
+    "NEURAL_GEN",
+    "PROCEDURAL"
+   ],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1653 prints `Env none`."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "GARP violation count",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "Afriat index by bisection",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "Houtman-Maks (largest rationalizable subset)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "money-pump index",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the curl mass, as a different measure of the same failure"
+   ],
+   "killCondition": "if Afriat and curl mass are monotonically related across twenty graders, in which case report one.",
+   "says": "\"This grader's comparisons are rationalizable by a scalar utility at efficiency e = 0.87. Thirteen percent of its choices cannot be reconciled with any single objective.\"",
+   "priorArt": []
+  },
+  {
+   "id": "B3",
+   "series": "B",
+   "name": "Composition tree and counterfactual composition",
+   "headline": "What the reward is actually made of, and what it would be without a piece.",
+   "quantities": [
+    "grader.composition",
+    "grader.counterfactual_score",
+    "grader.null_reach"
+   ],
+   "headlineQuantity": "grader.composition",
+   "accessMin": "GRADER:RECORD with per-leaf scores, and ESTIMATOR:RECORD. Part 5 prints only the first. The reading is a counterfactual *advantage* rather than a counterfactual score, which is the only reading consistent with the declared `reward.null` group, and replaying an advantage needs the recorded estimator spec: `record/scores.py:1473` calls `replay_advantages(before, g.estimator)` and refuses without it.",
+   "substrates": [
+    "COMPOSITE"
+   ],
+   "phases": [
+    "POST_RUN"
+   ],
+   "invarianceGroup": "`reward.null`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1656 prints \"leaves recorded, not just the total\", which is a record-completeness requirement rather than a regime condition."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "re-evaluate the tree with a node disabled on recorded leaves (free)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "re-score with a modified tree (needs QUERY)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the deployed composition"
+   ],
+   "killCondition": "if per-leaf scores are unavailable everywhere, which reduces this to a request rather than an instrument.",
+   "says": "\"Removing the length override changes 8% of advantages by more than one standard deviation, and reverses the sign for 31 of 512 rollouts.\"",
+   "priorArt": []
+  },
+  {
+   "id": "B4",
+   "series": "B",
+   "name": "Silent-zero and abstention rate",
+   "headline": "How often the grader failed and returned a real number anyway.",
+   "quantities": [
+    "grader.silent_zero_rate"
+   ],
+   "headlineQuantity": "grader.silent_zero_rate",
+   "accessMin": "GRADER:RECORD with exception logging, or source",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [],
+   "invarianceGroup": "none",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1659 prints `Env none`. It is a defect census and holds in any regime."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "count exceptions if logged",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "instrument the wrapper and count directly",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "assume zero and show the difference"
+   ],
+   "killCondition": "nothing kills this; it is a defect census, and the right outcome is that it goes to zero because people fix it.",
+   "says": "\"1.8% of your rollouts were scored 0.0 because the grader raised an exception. Those zeros entered the group mean and the standard deviation.\"",
+   "priorArt": []
+  },
+  {
+   "id": "B5",
+   "series": "B",
+   "name": "Scalar-representability bound",
+   "headline": "The worst-case number that carries the convergence theorem.",
+   "quantities": [
+    "grader.sep_distance"
+   ],
+   "headlineQuantity": "grader.sep_distance",
+   "accessMin": "GRADER:QUERY",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1662 prints \"Env `SCALAR_REPRESENTABLE` under test\". B5 measures the distance from scalar representability, so the condition is this instrument's output rather than its precondition."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the `O(n\u00b2)` column-mean sandwich",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "the `O(n\u00b3)` triple scan; **do not** solve the LP",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "B1's curl mass, always reported beside it"
+   ],
+   "killCondition": "if the sandwich is too loose to be informative at K = 4 to 16.",
+   "says": "\"`\u2016U\u2016_\u2295 = 0.31`, so the comparison kernel converges with contraction factor `c = 0.31` rather than in one step.\"",
+   "priorArt": []
+  },
+  {
+   "id": "B6",
+   "series": "B",
+   "name": "Tournament solution and comparison-graph connectivity",
+   "headline": null,
+   "quantities": [
+    "grader.smith_set_size",
+    "grader.graph_lambda2",
+    "grader.condorcet_rate"
+   ],
+   "headlineQuantity": "grader.smith_set_size",
+   "accessMin": "GRADER:RECORD",
+   "substrates": [
+    "PROCEDURAL"
+   ],
+   "phases": [],
+   "invarianceGroup": "`group.permutation`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "Condorcet check and Copeland (polynomial)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "Smith set",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "Copeland-versus-Slater disagreement rate",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "assume a total order exists"
+   ],
+   "killCondition": "if Condorcet cycles are under 1% at real group sizes.",
+   "says": "\"On 12% of prompts there is no Condorcet winner, and the Smith set has size 3. Your tournament reward is choosing arbitrarily on those.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C1",
+   "series": "C",
+   "name": "The susceptibility triple",
+   "headline": "`S`, `\u03b2`, and `G\u03b2`, always together.",
+   "quantities": [
+    "selection.differential_S",
+    "selection.gradient_beta",
+    "selection.response_Gbeta",
+    "selection.G_conditioning"
+   ],
+   "headlineQuantity": "selection.differential_S",
+   "accessMin": "GRADER:RECORD for S; plus POLICY:BACKWARD for `G`",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`, `repr.basis`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.3",
+   "envelope": {
+    "requires": [
+     "LINEAR_RESPONSE",
+     "GROUP_NONDEGENERATE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "`S` alone",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "`\u03b2 = C\u207b\u00b9S` with the conditioning `n_D`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "realised heritability from a step window",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "`G = JF\u207b\u00b9J\u1d40` and the full `\u0394z = \u03b7G\u03b2`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the raw `\u03c7` the shipped library reports",
+    "a random feature",
+    "a coherent irrelevant semantic feature"
+   ],
+   "killCondition": "if `\u03b2` never reorders features against `S` on stored data, the transplant is elegant and inert. This test is free and should run in week one.",
+   "says": "\"Feature 'cites a source' has S = +0.22 and \u03b2 = \u22120.05. It covaries with reward because it rides on verbosity; selection is pushing against it.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C2",
+   "series": "C",
+   "name": "Heritability and autonomy",
+   "headline": "Which features can move at all, and what moves with them.",
+   "quantities": [
+    "selection.heritability_h2",
+    "selection.autonomy",
+    "selection.evolvability",
+    "selection.G_conditioning"
+   ],
+   "headlineQuantity": "selection.heritability_h2",
+   "accessMin": "POLICY:BACKWARD (r3) or POLICY:RECORD over a step window (r0)",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`policy.reparam` (Fisher-metric quantities are invariant; `\u2016\u0394\u03b8\u2016` is not)",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.3",
+   "envelope": {
+    "requires": [
+     "LINEAR_RESPONSE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "realised `\u0125\u00b2` by regression across steps",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "`G` diagonal only",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "full `G`, `e(\u03b2)`, `c(\u03b2)`, `a(\u03b2)`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "`S` ranking without the filter"
+   ],
+   "killCondition": "if `h\u00b2` is above 0.8 for every feature anyone cares about, in which case `N` is negligible and `C` was fine all along.",
+   "says": "\"Feature 'hedging' has h\u00b2 = 0.03: it varies across rollouts and no gradient step can move it. Your index ranked it 4th most susceptible.\" And \"a(\u03b2) = 0.31: 69% of the response to this pressure is collateral.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C3",
+   "series": "C",
+   "name": "Instrument recovery AUC",
+   "headline": "The head-to-head nobody publishes.",
+   "quantities": [
+    "instrument.recovery_auc"
+   ],
+   "headlineQuantity": "instrument.recovery_auc",
+   "accessMin": "ORGANISM:MUTATE, a certified reference (\u00a75.L)",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`repr.basis`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1680 prints \"`REFERENCE_UNCERTIFIED` must not fire\", which names a RefusalReason rather than a RegimeCondition. The instrument refuses on an uncertified reference and has no regime precondition."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "one method",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "a panel including at least one black-box method and one dumb baseline",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "string match",
+    "length",
+    "scaffolded black-box prompting",
+    "a coherent irrelevant semantic direction"
+   ],
+   "killCondition": "nothing; a bad number here is the point.",
+   "says": "\"Against the same planted key: DiffMean 0.81, SAE 0.62, logit lens 0.55, scaffolded black-box prompting 0.84. Our method is third.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C4",
+   "series": "C",
+   "name": "Erasure, with the head-to-head that is now mandatory",
+   "headline": null,
+   "quantities": [
+    "intervention.erasure_cost",
+    "intervention.ec50",
+    "intervention.emax",
+    "intervention.hill_n",
+    "intervention.therapeutic_index"
+   ],
+   "headlineQuantity": "intervention.erasure_cost",
+   "accessMin": "GRADER:MUTATE",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`repr.basis`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.5",
+   "envelope": {
+    "requires": [
+     "ABOVE_LOD"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "single dose",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "dose sweep with `EC50`, `E_max`, `n` and a therapeutic index `TI = TD50/ED50`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "\"One Bias After Another\" (2603.03291) on the same Skywork-Reward-V2 fleet with the same DiffMean-plus-null-space method, reporting \u22120.8pp certified non-inferior against our \u22120.399",
+    "a coherent irrelevant semantic direction",
+    "a clamp rather than an erasure"
+   ],
+   "killCondition": "the head-to-head, if we lose it, retires the erasure claim and keeps the dose-response measurement.",
+   "says": "\"LEACE removes the exploit direction at 0.886 and costs 0.399 of RewardBench-2 accuracy. The published alternative on the same fleet costs 0.008 and is certified non-inferior.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C5",
+   "series": "C",
+   "name": "Acute versus chronic intervention",
+   "headline": "Ablate and keep training.",
+   "quantities": [
+    "intervention.acute_effect",
+    "intervention.chronic_effect"
+   ],
+   "headlineQuantity": "intervention.acute_effect",
+   "accessMin": "POLICY:MUTATE + CONTROL",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`repr.basis`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.5",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "acute only (what everyone does)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "acute plus chronic",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "no-ablation arm",
+    "a matched irrelevant ablation"
+   ],
+   "killCondition": "if acute and chronic agree everywhere, the distinction is not operative here.",
+   "says": "\"Ablating this direction drops the behaviour 40% immediately and 3% after 200 further steps. The capability was not localised there; it was currently implemented there.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C6",
+   "series": "C",
+   "name": "Rescue",
+   "headline": "Put it back and check the behaviour returns.",
+   "quantities": [
+    "intervention.rescue_fraction"
+   ],
+   "headlineQuantity": "intervention.rescue_fraction",
+   "accessMin": "POLICY:MUTATE",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`repr.basis`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "re-inject the exact removed activation",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a norm-matched random re-injection"
+   ],
+   "killCondition": "nothing; it is a control, not a finding.",
+   "says": "\"Re-injecting the ablated component restores 91% of the behaviour, so the effect is not an off-manifold artifact.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C7",
+   "series": "C",
+   "name": "Double dissociation",
+   "headline": "Necessity is not sufficiency.",
+   "quantities": [
+    "intervention.dissociation"
+   ],
+   "headlineQuantity": "intervention.dissociation",
+   "accessMin": "POLICY:MUTATE, at least two behaviours and two components",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "a single dissociation, which is compatible with one graded resource plus a difficulty difference"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"Ablating A impairs behaviour 1 and not 2; ablating B impairs 2 and not 1. The functions are distinct.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C8",
+   "series": "C",
+   "name": "Jacobian-corrected verdict direction",
+   "headline": null,
+   "quantities": [
+    "judge.verdict_direction",
+    "judge.commitment_position"
+   ],
+   "headlineQuantity": "judge.verdict_direction",
+   "accessMin": "GRADER:FORWARD, a fitted J-lens",
+   "substrates": [
+    "NEURAL_GEN"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "`repr.basis`, `tokenization`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.5",
+   "envelope": {
+    "requires": [
+     "ABOVE_LOD"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "naive `W_U[Yes] \u2212 W_U[No]` (what the shipped library used)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "`(W_U J_\u2113)[Yes] \u2212 (W_U J_\u2113)[No]`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the naive form, always reported beside r1",
+    "the vanilla logit lens, which the vendored code gives free via `apply(..., use_jacobian=False)`",
+    "a length baseline",
+    "the four controls report 04 specifies"
+   ],
+   "killCondition": "if the four controls show the mean moves while the mode is fixed.",
+   "says": "\"The judge's verdict direction saturates at token 12 of a 340-token rubric. The rubric is written after the decision.\"",
+   "priorArt": []
+  },
+  {
+   "id": "C9",
+   "series": "C",
+   "name": "Policy readout recoverability",
+   "headline": "What a linear readout of the policy's own residual stream recovers, against the black-box bank on the same items.",
+   "quantities": [
+    "policy.readout_recoverability"
+   ],
+   "headlineQuantity": "policy.readout_recoverability",
+   "accessMin": "POLICY:FORWARD",
+   "substrates": [
+    "NEURAL_GEN",
+    "NEURAL_SCALAR"
+   ],
+   "phases": [
+    "POST_RUN"
+   ],
+   "invarianceGroup": "repr.basis",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.1",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "a cross-fitted probe on a fixed item set depends on no property of the optimisation that produced the items. What it does depend on is label quality and class balance, and both are checked in preflight and refused by name rather than declared as regime conditions, because neither is a property of a run."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "a ridge readout of the residual stream at a named site, cross-fitted over folds, scored against the black-box baseline bank on the same items with the error correlation between the two methods' per-item margins",
+     "access": "POLICY:FORWARD",
+     "bias": "the penalty is fixed rather than tuned, at alpha times the mean eigenvalue of the training Gram, because a hyperparameter chosen on the evaluation set is a fitted parameter the baseline bank exists to count. That makes the reading a floor on what a tuned probe would recover.",
+     "cost": "one forward pass per item plus a ridge solve; no grader calls"
+    }
+   ],
+   "baselines": [
+    "the six-member black-box bank, on the same items",
+    "the best single baseline, which is what the incremental record is scored against"
+   ],
+   "killCondition": "if the probe never beats the black-box bank and is never decorrelated from it on any real subject, a linear readout of the residual stream is not carrying anything the text does not, and the instrument reports that rather than the field assuming otherwise.",
+   "says": "\"The probe reads 0.536 where the best black-box baseline reads 0.964, at an error correlation of +0.21 and an ensemble gain of exactly zero. On this run, opening the network bought nothing.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D1",
+   "series": "D",
+   "name": "Decision coverage",
+   "headline": "What fraction of the verifier's logic any rollout has ever exercised.",
+   "quantities": [
+    "verifier.decision_coverage"
+   ],
+   "headlineQuantity": "verifier.decision_coverage",
+   "accessMin": "GRADER source + RECORD",
+   "substrates": [
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN",
+    "POST_RUN"
+   ],
+   "invarianceGroup": "none",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "statement coverage",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "branch/decision coverage",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "path coverage on the hot subset",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "coverage of a random rollout sample of the same size"
+   ],
+   "killCondition": "if coverage is above 95% on every real verifier.",
+   "says": "\"Across 25,664 rollouts your verifier has never taken 31% of its branches. Those are behaviours it cannot distinguish.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D2",
+   "series": "D",
+   "name": "Surviving mutants",
+   "headline": "Would the verifier notice if it were wrong?",
+   "quantities": [
+    "verifier.surviving_mutants",
+    "verifier.mutation_score"
+   ],
+   "headlineQuantity": "verifier.surviving_mutants",
+   "accessMin": "GRADER source + MUTATE + a rollout corpus",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "operator-level mutation on the scoring function",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "whole-module",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "mutants ranked by how many rollouts change score",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a random source edit that should be caught"
+   ],
+   "killCondition": "if mutation score is above 95% on real verifiers.",
+   "says": "\"Of 412 mutants of your verifier, 89 survive: 89 ways it could be wrong that no rollout in your corpus would reveal.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D3",
+   "series": "D",
+   "name": "Metamorphic violations",
+   "headline": "Relations the grader should respect and does not.",
+   "quantities": [
+    "verifier.metamorphic_violations"
+   ],
+   "headlineQuantity": "verifier.metamorphic_violations",
+   "accessMin": "GRADER:QUERY + a transformation set",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "a fixed relation set (whitespace, variable renaming, comment insertion, statement reordering where semantics-preserving)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "domain-specific relations",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "learned relations",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "identity transformation"
+   ],
+   "killCondition": "if violations are under 0.1% everywhere.",
+   "says": "\"Renaming a variable changes the score on 4.1% of accepted solutions. Here are 210 reproducers.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D4",
+   "series": "D",
+   "name": "Sensitivity indices",
+   "headline": "Which inputs actually move the score.",
+   "quantities": [
+    "verifier.sobol_ST"
+   ],
+   "headlineQuantity": "verifier.sobol_ST",
+   "accessMin": "GRADER:QUERY, factorial sampling",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "one-at-a-time (biased, shown for contrast)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "Sobol first-order `S1`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "total-effect `S_Ti` with bootstrap CIs",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "equal weighting"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"78% of this rubric's score variance is driven by one criterion out of nine. The other eight are decoration.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D5",
+   "series": "D",
+   "name": "False-positive fuzzing",
+   "headline": "Where the verifier accepts a wrong answer.",
+   "quantities": [
+    "verifier.false_positive_rate",
+    "verifier.fp_catalogue"
+   ],
+   "headlineQuantity": "verifier.false_positive_rate",
+   "accessMin": "GRADER:QUERY + a stricter reference",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4/W6.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "replay known exploit families",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "`hypothesis`-driven search",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "coverage-guided fuzzing with `atheris`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "symbolic execution where tractable",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a random-mutation baseline"
+   ],
+   "killCondition": "if the fuzzer finds nothing on a verifier already known to be leaky, which would mean the search is too weak.",
+   "says": "\"Property-based search found 1,340 inputs your verifier accepts that a strict reference rejects. FPR 0.83 on partial-answer math.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D6",
+   "series": "D",
+   "name": "Exploit-family coverage",
+   "headline": "How much of the exploit space you have found.",
+   "quantities": [
+    "verifier.unseen_exploit_mass",
+    "verifier.reliability_growth_beta"
+   ],
+   "headlineQuantity": "verifier.unseen_exploit_mass",
+   "accessMin": "an exploit log",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "`f\u2081/n` and `f\u2081\u00b2/(2f\u2082)`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "plus Crow-AMSAA `\u03b2`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "plus Chao1",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the raw count of families found"
+   ],
+   "killCondition": "nothing; it is arithmetic on a log.",
+   "says": "\"You have found 23 exploit families. Good-Turing bounds the unseen mass at 8%, and the probability the next find is novel is 0.06. Crow-AMSAA \u03b2 = 0.74, so the blacklist is converging.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D7",
+   "series": "D",
+   "name": "The grader card",
+   "headline": "The composite artifact and the wedge product.",
+   "quantities": [
+    "grader.card"
+   ],
+   "headlineQuantity": "grader.card",
+   "accessMin": "GRADER:QUERY+REPLICATE and source where available",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if nobody reads one.",
+   "says": "one page: coverage, surviving mutants, metamorphic violations with reproducers, sensitivity profile, false-positive catalogue, silent-zero rate, flakiness spread, exploit-family accounting, variance components, effective group size, curl mass, Afriat index, and the abstention channel.",
+   "priorArt": []
+  },
+  {
+   "id": "D8",
+   "series": "D",
+   "name": "Attack surface",
+   "headline": "What the harness exposes.",
+   "quantities": [
+    "env.attack_surface",
+    "env.attack_cheapness"
+   ],
+   "headlineQuantity": "env.attack_surface",
+   "accessMin": "environment source and configuration",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "a static inventory (what can the harness read and write, which credentials are reachable, what does the scoring code trust)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "a formal task-boundary definition",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "a measured cost ratio",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the assumption that the sandbox holds"
+   ],
+   "killCondition": "if attack cheapness does not predict realised cheat rate across twenty environments.",
+   "says": "\"The scoring script reads a file the agent can write. Attacking the grader is 11x cheaper than solving the task.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D9",
+   "series": "D",
+   "name": "Static structure",
+   "headline": "The verifier's shape, extracted.",
+   "quantities": [
+    "verifier.cfg",
+    "verifier.trusted_inputs"
+   ],
+   "headlineQuantity": "verifier.cfg",
+   "accessMin": "source",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "`ast` walk",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "control-flow graph",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "taint/dataflow",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"The scoring function has 14 branches, 3 of them reachable only when a timeout fires, and it trusts 2 fields of untrusted input without validation.\"",
+   "priorArt": []
+  },
+  {
+   "id": "D10",
+   "series": "D",
+   "name": "Determinism and replay fidelity",
+   "headline": null,
+   "quantities": [
+    "env.replay_fidelity"
+   ],
+   "headlineQuantity": "env.replay_fidelity",
+   "accessMin": "TASK:QUERY + a record",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if replay fidelity is 100% everywhere.",
+   "says": "\"Replaying the recorded trajectory reproduces the score on 87% of tasks. The other 13% are not auditable.\"",
+   "priorArt": []
+  },
+  {
+   "id": "E1",
+   "series": "E",
+   "name": "Estimator specification, recorded",
+   "headline": "What transform actually ran.",
+   "quantities": [
+    "estimator.spec"
+   ],
+   "headlineQuantity": "estimator.spec",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"Group z-score with \u03b5 = 1e-4, token-level aggregation, clip 0.2, environment tokens masked, no length normalisation.\"",
+   "priorArt": []
+  },
+  {
+   "id": "E2",
+   "series": "E",
+   "name": "Degenerate and all-fail group fraction",
+   "headline": null,
+   "quantities": [
+    "estimator.degenerate_fraction",
+    "estimator.allfail_fraction"
+   ],
+   "headlineQuantity": "estimator.degenerate_fraction",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "count",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "attribute to task difficulty and grader saturation",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the nominal group size K"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"34% of your groups had zero reward spread. They contributed noise, not signal. A further 12% were all-fail, where the z-score amplified whatever was left by two orders of magnitude.\"",
+   "priorArt": []
+  },
+  {
+   "id": "E3",
+   "series": "E",
+   "name": "Signal-versus-noise share of the gradient, and its attribution",
+   "headline": null,
+   "quantities": [
+    "estimator.noise_share",
+    "estimator.noise_attribution"
+   ],
+   "headlineQuantity": "estimator.noise_share",
+   "accessMin": "RECORD with `sum_pi_squared` enabled; A2 for the attribution",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.5",
+   "envelope": {
+    "requires": [
+     "GROUP_NONDEGENERATE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "read veRL's `variance_proxy/proxy3_pure_noise`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "attribute the share using A2's variance components",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "carry correlated grader error into an effective group size",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the raw fraction with no attribution"
+   ],
+   "killCondition": "if the attribution never separates grader from sampling on real data.",
+   "says": "\"37% of this step's gradient power is noise. Of that, 22 points are grader replication variance, 9 are sampling, and 6 are the clip.\"",
+   "priorArt": []
+  },
+  {
+   "id": "E4",
+   "series": "E",
+   "name": "Amplifier safety",
+   "headline": "Is this reward component safe to add?",
+   "quantities": [
+    "estimator.amplifier_safety"
+   ],
+   "headlineQuantity": "estimator.amplifier_safety",
+   "accessMin": "RECORD with per-leaf scores",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine` (and note the point: the *normalised* advantage is invariant to rescaling, which is why magnitude is the wrong diagnostic)",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.5",
+   "envelope": {
+    "requires": [
+     "GROUP_NONDEGENERATE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the variance ratio between all-fail and mixed groups",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "the variance trajectory over training",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "a predicted collapse step",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the component's absolute magnitude, which is what people currently look at and which is uninformative"
+   ],
+   "killCondition": "if amplifier safety does not predict collapse on three held-out runs.",
+   "says": "\"Your new format reward has AmplifierSafety = 3.1. Its variance persists during all-fail groups, so the z-score will amplify it by two orders of magnitude exactly when the task signal vanishes. Expect collapse around step 40.\"",
+   "priorArt": []
+  },
+  {
+   "id": "E5",
+   "series": "E",
+   "name": "Clip and mask accounting",
+   "headline": null,
+   "quantities": [
+    "estimator.clip_fraction_effect"
+   ],
+   "headlineQuantity": "estimator.clip_fraction_effect",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"18% of ratios were clipped this step. Recomputing unclipped moves the gradient norm by 31%, so every gradient-derived quantity is biased.\"",
+   "priorArt": []
+  },
+  {
+   "id": "E6",
+   "series": "E",
+   "name": "Train-inference logprob mismatch",
+   "headline": null,
+   "quantities": [
+    "policy.train_infer_logprob_mismatch"
+   ],
+   "headlineQuantity": "policy.train_infer_logprob_mismatch",
+   "accessMin": "RECORD with both logprob streams",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if the mismatch is below the numerics floor everywhere, which would be good news and worth publishing.",
+   "says": "\"The sampling engine and the training engine disagree on this rollout's logprobs by 0.4 nats on average. Your importance ratio is measuring the engines, not the policy.\"",
+   "priorArt": []
+  },
+  {
+   "id": "F1",
+   "series": "F",
+   "name": "The selection term and the residual",
+   "headline": null,
+   "quantities": [
+    "selection.term",
+    "selection.residual"
+   ],
+   "headlineQuantity": "selection.term",
+   "accessMin": "RECORD + a featuriser",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`reward.affine`, `units`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.3",
+   "envelope": {
+    "requires": [
+     "LINEAR_RESPONSE",
+     "GROUP_NONDEGENERATE",
+     "NEAR_POLICY"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the pair, per feature per step",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a random feature",
+    "a permuted-advantage null"
+   ],
+   "killCondition": "if `\u03c1` is the same size as the selection term for every feature, in which case the first-order picture explains nothing and Level 1 collapses to Level 2.",
+   "says": "\"This step, 'response length' moved +0.04, of which selection explains +0.031 and 0.009 is unexplained.\"",
+   "priorArt": []
+  },
+  {
+   "id": "F2",
+   "series": "F",
+   "name": "The selection-explained fraction \u039b",
+   "headline": "The cheapest strong diagnostic here.",
+   "quantities": [
+    "selection.explained_fraction",
+    "selection.eta_eff"
+   ],
+   "headlineQuantity": "selection.explained_fraction",
+   "accessMin": "RECORD + a featuriser",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the `R\u00b2` of `\u0394z` regressed on `\u03b7\u00b7Cov(A,f)` across steps, with the OLS slope reported as `\u03b7_eff`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a permuted-step null"
+   ],
+   "killCondition": "nothing; a low \u039b is itself the finding.",
+   "says": "\"\u039b = 0.62. Sixty-two percent of the variance in what moved is explained by what this step selected for. It was 0.81 at step 100.\"",
+   "priorArt": []
+  },
+  {
+   "id": "F3",
+   "series": "F",
+   "name": "The cost book: KL budget and efficiency",
+   "headline": null,
+   "quantities": [
+    "update.kl_spent",
+    "update.kl_min",
+    "update.efficiency",
+    "update.kl_share"
+   ],
+   "headlineQuantity": "update.kl_spent",
+   "accessMin": "RECORD for `D_t`; POLICY:BACKWARD for `G` and therefore `KL_min`",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`policy.reparam`, `units` (nats, per-sequence)",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.4",
+   "envelope": {
+    "requires": [
+     "LINEAR_RESPONSE",
+     "ESS_ADEQUATE"
+    ],
+    "measuredBy": {
+     "LINEAR_RESPONSE": "OPEN",
+     "ESS_ADEQUATE": "frontier.visibility_horizon"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "`D_t` alone (already logged everywhere)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "`KL_min` and efficiency",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "the eigenbasis decomposition",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "Shapley allocation to named features with the projection residual reported",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the total KL with no decomposition",
+    "an equal-share attribution"
+   ],
+   "killCondition": "if `KL_min` exceeds `D_t` on real data, which means either `G` is mis-estimated or the natural-gradient approximation has failed, and either way the book does not balance.",
+   "says": "\"This step spent 0.031 nats. The minimum needed for the behavioural change we can see is 0.019, so efficiency is 0.61. Of the 0.019: 41% length, 22% tool-call frequency, 8% the target behaviour, 29% unattributed.\"",
+   "priorArt": []
+  },
+  {
+   "id": "F4",
+   "series": "F",
+   "name": "The reconciliation residual, budgeted",
+   "headline": null,
+   "quantities": [
+    "books.reconciliation_residual",
+    "books.budget_closure"
+   ],
+   "headlineQuantity": "books.reconciliation_residual",
+   "accessMin": "all four books",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units`",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the residual alone",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "the GUM itemisation of \u00a73.1.5",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "the closure test",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the residual reported as unexplained"
+   ],
+   "killCondition": "if the budget never closes on any run, in which case the first-order model is wrong and that is the result.",
+   "says": "\"`Var(\u03c1)` = 0.0041. The itemised budget accounts for 0.0038. The books close within 8%.\"",
+   "priorArt": []
+  },
+  {
+   "id": "F5",
+   "series": "F",
+   "name": "The selection covector and spectrum",
+   "headline": null,
+   "quantities": [
+    "selection.covector",
+    "selection.spectrum",
+    "selection.dimensionality",
+    "selection.stable_rank"
+   ],
+   "headlineQuantity": "selection.covector",
+   "accessMin": "POLICY:BACKWARD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`repr.basis` (covariant; needs a shared frame for comparison)",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.2",
+   "envelope": {
+    "requires": [
+     "LINEAR_RESPONSE"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the score-function `s_\u2113`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "the second-moment `M_\u2113` eigendecomposition",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "the whitened generalised problem `M_\u2113 v = \u03bc G_\u2113 v`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 3,
+     "estimator": "the differentiable-surrogate `\u2202r/\u2202h_\u2113` where it exists",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a random direction of matched norm",
+    "a coherent irrelevant semantic direction",
+    "the vanilla logit lens",
+    "string matching"
+   ],
+   "killCondition": "the variance spike: if `K = 64` is still too noisy with all variance reduction applied, F5 reduces to the differentiable-surrogate case and the plan changes here.",
+   "says": "\"Selection pressure at layer 18 is concentrated: stable rank 3.4 of 4096. The top direction is 61% of the pressure and it decodes as 'assertive closing'.\"",
+   "priorArt": []
+  },
+  {
+   "id": "F6",
+   "series": "F",
+   "name": "Realised versus predicted response, the Lande slope",
+   "headline": null,
+   "quantities": [
+    "selection.lande_slope"
+   ],
+   "headlineQuantity": "selection.lande_slope",
+   "accessMin": "all books over a window",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "slope near zero retires Level 1.",
+   "says": "\"Regressing observed `\u0394z` on `\u03b7G\u03b2` across 200 steps gives slope 0.83 [0.71, 0.95]. Lande holds to within 17%, and the deviation is drifting.\"",
+   "priorArt": []
+  },
+  {
+   "id": "G1",
+   "series": "G",
+   "name": "The credit measure",
+   "headline": null,
+   "quantities": [
+    "credit.measure",
+    "credit.conservation_error"
+   ],
+   "headlineQuantity": "credit.measure",
+   "accessMin": "per-token advantages and gradients",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`tokenization` (a per-token quantity must declare its normalisation)",
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.4",
+   "envelope": {
+    "requires": [
+     "NO_COMPACTION"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "consume SkyRL's `dump_data_batch` where it exists",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "compute in the tap",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "uniform attribution over tokens"
+   ],
+   "killCondition": "if per-token gradients cannot be obtained at scale within the memory budget, which is the one place this design has to write real numerical code.",
+   "says": "\"This step's credit disintegrates as: 34% on tool-call arguments, 41% on the final answer span, 25% elsewhere. Total mass matches the update norm to 1e-6.\"",
+   "priorArt": []
+  },
+  {
+   "id": "G2",
+   "series": "G",
+   "name": "Turn and tool-call disintegration",
+   "headline": "The agentic form.",
+   "quantities": [
+    "credit.by_turn",
+    "credit.by_tool_call"
+   ],
+   "headlineQuantity": "credit.by_turn",
+   "accessMin": "RECORD with turn structure",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"In a 40-turn episode, 71% of the log-probability mass that received advantage is in turns 1 to 3 and turn 40.\"",
+   "priorArt": []
+  },
+  {
+   "id": "G3",
+   "series": "G",
+   "name": "The implicit process reward model, extracted",
+   "headline": null,
+   "quantities": [
+    "credit.implicit_prm"
+   ],
+   "headlineQuantity": "credit.implicit_prm",
+   "accessMin": "RECORD + re-roll capability",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W5.4",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if the induced function is constant.",
+   "says": "\"GRPO's induced per-step credit function agrees with a trained PRM at \u03c1 = 0.4 and with counterfactual re-rolls at \u03c1 = 0.7.\"",
+   "priorArt": []
+  },
+  {
+   "id": "G4",
+   "series": "G",
+   "name": "Localiser scoring, done validly",
+   "headline": null,
+   "quantities": [
+    "credit.localiser_quality"
+   ],
+   "headlineQuantity": "credit.localiser_quality",
+   "accessMin": "re-roll capability",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": null,
+   "workPackage": null,
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1797 prints \"`LABEL_QUALITY_UNKNOWN` must not fire\", which names a RefusalReason rather than a RegimeCondition."
+   },
+   "ladder": [],
+   "baselines": [
+    "a position-stratified null",
+    "a uniform-position prior"
+   ],
+   "killCondition": "n/a; this instrument exists to stop a bad practice.",
+   "says": "\"Against counterfactual re-rolls rather than outcome-propagated labels, our localiser scores 0.68. Against the labels it scores 0.28, and the labels are one-third wrong.\"",
+   "priorArt": []
+  },
+  {
+   "id": "G5",
+   "series": "G",
+   "name": "Successor representation",
+   "headline": null,
+   "quantities": [
+    "credit.successor_representation"
+   ],
+   "headlineQuantity": "credit.successor_representation",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": null,
+   "workPackage": null,
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": "the discounted state-visitation structure of the policy, which is a representation-level object and therefore lives where a white-box instrument already operates.",
+   "priorArt": []
+  },
+  {
+   "id": "H1",
+   "series": "H",
+   "name": "Adiabaticity number",
+   "headline": "Is this run quasi-static?",
+   "quantities": [
+    "run.adiabaticity",
+    "run.tau_relax"
+   ],
+   "headlineQuantity": "run.adiabaticity",
+   "accessMin": "RECORD + perturb-and-hold for `\u03c4_relax`",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.8/W6.2",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "`\u03c4_relax` from the early AR(1) coefficient (free)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "perturb-and-hold",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "assume quasi-static, which is what everyone does"
+   ],
+   "killCondition": "if `Ad \u226a 1` on every real run.",
+   "says": "\"Ad = 2.3. This run is being driven faster than it relaxes. Equilibrium extrapolation and slowing-down early warning are not licensed here.\"",
+   "priorArt": []
+  },
+  {
+   "id": "H2",
+   "series": "H",
+   "name": "The two-run rate test",
+   "headline": "The decisive, cheap experiment.",
+   "quantities": [
+    "run.rate_dependence"
+   ],
+   "headlineQuantity": "run.rate_dependence",
+   "accessMin": "CONTROL, two small arms, shared seed",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W6.1",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "a single-rate run"
+   ],
+   "killCondition": "this is the kill test.",
+   "says": "\"Two anneal rates, plotted against \u03bb rather than t: the curves separate. The transition is rate-induced, so critical slowing down will not fire.\"",
+   "priorArt": []
+  },
+  {
+   "id": "H3",
+   "series": "H",
+   "name": "Rate-extrapolated hysteresis",
+   "headline": null,
+   "quantities": [
+    "run.hysteresis_area"
+   ],
+   "headlineQuantity": "run.hysteresis_area",
+   "accessMin": "CONTROL, three sweep rates, forward and reverse",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W6.2",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "the raw loop area at one rate, which is confounded with lag"
+   ],
+   "killCondition": "if the extrapolated area is zero.",
+   "says": "\"The loop area extrapolated to zero sweep rate is 0.11, so the irreversibility is genuine rather than lag.\"",
+   "priorArt": []
+  },
+  {
+   "id": "H4",
+   "series": "H",
+   "name": "Relaxation time and the transition window",
+   "headline": null,
+   "quantities": [
+    "run.tau_relax",
+    "run.transition_width"
+   ],
+   "headlineQuantity": "run.tau_relax",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W4.8",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"The behavioural transition has a fitted width of 58 steps. A 40-step lead is 0.69 of a window.\"",
+   "priorArt": []
+  },
+  {
+   "id": "H5",
+   "series": "H",
+   "name": "Regime reading",
+   "headline": "The whole envelope, measured per step.",
+   "quantities": [
+    "run.regime"
+   ],
+   "headlineQuantity": "run.regime",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W2.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": "the twelve conditions of \u00a72.4 with their statistics and thresholds.",
+   "priorArt": []
+  },
+  {
+   "id": "I1",
+   "series": "I",
+   "name": "Density discontinuity at a reward gate",
+   "headline": "McCrary as a hacking detector.",
+   "quantities": [
+    "gate.mccrary_statistic"
+   ],
+   "headlineQuantity": "gate.mccrary_statistic",
+   "accessMin": "RECORD with the gate's running variable",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the McCrary density test",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "with robust bias correction",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a smooth-density null",
+    "the same test at a placebo cutoff"
+   ],
+   "killCondition": "if no real pipeline has a hard gate, which is false.",
+   "says": "\"The density of token counts is discontinuous at \u03c4\u00b7b\u2080(x) with p < 1e-6. The policy is manipulating the running variable.\"",
+   "priorArt": []
+  },
+  {
+   "id": "I2",
+   "series": "I",
+   "name": "Bunching elasticity",
+   "headline": "How hard the policy is pushing on the gate.",
+   "quantities": [
+    "gate.bunching_elasticity"
+   ],
+   "headlineQuantity": "gate.bunching_elasticity",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "excess mass `b = B/h_0(c)`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "Saez elasticity",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a placebo cutoff"
+   ],
+   "killCondition": "if the elasticity does not respond when the gate is synthetically moved.",
+   "says": "\"Excess mass below the length gate implies an elasticity of 1.7: a 10% looser gate buys 17% more length.\"",
+   "priorArt": []
+  },
+  {
+   "id": "I3",
+   "series": "I",
+   "name": "Gradient dead-zone fraction",
+   "headline": null,
+   "quantities": [
+    "gate.deadzone_fraction"
+   ],
+   "headlineQuantity": "gate.deadzone_fraction",
+   "accessMin": "RECORD + the composition tree",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if the graded-penalty control shows the same verification suppression.",
+   "says": "\"31% of over-budget rollouts sit in a region where the gradient with respect to task quality is exactly zero. Stopping early strictly dominates verifying.\"",
+   "priorArt": []
+  },
+  {
+   "id": "I4",
+   "series": "I",
+   "name": "Monitor degradation under pressure",
+   "headline": "The figure of merit nobody uses.",
+   "quantities": [
+    "monitor.degradation_curve",
+    "monitor.half_life"
+   ],
+   "headlineQuantity": "monitor.degradation_curve",
+   "accessMin": "CONTROL, a monitor in the loop",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W6.5",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "pre/post AUROC",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "the full curve against steps",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "separating *evasion* (hacks look less suspicious) from *degradation* (the monitor loses discrimination)",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a monitor not being optimised against, run in parallel",
+    "the gradient-norm peak"
+   ],
+   "killCondition": "if the ranking by degradation curve matches the ranking by static AUROC across ten monitors.",
+   "says": "\"Placed in the loop, this monitor's AUROC falls from 0.94 to 0.71 over 180 steps. Its half-life under pressure is 96 steps. The competing monitor starts at 0.89 and holds 0.86.\"",
+   "priorArt": []
+  },
+  {
+   "id": "I5",
+   "series": "I",
+   "name": "The derivative of within-group reward variance",
+   "headline": null,
+   "quantities": [
+    "run.variance_derivative"
+   ],
+   "headlineQuantity": "run.variance_derivative",
+   "accessMin": "RECORD (veRL already logs `E[A\u00b2]`)",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.5",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the derivative with an ARL-designed CUSUM",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the *level* of variance, which is known not to be predictive",
+    "the gradient-norm peak, which is a free leading indicator every trainer already logs and which any new statistic must beat"
+   ],
+   "killCondition": "if it does not beat the gradient-norm peak.",
+   "says": "\"d/dt of within-group reward variance crossed its CUSUM threshold at step 71, 14 steps before the labelled hack rate moved. Lead = 0.24 of the transition window.\"",
+   "priorArt": []
+  },
+  {
+   "id": "I6",
+   "series": "I",
+   "name": "Obfuscation pressure on the monitored channel",
+   "headline": null,
+   "quantities": [
+    "run.cot_faithfulness_under_kl"
+   ],
+   "headlineQuantity": "run.cot_faithfulness_under_kl",
+   "accessMin": "the AISI KL sweep, which is 48 `cc-*` repos across seven \u03b2 values and four hint difficulties",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": null,
+   "workPackage": null,
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if the KL sweep shows no faithfulness effect.",
+   "says": "\"Raising the KL penalty raised the hack rate's CoT-mention rate's *complement*: the model hacks and reasons unfaithfully.\"",
+   "priorArt": []
+  },
+  {
+   "id": "I7",
+   "series": "I",
+   "name": "Exploit transfer graph",
+   "headline": null,
+   "quantities": [
+    "exploit.transfer_matrix"
+   ],
+   "headlineQuantity": "exploit.transfer_matrix",
+   "accessMin": "an exploit corpus + multiple graders",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": null,
+   "workPackage": null,
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if transfer is near zero, which would be good news about suite diversity.",
+   "says": "\"Of 23 exploit families found on verifier A, 14 transfer to verifier B. The suite has a geometry and it is not diverse.\"",
+   "priorArt": []
+  },
+  {
+   "id": "J1",
+   "series": "J",
+   "name": "E-values and confidence sequences",
+   "headline": "Peek freely.",
+   "quantities": [
+    "monitor.evalue",
+    "monitor.confidence_sequence"
+   ],
+   "headlineQuantity": "monitor.evalue",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "Hoeffding by \u03b1-spending `\u03b4_n = 6\u03b4/(\u03c0\u00b2n\u00b2)`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "polynomial stitching",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "betting with the ONS schedule",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a fixed-sample interval, and report how often it would have been wrong under continuous peeking"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"The anytime-valid interval on the hack rate is [0.03, 0.11] at step 140 and it has never been invalid, despite our having looked at every step.\"",
+   "priorArt": []
+  },
+  {
+   "id": "J2",
+   "series": "J",
+   "name": "ARL-designed alarms",
+   "headline": null,
+   "quantities": [
+    "monitor.arl0",
+    "monitor.detection_delay"
+   ],
+   "headlineQuantity": "monitor.arl0",
+   "accessMin": "RECORD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": "`units` (CALIPER I1, line 1832, declares `reward.affine` invariance on normalised statistics and requires it be declared otherwise; ASSAY prints no Grp for J2)",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "CUSUM with a derived `h`",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "EWMA",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "MEWMA on the multivariate channel",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the shipped ad hoc `k_sds = 0.5, h_sds = 5.0` with no derivation",
+    "a fixed threshold"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"Designed for one false alarm per 1000 steps: k = 0.5, h = 5.71. Realised delay on the labelled series: 22 steps, or 0.38 of the transition window.\"",
+   "priorArt": []
+  },
+  {
+   "id": "J3",
+   "series": "J",
+   "name": "Conjunction detectors",
+   "headline": null,
+   "quantities": [
+    "monitor.conjunction_alarm"
+   ],
+   "headlineQuantity": "monitor.conjunction_alarm",
+   "accessMin": "RECORD, multiple channels",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "each channel alone, with its own false-alarm count"
+   ],
+   "killCondition": "if a single channel matches the conjunction's operating characteristic.",
+   "says": "\"The conjunction of entropy decline, prediction saturation and length pinning fired at step 62, 21 steps before collapse. Entropy alone fired three times, twice falsely.\"",
+   "priorArt": []
+  },
+  {
+   "id": "J4",
+   "series": "J",
+   "name": "Operating point from an asymmetric loss",
+   "headline": null,
+   "quantities": [
+    "monitor.operating_point",
+    "monitor.ppv_curve"
+   ],
+   "headlineQuantity": "monitor.operating_point",
+   "accessMin": "a loss statement",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W4.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "a 0.5 threshold",
+    "a 5% FPR convention"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"At your stated 20:1 cost of a missed hack over a false alarm, the threshold is 0.31. At a 2.5% base rate that gives PPV 0.34.\"",
+   "priorArt": []
+  },
+  {
+   "id": "J5",
+   "series": "J",
+   "name": "Check standard",
+   "headline": null,
+   "quantities": [
+    "monitor.check_standard_drift"
+   ],
+   "headlineQuantity": "monitor.check_standard_drift",
+   "accessMin": "a fixed probe set, measured every session",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"The frozen invariant probe set moved 0.04 this session. That is instrument drift, not model drift.\"",
+   "priorArt": []
+  },
+  {
+   "id": "J6",
+   "series": "J",
+   "name": "The forecast calibration ledger",
+   "headline": "The score of the library's own forecasts, in public, with the honest starting position printed at the top.",
+   "quantities": [
+    "forecast.brier_score",
+    "forecast.calibration_reliability",
+    "forecast.calibration_resolution",
+    "forecast.decision_value"
+   ],
+   "headlineQuantity": "forecast.brier_score",
+   "accessMin": "RECORD",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "POST_RUN"
+   ],
+   "invarianceGroup": "none",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W4.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "a proper scoring rule is a function of forecasts and realised outcomes and of nothing about the run that produced them, so no regime condition bears on it. The conditions that matter here are on the forecasts, and the barrier enforces them at construction rather than at scoring."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the half-Brier score with the Murphy decomposition into reliability, resolution and uncertainty, a skill score against each mandatory baseline with a bootstrap interval, a reliability diagram, and the expected loss saved under the forecast's own DecisionSpec",
+     "access": "RECORD",
+     "bias": "unbiased for the forecasts it is given, and it says how many resolutions went void rather than scoring them as misses, because dropping a call and scoring it wrong are different numbers and the reader has to see which was done",
+     "cost": "none"
+    }
+   ],
+   "baselines": [
+    "climatology, the base rate in the reference class",
+    "persistence",
+    "the dumb statistic, which here means string matching, the gradient-norm peak or I5's variance derivative",
+    "the scaffolded black-box method, currently contrastive belief-flipping, which is the first thing a reviewer raises"
+   ],
+   "killCondition": "if the ledger never scores a forecast the library did not also issue, it is a self-assessment rather than a ledger.",
+   "says": "\"Directional Brier 0.26 over 16 calls against a coin at 0.25. Interval coverage 0.75 against a registered 0.80. Decision value 0.000: the forecaster acts every time and so does climatology.\"",
+   "priorArt": []
+  },
+  {
+   "id": "K1",
+   "series": "K",
+   "name": "The distillation gap",
+   "headline": "Kill risk number one.",
+   "quantities": [
+    "artifact.distillation_delta"
+   ],
+   "headlineQuantity": "artifact.distillation_delta",
+   "accessMin": "a pre-distillation expert and the consolidated model",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "planned",
+   "workPackage": "W6.3",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "if nothing survives, everything measured during RL is measured on a model that never ships and the whole in-run layer is for the lab's internal use only.",
+   "says": "\"Of the behaviour RL installed, 62% survives the on-policy distillation step. The reward-hacking propensity survives at 91%.\"",
+   "priorArt": []
+  },
+  {
+   "id": "K2",
+   "series": "K",
+   "name": "Planted-to-real transfer coefficient",
+   "headline": null,
+   "quantities": [
+    "calibration.transfer_t32"
+   ],
+   "headlineQuantity": "calibration.transfer_t32",
+   "accessMin": "organisms + a labelled real corpus",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "planned",
+   "workPackage": "W6.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "ASSAY line 1873 prints \"`REFERENCE_UNCERTIFIED` must not fire\", which names a RefusalReason rather than a RegimeCondition."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the raw gap",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "with standard addition into the target",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "with a Pearl-Bareinboim selection diagram stating which quantities may legally cross",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "the organism-only number, which is what everyone reports"
+   ],
+   "killCondition": "if standard addition drives it to zero, in which case the matrix-effect diagnosis was right and the fix works, which is the good outcome.",
+   "says": "\"Calibrated on planted organisms and evaluated on AISI's naturally-arising labelled hacks over 25,664 rollouts, an instrument differs by t32 = 0.4732 [0.4543, 0.4933]. Under a substitute planting design the same coefficient is 0.0204, a spread of 0.4528, so a transfer coefficient quoted without its organism design is not yet a measurement.\"",
+   "priorArt": []
+  },
+  {
+   "id": "K3",
+   "series": "K",
+   "name": "Shelf life of a readout",
+   "headline": null,
+   "quantities": [
+    "instrument.shelf_life"
+   ],
+   "headlineQuantity": "instrument.shelf_life",
+   "accessMin": "a checkpoint series",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "planned",
+   "workPackage": "W6.8",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"This readout's AUROC decays from 0.61 to 0.51 over 250 GRPO steps. Its shelf life at the 0.55 threshold is 140 steps.\"",
+   "priorArt": []
+  },
+  {
+   "id": "K4",
+   "series": "K",
+   "name": "Sparsity under staleness",
+   "headline": null,
+   "quantities": [
+    "policy.update_sparsity_vs_staleness"
+   ],
+   "headlineQuantity": "policy.update_sparsity_vs_staleness",
+   "accessMin": "checkpoint pairs at controlled staleness",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "planned",
+   "workPackage": "W6.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "the published cross-algorithm table, which trends the *other* way"
+   ],
+   "killCondition": "n/a; both outcomes are results.",
+   "says": "\"Update sparsity is 82% at staleness 0 and 79% at staleness 8. The mechanism's prediction does not hold.\"",
+   "priorArt": []
+  },
+  {
+   "id": "L1",
+   "series": "L",
+   "name": "Reference-material certificate",
+   "headline": null,
+   "quantities": [
+    "reference.u_homogeneity",
+    "reference.u_stability",
+    "reference.u_characterisation"
+   ],
+   "headlineQuantity": "reference.u_homogeneity",
+   "accessMin": "ORGANISM:MUTATE, at least 3 seeds",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "characterisation only",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "plus homogeneity across seeds",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "plus stability under continued training",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "a single-seed plant with a nominal dose, which is current practice everywhere"
+   ],
+   "killCondition": "if homogeneity is negligible across seeds, in which case single-seed plants are fine and this is one measurement, once.",
+   "says": "\"This organism family: assigned dose \u03c1 = 0.75, characterisation uncertainty 0.06, between-seed homogeneity 0.14, stability under 200 further steps not measured.\"",
+   "priorArt": []
+  },
+  {
+   "id": "L2",
+   "series": "L",
+   "name": "Label error rate and the ceiling it implies",
+   "headline": null,
+   "quantities": [
+    "labels.error_rate",
+    "labels.score_ceiling"
+   ],
+   "headlineQuantity": "labels.error_rate",
+   "accessMin": "a labelled corpus + an audit sample",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "a hand-audited sample with a Wilson interval",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 1,
+     "estimator": "IRT-based mislabel surfacing",
+     "access": null,
+     "bias": null,
+     "cost": null
+    },
+    {
+     "rung": 2,
+     "estimator": "a two-rater agreement design",
+     "access": null,
+     "bias": null,
+     "cost": null
+    }
+   ],
+   "baselines": [
+    "assume the labels are right"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"This label set is 4.2% wrong, so the maximum achievable score is 95.8%. A model reported at 97% is partly matching the annotation error.\"",
+   "priorArt": []
+  },
+  {
+   "id": "L3",
+   "series": "L",
+   "name": "Two-sided verifier error",
+   "headline": null,
+   "quantities": [
+    "labels.false_success_rate",
+    "labels.corrupt_success_rate"
+   ],
+   "headlineQuantity": "labels.false_success_rate",
+   "accessMin": "a labelled corpus + trajectory inspection",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [
+    "the scalar as given"
+   ],
+   "killCondition": "n/a.",
+   "says": "\"36% of this benchmark's zeros are trajectories where the agent claimed success, and 27 to 78% of its ones are trajectories that violated the procedure and reached the right end state anyway.\"",
+   "priorArt": []
+  },
+  {
+   "id": "L4",
+   "series": "L",
+   "name": "The distributed-tell question, which is a free white-box experiment",
+   "headline": null,
+   "quantities": [
+    "labels.fs_signal_locality"
+   ],
+   "headlineQuantity": "labels.fs_signal_locality",
+   "accessMin": "a labelled FS corpus + POLICY:FORWARD",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"The tell that an agent will falsely claim success is present across the whole episode, not at the end: text excluding the closing message scores 0.924 against 0.934 for closing-message-only.\" And then: \"the same question, asked of the residual stream, gives X.\"",
+   "priorArt": []
+  },
+  {
+   "id": "L5",
+   "series": "L",
+   "name": "Position-stratified null for localisation",
+   "headline": null,
+   "quantities": [
+    "labels.position_prior"
+   ],
+   "headlineQuantity": "labels.position_prior",
+   "accessMin": "the existing `VERIF-PRM` artifacts",
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.6",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": "n/a.",
+   "says": "\"Scored against a uniform prior over positions our localiser gets 0.28. Against the position-stratified null it gets 0.72.\"",
+   "priorArt": []
+  },
+  {
+   "id": "M1",
+   "series": "M",
+   "name": "Substrate noise floor, LOD and LOQ",
+   "headline": "\u00a74.7. Consulted by every preflight, cached per configuration.",
+   "quantities": [
+    "intervention.ec50",
+    "substrate.noise_floor",
+    "substrate.lod",
+    "substrate.loq"
+   ],
+   "headlineQuantity": "intervention.ec50",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M2",
+   "series": "M",
+   "name": "Instrument effect",
+   "headline": "The overhead this measurement imposed, per step, as a term in the uncertainty budget. **No competitor has published an overhead number of any kind**, so a monitor with a measured one would be the first.",
+   "quantities": [
+    "instrument.effect"
+   ],
+   "headlineQuantity": "instrument.effect",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M3",
+   "series": "M",
+   "name": "Dumb-baseline bank",
+   "headline": "String match, length, TF-IDF, n-gram diversity, a scaffolded black-box prompt, the gradient-norm peak. Every claim ships against all six. The reason is a single published case: a probe reported at AUC 0.998 on a task where a zero-parameter string match scores 100%, whose author's summary is \"the probe detects the hack, and the detection is empty.\"",
+   "quantities": [
+    "baseline.best_score"
+   ],
+   "headlineQuantity": "baseline.best_score",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M4",
+   "series": "M",
+   "name": "Semantic placebo",
+   "headline": "A coherent but irrelevant direction, not a random Gaussian one. Mandatory on every steering and ablation claim, because a vampires-versus-werewolves direction suppressed deployment-time hacking to 0.000 exactly as well as the real direction.",
+   "quantities": [
+    "placebo.effect_ratio"
+   ],
+   "headlineQuantity": "placebo.effect_ratio",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M5",
+   "series": "M",
+   "name": "Matched positive control",
+   "headline": "A null without an identically-powered positive control is indistinguishable from an underpowered experiment. `NO_MATCHED_CONTROL` is a refusal reason. The library's own susceptibility card at accepted power 0.13 conspicuously lacked one.",
+   "quantities": [
+    "study.power"
+   ],
+   "headlineQuantity": "study.power",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M6",
+   "series": "M",
+   "name": "Reasoning-stripped ablation",
+   "headline": "For anything that reads text, because a leading detector drops from AUC 0.9467 to 0.6213 once natural-language reasoning is removed from its input, and reviewers will run this if we do not.",
+   "quantities": [],
+   "headlineQuantity": "M6",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": null,
+   "workPackage": null,
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M7",
+   "series": "M",
+   "name": "Uncertainty budget",
+   "headline": "The GUM table, lint-enforced to compose, with the largest term named. It is almost never sampling noise.",
+   "quantities": [],
+   "headlineQuantity": "M7",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M8",
+   "series": "M",
+   "name": "Interlaboratory comparison",
+   "headline": "HuggingFace against vLLM, eager against compiled, two seeds, two precisions. Report `s_L` and the Birge ratio beside every reading.",
+   "quantities": [
+    "study.tau2"
+   ],
+   "headlineQuantity": "study.tau2",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M9",
+   "series": "M",
+   "name": "Incremental validity",
+   "headline": "\u00a76.4. Required on every white-box reading.",
+   "quantities": [
+    "instrument.incremental_validity",
+    "instrument.error_correlation"
+   ],
+   "headlineQuantity": "instrument.incremental_validity",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": false,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M10",
+   "series": "M",
+   "name": "Power and minimum detectable effect",
+   "headline": "Before the run, not after. Three of five standard power calculators are roughly 2x wrong for close paired model comparisons, and the resolution ratio `q = N/N*` says outright when a leaderboard row is not resolved. Also carry the detection-band lesson: position bias is statistically detectable only within roughly a 60% to 95% base-accuracy window, so **absence of signal above that band should be read as \"not measurable\", not as \"unbiased\"**, and that logic applies to several of the library's own refuted cards.",
+   "quantities": [
+    "study.power",
+    "study.mde",
+    "study.resolution_ratio"
+   ],
+   "headlineQuantity": "study.power",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "M11",
+   "series": "M",
+   "name": "Rung disagreement, published",
+   "headline": "When two rungs of the same ladder disagree on the same data, that difference is the cheap method's transfer uncertainty. It becomes a `Transfer` row and it composes into the calibration chain. Nobody publishes this.",
+   "quantities": [
+    "ladder.rung_disagreement"
+   ],
+   "headlineQuantity": "ladder.rung_disagreement",
+   "accessMin": null,
+   "substrates": [],
+   "phases": [],
+   "invarianceGroup": null,
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.7",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": null
+   },
+   "ladder": [],
+   "baselines": [],
+   "killCondition": null,
+   "says": null,
+   "priorArt": []
+  },
+  {
+   "id": "N1",
+   "series": "N",
+   "name": "The reward-versus-gold frontier",
+   "headline": "The whole frontier is estimable before any optimisation is run, from n base-policy rollouts scored by both channels.",
+   "quantities": [
+    "frontier.gold_vs_kl"
+   ],
+   "headlineQuantity": "frontier.gold_vs_kl",
+   "accessMin": "GRADER:QUERY + GOLD:QUERY + POLICY:QUERY, on the same n samples",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "reward.affine",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.8",
+   "envelope": {
+    "requires": [
+     "LIGHT_TAILED",
+     "ESS_ADEQUATE"
+    ],
+    "measuredBy": {
+     "LIGHT_TAILED": "frontier.tail_index",
+     "ESS_ADEQUATE": "frontier.visibility_horizon"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "self-normalised importance sampling over the tilt family; every reported number is a ratio of weighted means with the max-subtraction applied before exponentiating",
+     "access": "GRADER:QUERY + GOLD:QUERY",
+     "bias": "consistent, downward-biased in variance at small ESS; the self-normalised ratio is biased at order 1/ESS and the bias grows exactly where the horizon is about to refuse",
+     "cost": "n grader calls and n gold calls, both reusable across every lambda on the sweep"
+    }
+   ],
+   "baselines": [
+    "HedgeTune (arXiv 2506.19248), run on the same samples. This is mandatory rather than a citation, because it is a bisection and Newton solver for the same turning point consuming the same data, and the two turning-point estimates are reported side by side.",
+    "the untilted base-policy gold mean at lambda = 0",
+    "a linear extrapolation from the first two points of the sweep, which is the null under which the curve has no shape (CALIPER E1, line 1636)"
+   ],
+   "killCondition": "if HedgeTune and the cumulant estimate agree within their intervals on every grader tested, report HedgeTune and drop the second estimator. CALIPER E1 (line 1638) states the stronger kill, for the layer rather than for the estimator: if the predicted turn does not match the realised turn on any open model where both are measurable, at any horizon, Level 0 is descriptive rather than predictive.",
+   "says": "\"Gold peaks at KL = 1.8 nats and we can see out to 3.1 before ESS falls below floor.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N2",
+   "series": "N",
+   "name": "The visibility horizon",
+   "headline": "Where a tilt extrapolation goes blind, which nobody states.",
+   "quantities": [
+    "frontier.visibility_horizon"
+   ],
+   "headlineQuantity": "frontier.visibility_horizon",
+   "accessMin": "GRADER:QUERY + POLICY:QUERY",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "reward.affine",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.8",
+   "envelope": {
+    "requires": [
+     "LIGHT_TAILED"
+    ],
+    "measuredBy": {
+     "LIGHT_TAILED": "frontier.tail_index"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "Kish ESS(lambda) = (sum w_i)^2 / sum w_i^2, swept until it crosses a stated floor, default 0.05 of n",
+     "access": "GRADER:QUERY",
+     "bias": "approximately unbiased as a summary of the realised weights, being a property of the sample rather than an estimate of a population quantity. The envelope still requires LIGHT_TAILED because the horizon is reported in nats, and the KL it bounds exists only where K(lambda) does. On a heavy-tailed reward the empirical K is a finite sum converging to nothing.",
+     "cost": "none beyond N1's n grader calls"
+    }
+   ],
+   "baselines": [
+    "the raw sample size n, which is what a frontier reported without a horizon implicitly claims",
+    "the naive count of rollouts with nonzero weight"
+   ],
+   "killCondition": "if the horizon never binds before the sweep's own range on any real grader, it is a formality rather than an instrument and it collapses into N1's reporting range.",
+   "says": "\"Past lambda = 2.4 this instrument declines to answer. n/ESS = 20.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N3",
+   "series": "N",
+   "name": "Reward tail index",
+   "headline": "The precondition the whole tilt layer rests on, measured rather than assumed.",
+   "quantities": [
+    "frontier.tail_index"
+   ],
+   "headlineQuantity": "frontier.tail_index",
+   "accessMin": "GRADER:QUERY + POLICY:QUERY",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "reward.affine",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.8",
+   "envelope": {
+    "requires": [],
+    "measuredBy": {},
+    "unconditionalJustification": "The Hill estimator on the upper tail depends on no regime condition. What it depends on is exceedance count, and an inadequate one is a refusal with a stated required n rather than a violated envelope, because the quantity stays well defined and only the estimate is unavailable."
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "Hill estimator over a threshold sweep, reported as a Hill plot with the stability protocol rather than as a point estimate at one k",
+     "access": "GRADER:QUERY",
+     "bias": "upward-biased at small k and threshold-sensitive; the plot is the reading and a single k is not",
+     "cost": "n grader calls, shared with N1"
+    }
+   ],
+   "baselines": [
+    "a light-tailed parametric fit (exponential upper tail) at the same threshold, for contrast"
+   ],
+   "killCondition": "if every grader tested is unambiguously light-tailed, the instrument becomes a precondition check rather than a reported quantity, and it renders as an envelope line on the card instead of a row.",
+   "says": "\"Hill gamma-hat = 0.19 [0.12, 0.27]. Light-tailed assumption holds.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N4",
+   "series": "N",
+   "name": "Surrogate conditions and the concomitant of best-of-n",
+   "headline": "Falsifiable conditions on the proxy beat a predicted turning point, and best-of-n Goodhart is a concomitant problem nobody has recognised as one.",
+   "quantities": [
+    "frontier.prentice_checklist",
+    "frontier.concomitant_bon"
+   ],
+   "headlineQuantity": "frontier.prentice_checklist",
+   "accessMin": "GRADER:QUERY + GOLD:QUERY, on the same n samples",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN"
+   ],
+   "invarianceGroup": "reward.affine",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.8",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {
+     "STATIONARY_GRADER": "monitor.check_standard_drift"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "the four surrogate-endpoint criteria as explicit testable conditions on the joint distribution of (r, g, treatment), each returning pass, fail or untestable; and the exact finite-n concomitant expectation of the maximum-of-selected-concomitants problem",
+     "access": "GRADER:QUERY + GOLD:QUERY",
+     "bias": "the concomitant expectation is exact at the stated n given the joint sample; the criteria are verdicts rather than estimates and carry no bias direction",
+     "cost": "none beyond N1's n grader and gold calls"
+    }
+   ],
+   "baselines": [
+    "the marginal proxy-gold correlation, which is what practice currently looks at and which cannot distinguish a mediating surrogate from a merely correlated one",
+    "simulation of best-of-n at the same n, to check the exact expression"
+   ],
+   "killCondition": "if every criterion returns untestable on every real grader for want of an intervention, the checklist is a research note rather than an instrument and only the concomitant reading ships.",
+   "says": "\"Fails criterion 4: the proxy does not fully mediate the treatment effect on gold. At n = 64, expected gold at the proxy-argmax is 0.71 [0.66, 0.75], exactly.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N5",
+   "series": "N",
+   "name": "Optimal component weights",
+   "headline": "Nobody sets a reward component's weight from that component's measured noise, and the formula that does has been sitting in contract theory since 1991.",
+   "quantities": [
+    "reward.optimal_weights"
+   ],
+   "headlineQuantity": "reward.optimal_weights",
+   "accessMin": "GRADER: REPLICATE, for Sigma. Every other parameter is stated or swept",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN",
+    "POST_RUN"
+   ],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.9",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {
+     "STATIONARY_GRADER": "monitor.check_standard_drift"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 1,
+     "estimator": "alpha* = [M C''^-1 M' + r Sigma]^-1 M C''^-1 B', with Sigma from A2 and the other four parameters stated or swept. The diagonal form alpha_i = B_i / (1 + r C_ii sigma_i^2) and the unmeasurable-task form are special cases of the same solve and are checked against it.",
+     "access": "GRADER: REPLICATE",
+     "bias": "exact given the parameters, and the parameters are where the error lives. The recommendation is a deterministic function of five inputs of which one is measured, so its uncertainty is dominated by the four that are not, and the sweep rather than an interval is what reports it.",
+     "cost": "none beyond A2's crossed design"
+    }
+   ],
+   "baselines": [
+    "equal weights across components, which is what a composite with no analysis uses",
+    "weights proportional to B', which is what weighting by importance means and is this recommendation with the noise term deleted"
+   ],
+   "killCondition": "if the recommended weights are within measurement error of the value-proportional baseline on every real composite tested, the noise term is doing no work and the instrument is a restatement of B'.",
+   "says": "\"skywork-v2-qwen3-8b keeps 0.141 of the weight its value alone would buy it, and armorm keeps 0.926, decided by measured noise on components of equal stated value. Where one task cannot be measured, the correction sends the measurable component's weight to exactly zero, and only when the two tasks are equally valuable.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N6",
+   "series": "N",
+   "name": "The equal-compensation table",
+   "headline": "Which component of a composite reward the policy is being paid least to work on.",
+   "quantities": [
+    "reward.equal_compensation_ratio"
+   ],
+   "headlineQuantity": "reward.equal_compensation_ratio",
+   "accessMin": "GRADER: RECORD for the weights; POLICY: CONTROL for a measured sensitivity",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN",
+    "POST_RUN"
+   ],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.9",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {
+     "STATIONARY_GRADER": "monitor.check_standard_drift"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 0,
+     "estimator": "kappa_i = alpha_i mu'_i from a stated sensitivity, normalised by the largest kappa across components; the starved component is argmin kappa. A stated mu' makes the table a conditional statement and every row says which of the two it is on.",
+     "access": "GRADER: RECORD",
+     "bias": "exact given mu'. A stated mu' is an assumption and the reading names it as one.",
+     "cost": "free. Arithmetic on parameters the caller already holds."
+    },
+    {
+     "rung": 1,
+     "estimator": "the same table with mu' from a measured weight sweep",
+     "access": "GRADER: RECORD, POLICY: CONTROL",
+     "bias": "a finite-difference sensitivity, so it inherits the sweep's step size",
+     "cost": "one sweep per component"
+    }
+   ],
+   "baselines": [
+    "the weights read as commissions, which is what treating a weight as an incentive assumes and is this table under mu' = 1",
+    "equal weights, which is what the table would say if the composite had not been tuned"
+   ],
+   "killCondition": "if the commission ratio is within a few percent of 1 for every component of every real composite tested, composites are already equal-compensating and the table is a formality. It does not fire here; the spread is 0.033.",
+   "says": "\"The commissions are 0.037, 0.421 and 1.117. armorm is starved: it pays the policy under four percent of what the best-paying component pays for the same unit of capacity, and its stated weight of one third is not the incentive it delivers.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N7",
+   "series": "N",
+   "name": "The sorting cutoff",
+   "headline": "Do not put a noisy judge and a crisp unit test in the same weighted sum, with the threshold at which that stops being a slogan.",
+   "quantities": [
+    "reward.sorting_cutoff"
+   ],
+   "headlineQuantity": "reward.sorting_cutoff",
+   "accessMin": "GRADER: REPLICATE for Sigma; POLICY: CONTROL for the sensitivities",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN",
+    "POST_RUN"
+   ],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.9",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {
+     "STATIONARY_GRADER": "monitor.check_standard_drift"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 1,
+     "estimator": "exhaustive maximisation of the summed contract value B_g^2 / [2 C (1 + r C N_g)] over partitions, with the interval partition in rho order computed alongside and the two compared, so the sorting theorem's own claim is checked rather than assumed. Comparisons across the number of contracts carry the capacity correction C -> k C, without which splitting compares one agent against several and looks free.",
+     "access": "GRADER: REPLICATE, POLICY: CONTROL",
+     "bias": "exact given the parameters. Above the enumeration limit only the interval scan runs and the reading records that the check did not happen.",
+     "cost": "free. Arithmetic on parameters the caller already holds."
+    }
+   ],
+   "baselines": [
+    "one contract holding every component, which is what every composite reward is",
+    "one contract per component, which is the other extreme and is usually worse"
+   ],
+   "killCondition": "if the single-contract baseline is optimal on every real composite tested, splitting never pays and the instrument reports a cutoff nobody should act on.",
+   "says": "\"Split at rho = 0.183: armorm in one stage, tulu-rm and skywork-v2-qwen3-8b in another. Keeping skywork-v2-qwen3-8b in one sum with the rest multiplies every other component's incentive intensity by 0.49, and splitting is worth +141% against the single weighted sum at the same total capacity.\"",
+   "priorArt": []
+  },
+  {
+   "id": "N8",
+   "series": "N",
+   "name": "Noise and angle, per component",
+   "headline": "Every reward component needs at least two numbers, a noise and an angle, and no RLHF tooling separates them.",
+   "quantities": [
+    "reward.component_congruity"
+   ],
+   "headlineQuantity": "reward.component_congruity",
+   "accessMin": "GRADER: REPLICATE for Sigma; POLICY: CONTROL for the sensitivity matrix",
+   "substrates": [
+    "COMPOSITE",
+    "HUMAN",
+    "NEURAL_GEN",
+    "NEURAL_SCALAR",
+    "PROCEDURAL",
+    "PROGRAM"
+   ],
+   "phases": [
+    "PRE_RUN",
+    "POST_RUN"
+   ],
+   "invarianceGroup": "`reward.affine`",
+   "wedge": true,
+   "status": "built",
+   "workPackage": "W3.9",
+   "envelope": {
+    "requires": [
+     "STATIONARY_GRADER"
+    ],
+    "measuredBy": {
+     "STATIONARY_GRADER": "monitor.check_standard_drift"
+    },
+    "unconditionalJustification": null
+   },
+   "ladder": [
+    {
+     "rung": 1,
+     "estimator": "n_i = sigma_i^2 / mu'_i^2 from A2's variance components and the sensitivity matrix; congruity is the cosine between the i-th row of M and B', with the whole-contract cosine between M' alpha and B' reported beside it. A single component's cosine cannot reach 1 when the value direction spreads over several tasks, so distortion is measured against the clean-measure reference B_i / ||B'|| rather than against 1.",
+     "access": "GRADER: REPLICATE, POLICY: CONTROL",
+     "bias": "exact given the parameters. Congruity is degenerate under a diagonal M, where it equals the normalised benefit vector, and the reading refuses to call that a measurement of distortion.",
+     "cost": "free. Arithmetic on parameters the caller already holds."
+    }
+   ],
+   "baselines": [
+    "the marginal correlation between each component and the outcome, which is what practice looks at and which cannot separate a noisy measure from a distorted one",
+    "the component's raw variance, which is the noise half with the sensitivity left in and is therefore not comparable across components"
+   ],
+   "killCondition": "Fires on this subject, and the reading says which half is a measurement. The tasks are identified one-to-one with the components, so M is diagonal by construction and every distortion is exactly zero; the off-diagonal path is exercised on a constructed M that is labelled synthetic. Recorded rather than hidden, and it is also why the noise half must be divided by the squared sensitivity: SPEC-ERRATA E47 found the diagonal weight formula is not scale free, and on this panel the three components' raw noise variances differ by a factor of 74,890, which is almost entirely the scale each model emits on, while their effort-equivalent noise differs by 80, which is the real difference.",
+   "says": "\"The three components' effort-equivalent noise is 0.029, 1.172 and 2.296, so tulu-rm and skywork-v2-qwen3-8b want lower weights. Their distortions are exactly zero, and by construction rather than by measurement: the sensitivity matrix is diagonal here, so the angle half is not a reading this subject can support.\"",
+   "priorArt": []
+  }
+ ],
+ "provenance": {
+  "generatedBy": "scripts/build_catalogue.py",
+  "libraryVersion": "3.0.0",
+  "librarySource": "reward-lens/src/reward_lens",
+  "quantitySource": "reward-lens/spec/QUANTITIES.json",
+  "skippedModules": [
+   "reward_lens.sae"
+  ]
+ }
+}

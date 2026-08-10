@@ -1,0 +1,231 @@
+---
+/**
+ * /docs/refusals/  ·  design/pages/docs-refusals.md
+ *
+ * The most-visited reference page on the site, built as a lookup table rather
+ * than as an essay. The reader is mid-task and mildly annoyed: they arrived
+ * with a reason name, they want to know what input was missing and what to do,
+ * and they want it in the next thirty seconds.
+ *
+ * THE RULE THAT MUST NOT BE BROKEN, D-09: do not group all seventeen. The
+ * library sorts exactly three of them by where the remedy is answerable and
+ * assigns the other fourteen to no group at all. Inventing fourteen
+ * classifications the library does not make would be the site asserting a
+ * taxonomy its own subject does not hold, on the page whose entire subject is
+ * not asserting things you cannot support. The count of sorted reasons is read
+ * from the data and asserted below, so a build that quietly grew the mapping
+ * fails here rather than shipping.
+ *
+ * This page is generated: the library emits its own refusals page into memory
+ * and never writes it to disk (assay/docs/hooks.py:1-11), so that there is no
+ * committed copy to go stale and the claims ratchet stays over human-written
+ * prose. The site reproduces the property by rendering from
+ * src/data/refusals.json at build time.
+ */
+import Docs from "@layouts/Docs.astro";
+import "@styles/docs-legacy.css";
+import Callout from "@components/base/callout.astro";
+import RefusalCard from "@components/base/refusal-card.astro";
+import refusals from "@data/refusals.json";
+import docsNav from "@data/docs-nav.json";
+import type { NavItem } from "@components/docs/types";
+import { copy } from "../../copy";
+
+const refusalCopy = copy.refusals as Record<string, any>;
+const reasons = refusals.reasons;
+const sorted = reasons.filter((r) => r.remedy !== null);
+
+// D-09, mechanically. If the library ever assigns a group to all seventeen the
+// page gains a facet filter and the callout stays, and that is a decision a
+// person makes rather than something a build discovers by rendering fourteen
+// invented buckets.
+if (sorted.length !== refusals.counts.sorted) {
+  throw new Error(
+    `/docs/refusals/: ${sorted.length} reasons carry a remedy sort and ` +
+      `refusals.json counts ${refusals.counts.sorted}. DECISIONS.md D-09: the ` +
+      `mapping exists for three of seventeen and nowhere else.`,
+  );
+}
+
+// src/data/refusals.json carries the library's own sentences, and four of the
+// thirty-four fields contain a markdown inline code span. refusal-card renders
+// its detail and remedy as text nodes, per its contract, so those four showed
+// their backticks on the page. Found in the 1440 screenshot.
+//
+// The delimiters come off and the identifier stays. It is a delimiter, not
+// prose: nothing the library wrote is changed, and the alternative is either a
+// component that accepts HTML from generated data or four visible backticks on
+// the site's most-visited reference page. Reported as a mismatch between P1's
+// data, which is markdown, and the component contract, which is not.
+const unbacktick = (s: string) => s.replace(/`([^`]+)`/g, "$1");
+
+const current = "/docs/refusals/";
+const nav = docsNav as NavItem[];
+const sectionOf = (): string => {
+  const inside = (item: NavItem): boolean =>
+    item.href === current || (item.children ?? []).some(inside);
+  return nav.find(inside)?.title ?? "";
+};
+
+// The heading a reader sees is the one the library's own nav gives this page.
+const title =
+  nav.find((n) => n.href === current)?.title ?? refusalCopy.heading;
+
+// The contents rail's entries are the seventeen anchors, so the rail is the
+// lookup index this page needs rather than a list of two prose headings.
+const railEntries = reasons.map((r) => ({
+  path: r.name,
+  name: r.name,
+  kind: r.remedy ? r.remedy.answerable : "",
+}));
+---
+
+<Docs
+  title={title}
+  description={refusalCopy.heading}
+  current={current}
+  libraryVersion={refusals.provenance.libraryVersion}
+  symbols={railEntries}
+  railForm="symbols"
+  section={sectionOf()}
+>
+  <header class="ref__head">
+    <h1 class="ref__title type-display-2">{refusalCopy.heading}</h1>
+    <div class="docs-prose ref__intro">
+      <p>{refusalCopy.intro}</p>
+      <p>{refusalCopy.remedy_rule}</p>
+    </div>
+  </header>
+
+  {/*
+    The three-way question, above the list, sorting exactly the three the
+    library sorts. The note is the sentence that says the other fourteen are
+    not grouped, and it stays.
+  */}
+  <Callout variant="note" label={refusals.remedySort.question} class="ref__sort">
+    <p>{refusalCopy.answerable_heading}</p>
+    <p>{refusalCopy.answerable_intro}</p>
+    <ul class="ref__sortlist">
+      {
+        sorted.map((r) => (
+          <li class="ref__sortrow">
+            <a class="ref__sortname type-mono-sm" href={`#${r.name}`}>
+              {r.name}
+            </a>
+            <span class="ref__sortwhere type-body-sm">
+              {r.remedy!.answerableLabel}
+            </span>
+            <span class="ref__sortremedy type-body-sm">{r.remedy!.remedy}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p>{refusalCopy.answerable_note}</p>
+  </Callout>
+
+  {/*
+    A flat list of seventeen in registry order. Not sorted by frequency and not
+    with the common ones promoted: a reader arrives with a specific name and
+    uses the browser's find, and registry order is stable where
+    alphabetical-by-accident is not.
+
+    The id on each wrapper is the enum member name exactly, so a link from an
+    error message resolves. The card inside carries its own heading id, which
+    is why the anchor is on the wrapper rather than borrowed from the card.
+  */}
+  <div class="ref__list">
+    {
+      reasons.map((r) => (
+        <div class="ref__entry" id={r.name}>
+          <RefusalCard
+            quantity={r.name}
+            reason={r.name}
+            detail={unbacktick(r.meaning)}
+            remedy={unbacktick(r.whatToDo)}
+            as="h2"
+          />
+        </div>
+      ))
+    }
+  </div>
+</Docs>
+
+<style>
+  .ref__head {
+    margin-block-end: var(--space-6);
+  }
+  .ref__title {
+    color: var(--ink);
+    margin: 0 0 var(--space-4);
+    max-inline-size: min(var(--measure-heading), 100%);
+  }
+  .ref__intro {
+    min-width: 0;
+  }
+
+  .ref__sort {
+    margin-block-end: var(--space-7);
+  }
+  .ref__sortlist {
+    list-style: none;
+    margin: var(--space-3) 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .ref__sortrow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+  .ref__sortname {
+    color: var(--ink);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .ref__sortwhere {
+    color: var(--ink);
+  }
+  .ref__sortremedy {
+    color: var(--ink-2);
+  }
+
+  .ref__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .ref__entry {
+    /* The sticky header must not cover a reason a reader was linked to. */
+    scroll-margin-block-start: calc(var(--space-7) + var(--space-4));
+    min-width: 0;
+  }
+
+  /* refusal-card's heading is its `quantity` and its chip is its `reason`. On
+     every other page those are two different facts: the field that was asked
+     for, and why it was declined. On THIS page there is no quantity, because
+     the subject is the reason itself, so both slots carry the same word and
+     the name rendered twice on all seventeen cards, once in sans and once in
+     the mono chip.
+
+     Removing the duplicate is what display:none is legitimately for: it takes
+     the chip out of the accessibility tree as well, and what it removes is an
+     exact copy of the heading immediately to its left. Nothing is hidden from
+     anybody. Reported as a mismatch between the component's shape and this
+     page's subject rather than papered over silently. */
+  .ref__entry :global(.refusal__reason) {
+    display: none;
+  }
+
+  /* This is a page somebody prints and keeps: all seventeen, each with its
+     remedy, nothing behind a disclosure. */
+  @media print {
+    .ref__entry {
+      break-inside: avoid;
+    }
+  }
+</style>

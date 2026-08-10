@@ -2,8 +2,10 @@
 title: The sixteen sciences
 description: What is a reward model, taken seriously as an object of study? Not a black box to benchmark and move past. A trained artifact with a geometry, a development
 section: root
-order: 63
+order: 91
 source: docs/content/sciences.md
+libraryVersion: 3.0.0
+staleMarkers: []
 ---
 import ThemedFigure from "@components/ThemedFigure.astro";
 
@@ -22,7 +24,7 @@ Read that map as an argument about cost. If each science had to build its own wa
 
 ## What a result counts as here
 
-Every science reports through the same gates, so a headline number is not a claim until it has earned one. A confirmatory result needs a preregistration frozen before the run ([registration gate](/docs/discipline/studies-and-preregistration/)). A basis-dependent quantity needs a shared frame before it can be compared across models ([gauge gate](/docs/discipline/gauge-and-frames/)). And no instrument claims more than exploratory trust until it has been graded on an organism where the truth is planted by construction ([calibration gate](/docs/discipline/calibration-and-organisms/)). The standing claims collect on a [scoreboard](/docs/reference/studies/), and refutations post as plainly as confirmations.
+Every science reports through the same gates, so a headline number is not a claim until it has earned one. A confirmatory result needs a preregistration frozen before the run ([registration gate](/docs/discipline/studies-and-preregistration/)). A basis-dependent quantity needs a shared frame before it can be compared across models ([gauge gate](/docs/discipline/gauge-and-frames/)). And no instrument claims more than exploratory trust until it has been graded on an organism where the truth is planted by construction ([calibration gate](/docs/discipline/calibration-and-organisms/)). The standing claims collect on a [scoreboard](/docs/api/studies/), and refutations post as plainly as confirmations.
 
 ```python
 from reward_lens.studies import Scoreboard, DEFAULT_ROWS
@@ -99,4 +101,4 @@ None of this is finished, and that is the invitation. A science is a spec you ca
 
 ## What the campaign touched
 
-The July 2026 campaign put several of these sciences in contact with real models; the scored ledger is at [/campaign/](/campaign/), and the standing board with the open problems is at [/science/](/science/). S3's fluctuation-dissipation prediction has its first real-model confirmation in [CHI-DRIFT](/campaign/chi-drift/). S6's intransitivity bound has its first measurement in [TOPO-HODGE](/campaign/topo-hodge/). S9's verifier question came back as an instrument-level refutation in [VERIF-PRM](/campaign/verif-prm/).
+The July 2026 campaign put several of these sciences in contact with real models; the scored ledger is at [/log/](/log/), and the standing board with the open problems is at [/atlas/](/atlas/). S3's fluctuation-dissipation prediction has its first real-model confirmation on [a real preference bank](/log/cards/chi-drift/). S6's intransitivity bound has no measurement yet: the card that claimed one is recorded as confirmed and does not hold, because a later recount found no cyclic triples at all and a single scalar score reproducing every recorded comparison exactly ([the withdrawal](/log/cards/topo-hodge/)). S9's verifier question came back as an instrument-level refutation on [a real process reward model](/log/cards/verif-prm/).

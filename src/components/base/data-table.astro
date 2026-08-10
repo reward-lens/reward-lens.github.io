@@ -1,0 +1,349 @@
+---
+/**
+ * data-table  ·  design/components/data-table.md
+ *
+ * Numbers next to each other so they can be compared, each one's provenance
+ * attached, and never reordered to flatter the result.
+ *
+ * THERE IS NO `sortable` PROPERTY AND THERE MUST NOT BE ONE. Order is the
+ * source's order. Sorting the detector table by lead time descending puts the
+ * worthless detector on top with no counterweight, so the reader meets the
+ * lead before they meet the false-alarm rate that makes it worthless. That is
+ * not a display preference; it is the difference between the table making the
+ * argument and the table undermining it.
+ *
+ * A missing value is an em dash and it means nothing was measured. It is never
+ * used to mean zero, and zero is never rendered as blank: those are different
+ * facts and the table must not merge them. Gate 9's em-dash ban carries a
+ * narrow exception for a cell whose entire content is that character, which is
+ * the only place this component emits one.
+ *
+ * The scroll container carries tabindex="0" and an accessible name. A
+ * scrollable region without one is unreachable by keyboard, and then the
+ * numbers are present and cannot be read. It is role="group" and not
+ * role="region": a region is a landmark, and one landmark per table is a rotor
+ * full of identically named entries rather than page structure.
+ */
+import { ui } from "../../copy";
+import ProvenanceChip from "./provenance-chip.astro";
+import { requireColumnKeys } from "./data";
+import type { Cell, Column, Row } from "./data";
+
+interface Props {
+  /** From copy.yaml. Set above the table in type-mono-label. */
+  caption: string;
+  columns: Column[];
+  /** From generated data. Rendered in the order given. */
+  rows: Row[];
+  /** Which column identifies a row. Defaults to the first. */
+  rowKey?: string;
+  /** A row key rendered as a baseline rather than a result. */
+  referenceRow?: string | null;
+  /** A row key given a --surface-1 fill. At most one. */
+  emphasisRow?: string | null;
+  density?: "default" | "compact";
+  class?: string;
+}
+
+const {
+  caption,
+  columns,
+  rows,
+  rowKey = columns[0]?.key ?? "",
+  referenceRow = null,
+  emphasisRow = null,
+  density = "default",
+  class: extraClass = "",
+} = Astro.props;
+
+// A row missing a declared column key fails the build naming both
+// (criterion 5). A cell that is deliberately not measured is `null`, which is
+// present; only an absent key is an error.
+requireColumnKeys(caption, columns, rows);
+
+const idOf = (row: Row): string => {
+  const c = row[rowKey];
+  const v = c !== null && typeof c === "object" ? c.value : c;
+  return String(v ?? "");
+};
+
+const unwrap = (cell: Cell) =>
+  cell !== null && typeof cell === "object"
+    ? cell
+    : { value: cell, display: undefined, evidenceId: null, record: {} };
+
+// --surface-4 zebra is available and is used only where a table exceeds twelve
+// rows. Below that, hairline rules and the row height already separate them
+// and a second separator does the same job twice.
+const zebra = rows.length > 12;
+const captionId = `dt-${caption.replace(/[^a-z0-9]/gi, "-").toLowerCase()}`;
+---
+
+<div class:list={["dt", `dt--${density}`, extraClass]}>
+  <div
+    class="dt__scroll"
+    role="group"
+    tabindex="0"
+    aria-labelledby={captionId}
+    data-print="scroll"
+  >
+    <table class:list={["dt__table", zebra && "dt__table--zebra"]}>
+      <caption class="dt__caption" id={captionId}
+        ><span class="dt__caption-inner type-mono-label">{caption}</span></caption
+      >
+      <thead>
+        <tr>
+          {
+            columns.map((col) => (
+              <th
+                scope="col"
+                class="dt__th type-mono-label"
+                data-align={col.align ?? (col.kind === "text" ? "start" : "end")}
+              >
+                {col.label}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.length === 0 ? (
+            <tr>
+              <td class="dt__td dt__td--empty type-body-sm" colspan={columns.length}>
+                {ui.table_empty}
+              </td>
+            </tr>
+          ) : (
+            rows.map((row) => {
+              const id = idOf(row);
+              const isReference = referenceRow !== null && id === referenceRow;
+              const isEmphasis = emphasisRow !== null && id === emphasisRow;
+              return (
+                <tr
+                  class:list={[
+                    "dt__tr",
+                    isReference && "dt__tr--reference",
+                    isEmphasis && "dt__tr--emphasis",
+                  ]}
+                >
+                  {columns.map((col, ci) => {
+                    const cell = unwrap(row[col.key]);
+                    const kind = col.kind ?? "text";
+                    const align = col.align ?? (kind === "text" ? "start" : "end");
+                    const missing = cell.value === null || cell.value === undefined;
+                    const text = missing
+                      ? ""
+                      : (cell.display ?? String(cell.value));
+                    return (
+                      <td
+                        class:list={[
+                          "dt__td",
+                          kind === "text" ? "type-body-sm" : "type-mono-base",
+                          kind === "state" && "dt__td--state",
+                        ]}
+                        data-align={align}
+                      >
+                        {ci === 0 && isReference && (
+                          <span class="visually-hidden">
+                            {`${ui.table_reference_prefix} `}
+                          </span>
+                        )}
+                        <span class="dt__cell">
+                          {missing ? (
+                            <>
+                              <span aria-hidden="true">—</span>
+                              <span class="visually-hidden">{ui.no_value}</span>
+                            </>
+                          ) : cell.evidenceId ? (
+                            <ProvenanceChip
+                              evidenceId={cell.evidenceId}
+                              field={col.key}
+                              display={text}
+                              record={cell.record ?? {}}
+                            />
+                          ) : (
+                            text
+                          )}
+                          {kind === "percent-bar" && !missing && (
+                            <span class="dt__bar-track" aria-hidden="true">
+                              <span
+                                class="dt__bar"
+                                style={`--dt-pct:${Number(cell.value)}%`}
+                              />
+                            </span>
+                          )}
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .dt {
+    min-width: 0;
+  }
+
+  /* The table scrolls inside its own container, never by widening the page.
+     min-width: 0 on the container and every ancestor; a max-width clamp does
+     not fix this. */
+  .dt__scroll {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    min-width: 0;
+    /* Makes the scrollport a query container, so the caption can be capped at
+       the width a reader can actually see rather than at the table's width. */
+    container-type: inline-size;
+  }
+  .dt__scroll:focus-visible {
+    outline: var(--focus-width) solid var(--focus);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* No box around the table and no vertical rules at all. Hairlines and row
+     height do the separating. */
+  /* max-content, not 100%: at 390 a percentage width squeezes the label column
+     until "variance level" wraps onto three lines inside a table that is
+     scrolling anyway. The table takes its natural width and the container
+     scrolls; min-inline-size keeps a narrow table filling its column. */
+  .dt__table {
+    inline-size: max-content;
+    min-inline-size: 100%;
+    border-collapse: collapse;
+    text-align: start;
+  }
+
+  /* `display: block` on a <caption> takes it out of the table box and drops it
+     below the header row, which is what it did here before this comment
+     existed. caption-side does the ordering; the inner span does the pinning,
+     so a wide table scrolls under a caption that stays where it can be read. */
+  .dt__caption {
+    caption-side: top;
+    text-align: start;
+    padding-block-end: var(--space-3);
+  }
+  .dt__caption-inner {
+    display: inline-block;
+    position: sticky;
+    inset-inline-start: 0;
+    max-inline-size: 100cqi;
+    color: var(--ink-2);
+  }
+
+  .dt__th {
+    color: var(--ink-2);
+    font-weight: var(--type-mono-label-weight);
+    padding: var(--space-2) var(--space-4);
+    border-block-end: var(--border-w) solid var(--line-strong);
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+  .dt__th[data-align="end"] {
+    text-align: end;
+  }
+  .dt__th[data-align="start"] {
+    text-align: start;
+  }
+
+  .dt__td {
+    color: var(--ink);
+    padding: var(--space-3) var(--space-4);
+    border-block-end: var(--border-w) solid var(--line);
+    vertical-align: baseline;
+  }
+  .dt__td[data-align="end"] {
+    text-align: end;
+  }
+  .dt__td[data-align="start"] {
+    text-align: start;
+  }
+  .dt__td--state {
+    color: var(--ink-2);
+  }
+  .dt__td--empty {
+    color: var(--ink-2);
+    text-align: start;
+  }
+  .dt--compact .dt__td {
+    padding: var(--space-2) var(--space-3);
+  }
+  .dt--compact .dt__th {
+    padding: var(--space-1) var(--space-3);
+  }
+
+  /* Hover fills the row and does nothing else. No lift, no border change. */
+  .dt__tr {
+    transition: background-color var(--dur-1) var(--curve-ui);
+  }
+  .dt__tr:hover {
+    background: var(--surface-1);
+  }
+
+  .dt__tr--emphasis {
+    background: var(--surface-1);
+  }
+
+  /* The reference row is a baseline, not a result. It is excluded from the
+     zebra fill, so it stays on the page ground where --ink-3 is 5.25:1. */
+  .dt__tr--reference .dt__td {
+    /* ink3-ok: the reference row never takes the --surface-4 zebra fill; the
+       rule below removes it. */
+    color: var(--ink-3); /* ink3-ok: never on the zebra fill, see the rule below */
+  }
+
+  .dt__table--zebra tbody tr:nth-child(even) {
+    background: var(--surface-4);
+  }
+  /* Same specificity, later in source, so the reference row keeps the page
+     ground under it. */
+  .dt__table--zebra tbody tr.dt__tr--reference {
+    background: transparent;
+  }
+
+  /* The one piece of decoration allowed, and it is not decoration: a
+     percentage that also has a bar is read comparatively at a glance. The fill
+     is --control, the scrambled-surrogate token, because that is the quantity
+     the only bar column currently carries. A bar on a different quantity uses
+     that quantity's own token and never a generic one. */
+  .dt__cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  /* The bar sits to the right of its number and grows rightward from a shared
+     origin, which is what makes 60.7 against 24.3 readable without arithmetic.
+     The track is transparent: an empty rail would be a second mark carrying
+     nothing. */
+  .dt__bar-track {
+    inline-size: var(--space-8);
+    block-size: var(--space-1);
+    flex: none;
+  }
+  .dt__bar {
+    display: block;
+    block-size: 100%;
+    inline-size: var(--dt-pct, 0%);
+    background: var(--control);
+    /* Micro-bars do not animate in, at any time, including on first view. */
+    transition: none;
+  }
+
+  @media print {
+    .dt__scroll {
+      overflow-x: visible;
+    }
+    .dt__td,
+    .dt__th {
+      padding: var(--space-1) var(--space-2);
+    }
+  }
+</style>

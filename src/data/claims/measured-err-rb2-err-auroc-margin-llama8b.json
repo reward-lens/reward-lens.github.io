@@ -1,0 +1,24 @@
+{
+ "comparator": "none registered",
+ "contentHash": "552b7b334da6e7dd0cd7fa9b59062ad1",
+ "humanSource": "The frozen study \"Error anticipation on RewardBench 2\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:6bf316c059230ff4ff99b118b1664631",
+  "campaign.adjudication.ERR-RB2",
+  "study:campaign-err-rb2@v1#c8ac36e7",
+  "spec:c8ac36e72adcc96a3d65b802efbce423"
+ ],
+ "label": "Error anticipation on RewardBench 2",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Nothing was registered against this value in advance, so it is a supporting measurement rather than a tested one. delta-AUROC point call at its own 0.03 threshold under the label-shuffle refit null (null sd 0.0235, null pass rate at threshold 0.2013); the registered CI exclusion carries size control and deltas at or above the MDE confirm at 80 percent.",
+ "quantity": {
+  "name": "err_auroc_margin_llama8b",
+  "unit": null,
+  "value": 0.8762803386793443
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-8b and skywork-v2-llama31-8b, over rb2-full.",
+ "slug": "measured-err-rb2-err-auroc-margin-llama8b",
+ "sourceUrl": "/evidence/6bf316c059230ff4ff99b118b1664631/",
+ "statement": "A supporting measurement from the frozen study \"Error anticipation on RewardBench 2\", with no prediction registered against it in advance.",
+ "subject": "skywork-v2-qwen3-8b and skywork-v2-llama31-8b, over rb2-full",
+ "type": "measured-result"
+}

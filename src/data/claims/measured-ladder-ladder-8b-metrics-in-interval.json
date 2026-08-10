@@ -1,0 +1,26 @@
+{
+ "comparator": ">= 2",
+ "contentHash": "417d63ca8c91c55d90594890db164b90",
+ "humanSource": "The frozen study \"Same-recipe scale ladder with frozen 8B extrapolation\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:d746d48eef7a5630cecbd3e97a9d9cb8",
+  "campaign.adjudication.LADDER",
+  "study:campaign-ladder@v1#0023527a",
+  "spec:0023527a360de5b616a0aa5a7bb6c3cf",
+  "H-ladder-coverage"
+ ],
+ "label": "Same-recipe scale ladder with frozen 8B extrapolation",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "ladder_8b_metrics_in_interval",
+  "unit": null,
+  "value": 3
+ },
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-0.6b and skywork-v2-qwen3-1.7b and skywork-v2-qwen3-4b and skywork-v2-qwen3-8b, over rb2-full.",
+ "slug": "measured-ladder-ladder-8b-metrics-in-interval",
+ "sourceUrl": "/evidence/d746d48eef7a5630cecbd3e97a9d9cb8/",
+ "statement": "at least 2 of 3 capture-only internal quantities land in their pre-frozen 8B intervals.",
+ "status": "supported",
+ "subject": "skywork-v2-qwen3-0.6b and skywork-v2-qwen3-1.7b and skywork-v2-qwen3-4b and skywork-v2-qwen3-8b, over rb2-full",
+ "type": "measured-result"
+}

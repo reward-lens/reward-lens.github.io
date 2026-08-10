@@ -1,0 +1,26 @@
+{
+ "comparator": "> 0.3",
+ "contentHash": "090fef8c6453516ee8f19290027ec57c",
+ "humanSource": "The frozen study \"Do the indices carry information beyond size, accuracy, and lineage\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:491f7f378d0b58dfdadebc9aaee7c983",
+  "campaign.adjudication.CONF-PARTIAL",
+  "study:campaign-conf-partial@v1#3ecef7c0",
+  "spec:3ecef7c08cb489d49083f607184717bc",
+  "H-partial"
+ ],
+ "label": "Do the indices carry information beyond size, accuracy, and lineage",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run.",
+ "quantity": {
+  "name": "max_abs_partial_corr",
+  "unit": null,
+  "value": 0.6484848484848483
+ },
+ "scope": "One frozen study, adjudicated once, on fleet, over rb2-full.",
+ "slug": "measured-conf-partial-max-abs-partial-corr",
+ "sourceUrl": "/evidence/491f7f378d0b58dfdadebc9aaee7c983/",
+ "statement": "at least one load-bearing index retains a partial correlation above 0.3 after the size-and-accuracy control.",
+ "status": "supported",
+ "subject": "fleet, over rb2-full",
+ "type": "measured-result"
+}

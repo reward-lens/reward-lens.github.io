@@ -1,0 +1,19 @@
+{
+ "contentHash": "6c416a96c88142af1bee3f72d0e418d4",
+ "humanSource": "The frozen study \"Tail index forecasts the best-of-k plateau on PPE\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:5cd71da5713f2b2fb77697318b842401",
+  "campaign.adjudication.PPE-BON",
+  "study:campaign-ppe-bon@v1#7077cf84",
+  "spec:7077cf849ed8492fc327d970aa2ede55"
+ ],
+ "label": "Tail index forecasts the best-of-k plateau on PPE",
+ "limitation": "It does not establish that the same holds on another subject, another dataset or another run. Fisher-z detection of the frozen 0.3 against the null-critical 0.46 over n = 15 (model, set) points; the permutation null passes the frozen 0.3 0.17 of the time, the registered CI exclusion carries size control, and effects at or above 0.64 confirm at 80 percent.",
+ "scope": "One frozen study, adjudicated once, on skywork-v2-qwen3-8b and skywork-v2-llama31-8b and skywork-v2-qwen3-0.6b, over ppe-best-of-k and ppe-human.",
+ "slug": "study-ppe-bon",
+ "sourceUrl": "/evidence/5cd71da5713f2b2fb77697318b842401/",
+ "statement": "The frozen study \"Tail index forecasts the best-of-k plateau on PPE\" was adjudicated inconclusive, over 2 registered predictions of which 2 returned no value.",
+ "status": "unrun",
+ "subject": "skywork-v2-qwen3-8b and skywork-v2-llama31-8b and skywork-v2-qwen3-0.6b, over ppe-best-of-k and ppe-human",
+ "type": "interpretation"
+}

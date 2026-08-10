@@ -1,0 +1,19 @@
+{
+ "comparator": "> 0.6",
+ "contentHash": "ea9394e938399ecd2f80472ce83a5ebd",
+ "humanSource": "The frozen study \"Bias battery predicts RM-Bench Hard ranking\", adjudicated on 19 July 2026 at the registered level of the project's evidence ladder.",
+ "immutableIds": [
+  "ev:14bc4c666b5b115cf1fd2c86cf209f01",
+  "H-style-transfer",
+  "study:campaign-style-rmb@v1#59c45767"
+ ],
+ "label": "Bias battery predicts RM-Bench Hard ranking",
+ "limitation": "The study returned no value because an input it needs was not produced by the run that was supposed to produce it.",
+ "scope": "One frozen study, adjudicated once, on fleet, over rmbench-full and diagnostic-v3.",
+ "slug": "open-style-rmb-spearman-biasbattery-vs-rmbench-hard",
+ "sourceUrl": "/evidence/14bc4c666b5b115cf1fd2c86cf209f01/",
+ "statement": "Registered prediction, not resolved: internal style susceptibility predicts the fleet's RM-Bench Hard ranking.",
+ "status": "unrun",
+ "subject": "fleet, over rmbench-full and diagnostic-v3",
+ "type": "open-hypothesis"
+}
