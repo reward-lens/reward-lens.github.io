@@ -1,8 +1,8 @@
 {
- "latest": "3.0.0",
+ "latest": "3.1.0",
  "unpublished": null,
  "unpublishedIsAhead": false,
- "requiresPython": ">=3.10",
+ "requiresPython": ">=3.11",
  "releases": [
   {
    "version": "1.0.0",
@@ -19,6 +19,10 @@
   {
    "version": "3.0.0",
    "uploadedAt": "2026-08-07T23:44:30.694Z"
+  },
+  {
+   "version": "3.1.0",
+   "uploadedAt": "2026-10-17T06:19:49.658Z"
   }
  ],
  "urls": {
@@ -29,5 +33,15 @@
   "publishedUrlsAreStale": false
  },
  "changelogUrl": "https://github.com/reward-lens/reward-lens/blob/main/CHANGELOG.md",
- "fetchedAt": "2026-08-10T00:45:35.000Z"
+ "artifactBinding": {
+  "repository": "reward-lens/reward-lens",
+  "sourceSha": "2775965d641ca48cf2745bf9c41e6b5659562306",
+  "sourceTree": "c1399fed11c3b2033e7cd3cef40dcaa627c1dfc8",
+  "ciRunId": 38943117681,
+  "sha256": {
+   "reward_lens-3.1.0-py3-none-any.whl": "ae6acb8bef70ce486b4e1f033b53222fbf86698eb935d8f9627dac8c7fb80eb3",
+   "reward_lens-3.1.0.tar.gz": "7bda3ed21cb33d92aa62ecd29453e201a2ecf06c11dd4bf9ce3c771635743a16"
+  }
+ },
+ "fetchedAt": "2026-10-17T06:33:55.000Z"
 }

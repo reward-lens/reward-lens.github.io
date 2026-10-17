@@ -59,19 +59,20 @@ const dataFile = <T>(name: string): T | null => {
 
 export interface Release {
   latest: string;
-  /**
-   * The version tagged in the repository and not on the package index.
-   * RENAMED from `rc` at build time, with the schema's pattern widened to
-   * `^[0-9]+\.[0-9]+\.[0-9]+([a-z]+[0-9]+)?$` so that a bare `3.0.0`
-   * validates: DECISIONS.md D-25 removed the rc marker at commit 2e75a0d, and
-   * the old pattern rejected the only value this field will ever hold.
-   */
+  /** Null once the public release is bound to the qualified CI artifacts. */
   unpublished: string | null;
   unpublishedIsAhead?: boolean;
   requiresPython: string;
   releases: { version: string; uploadedAt: string }[];
   urls: Record<string, string | boolean>;
   changelogUrl?: string;
+  artifactBinding?: {
+    repository: string;
+    sourceSha: string;
+    sourceTree: string;
+    ciRunId: number;
+    sha256: Record<string, string>;
+  };
   fetchedAt: string;
 }
 

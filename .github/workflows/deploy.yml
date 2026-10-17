@@ -5,7 +5,7 @@ name: Build and deploy the site
 # "GitHub Actions" in the repository settings, the same one manual click the
 # library docs repo needed.
 #
-# THE TWENTY-FOUR GATES RUN HERE AND NOWHERE ELSE. D-07: there are no local-only
+# THE 29 DOCUMENTED GATE STEPS RUN HERE AND NOWHERE ELSE. D-07: there are no local-only
 # gates. A gate that is not in this file does not exist, and a step in this file
 # that nobody documented is equally a defect. `verify-gate-list` parses this
 # workflow against design/QA.md §1 and fails if they disagree in either
@@ -19,9 +19,8 @@ name: Build and deploy the site
 # QA.md §1, or is declared as infrastructure in
 # scripts/checks/verify-gate-list.mjs.
 #
-# The claims gate pins reward-lens==2.0.1 DELIBERATELY. It predates the work the
-# site describes, and when 3.0.0 ships the pin moves as a reviewed change. It is
-# never a floating `latest`. HANDOFF.md trap 5.
+# The release gates use the exact published 3.1.0 wheel and the qualified CI
+# artifact manifest. No floating latest or local assay checkout is accepted.
 on:
   push:
     branches: [main]
@@ -30,8 +29,7 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  actions: read
 
 concurrency:
   group: "pages"
@@ -41,6 +39,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read
+      pages: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,7 +50,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Set up Python
@@ -75,16 +77,37 @@ jobs:
       # along with this comment. That is the whole revert.
       # ─────────────────────────────────────────────────────────────────────
 
-      - name: Install reward-lens for the claims gate
-        continue-on-error: true
-        run: pip install "reward-lens==2.0.1"
-
       - name: Install site dependencies
         run: npm ci
+
+      - name: Install reward-lens for the claims gate
+        run: |
+          npm run check:release-binding
+          python -m unittest discover -s tests/regression -p 'release_install_test.py'
+          python -m venv "$RUNNER_TEMP/reward-lens-site-install"
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+            'https://files.pythonhosted.org/packages/f3/6e/1736e5b4ae2b778ef2f81c47d797de9f891d4d8acb047a24ca37a60294dd/pip-26.2.1-py3-none-any.whl' \
+            --output "$RUNNER_TEMP/pip-26.2.1-py3-none-any.whl"
+          printf '%s  %s\n' '71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e' \
+            "$RUNNER_TEMP/pip-26.2.1-py3-none-any.whl" | sha256sum --check -
+          PIP_CONFIG_FILE=/dev/null "$RUNNER_TEMP/reward-lens-site-install/bin/python" -m pip --isolated install \
+            --no-index --no-deps --no-cache-dir "$RUNNER_TEMP/pip-26.2.1-py3-none-any.whl"
+          "$RUNNER_TEMP/reward-lens-site-install/bin/python" -m pip --isolated --version | grep -F 'pip 26.2.1 '
+          PIP_CONFIG_FILE=/dev/null "$RUNNER_TEMP/reward-lens-site-install/bin/python" -m pip --isolated uninstall \
+            --yes setuptools
+          "$RUNNER_TEMP/reward-lens-site-install/bin/python" scripts/checks/release-install.py --install
+          echo "$RUNNER_TEMP/reward-lens-site-install/bin" >> "$GITHUB_PATH"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Install Playwright browser
         continue-on-error: true
         run: npx playwright install --with-deps chromium
+
+      - name: Gate 26 · Release artifact and install
+        run: npm run check:release-binding && python scripts/checks/release-install.py
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Gate ++ · The gate list
         continue-on-error: true
@@ -96,6 +119,9 @@ jobs:
 
       - name: Gate 2 · Build
         run: npm run build
+
+      - name: Gate 27 · Current release links and documentation
+        run: node scripts/checks/release-links.mjs
 
       - name: Gate + · Gallery absence
         continue-on-error: true
@@ -219,8 +245,13 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
