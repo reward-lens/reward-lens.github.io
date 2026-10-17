@@ -687,7 +687,14 @@ for (const level of copy.trust_ladder?.levels ?? []) {
       ),
       artifact: tidy(copy.install.command),
       sourceUrl: copy.urls.pypi,
-      immutableIds: ["src/data/release.json", `reward-lens==${latest}`],
+      immutableIds: [
+        "src/data/release.json",
+        `reward-lens==${latest}`,
+        ...(release.artifactBinding ? [
+          `reward-lens/reward-lens@${release.artifactBinding.sourceSha}`,
+          `ci-run:${release.artifactBinding.ciRunId}`,
+        ] : []),
+      ],
     },
     "software-capability install-current-release",
   );

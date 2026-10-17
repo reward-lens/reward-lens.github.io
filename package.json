@@ -13,7 +13,7 @@
     "build:scene-data": "node scripts/build_scene_data.mjs",
     "gen:release": "node scripts/gen-release.mjs",
     "gen:release:check": "node scripts/gen-release.mjs --check",
-    "test:regression": "node --test tests/regression/",
+    "test:regression": "node --test tests/regression/*.test.mjs",
     "check": "node scripts/checks/paths.mjs && node scripts/build_scene_data.mjs --check && node scripts/checks/data_assertions.mjs && astro check && node scripts/checks/links.mjs && node scripts/checks/copy_grep.mjs && node scripts/checks/redirects.mjs && node scripts/checks/meta_audit.mjs && bash scripts/checks/claims_gate.sh && node scripts/checks/terms.mjs && node scripts/checks/claims-public.mjs",
     "check:claims": "bash scripts/checks/claims_gate.sh",
     "check:paths": "node scripts/checks/paths.mjs",
@@ -48,7 +48,9 @@
     "check:fidelity": "node scripts/checks/fidelity.mjs",
     "shoot:fallback": "node tests/scene/fallback/_shoot.mjs",
     "build:noscene": "PUBLIC_SCENE=off astro build --outDir dist-noscene",
-    "check:noscene": "bash scripts/checks/no-scene-build.sh"
+    "check:noscene": "bash scripts/checks/no-scene-build.sh",
+    "finalize:release": "node scripts/gen-release.mjs && node scripts/build_claims.mjs",
+    "check:release-binding": "node scripts/gen-release.mjs --check && node scripts/build_claims.mjs --check"
   },
   "description": "The reward-lens website: campaign ledger, atlas, docs, science.",
   "dependencies": {

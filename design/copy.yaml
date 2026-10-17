@@ -465,12 +465,11 @@ install:
   # carried by the visible "not yet published" link beside it.
   version_aria: >
     The published release is {{released_version}}. This is what pip install reward-lens gets.
-  # 'pulls nothing compiled' is false against the wheel: the base install
-  # brings numpy, scipy, pandas, scikit-learn and pydantic-core. What is true,
-  # and what a reader actually wants to know, is that it needs no GPU and no
-  # model download. Measured in a fresh virtualenv built from the index.
+  # 3.1.0 requires Python 3.11 and includes native base dependencies such as
+  # cryptography and jsonschema-rs. It needs no GPU, model download, Torch, or
+  # Transformers for the first offline audit.
   python_note: >-
-    Python 3.10 or newer. The base install needs no GPU, no model download and neither
+    Python 3.11 or newer. The base install needs no GPU, no model download and neither
     Torch nor Transformers.
 
 # ---------------------------------------------------------------------------

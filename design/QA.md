@@ -13,7 +13,7 @@ A check named `verify-gate-list` parses the workflow and fails if the set of ste
 disagree **in either direction**: a gate missing from the workflow is a defect, and a workflow step
 nobody documented is equally a defect.
 
-**Twenty-four, not nineteen.** This table listed nineteen when it was frozen. The build brief §10
+**The original twenty-four gates, plus the public claims gate and two release gates.** This table listed nineteen when it was frozen. The build brief §10
 adds five (20 to 24) and one unnumbered build assertion, and `verify-gate-list` compares this table
 against the workflow on the number, the name **and the command**, so all of them have to be here or
 the check cannot do its job. The five new rows and the two unnumbered ones were added by packet P2
@@ -50,6 +50,8 @@ command a check can compare.
 | **23** | **Visual baseline** | `node scripts/checks/visual-diff.mjs` | more than 0.4% changed pixels on a route the change did not touch |
 | **24** | **Film provenance** | `node scripts/checks/film-provenance.mjs` | a colour in `film/**` outside `tokens.css`, or a number in a caption or frame outside the evidence store |
 | **25** | **Public claims** | `npm run check:claims-public` | a rendered claim that does not resolve, a value disagreeing with its source plate, an outcome word interchanged, or a campaign identifier in a public disclosure |
+| **26** | **Release artifact and install** | `npm run check:release-binding && python scripts/checks/release-install.py` | the CI manifest, source commit/tree, public PyPI files or hashes disagree, or the installed runtime and CLI are not 3.1.0 |
+| **27** | **Current release links and documentation** | `node scripts/checks/release-links.mjs` | the built install/version copy or public release links do not match 3.1.0 |
 
 **Gate 14 and gate 19 are the two the previous site did not have.** The accessibility scan existed
 as a script that no workflow invoked. The overflow check did not exist.
@@ -67,9 +69,10 @@ latter does not establish a mobile layout viewport and produces false clipping; 
 during design work when a specimen that measured correct at 390px appeared clipped under
 `--window-size=390`. Recorded here so the build team does not rediscover it.
 
-**The claims gate pins the library version whose evidence semantics it enforces.** It currently
-installs `reward-lens==2.0.1`, which predates the work this site describes. When 3.0.0 ships the pin
-moves, and the pin bump is a reviewed change, never a floating `latest`.
+**The claims gate pins the library version whose evidence semantics it enforces.** It installs
+the exact public 3.1.0 wheel bytes verified against the qualified release artifact manifest.
+Gate 26 checks the public CI run and the installed distribution. Dependencies resolve through
+the public PyPI index.
 
 ---
 

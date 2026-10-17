@@ -1,76 +1,64 @@
 ---
 title: Install
-description: What has to be on the machine before any of this runs? Less than you would guess. The measurement half of the library is pure numpy and opens on any laptop.
+description: Install reward-lens 3.1.0, run the first offline audit, and add only the optional integrations you need.
 section: getting-started
 order: 2
 source: docs/content/getting-started/install.md
-libraryVersion: 3.0.0
+libraryVersion: 3.1.0
 staleMarkers: []
 ---
-import Callout from "@components/Callout.astro";
 
 # Install
 
-**What has to be on the machine before any of this runs?** Less than you would guess. The measurement half of the library is pure numpy and opens on any laptop. The model half wants weights and, for the real 8B graders, a GPU. You can learn the whole thing on the CPU half first.
+Python 3.11 or newer is required. Install the published 3.1.0 release from PyPI:
 
 ```bash
-pip install reward-lens
+python -m pip install reward-lens==3.1.0
 ```
 
-Python 3.10 or newer. That base install brings **nothing compiled**: numpy, scipy, pandas, scikit-learn and a CLI. No torch, no transformers.
+The base package includes the CLI, assay schemas, offline report assets, and dependencies for record verification and the evidence store. It includes compiled dependencies such as `cryptography` and `jsonschema-rs`. It does not require Node, Torch, a model download, or a GPU.
 
-The extras are where the weight is, and each one buys a named capability:
+## First audit
 
-| Extra | What it adds |
+```bash
+reward-lens init --example code-reward ./demo
+reward-lens audit ./demo --offline
+reward-lens doctor
+```
+
+The example deliberately contains defects. `audit` writes an assay record and offline report, reports blocking findings, and exits 2 with an unresolved decision. `doctor` shows which measurements the supplied inputs support and which need more access. This first audit does not claim that the reward system is sound.
+
+{/* reward-lens-release-downloads:start */}
+## Verified 3.1.0 downloads
+
+The [PyPI version](https://pypi.org/project/reward-lens/3.1.0/) and [official GitHub Release](https://github.com/reward-lens/reward-lens/releases/tag/v3.1.0) contain the qualified 3.1.0 artifacts.
+
+- [reward_lens-3.1.0-py3-none-any.whl](https://github.com/reward-lens/reward-lens/releases/download/v3.1.0/reward_lens-3.1.0-py3-none-any.whl): SHA-256 `ae6acb8bef70ce486b4e1f033b53222fbf86698eb935d8f9627dac8c7fb80eb3`
+- [reward_lens-3.1.0.tar.gz](https://github.com/reward-lens/reward-lens/releases/download/v3.1.0/reward_lens-3.1.0.tar.gz): SHA-256 `7bda3ed21cb33d92aa62ecd29453e201a2ecf06c11dd4bf9ce3c771635743a16`
+
+[Download SHA256SUMS](https://github.com/reward-lens/reward-lens/releases/download/v3.1.0/SHA256SUMS) to check both files.
+{/* reward-lens-release-downloads:end */}
+
+## Optional integrations
+
+Install an extra only for the capability you need. For example, `python -m pip install "reward-lens[white-box]==3.1.0"` adds Torch and Transformers for model inspection.
+
+| Extra | Capability |
 |---|---|
-| `white-box` | torch and transformers. Everything that reads a model's activations or gradients |
-| `verifier` | the program-substrate toolchain: coverage, mutation, property search. No GPU, no model |
-| `record` | columnar scalars and tensor shards for a training record. The reader works without it |
-| `organisms` | training planted model organisms, which needs `peft` and `datasets` |
-| `sampling` | vLLM, for a policy you want to sample from at speed |
-| `dict` | sparse-autoencoder tooling for feature-reward alignment |
-| `trl` | the TRL tap, for recording a live training run |
-| `viz` | matplotlib and seaborn, for the figure helpers |
-| `dev` | the test suite and the lint toolchain, for a source checkout |
-| `all` | every one of the above |
+| `mcp` | MCP server integration |
+| `trace` | Columnar trace reading |
+| `train` | Training-side model and TRL integration |
+| `white-box` | Model weights, activations, and gradients |
+| `verifier` | Program-grader analysis tools |
+| `record` | Columnar record and tensor storage |
+| `organisms` | Planted-model training tools |
+| `openenv` | OpenEnv adapter |
+| `trackers` | Local tracker SDK integrations |
+| `viz` | Figure helpers |
+| `all` | All declared optional integrations |
 
-Install them the usual way, quoted so the shell does not eat the brackets: `pip install "reward-lens[white-box]"`.
+The `judge` extra is reserved and currently declares no provider dependency. The `sigstore` extra installs the Sigstore package, but 3.1.0 still refuses external-identity signing with `RL0704`; offline Ed25519 export is the supported signing path. For a source checkout, `uv sync --group dev` installs the development group. There is no published `dev` extra.
 
-The split is deliberate rather than tidy. A record is written by whoever ran the training and read by whoever is auditing it, and the auditor is the person most likely to be on a base install, so the reader dispatches on the file rather than on the environment.
+The older [getting-started examples](/docs/getting-started/) document the 3.0 library and are marked as such. For the current 3.1.0 first-use path, run the audit above; model-based examples in the older pages have their own weight and hardware requirements.
 
-<Callout type="tip" title="Nothing on your machine at all">
-
-The [Colab tour](https://colab.research.google.com/drive/1x5zG07HdsWlNsJmkl2ddJ1yalmwwujfY?usp=sharing) installs the library into a free hosted runtime and walks the whole thing end to end. It is the way to try the library before you commit anything to your own environment.
-
-</Callout>
-## Importing the library never imports torch
-
-That is asserted in CI rather than described here, and you can confirm it in three lines:
-
-```python
-import sys
-import reward_lens, reward_lens.core, reward_lens.stats
-
-print(reward_lens.__version__)
-"torch" in sys.modules      # False, nothing model-touching was pulled in
-"numpy" in sys.modules      # True
-```
-
-Anything that reads a model imports from its own subsystem, `from reward_lens.signals import ...` or `from reward_lens.policy import ...`, and only then does torch load. A module that needs an extra you do not have raises `ExtraRequiredError` naming the extra and the pip command, rather than an `ImportError` that leaves you guessing.
-
-So a continuous-integration box, a notebook on a plane, a reviewer checking your arithmetic: none of them need a GPU to run the discipline.
-
-## What actually bites, before you load a real model
-
-- **You need the weights.** `reward-lens` hooks a live model in memory and reads the reward head directly, keeping it in fp32 so the readout matches the head exactly. Anything you can only reach through an API, with no weights to hold, is out of scope. If `transformers` can load it, an adapter can open it up.
-- **The good graders are gated.** Skywork and ArmoRM sit behind a license click on the Hugging Face Hub. Accept the terms on the model page, then `huggingface-cli login` with a token, or the load returns a 401 and nothing else.
-- **An 8B trace wants a GPU.** An 8B reward model in fp32 does not fit an 8 GB card, and the campaign numbers on this site were measured on larger hardware and committed as artifacts. That is a hardware fact, not a soft limit: the 8B code path names the call it would make and refuses rather than pretend. Everything conceptual runs first on the CPU through `from reward_lens.signals import from_tiny`, which builds a real (small) reward model with no download.
-
-<Callout type="warn" title="Needs a GPU">
-
-Loading a flagship grader from the Hub is gated on this machine. `load_signal("Skywork/Skywork-Reward-Llama-3.1-8B-v0.2")` raises `NotImplementedError` by default and names the exact dispatch; passing `allow_download=True` opts in, and then it needs the memory to hold the model. The ungated loaders, `wrap_hf_model` for a model you already have and `from_tiny` for a toy one, never touch the network.
-
-</Callout>
-## Where to start
-
-Install done, the fastest next step is one of the two quickstarts on the [getting-started page](/docs/getting-started/): one opens a real grader end to end, the other runs the whole arc on the CPU with `from_tiny`. If your first question is instead whether your particular grader is even supported, a classifier head or a DPO checkpoint or an LLM judge, that is answered on [models and signals](/docs/models-and-signals/). Adding a model family the adapters do not yet cover is [one small class](/docs/how-to/write-an-adapter/).
+For the maintained 3.1.0 API, CLI, and limitations, read the [3.1.0 product guide](https://github.com/reward-lens/reward-lens/blob/v3.1.0/README.md).
