@@ -1,0 +1,269 @@
+---
+import { DEFAULT_STAGE } from "./instrument-data";
+interface Props { class?: string; labelledBy?: string; }
+const { class: extraClass = "", labelledBy } = Astro.props;
+---
+<section class:list={["instrument", extraClass]} data-instrument data-stage={DEFAULT_STAGE} data-status="poster" aria-labelledby={labelledBy}>
+  <div class="instrument__visual" aria-hidden="true">
+    <img class="instrument__poster" data-lagoon-poster width="1440" height="900" alt="" decoding="sync" fetchpriority="high" />
+    <noscript><picture>
+      <source media="(max-width: 768px) and (prefers-color-scheme: dark)" srcset="/lagoon/poster-dark-mobile-640.webp 640w, /lagoon/poster-dark-mobile-960.webp 960w" sizes="100vw" />
+      <source media="(max-width: 768px)" srcset="/lagoon/poster-light-mobile-640.webp 640w, /lagoon/poster-light-mobile-960.webp 960w" sizes="100vw" />
+      <source media="(prefers-color-scheme: dark)" srcset="/lagoon/poster-dark-desktop-960.webp 960w, /lagoon/poster-dark-desktop-1440.webp 1440w, /lagoon/poster-dark-desktop-1920.webp 1920w" sizes="(max-width: 1100px) 100vw, 60vw" />
+      <img class="instrument__poster" data-lagoon-noscript src="/lagoon/poster-light-desktop-1440.webp" srcset="/lagoon/poster-light-desktop-960.webp 960w, /lagoon/poster-light-desktop-1440.webp 1440w, /lagoon/poster-light-desktop-1920.webp 1920w" sizes="(max-width: 1100px) 100vw, 60vw" width="1440" height="900" alt="" />
+    </picture></noscript>
+    <div class="instrument__runtime" data-instrument-runtime></div>
+    <script is:inline>
+      (() => {
+        const image = document.currentScript?.parentElement?.querySelector("[data-lagoon-poster]");
+        if (!(image instanceof HTMLImageElement)) return;
+        const narrow = matchMedia("(max-width: 768px)");
+        const update = () => {
+          const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+          const form = narrow.matches ? "mobile" : "desktop";
+          image.sizes = narrow.matches ? "100vw" : "(max-width: 1100px) 100vw, 60vw";
+          image.srcset = (narrow.matches ? [640, 960] : [960, 1440, 1920]).map(width => `/lagoon/poster-${theme}-${form}-${width}.webp ${width}w`).join(", ");
+          image.src = `/lagoon/poster-${theme}-${form}-${narrow.matches ? 640 : 1440}.webp`;
+        };
+        update(); narrow.addEventListener("change", update); window.__lagoonPoster = update;
+      })();
+    </script>
+  </div>
+</section>
+<script>
+  import { DEFAULT_STAGE, STAGE_COPY, isInstrumentStage, isLoopback, type InstrumentStage, type LagoonTheme } from "./instrument-data";
+  type Root = { render(props: any): void; unmount(): void };
+  type Metrics = { drawCalls: number; triangles: number; frames: number; signature: string; anchors: unknown; compiledAt: number; paintedAt: number; opticalStrength?: number };
+  type ReactRefreshRuntime = { injectIntoGlobalHook(target: Window): void };
+  declare global {
+    interface Window {
+      __lagoon?: Record<string, unknown>;
+      __lagoonPoster?: () => void;
+      $RefreshReg$?: () => void;
+      $RefreshSig$?: () => <T>(type: T) => T;
+    }
+  }
+  const VITE_REFRESH_URL = "/@react-refresh";
+  let devRefreshPreamble: Promise<void> | null = null;
+  const ensureDevReactRefresh = () => {
+    if (!import.meta.env.DEV || (window.$RefreshReg$ && window.$RefreshSig$)) return Promise.resolve();
+    if (!devRefreshPreamble) {
+      devRefreshPreamble = import(/* @vite-ignore */ VITE_REFRESH_URL).then((refresh: ReactRefreshRuntime) => {
+        refresh.injectIntoGlobalHook(window);
+        window.$RefreshReg$ = () => {};
+        window.$RefreshSig$ = () => type => type;
+      });
+    }
+    return devRefreshPreamble;
+  };
+  const sceneEnabled = import.meta.env.PUBLIC_SCENE !== "off";
+  const local = isLoopback(location.hostname);
+  const query = new URLSearchParams(location.search);
+  const testing = local && import.meta.env.PUBLIC_INSTRUMENT_CAPTURE === "test";
+  const capture = testing && query.get("lab-capture") === "1";
+  const allowSoftware = testing && query.get("instrument-software") === "test";
+  const posterOnly = testing && query.get("instrument-off") === "test";
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+  const assetUrl = matchMedia("(max-width: 768px), (pointer: coarse)").matches ? "/lagoon/lab-compact.glb" : "/lagoon/lab.glb";
+
+  for (const instrument of document.querySelectorAll<HTMLElement>("[data-instrument]")) {
+    if (instrument.dataset.instrumentMounted) continue;
+    instrument.dataset.instrumentMounted = "true";
+    const runtime = instrument.querySelector<HTMLElement>("[data-instrument-runtime]");
+    const controls = document.querySelector<HTMLElement>("[data-lagoon-controls]");
+    const inputs = [...(controls?.querySelectorAll<HTMLInputElement>("[data-stage-input]") ?? [])];
+    const lifetime = new AbortController();
+    let stage: InstrumentStage = DEFAULT_STAGE;
+    let theme: LagoonTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    let clip: import("../lagoon/fallback").RoomClip | null = null;
+    let clipPending: Promise<void> | null = null;
+    let clipFailed = false;
+    let liveUnavailable = false;
+    let root: Root | null = null;
+    let mountRuntime: ((container: HTMLElement) => Promise<Root>) | null = null;
+    let pending: Promise<void> | null = null;
+    let visible = false;
+    let hidden = document.hidden;
+    let revision = 0;
+    let readyRevision = -1;
+    let displayed = false;
+    let failed = false;
+    let tierChecked = false;
+    let awaitingRestore = false;
+    let restoreCount = 0;
+    let restoreTimer = 0;
+    const diagnostics = local;
+    const publish = (values: Record<string, unknown>) => { if (diagnostics) window.__lagoon = { ...(window.__lagoon ?? {}), ...values, stage, identity: revision }; };
+    const status = (value: string) => { if (value === "active") performance.mark("lagoon:active-handoff"); instrument.dataset.status = value; publish({ status: value }); };
+    const motionAllowed = () => sceneEnabled && !posterOnly && !saveData && !motion.matches;
+    const allowed = () => motionAllowed() && !failed && !liveUnavailable;
+    const running = () => allowed() && visible && !hidden && !awaitingRestore;
+    const teardown = () => { root?.unmount(); root = null; runtime?.replaceChildren(); };
+    const fail = (error: unknown) => {
+      publish({ failure: error instanceof Error ? error.message : String(error) });
+      failed = true; status("fallback"); queueMicrotask(() => { teardown(); void wakeClip(); });
+    };
+    const render = () => {
+      if (!root) return;
+      const token = revision;
+      root.render({
+        stage, theme, capture, assetUrl, running: running(), paused: false, reducedMotion: motion.matches, revision, lifecycleSignal: lifetime.signal,
+        onReady: (metrics: Metrics) => {
+          if (token !== revision || !running()) return;
+          readyRevision = token;
+          instrument.dataset.runtimeLandmarks = JSON.stringify(metrics.anchors);
+          instrument.dataset.drawCalls = String(metrics.drawCalls);
+          instrument.dataset.triangles = String(metrics.triangles);
+          instrument.dataset.renderFrames = String(metrics.frames);
+          publish({ ...metrics, geometrySignature: metrics.signature });
+          document.dispatchEvent(new CustomEvent("rewardlens:lab-ready", { detail: metrics }));
+          if (!displayed) status("ready");
+          requestAnimationFrame(() => { if (token === revision && running()) { displayed = true; status("active"); } });
+        },
+        onFrame: (metrics: Pick<Metrics, "drawCalls" | "triangles" | "frames">) => {
+          if (token !== revision) return;
+          instrument.dataset.drawCalls = String(metrics.drawCalls);
+          instrument.dataset.triangles = String(metrics.triangles);
+          instrument.dataset.renderFrames = String(metrics.frames); publish(metrics);
+          document.dispatchEvent(new CustomEvent("rewardlens:lab-projection", { detail: metrics }));
+        },
+        onFailure: (error: unknown) => {
+          if (!(error instanceof Event) || error.type !== "webglcontextlost") { fail(error); return; }
+          if (restoreCount >= 1) { fail(new Error("Repeated context loss")); return; }
+          awaitingRestore = true; status("suspended");
+          // Wait for the browser's restoration. One bounded retry; never a reload loop.
+          restoreTimer = window.setTimeout(() => fail(new Error("WebGL restoration timed out")), 12000);
+        },
+        onContextRestored: () => {
+          if (!awaitingRestore) return;
+          clearTimeout(restoreTimer); awaitingRestore = false;
+          if (restoreCount++ >= 1) { fail(new Error("Repeated context loss")); return; }
+          revision += 1; readyRevision = -1; status("preparing"); render();
+        },
+      });
+    };
+    const wake = () => {
+      if (!running() || !runtime) return;
+      if (root) { if (!displayed && readyRevision !== revision) status("preparing"); render(); return; }
+      if (pending) return;
+      status("preparing");
+      pending = (async () => {
+        try {
+          // Give the server-rendered content two paint opportunities before
+          // even the capability probe or deferred renderer imports begin.
+          await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+          if (!running()) return;
+          if (sceneEnabled && !tierChecked && !allowSoftware) {
+            const { detectTier } = await import("../runtime/tier");
+            tierChecked = true;
+            if (detectTier() === "still") { liveUnavailable = true; publish({ liveUnavailable: true, mode: "still", rendererEligibility: "unsupported-or-software" }); status("poster"); void wakeClip(); return; }
+          }
+          if (!running()) return;
+          if (sceneEnabled && !mountRuntime) {
+            // Manual direct R3F mounting does not pass through Astro's React
+            // island hydrator, which normally installs this Vite dev preamble.
+            // Keep the call itself in a DEV branch so production removes both
+            // the refresh runtime URL and this bootstrap from the emitted chunk.
+            if (import.meta.env.DEV) await ensureDevReactRefresh();
+            mountRuntime = (await import("./InstrumentRuntime")).mountRuntime;
+          }
+          if (!running()) return;
+          const mounted = await mountRuntime!(runtime);
+          if (!running()) { mounted.unmount(); return; }
+          root = mounted; publish({ mode: "live-webgl" }); revision += 1; render();
+        } catch (error) { fail(error); }
+        finally { pending = null; if (running() && !root && !failed && !liveUnavailable) queueMicrotask(wake); }
+      })();
+    };
+    const wakeClip = async () => {
+      if (!motionAllowed() || clipFailed || !runtime || !visible || hidden || lifetime.signal.aborted) return;
+      if (clip) { clip.setEligibility(visible && !hidden, false); return; }
+      if (clipPending) return;
+      clipPending = (async () => {
+        try {
+          const { RoomClip } = await import("../lagoon/fallback");
+          if (!motionAllowed() || lifetime.signal.aborted) return;
+          clip = new RoomClip(runtime, theme, lifetime.signal, values => {
+            if (values.fallbackFailure) { clipFailed = true; clip?.dispose(); clip = null; status("poster"); instrument.dataset.motionAllowed="false"; }
+            publish(values.fallbackFailure ? { ...values, mode: "still" } : values);
+          }, () => { status("animated-fallback"); instrument.dataset.renderMode = "animated-fallback"; publish({ mode: "animated-fallback", renderer: "controlled authored-room clip" }); });
+          await clip.start(); clip.setEligibility(visible && !hidden, false);
+        } catch (error) { clipFailed = true; clip?.dispose(); clip = null; status("poster"); publish({ mode: "still", fallbackFailure: error instanceof Error ? error.message : String(error) }); }
+        finally { clipPending = null; }
+      })();
+      await clipPending;
+    };
+    const reconcile = () => {
+      instrument.dataset.motionAllowed=String(motionAllowed()&&!clipFailed);
+      if (clip) {
+        clip.setEligibility(motionAllowed() && visible && !hidden, false);
+        if (!motionAllowed()) { status("poster"); publish({ mode: "still" }); }
+        else if (visible && !hidden) status("animated-fallback");
+        else status("suspended-clip");
+        return;
+      }
+      if ((failed || liveUnavailable) && motionAllowed()) { void wakeClip(); return; }
+      if (running()) { wake(); return; }
+      status(failed ? "fallback" : allowed() ? "suspended" : "poster");
+      render();
+    };
+    const write = (key: string, value: string) => { const node = controls?.querySelector(`[data-instrument-${key}]`); if (node) node.textContent = value; };
+    const paint = (next: InstrumentStage, selectedEntry?: string) => {
+      stage = next;
+      const copy = STAGE_COPY[next];
+      instrument.dataset.stage = next;
+      inputs.forEach(input => { input.checked = input.value === next; });
+      write("short", copy.short); write("detector", copy.detector); write("scope", copy.scope); write("missing", copy.missing); write("remedy", copy.remedy);
+      const entryId = selectedEntry ?? copy.entryId;
+      const report = controls?.querySelector<HTMLAnchorElement>("[data-instrument-report]");
+      if (report) report.href = selectedEntry ? `/report/?record=code-reward-v1&entry=${encodeURIComponent(selectedEntry)}` : copy.href;
+      if (selectedEntry) {
+        write("short", "Selected finding in code-reward-v1");
+        write("scope", `Bundled example · ${selectedEntry}`);
+        const selectedPanel = [...document.querySelectorAll<HTMLElement>("[data-finding-panel]")].find(panel => !panel.hidden);
+        const text = selectedPanel?.querySelector("h3")?.textContent;
+        if (text) write("detector", text);
+      }
+      window.__instrument?.setState?.({ activeState: copy.bridgeState });
+      document.dispatchEvent(new CustomEvent("rewardlens:instrument-stage", { detail: { stage: next, recordId: "code-reward-v1", entryId } }));
+      revision += 1; if (clip) clip.select(next); if (root) reconcile();
+    };
+    controls?.setAttribute("data-instrument-enhanced", "true");
+    inputs.forEach(input => input.addEventListener("change", () => { if (input.checked && isInstrumentStage(input.value)) paint(input.value); }, { signal: lifetime.signal }));
+    controls?.querySelector("[data-instrument-reset]")?.addEventListener("click", () => paint(DEFAULT_STAGE), { signal: lifetime.signal });
+    document.addEventListener("rewardlens:select-finding", ((event: CustomEvent<{ recordId?: string; entryId?: string }>) => {
+      if (event.detail?.recordId === "code-reward-v1") paint("reward", event.detail.entryId);
+    }) as EventListener, { signal: lifetime.signal });
+    const themeObserver = new MutationObserver(() => {
+      const next = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      if (theme === next) return;
+      theme = next; window.__lagoonPoster?.(); revision += 1; if (clip) void clip.setTheme(theme).catch(error => { clipFailed = true; clip?.dispose(); clip = null; status("poster"); publish({fallbackFailure:String(error),mode:"still"}); }); reconcile();
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    const intersection = new IntersectionObserver(([entry]) => { visible = Boolean(entry?.isIntersecting); reconcile(); }, { rootMargin: "0px" });
+    intersection.observe(instrument);
+    motion.addEventListener("change", () => { revision += 1; reconcile(); }, { signal: lifetime.signal });
+    document.addEventListener("visibilitychange", () => { hidden = document.hidden; reconcile(); }, { signal: lifetime.signal });
+    window.addEventListener("pagehide", event => {
+      hidden = true; reconcile();
+      if (!event.persisted) { lifetime.abort(); intersection.disconnect(); themeObserver.disconnect(); clearTimeout(restoreTimer); clip?.dispose(); teardown(); }
+    }, { signal: lifetime.signal });
+    window.addEventListener("pageshow", () => { hidden = document.hidden; reconcile(); }, { signal: lifetime.signal });
+    paint(DEFAULT_STAGE);
+    if (!allowed()) status("poster");
+  }
+</script>
+<style>
+  .instrument{position:relative;inline-size:100%;block-size:100%;min-block-size:0}
+  .instrument__visual,.instrument__poster,.instrument__runtime{position:absolute;inset:0;inline-size:100%;block-size:100%}
+  .instrument__visual{overflow:hidden;background:#c9dcd9}
+  .instrument__poster{display:block;object-fit:contain;object-position:center bottom;transition:opacity 120ms ease;z-index:1;pointer-events:none}
+  .instrument__poster:not([src]){display:none}
+  .instrument__runtime{pointer-events:none}
+  .instrument__runtime :global(canvas){display:block;inline-size:100%!important;block-size:100%!important}
+  .instrument[data-status="active"] .instrument__poster,.instrument[data-status="animated-fallback"] .instrument__poster{opacity:0}
+  .instrument__runtime :global(.instrument__clip){position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 760ms ease;pointer-events:none}
+  .instrument__runtime :global(.instrument__clip.is-current){opacity:1}
+  @media(prefers-reduced-motion:reduce){.instrument__poster{transition:none}.instrument__runtime{visibility:hidden}}
+</style>

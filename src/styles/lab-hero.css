@@ -1,0 +1,289 @@
+/* The pocket laboratory hero. Loaded by components/home/lab-hero.astro only,
+   so the tokens below exist on the homepage and nowhere else.
+
+   The room was lit and its posters and fallback clips were rendered against
+   these two grounds. Change a ground and the posters stop matching. */
+:root,
+:root[data-theme="dark"] {
+  --lab-ground: #090d0e;
+  --lab-ink: #e3ebe7;
+  --lab-petrol: #6e9c9d;
+  --lab-command: #1a2324;
+  --lab-command-ink: #f2f6f1;
+  --lab-command-rule: #4f6563;
+  /* Aliases read by the ported Instrument component. */
+  --lagoon-ground: var(--lab-ground);
+  --lagoon-ink: var(--lab-ink);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --lab-ground: #c9dcd9;
+    --lab-ink: #152d31;
+    --lab-petrol: #33575a;
+    --lab-command: #153b3e;
+    --lab-command-ink: #f2f6f1;
+    --lab-command-rule: #6f8986;
+  }
+}
+:root[data-theme="light"] {
+  --lab-ground: #c9dcd9;
+  --lab-ink: #152d31;
+  --lab-petrol: #33575a;
+  --lab-command: #153b3e;
+  --lab-command-ink: #f2f6f1;
+  --lab-command-rule: #6f8986;
+}
+
+/* The header shares the room's ground while the room is under it. The
+   attribute is set by the hero's script, so without JavaScript the header
+   keeps the site's own ground. */
+.nav-shell[data-over-lab] {
+  background: var(--lab-ground);
+  border-bottom-color: transparent;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+.nav-shell {
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.lab-hero {
+  /* The header's own measured height (nav-shell.astro, 65px at every width
+     the old hero measured). The room's envelope is the lagoon candidate's,
+     less this, because there the header floated over the room. */
+  --lab-nav: 65px;
+  /* The copy column's left edge is the header's content edge, so the
+     headline sits under the mark. */
+  --lab-copy-left: calc(max(0px, (100% - var(--grid-max)) / 2) + var(--page-pad));
+  position: relative;
+  background: var(--lab-ground);
+  color: var(--lab-ink);
+  border-bottom: var(--border-w, 1px) solid color-mix(in srgb, var(--lab-petrol) 22%, transparent);
+  overflow: clip;
+}
+
+.lab-hero__inner {
+  position: relative;
+  box-sizing: border-box;
+  min-height: calc(clamp(46rem, 60vw, 56rem) - var(--lab-nav));
+  padding-block: calc(clamp(7.3rem, 9.2vw, 9rem) - var(--lab-nav)) 4rem;
+  padding-inline: var(--lab-copy-left) var(--page-pad);
+}
+
+.lab-hero__copy {
+  position: relative;
+  z-index: 3;
+  max-width: min(40vw, 37rem);
+  pointer-events: none;
+}
+.lab-hero__copy > * { pointer-events: auto; }
+
+.lab-hero__headline {
+  margin: 0 0 1.6rem;
+  color: var(--lab-ink);
+  font-family: var(--font-sans);
+  font-size: clamp(2.9rem, 3.85vw, 4rem);
+  font-weight: 400;
+  letter-spacing: -0.046em;
+  line-height: 1.08;
+  text-wrap: wrap;
+}
+.lab-hero__headline span { display: block; }
+/* Narrow enough that the second clause breaks after "inside" at every
+   desktop size, as set in the reference composition. */
+.lab-hero__headline { max-width: 9.2em; }
+
+.lab-hero__subhead {
+  margin: 0;
+  max-width: 30rem;
+  color: color-mix(in srgb, var(--lab-ink) 84%, transparent);
+  font-size: clamp(1rem, 1.16vw, 1.12rem);
+  line-height: 1.6;
+}
+
+.lab-hero__installation {
+  inline-size: min(36vw, 33rem);
+  margin-top: 2.25rem;
+}
+
+.lab-hero__command {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 1rem;
+  min-height: 3.9rem;
+  margin: 0;
+  padding: 0.65rem 1.2rem;
+  color: var(--lab-command-ink);
+  background: var(--lab-command);
+  border: 1px solid color-mix(in srgb, var(--lab-command-ink) 22%, transparent);
+  border-radius: 0.28rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 0.6rem 1rem rgba(0, 20, 23, 0.18);
+}
+/* The aperture the feed line leaves through. */
+.lab-hero__command::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: calc(50% - 6px);
+  width: 3px;
+  height: 12px;
+  background: #edc78e;
+  box-shadow: 0 0 6px rgba(255, 199, 118, 0.5);
+  pointer-events: none;
+}
+.lab-hero__prompt {
+  flex: none;
+  color: #b6d0c9;
+  font: 1rem/1 var(--font-mono);
+}
+.lab-hero__command code {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: inherit;
+  background: none;
+  padding: 0;
+  font: clamp(0.88rem, 1.18vw, 1.1rem)/1.4 var(--font-mono);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.lab-hero__copy-button {
+  appearance: none;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  inline-size: 4.5rem;
+  min-block-size: 2.75rem;
+  margin-inline-start: auto;
+  padding-inline: 0.6rem 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-inline-start: 1px solid var(--lab-command-rule);
+  font: 500 0.8rem/1 var(--font-mono);
+  cursor: pointer;
+}
+.lab-hero__copy-button:hover { text-decoration: underline; text-underline-offset: 0.22em; }
+.lab-hero__copy-button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+:root:not([data-js]) .lab-hero__copy-button { display: none; }
+.lab-hero__copy-status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.lab-hero__release {
+  margin: 0.65rem 0 0;
+  color: color-mix(in srgb, var(--lab-ink) 78%, transparent);
+  font: 0.8rem/1.5 var(--font-mono);
+}
+.lab-hero__release code { font: inherit; color: inherit; background: none; padding: 0; }
+
+.lab-hero__signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-block-size: 2.75rem;
+  margin-top: 1.25rem;
+  color: var(--lab-ink);
+  font-size: 1.08rem;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+.lab-hero__signal:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* The room. Its box starts where the lagoon composition put it relative to
+   the copy, so the plant and trolley clear the install command. */
+.lab-hero__room {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--lab-copy-left) + 31vw);
+  right: 0;
+}
+.lab-hero .lab-hero__room .instrument { display: block; block-size: 100%; }
+.lab-hero .lab-hero__room .instrument__visual { background: transparent; block-size: 100%; border: 0; min-block-size: 0; overflow: visible; }
+.lab-hero .lab-hero__room .instrument__poster { object-fit: contain; object-position: center; }
+.lab-hero .lab-hero__room .instrument__runtime { overflow: hidden; }
+
+.lab-hero__feed {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+}
+.lab-hero__feed-core { fill: none; stroke: #fff0d2; stroke-width: 1.25px; }
+.lab-hero__feed-halo { fill: none; stroke: #eda044; stroke-width: 4px; opacity: 0.18; }
+.lab-hero__feed-excitation { fill: none; stroke: #fff9e8; stroke-width: 1.9px; stroke-dasharray: 0.07 0.93; opacity: 0; }
+
+/* A short desktop window: keep the room inside the first screen. */
+@media (min-width: 1101px) and (max-height: 760px) {
+  .lab-hero__inner {
+    min-height: calc(100svh - var(--lab-nav) - 2rem);
+    padding-block: calc(7.25rem - var(--lab-nav)) 2rem;
+  }
+  .lab-hero__headline { font-size: clamp(2.65rem, 3.65vw, 3.6rem); }
+  .lab-hero__installation { margin-top: 1.8rem; }
+}
+
+/* Tablet and phone: the room moves below the copy and bleeds to both edges. */
+@media (max-width: 1100px) {
+  .lab-hero__inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: calc(7.5rem - var(--lab-nav)) var(--page-pad) 0;
+  }
+  .lab-hero__copy { max-width: 44rem; }
+  .lab-hero__headline { font-size: clamp(2.9rem, 5.2vw, 4rem); }
+  .lab-hero__subhead { max-width: 38rem; }
+  .lab-hero__installation { inline-size: min(35rem, 100%); }
+  .lab-hero__room {
+    position: relative;
+    inset: auto;
+    width: calc(100% + 2 * var(--page-pad));
+    aspect-ratio: 1.4;
+    margin-inline: calc(-1 * var(--page-pad));
+  }
+}
+@media (max-width: 48rem) {
+  .lab-hero__inner { padding: 1.6rem var(--page-pad) 0; }
+  .lab-hero__copy { max-width: none; }
+  .lab-hero__headline {
+    margin-bottom: 1.1rem;
+    font-size: clamp(1.95rem, 8.3vw, 3.4rem);
+    letter-spacing: -0.045em;
+    line-height: 1.1;
+  }
+  .lab-hero__headline span { display: inline; }
+  .lab-hero__headline { max-width: none; }
+  .lab-hero__subhead { max-width: none; font-size: 0.9375rem; line-height: 1.55; }
+  .lab-hero__installation { inline-size: auto; margin-top: 1.3rem; }
+  .lab-hero__command { gap: 0.65rem; padding-inline: 0.85rem; }
+  .lab-hero__command code { font-size: clamp(0.78rem, 3.4vw, 1rem); }
+  .lab-hero__copy-button { inline-size: 3.9rem; padding-inline-start: 0.6rem; }
+  .lab-hero__signal { margin: 0.65rem 0 0.1rem; font-size: 1rem; }
+  .lab-hero__room { aspect-ratio: 1.02; }
+  .lab-hero__feed-core { stroke-width: 1px; }
+  .lab-hero__feed-halo { stroke-width: 3px; opacity: 0.1; }
+  .lab-hero__command::after { right: 11%; top: auto; bottom: -1px; width: 12px; height: 2px; }
+}
+@media (max-width: 23rem) {
+  .lab-hero__command { flex-wrap: wrap; gap: 0.45rem 0.75rem; padding: 0.6rem 0.85rem; }
+  .lab-hero__command code { flex: 1 1 12rem; }
+  .lab-hero__copy-button {
+    flex: 1 0 100%;
+    inline-size: 100%;
+    padding-inline: 0;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--lab-command-rule);
+  }
+}

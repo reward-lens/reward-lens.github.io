@@ -1,0 +1,109 @@
+{
+  "version": 2,
+  "assets": {
+    "standard": {
+      "url": "/lagoon/lab.glb",
+      "sha256": "13a660ab43ddbc589e3a0633ecf3b9f23c0e1c772b5c69716d6775cb72b33a09"
+    },
+    "compact": {
+      "url": "/lagoon/lab-compact.glb",
+      "sha256": "a6f814414100545cdc2bba98f6590860025c5600ed9fc0eef6152ebb9859391c"
+    },
+    "rig": {
+      "url": "/lagoon/rig.glb",
+      "sha256": "bb016287c6424ffd07b15577f5206268660158e2f9e3be6e9651bd83e1f03c1d"
+    }
+  },
+  "posters": [
+    {
+      "theme": "light",
+      "form": "desktop",
+      "width": 960,
+      "height": 813,
+      "file": "poster-light-desktop-960.webp",
+      "sha256": "efe744f8ae627bf69e55010d9fa273b86d13e90896d2327eff062db42544ccbc",
+      "bytes": 71878
+    },
+    {
+      "theme": "light",
+      "form": "desktop",
+      "width": 1440,
+      "height": 1220,
+      "file": "poster-light-desktop-1440.webp",
+      "sha256": "5a69449dba3e9e0908d70ad22df7b731ee0d4c8c3ce1f89c419cdbc97f34a4d1",
+      "bytes": 108660
+    },
+    {
+      "theme": "light",
+      "form": "desktop",
+      "width": 1920,
+      "height": 1627,
+      "file": "poster-light-desktop-1920.webp",
+      "sha256": "9068111ecd3a84b45ecca830ea3794e07dccc89c1b7266d8647d34ea45861986",
+      "bytes": 147850
+    },
+    {
+      "theme": "dark",
+      "form": "desktop",
+      "width": 960,
+      "height": 813,
+      "file": "poster-dark-desktop-960.webp",
+      "sha256": "f22e792d4cc217753818d6a6cc3a23480b2da1bdd0ae3689dbe391afc46e59a2",
+      "bytes": 54942
+    },
+    {
+      "theme": "dark",
+      "form": "desktop",
+      "width": 1440,
+      "height": 1220,
+      "file": "poster-dark-desktop-1440.webp",
+      "sha256": "d11add39e9ea7f4346526d4ca63335f0b5f374d96808ffdd2e0120877fe3899e",
+      "bytes": 82254
+    },
+    {
+      "theme": "dark",
+      "form": "desktop",
+      "width": 1920,
+      "height": 1627,
+      "file": "poster-dark-desktop-1920.webp",
+      "sha256": "9faf40480466f343ae817774e7d58a0ebf08cc8a2588a5833776846315f8a79b",
+      "bytes": 111252
+    },
+    {
+      "theme": "light",
+      "form": "mobile",
+      "width": 640,
+      "height": 556,
+      "file": "poster-light-mobile-640.webp",
+      "sha256": "b761462076a2d79355ad9ba5473a2bb42202159bf8f64305d7af0a6e53c675da",
+      "bytes": 45678
+    },
+    {
+      "theme": "light",
+      "form": "mobile",
+      "width": 960,
+      "height": 834,
+      "file": "poster-light-mobile-960.webp",
+      "sha256": "923847113432faa7f928699de79ce99c73e812fbf4f9ba90b52905e151d30fc8",
+      "bytes": 72084
+    },
+    {
+      "theme": "dark",
+      "form": "mobile",
+      "width": 640,
+      "height": 556,
+      "file": "poster-dark-mobile-640.webp",
+      "sha256": "df7b75fc570aa88e30993309317087f88328a71971072f31bf53e1e6e62ee0ce",
+      "bytes": 37126
+    },
+    {
+      "theme": "dark",
+      "form": "mobile",
+      "width": 960,
+      "height": 834,
+      "file": "poster-dark-mobile-960.webp",
+      "sha256": "696814f013d1f14f3bb487e81e53159188b68c17d750c57415c889977dc2e86d",
+      "bytes": 57168
+    }
+  ]
+}

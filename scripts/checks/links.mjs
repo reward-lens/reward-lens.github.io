@@ -21,8 +21,13 @@ const seenMissing = new Set();
 for (const page of pages) {
   if (page.includes("dev-components")) continue; // build-time review page, removed before launch
   const html = readFileSync(page, "utf-8");
-  const refs = [...html.matchAll(/(?:href|src|srcset)="([^"]+)"/g)].map(
-    (m) => m[1],
+  // A srcset is a comma-separated list of image candidates, each with an
+  // optional width or density descriptor. Check every candidate URL.
+  const refs = [...html.matchAll(/\b(href|src|srcset)="([^"]+)"/g)].flatMap(
+    ([, attribute, value]) =>
+      attribute === "srcset"
+        ? value.split(",").map((candidate) => candidate.trim().split(/\s+/)[0]).filter(Boolean)
+        : [value],
   );
   for (let ref of refs) {
     if (

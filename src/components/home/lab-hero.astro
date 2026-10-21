@@ -1,0 +1,172 @@
+---
+/**
+ * Section 1 · the pocket laboratory.
+ *
+ * Ported from the furnished pocket-lab candidate (website-lagoon-2026-09-24,
+ * scene identity pocket-9bcacf5ec00b24d3) to replace the August optical-bench
+ * hero. Only the first viewport changed: the copy, the install command and
+ * the movements below are the site's own.
+ *
+ * The room is decorative. Everything a reader needs is HTML on the left; the
+ * scene sits behind it as an enhancement with a matching poster, an authored
+ * clip for software or failed WebGL, and a still for reduced motion, Save-Data
+ * and no-JavaScript readers.
+ *
+ * The feed line runs from the install command's right edge into the room's
+ * beam entry. It is drawn in page space so it stays attached to the command at
+ * every width, and it reads the live projected anchor once the scene is ready.
+ */
+import posterLayout from "../../data/lagoon-poster-layout.json";
+import Instrument from "../scene/rebuild/Instrument.astro";
+import { install, requireRelease } from "../base/data";
+import { copy } from "../../copy";
+import "../../styles/lab-hero.css";
+
+interface HeroCopy {
+  headline_a: string;
+  headline_b: string;
+  subhead: string;
+  secondary_action: string;
+}
+
+const hero = (copy.home as Record<string, unknown>).hero as HeroCopy;
+const release = requireRelease("lab-hero");
+---
+
+<section class="lab-hero" data-hero data-lab-hero aria-labelledby="hero-question">
+  <div class="lab-hero__inner">
+    <div class="lab-hero__copy">
+      <h1 id="hero-question" class="lab-hero__headline">
+        <span>{hero.headline_a}</span>
+        <span>{hero.headline_b}</span>
+      </h1>
+      <p class="lab-hero__subhead">{hero.subhead}</p>
+      <div class="lab-hero__installation">
+        <div class="lab-hero__command" data-install-command>
+          <span class="lab-hero__prompt" aria-hidden="true">$</span>
+          <code data-install-code>{install.command}</code>
+          <button type="button" class="lab-hero__copy-button" data-copy-command aria-describedby="lab-copy-status">
+            <span data-copy-label>Copy</span>
+          </button>
+          <span class="lab-hero__copy-status" id="lab-copy-status" aria-live="polite" aria-atomic="true"></span>
+        </div>
+        <p class="lab-hero__release">installs <code class="install-strip__number">{release.latest}</code></p>
+      </div>
+      <a class="lab-hero__signal" href="#instrument-story">
+        {hero.secondary_action} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <div class="lab-hero__room"><Instrument labelledBy="hero-question" /></div>
+    <svg class="lab-hero__feed" data-lagoon-feed data-poster-layout={JSON.stringify(posterLayout)} aria-hidden="true">
+      <path class="lab-hero__feed-halo" />
+      <path class="lab-hero__feed-core" />
+      <path class="lab-hero__feed-excitation" pathLength="1" />
+    </svg>
+  </div>
+</section>
+
+<script>
+  const feed = document.querySelector<SVGSVGElement>("[data-lagoon-feed]");
+  const hero = document.querySelector<HTMLElement>(".lab-hero__inner");
+  let liveAnchors: Array<{ id: string; normalized: [number, number] }> | null = null;
+  let opticalStrength = 1;
+  let opticalTravel = 1;
+  const updateFeed = () => {
+    if (!feed || !hero) return;
+    const box = hero.getBoundingClientRect();
+    const art = document.querySelector<HTMLElement>(".instrument__visual")?.getBoundingClientRect();
+    const command = document.querySelector<HTMLElement>("[data-install-command]")?.getBoundingClientRect();
+    if (!art || !command) return;
+    const anchor = liveAnchors?.find((point) => point.id === "BEAM_ENTRY")?.normalized;
+    let x: number;
+    let y: number;
+    if (anchor) {
+      x = art.left - box.left + anchor[0] * art.width;
+      y = art.top - box.top + anchor[1] * art.height;
+    } else {
+      const layouts = JSON.parse(feed.dataset.posterLayout ?? "{}");
+      const layout = innerWidth <= 768 ? layouts.mobile : layouts.desktop;
+      if (!layout) return;
+      const width = Math.min(art.width, art.height * layout.aspect);
+      const height = width / layout.aspect;
+      x = art.left - box.left + (art.width - width) / 2 + layout.beam[0] * width;
+      y = art.top - box.top + (art.height - height) / 2 + layout.beam[1] * height;
+    }
+    feed.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+    const right = command.right - box.left;
+    const middle = command.top - box.top + command.height / 2;
+    // The line leaves a small aligned aperture in the command's edge, then
+    // stays attached to the live source at every camera pose.
+    const d = innerWidth > 1100
+      ? `M ${command.left - box.left - 30} ${middle} H ${right + 12} C ${right + 45} ${middle}, ${x - 35} ${y}, ${x} ${y}`
+      : `M ${right - command.width * 0.11} ${command.bottom - box.top} v 14 M ${x - 16} ${y} H ${x}`;
+    feed.querySelectorAll("path").forEach((path) => { if (path.getAttribute("d") !== d) path.setAttribute("d", d); });
+    feed.style.opacity = String(Math.max(0.08, opticalStrength));
+    const excitation = feed.querySelector<SVGPathElement>(".lab-hero__feed-excitation");
+    if (excitation) {
+      excitation.style.strokeDashoffset = String(-Math.min(0.93, opticalTravel));
+      excitation.style.opacity = String(opticalTravel < 0.2 ? 1 : 0);
+    }
+    feed.dataset.aligned = "true";
+  };
+  const project = (event: CustomEvent<{ anchors?: Array<{ id: string; normalized: [number, number] }>; opticalStrength?: number; opticalTravel?: number }>) => {
+    if (event.detail.anchors) liveAnchors = event.detail.anchors;
+    if (event.detail.opticalStrength !== undefined) opticalStrength = event.detail.opticalStrength;
+    if (event.detail.opticalTravel !== undefined) opticalTravel = event.detail.opticalTravel;
+    updateFeed();
+  };
+  document.addEventListener("rewardlens:lab-ready", project as EventListener);
+  document.addEventListener("rewardlens:lab-projection", project as EventListener);
+  const feedResize = new ResizeObserver(() => { liveAnchors = null; updateFeed(); });
+  if (hero) feedResize.observe(hero);
+  const themeFeed = new MutationObserver(updateFeed);
+  themeFeed.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  document.fonts.ready.then(updateFeed);
+
+  // The header shares the room's ground while the room is under it, and
+  // returns to the site's own ground once the reader scrolls past.
+  const header = document.querySelector<HTMLElement>(".nav-shell");
+  const section = document.querySelector<HTMLElement>("[data-lab-hero]");
+  let headerWatch: IntersectionObserver | null = null;
+  if (header && section) {
+    const offset = Math.round(header.getBoundingClientRect().height);
+    headerWatch = new IntersectionObserver(([entry]) => {
+      header.toggleAttribute("data-over-lab", Boolean(entry?.isIntersecting));
+    }, { rootMargin: `-${offset}px 0px 0px 0px` });
+    headerWatch.observe(section);
+  }
+
+  window.addEventListener("pagehide", (event) => {
+    if (event.persisted) return;
+    feedResize.disconnect();
+    themeFeed.disconnect();
+    headerWatch?.disconnect();
+    document.removeEventListener("rewardlens:lab-ready", project as EventListener);
+    document.removeEventListener("rewardlens:lab-projection", project as EventListener);
+  });
+
+  const installCommand = document.querySelector<HTMLElement>("[data-install-command]");
+  const copyButton = installCommand?.querySelector<HTMLButtonElement>("[data-copy-command]");
+  const code = installCommand?.querySelector<HTMLElement>("[data-install-code]");
+  const copyStatus = installCommand?.querySelector<HTMLElement>(".lab-hero__copy-status");
+  const copyLabel = installCommand?.querySelector<HTMLElement>("[data-copy-label]");
+
+  copyButton?.addEventListener("click", async () => {
+    const command = code?.textContent?.trim() ?? "pip install reward-lens";
+    try {
+      await navigator.clipboard.writeText(command);
+      if (copyLabel) copyLabel.textContent = "Copied";
+      if (copyStatus) copyStatus.textContent = "Installation command copied to clipboard.";
+      window.setTimeout(() => { if (copyLabel) copyLabel.textContent = "Copy"; }, 1800);
+    } catch {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      if (code) {
+        range.selectNodeContents(code);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+      if (copyStatus) copyStatus.textContent = "Copy is unavailable. The installation command is selected for you to copy.";
+    }
+  });
+</script>
