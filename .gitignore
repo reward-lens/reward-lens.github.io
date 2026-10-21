@@ -14,3 +14,6 @@ dist-noscene/
 
 # Agent worktrees, created and removed by the harness.
 .claude/
+
+# The capture build that scripts/lab-hero/media.mjs renders posters and clips from.
+dist-capture/

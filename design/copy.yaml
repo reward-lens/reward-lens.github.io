@@ -180,7 +180,7 @@ home:
     headline_a: The reward went up.
     headline_b: What changed inside the model?
     subhead: >
-      Reward Lens instruments the path from a grader's score to the advantages training used,
+      reward-lens instruments the path from a grader's score to the advantages training used,
       the update that followed, and the policy that came out. Inspect what was favoured, what
       moved, and what the account still cannot explain.
     secondary_action: Follow the signal
@@ -296,7 +296,7 @@ home:
         composed from several parts, sensitive to surface features, or reachable by a route nobody
         intended.
       body_2: >
-        Reward Lens keeps that scoring process inspectable wherever the available access allows,
+        reward-lens keeps that scoring process inspectable wherever the available access allows,
         and preserves the components, gates and overrides before they collapse into one number.
 
     selection:
@@ -316,7 +316,7 @@ home:
       heading: One update has an address.
       body_1: >
         The optimizer computes local credit and then discards the decomposition, keeping only the
-        summed direction. Reward Lens partitions that immediate gradient back across the rollouts
+        summed direction. reward-lens partitions that immediate gradient back across the rollouts
         that produced it, and checks the partition against an independently computed full update
         rather than trusting it.
       body_2: >
@@ -336,7 +336,7 @@ home:
         cheaply make, the movement actually observed, and the part of that movement nothing
         accounts for.
       body_2: >
-        This is the account Reward Lens is built to make close or visibly fail. On the run
+        This is the account reward-lens is built to make close or visibly fail. On the run
         available here it does not close. The budget balances, but it balances on the sampling
         noise of two small batches, and the test's own detection floor sits hundreds of thousands
         of times above the effect it is arbitrating. Neither verdict could have failed

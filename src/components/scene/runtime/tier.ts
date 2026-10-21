@@ -82,22 +82,88 @@ export function profileFor(tier: SceneTier): TierProfile {
  * the count per document at a number low enough to matter.
  */
 export function detectWebGL(): boolean {
-  if (typeof document === "undefined") return false;
+  return probeWebGL().supported;
+}
+
+export interface WebGLProbe {
+  supported: boolean;
+  software: boolean;
+  renderer: string | null;
+}
+
+/**
+ * Software WebGL is a fallback implementation, not a usable performance tier.
+ *
+ * The previous detector stopped at "a context exists". On this machine Chrome
+ * exposes SwiftShader, so the CPU and memory hints selected the high tier even
+ * though the renderer was software. The measured result was a 104 MB post
+ * chain, 17.4 seconds of blocking work and less than one frame per second. That
+ * is exactly the combination that makes native scrolling feel broken.
+ *
+ * Keep the classifier separate from the context probe so it can be exercised
+ * without a browser. The strings cover the software adapters exposed by
+ * Chromium/ANGLE and Mesa; an unknown renderer is treated as hardware because
+ * hiding the scene on an unrecognised real GPU would be the wrong failure.
+ */
+export function isSoftwareRenderer(renderer: string | null | undefined): boolean {
+  if (!renderer) return false;
+  return /swiftshader|llvmpipe|softpipe|software rasterizer|software renderer/i.test(renderer);
+}
+
+export function probeWebGL(): WebGLProbe {
+  if (typeof document === "undefined") {
+    return { supported: false, software: false, renderer: null };
+  }
   try {
     const canvas = document.createElement("canvas");
-    const gl = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
-    if (!gl) return false;
+    // Ask the browser to refuse a context when it can provide only a major
+    // performance fallback. This catches software rendering even when privacy
+    // settings hide the unmasked renderer string. The scene is an enhancement,
+    // so a conservative refusal is preferable to turning scrolling into CPU
+    // rasterisation.
+    const contextOptions: WebGLContextAttributes = { failIfMajorPerformanceCaveat: true };
+    const gl =
+      canvas.getContext("webgl2", contextOptions) ??
+      canvas.getContext("webgl", contextOptions);
+    if (!gl) return { supported: false, software: false, renderer: null };
+    const debug = gl.getExtension("WEBGL_debug_renderer_info") as
+      | { UNMASKED_RENDERER_WEBGL: number }
+      | null;
+    const renderer = String(
+      debug
+        ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)
+        : gl.getParameter(gl.RENDERER),
+    );
     const lose = (gl as WebGLRenderingContext).getExtension("WEBGL_lose_context");
     lose?.loseContext();
-    return true;
+    return {
+      supported: true,
+      software: isSoftwareRenderer(renderer),
+      renderer,
+    };
   } catch {
-    return false;
+    return { supported: false, software: false, renderer: null };
   }
 }
 
 export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/**
+ * Local visual and gate work sometimes needs to exercise a live tier on a
+ * machine whose only adapter is SwiftShader. Keep that override on loopback so
+ * a public URL cannot ask a reader to opt back into the failure this detector
+ * exists to prevent.
+ */
+export function parseLocalTierOverride(
+  value: string | null | undefined,
+  hostname: string | null | undefined,
+): Exclude<SceneTier, "still"> | null {
+  const local = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  if (!local) return null;
+  return value === "high" || value === "mid" || value === "low" ? value : null;
 }
 
 /**
@@ -111,7 +177,17 @@ export function prefersReducedMotion(): boolean {
 export function detectTier(): SceneTier {
   if (typeof window === "undefined") return "still";
   if (prefersReducedMotion()) return "still";
-  if (!detectWebGL()) return "still";
+  const graphics = probeWebGL();
+  if (!graphics.supported) return "still";
+  const forced = parseLocalTierOverride(
+    new URLSearchParams(window.location.search).get("scene-tier"),
+    window.location.hostname,
+  );
+  if (forced) return forced;
+  // A software adapter can technically draw the room, but doing so makes the
+  // page less usable than the complete vector fallback. Do not download or
+  // compile the 3D scene for it.
+  if (graphics.software) return "still";
 
   const nav = window.navigator as Navigator & {
     deviceMemory?: number;

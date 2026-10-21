@@ -35,7 +35,7 @@
  *         `HandoffBlock`
  */
 import Base from "@layouts/Base.astro";
-import Hero from "@components/home/hero.astro";
+import LabHero from "@components/home/lab-hero.astro";
 import InstrumentStory from "@components/home/story/instrument-story.astro";
 import ProofBench from "@components/home/proof/proof-bench.astro";
 import TrustStrip from "@components/home/boundary/trust-strip.astro";
@@ -47,8 +47,8 @@ const home = copy.home as Record<string, any>;
 ---
 
 <Base title={copy.meta.site_name} description={home.meta_description}>
-  <!-- §1 · the claim. The room. -->
-  <Hero />
+  <!-- §1 · the claim. The pocket laboratory. -->
+  <LabHero />
 
   <div class="home">
     {/*
