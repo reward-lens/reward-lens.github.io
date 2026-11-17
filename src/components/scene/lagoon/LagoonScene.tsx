@@ -797,6 +797,11 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   }, [anchors, asset, bounds, camera, capture, gl, invalidate, onFrame, onReady, quality, reportFailure, running, scene]);
 
   useFrame(() => {
+    // Switch the shared page field with the HTML theme so its text keeps full
+    // contrast. Set before the readiness guard: the canvas is opaque, so a
+    // frame drawn while the room is still loading would otherwise clear to
+    // Three's default black and show through the poster's side gutters.
+    gl.setClearColor(LAGOON_LIGHTS[theme].background, 1);
     if (!running || !asset || !anchors || !bounds) return;
     const now = performance.now();
     const sampledCapture = captureAt.current;
@@ -815,10 +820,7 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
     }
     const t = frame.theme, day = LAGOON_LIGHTS.light, night = LAGOON_LIGHTS.dark;
     const mix = (a: number, b: number) => a + (b - a) * t;
-    // Switch the shared page field with the HTML theme so its text keeps full
-    // contrast. Physical light, exposure and reflections still relight together.
-    const background = new Color(LAGOON_LIGHTS[theme].background);
-    gl.setClearColor(background, 1);
+    // Physical light, exposure and reflections relight together.
     scene.environmentIntensity = mix(day.environment, night.environment) * (variant && (artPass === "A" || artPass === "D") ? 1.8 : 1);
     gl.toneMappingExposure = mix(day.exposure, night.exposure);
     lightRig.key.color.set("#fff1dc").lerp(new Color("#c6dbe5"), t); lightRig.key.intensity = mix(day.key, night.key);

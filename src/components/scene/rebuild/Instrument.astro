@@ -262,6 +262,11 @@ const { class: extraClass = "", labelledBy } = Astro.props;
   .instrument__poster:not([src]){display:none}
   .instrument__runtime{pointer-events:none}
   .instrument__runtime :global(canvas){display:block;inline-size:100%!important;block-size:100%!important}
+  /* The canvas is opaque and holds black until its first frame, and again
+     after any resize while it is not drawing. The poster has the room's own
+     aspect, so its gutters would show that black. Keep the canvas hidden until
+     it is the picture; the gutters then show the section's ground. */
+  .instrument:not([data-status="active"]) .instrument__runtime :global(canvas){visibility:hidden}
   .instrument[data-status="active"] .instrument__poster,.instrument[data-status="animated-fallback"] .instrument__poster{opacity:0}
   .instrument__runtime :global(.instrument__clip){position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 760ms ease;pointer-events:none}
   .instrument__runtime :global(.instrument__clip.is-current){opacity:1}
