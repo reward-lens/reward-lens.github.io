@@ -1,7 +1,9 @@
 export type AnchorPoint = readonly [number, number, number];
 export type LagoonAnchors = Readonly<Record<string, AnchorPoint>>;
 export interface LagoonBounds { min: AnchorPoint; max: AnchorPoint; }
-export interface LagoonAssetData { anchors: LagoonAnchors; bounds: LagoonBounds; }
+/** A modeled lamp: where its light leaves the fixture and where it aims, both authored in Blender. */
+export interface LagoonPractical { position: AnchorPoint; direction: AnchorPoint; kind: string; }
+export interface LagoonAssetData { anchors: LagoonAnchors; bounds: LagoonBounds; practicals: Readonly<Record<string, LagoonPractical>>; }
 
 const REQUIRED = [
   "BEAM_ENTRY",
@@ -48,10 +50,24 @@ function boundsFrom(value: unknown, anchors: LagoonAnchors): LagoonBounds {
   return { min: [Math.min(...points.map((p) => p[0])), Math.min(...points.map((p) => p[1])), Math.min(...points.map((p) => p[2]))], max: [Math.max(...points.map((p) => p[0])), Math.max(...points.map((p) => p[1])), Math.max(...points.map((p) => p[2]))] };
 }
 
+function practicalsFrom(value: unknown): Record<string, LagoonPractical> {
+  const raw = typeof value === "object" && value !== null && "practicals" in value ? (value as { practicals?: unknown }).practicals : null;
+  const out: Record<string, LagoonPractical> = {};
+  if (typeof raw !== "object" || raw === null) return out;
+  for (const [key, entry] of Object.entries(raw)) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const { position, direction, kind } = entry as { position?: unknown; direction?: unknown; kind?: unknown };
+    try { out[key] = { position: asPoint(position, key), direction: asPoint(direction, `${key}.direction`), kind: String(kind ?? "") }; } catch { /* a malformed lamp keeps its preset */ }
+  }
+  return out;
+}
+
 export async function loadLagoonAssetData(signal?: AbortSignal): Promise<LagoonAssetData> {
-  const response = await fetch("/lagoon/anchors.json", { signal, cache: "force-cache" });
+  // Revalidate rather than force-cache: the sidecar must match the GLBs it
+  // describes, and a stale copy would misplace the beam after a deploy.
+  const response = await fetch("/lagoon/anchors.json", { signal, cache: "no-cache" });
   if (!response.ok) throw new LagoonAnchorError(`anchors.json returned ${response.status}`);
   const json = await response.json();
   const anchors = validateAnchors(json);
-  return { anchors, bounds: boundsFrom(json, anchors) };
+  return { anchors, bounds: boundsFrom(json, anchors), practicals: practicalsFrom(json) };
 }
