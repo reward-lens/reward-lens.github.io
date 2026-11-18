@@ -73,10 +73,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.185.0",
     "axe-core": "^4.12.1",
+    "meshoptimizer": "^1.1.1",
     "playwright": "^1.61.1",
     "typescript": "^5.9.3",
     "yaml": "^2.9.0"

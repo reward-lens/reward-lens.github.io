@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { ACESFilmicToneMapping, AdditiveBlending, Box3, BoxGeometry, BufferGeometry, CanvasTexture, Color, CylinderGeometry, DirectionalLight, DoubleSide, Group, HemisphereLight, InstancedMesh, Matrix4, Quaternion, Material, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Object3D, PCFShadowMap, PerspectiveCamera, PMREMGenerator, PlaneGeometry, SphereGeometry, Sprite, SpriteMaterial, Texture, Vector3, type Camera } from "three";
+import { ACESFilmicToneMapping, AdditiveBlending, AgXToneMapping, Box3, BoxGeometry, BufferGeometry, CanvasTexture, Color, DirectionalLight, Group, HemisphereLight, InstancedMesh, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, NeutralToneMapping, Object3D, PCFShadowMap, PerspectiveCamera, PMREMGenerator, PlaneGeometry, SphereGeometry, Sprite, SpriteMaterial, Texture, Vector3 } from "three";
 import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
-import { installLabLamps, makeLamp, updateLabLamps, type LabLamp } from "./lamps";
+import { enableBakedAo, makeLamp, setLabAoDirect, updateLabLamps, updateLabLines, type LabLamp } from "./lamps";
+import { tuneRoomMaterial, type ThemeBinding } from "./materials";
+import { makeLabComposer, type LabComposer } from "./post";
+import { ATTACHMENT_NAMES, disposeOpticalPath, makeOpticalPath, updateOpticalPath, type AttachmentName } from "./beam";
 import { makeStudioScene } from "./studio";
 import type { LagoonTheme, InstrumentStage } from "../rebuild/instrument-data";
 import { loadLagoonAssetData, type LagoonAnchors, type LagoonBounds } from "./anchors";
 import { PulseCadence } from "./cadence.mjs";
-import { LAGOON_LIGHTS, LAGOON_PRACTICALS, LAGOON_PRESETS, LAGOON_QUALITY, lagoonView } from "./presets";
+import { LAGOON_BEAM, LAGOON_BLOOM, LAGOON_LIGHTS, LAGOON_PRACTICALS, LAGOON_PRESETS, LAGOON_QUALITY, LAGOON_SOFFITS, LAGOON_TONE_MAPPING, lagoonView } from "./presets";
 import { LabMotion } from "./motion.mjs";
 
 export interface LagoonRenderMetrics {
@@ -72,37 +75,30 @@ export function applyMaterialQuality(material: Material & { transmission?: numbe
   material.needsUpdate = true;
 }
 
-/** Runtime finishing keeps the authored palette but gives each material family a readable response. */
-function tuneRoomMaterial(material: Material) {
-  if (!(material instanceof MeshStandardMaterial)) return;
-  const name = material.name;
-  if (/CERAMIC_Pale/.test(name)) material.color.set("#b8c4c0");
-  if (/ALUMINIUM_Brushed/.test(name)) { material.metalness = .86; material.roughness = .24; material.envMapIntensity = 1.18; }
-  else if (/CHARCOAL_Instrument/.test(name)) { material.metalness = .64; material.roughness = .23; material.envMapIntensity = .92; }
-  else if (/BRASS_Restrained/.test(name)) { material.metalness = .84; material.roughness = .25; material.envMapIntensity = 1.05; }
-  else if (/PETROL_Painted/.test(name)) { material.metalness = .035; material.roughness = .52; material.envMapIntensity = .38; }
-  else if (/CERAMIC_Pale/.test(name)) { material.metalness = 0; material.roughness = .31; material.envMapIntensity = .26; }
-  else if (/APRICOT_Task_Light/.test(name)) { material.emissive.set("#e8a965"); material.emissiveIntensity = 1.1; material.roughness = .26; }
-  // Glass reads through its reflections and edges rather than a transmission
-  // pass. That pass redrew the whole room every frame and doubled the
-  // programs to link before the first frame.
-  const glass = material as MeshStandardMaterial & { transmission?: number };
-  const transmissive = Number(glass.transmission ?? 0) > 0;
-  if (transmissive) glass.transmission = 0;
-  if (/PRISM_Glass/.test(name)) {
-    material.color.set("#d6f0ea"); material.metalness = 0; material.roughness = .035; material.envMapIntensity = 2.4;
-    material.opacity = .46; material.transparent = true; material.depthWrite = false;
-    if (material instanceof MeshPhysicalMaterial) { material.ior = 1.5; material.specularIntensity = 1; }
-  } else if (transmissive) {
-    material.roughness = Math.min(material.roughness, .08); material.envMapIntensity = 1.8;
-    material.opacity = .42; material.transparent = true; material.depthWrite = false;
+const TONE_MAPPINGS = { neutral: NeutralToneMapping, agx: AgXToneMapping, aces: ACESFilmicToneMapping } as const;
+
+/**
+ * Fit the key's orthographic shadow camera to the room's world bounds as seen
+ * from the light, so the 2048 map spends its texels on the room only.
+ */
+function fitKeyShadow(key: DirectionalLight, room: Object3D) {
+  const box = new Box3().setFromObject(room);
+  if (box.isEmpty()) return;
+  key.parent?.updateMatrixWorld(true);
+  const shadowCamera = key.shadow.camera;
+  shadowCamera.position.setFromMatrixPosition(key.matrixWorld);
+  shadowCamera.lookAt(new Vector3().setFromMatrixPosition(key.target.matrixWorld));
+  shadowCamera.updateMatrixWorld(true);
+  const local = new Box3();
+  for (let i = 0; i < 8; i++) {
+    local.expandByPoint(new Vector3(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).applyMatrix4(shadowCamera.matrixWorldInverse));
   }
-  if (/SPECIMEN_Glass(?!_Edge)/.test(name)) { material.opacity = Math.min(.34, material.opacity); material.transparent = true; material.depthWrite = false; material.roughness = .16; }
-  // Exported manufacture maps contain the absolute roughness response. They
-  // must not be multiplied by a second family roughness value.
-  if(material.roughnessMap)material.roughness=/CERAMIC_Pale_OPTICAL_BENCH/.test(name) ? .60 : 1;
-  installLabLamps(material);
-  material.needsUpdate = true;
+  const margin = .25;
+  Object.assign(shadowCamera, {
+    left: local.min.x - margin, right: local.max.x + margin, bottom: local.min.y - margin, top: local.max.y + margin,
+    near: Math.max(.1, -local.max.z - margin), far: -local.min.z + margin,
+  });
+  shadowCamera.updateProjectionMatrix();
 }
 interface Props {
   stage: InstrumentStage; theme: LagoonTheme; capture: boolean; assetUrl: string;
@@ -112,11 +108,6 @@ interface Props {
   /** Known asset failures return to the poster owner without a React throw. */
   onError?(error: unknown): void;
 }
-const SEGMENTS = [
-  ["BEAM_ENTRY", "BEAM_AFTER_PRISM"], ["BEAM_AFTER_PRISM", "SPECIMEN_FOCUS"],
-  ["SPECIMEN_FOCUS", "DETECTOR_SPLIT"], ["DETECTOR_SPLIT", "DETECTOR_TOP"], ["DETECTOR_SPLIT", "DETECTOR_BOTTOM"],
-] as const;
-
 function disposeObject(object: Object3D) {
   const geometries = new Set<BufferGeometry>(); const materials = new Set<Material>(); const textures = new Set<Texture>();
   object.traverse(child => {
@@ -203,11 +194,6 @@ function meshSignature(object: Object3D, anchors: LagoonAnchors) {
   return `geometry-${(hash >>> 0).toString(16).padStart(8, "0")}`;
 }
 
-interface OpticalPath {
-  object: Group; core: InstancedMesh; halo: InstancedMesh; ribbons: Mesh[]; ribbonMaterial: MeshBasicMaterial;
-  traveller: Mesh; receivers: LabLamp[]; catches: Mesh[]; glows: Sprite[]; arrivals: number[];
-}
-
 /** A soft radial falloff shared by every glow sprite. */
 function makeGlowTexture() {
   const canvas = document.createElement("canvas"); canvas.width = canvas.height = 64;
@@ -218,119 +204,13 @@ function makeGlowTexture() {
   return new CanvasTexture(canvas);
 }
 
-/**
- * A cross-beam falloff for the light's own glow: a bright centre and a long
- * soft shoulder, so the beam reads as light in air rather than a lit tube.
- */
-function makeRibbonTexture() {
-  const canvas = document.createElement("canvas"); canvas.width = 4; canvas.height = 128;
-  const context = canvas.getContext("2d")!;
-  const fade = context.createLinearGradient(0, 0, 0, 128);
-  for (const [stop, alpha] of [[0, 0], [.2, .03], [.36, .12], [.45, .42], [.5, 1], [.55, .42], [.64, .12], [.8, .03], [1, 0]] as const) fade.addColorStop(stop, `rgba(255,255,255,${alpha})`);
-  context.fillStyle = fade; context.fillRect(0, 0, 4, 128);
-  return new CanvasTexture(canvas);
-}
-
-const ribbonAxis = new Vector3(), ribbonAcross = new Vector3(), ribbonNormal = new Vector3(), ribbonView = new Vector3(), ribbonBasis = new Matrix4();
-/** Lay a ribbon along a segment, turned to face the camera about its own axis. */
-function orientRibbon(mesh: Mesh, from: Vector3, to: Vector3, camera: Camera, width: number) {
-  ribbonAxis.subVectors(to, from); const length = Math.max(.0001, ribbonAxis.length()); ribbonAxis.divideScalar(length);
-  mesh.position.addVectors(from, to).multiplyScalar(.5);
-  ribbonView.setFromMatrixPosition(camera.matrixWorld).sub(mesh.position).normalize();
-  ribbonAcross.crossVectors(ribbonAxis, ribbonView); if (ribbonAcross.lengthSq() < 1e-8) ribbonAcross.set(0, 1, 0); ribbonAcross.normalize();
-  ribbonNormal.crossVectors(ribbonAxis, ribbonAcross);
-  mesh.quaternion.setFromRotationMatrix(ribbonBasis.makeBasis(ribbonAxis, ribbonAcross, ribbonNormal));
-  mesh.scale.set(length, width, 1);
-}
-
-function makeOpticalPath(anchors: LagoonAnchors): OpticalPath {
-  const object = new Group(); object.name = "ILLUSTRATIVE_OPTICAL_PATH";
-  // The fine core belongs to Three's opaque transmission input so the hero
-  // prism can refract it. Its energy is color-scaled; alpha would exclude it
-  // from that input and the prism's depth would erase the interior signal.
-  const core = new InstancedMesh(new CylinderGeometry(.015, .015, 1, 8), new MeshBasicMaterial({ color: "#fff7e2", toneMapped: false, depthWrite: false }), SEGMENTS.length);
-  const halo = new InstancedMesh(new CylinderGeometry(.035, .035, 1, 8), new MeshBasicMaterial({ color: "#ffaf50", transparent: true, opacity: .12, blending: AdditiveBlending, toneMapped: false, depthWrite: false }), SEGMENTS.length);
-  core.name = "OPTICAL_CORE"; halo.name = "OPTICAL_HALO";
-  // Depth testing stays enabled: solid mounts and housings occlude the path.
-  core.renderOrder = 4; halo.renderOrder = 3;
-  SEGMENTS.forEach(([from, to], index) => {
-    const a = new Vector3(...anchors[from]), b = new Vector3(...anchors[to]);
-    const direction = b.clone().sub(a), length = direction.length();
-    const transform = new Matrix4().compose(a.add(b).multiplyScalar(.5), new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize()), new Vector3(1, length, 1));
-    core.setMatrixAt(index, transform); halo.setMatrixAt(index, transform);
-  });
-  core.instanceMatrix.needsUpdate = halo.instanceMatrix.needsUpdate = true;
-  object.add(core, halo);
-  const ribbonMaterial = new MeshBasicMaterial({ map: makeRibbonTexture(), color: "#ffb45a", transparent: true, opacity: 0, blending: AdditiveBlending, toneMapped: false, depthWrite: false, side: DoubleSide });
-  const ribbons = SEGMENTS.map(() => {
-    const ribbon = new Mesh(new PlaneGeometry(1, 1), ribbonMaterial);
-    ribbon.name = "OPTICAL_GLOW"; ribbon.renderOrder = 3; ribbon.frustumCulled = false;
-    object.add(ribbon); return ribbon;
-  });
-  const traveller = new Mesh(new CylinderGeometry(.014, .014, .22, 8), new MeshBasicMaterial({ color: "#fff7df", toneMapped: false, depthWrite: false }));
-  traveller.name = "TRAVELLING_OPTICAL_EXCITATION"; traveller.visible = false; object.add(traveller);
-  const receivers: LabLamp[] = [], catches: Mesh[] = [], glows: Sprite[] = [];
-  const glowMap = makeGlowTexture();
-  for (const name of ["BEAM_ENTRY", "BEAM_AFTER_PRISM", "SPECIMEN_FOCUS", "DETECTOR_TOP", "DETECTOR_BOTTOM"]) {
-    const lamp = makeLamp(anchors[name], "#ffd08b", 1.8);
-    // The source is just outside the aperture and catches illuminate its lip.
-    lamp.position.z += .045; receivers.push(lamp);
-    const catchLight = new Mesh(new SphereGeometry(.036, 12, 8), new MeshBasicMaterial({ color: "#fff1cc", transparent: true, blending: AdditiveBlending, toneMapped: false, depthWrite: false }));
-    catchLight.position.copy(lamp.position); catchLight.name = `RECEIVER_${name}`; object.add(catchLight); catches.push(catchLight);
-    const glow = new Sprite(new SpriteMaterial({ map: glowMap, color: "#ffd29a", transparent: true, opacity: 0, blending: AdditiveBlending, toneMapped: false, depthWrite: false }));
-    glow.position.copy(lamp.position); glow.scale.setScalar(.20); glow.name = `SOURCE_GLOW_${name}`;
-    object.add(glow); glows.push(glow);
-  }
-  return { object, core, halo, ribbons, ribbonMaterial, traveller, receivers, catches, glows, arrivals: [0,.5,.75,1,1] };
-}
-
-const ATTACHMENT_NAMES = ["SOURCE_ATTACHMENT", "PRISM_ATTACHMENT", "SPECIMEN_ATTACHMENT", "RECEIVER_TOP_ATTACHMENT", "RECEIVER_BOTTOM_ATTACHMENT"] as const;
+/** Small or flush parts whose shadows cannot be seen from the hero camera stay out of the key's shadow pass. */
+const QUIET_CASTERS = /^(MARBLE_Floor|BRASS_|RUBBER_|PLANT_Leaf|BOOK_|GLASS_|LENS_|SOIL_|POT_|PRINT_|SCREEN_|DISPLAY_)/;
+/** Rig parts that animate almost constantly but cast no visible shadow; leaving them out lets the shadow map rest. */
+const QUIET_RIG = /^(SOURCE_SHUTTER|FILTER_SELECTOR|RECEIVER_TOP_ACTION|RECEIVER_BOTTOM_ACTION)$/;
 const RIG_ROOTS = ["HEAD_CARRIAGE", "FOCUS_LENS", "SOURCE_SHUTTER", "FILTER_SELECTOR", "RECEIVER_TOP_ACTION", "RECEIVER_BOTTOM_ACTION"] as const;
-type AttachmentName = typeof ATTACHMENT_NAMES[number];
 type RigRoot = typeof RIG_ROOTS[number];
 interface RestTransform { position: Vector3; rotation: Vector3; scale: Vector3; }
-
-function updateSegment(mesh: InstancedMesh, index: number, from: Vector3, to: Vector3) {
-  const direction = to.clone().sub(from); const length = Math.max(.0001, direction.length());
-  mesh.setMatrixAt(index, new Matrix4().compose(from.clone().add(to).multiplyScalar(.5), new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize()), new Vector3(1, length, 1)));
-}
-
-/** Dynamic endpoints use articulated world positions; the static map remains an immutable rest reference. */
-function updateOpticalPath(path: OpticalPath, anchors: LagoonAnchors, attachments: Partial<Record<AttachmentName, Object3D>>, travel: number, active: boolean, camera: Camera, ribbonWidth: number) {
-  const point = (attachment: AttachmentName, anchor: string) => {
-    const object = attachments[attachment];
-    return object ? object.getWorldPosition(new Vector3()) : new Vector3(...anchors[anchor]);
-  };
-  const points = [
-    point("SOURCE_ATTACHMENT", "BEAM_ENTRY"), point("PRISM_ATTACHMENT", "BEAM_AFTER_PRISM"), point("SPECIMEN_ATTACHMENT", "SPECIMEN_FOCUS"),
-    new Vector3(...anchors.DETECTOR_SPLIT), point("RECEIVER_TOP_ATTACHMENT", "DETECTOR_TOP"), point("RECEIVER_BOTTOM_ATTACHMENT", "DETECTOR_BOTTOM"),
-  ];
-  updateSegment(path.core, 0, points[0], points[1]); updateSegment(path.halo, 0, points[0], points[1]);
-  updateSegment(path.core, 1, points[1], points[2]); updateSegment(path.halo, 1, points[1], points[2]);
-  updateSegment(path.core, 2, points[2], points[3]); updateSegment(path.halo, 2, points[2], points[3]);
-  updateSegment(path.core, 3, points[3], points[4]); updateSegment(path.halo, 3, points[3], points[4]);
-  updateSegment(path.core, 4, points[3], points[5]); updateSegment(path.halo, 4, points[3], points[5]);
-  path.core.instanceMatrix.needsUpdate = path.halo.instanceMatrix.needsUpdate = true;
-  const spans: Array<[number, number]> = [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5]];
-  spans.forEach(([from, to], index) => orientRibbon(path.ribbons[index], points[from], points[to], camera, ribbonWidth));
-  const catchPoints = [points[0], points[1], points[2], points[4], points[5]];
-  path.receivers.forEach((light, index) => { light.position.copy(catchPoints[index]); light.position.z += .045; });
-  path.catches.forEach((catchLight, index) => catchLight.position.copy(path.receivers[index].position));
-  path.glows.forEach((glow, index) => glow.position.copy(path.receivers[index].position));
-  const route = [points[0], points[1], points[2], points[3], points[4]];
-  const lengths = route.slice(1).map((value, index) => value.distanceTo(route[index])); const total = lengths.reduce((sum, value) => sum + value, 0);
-  const prefix = [0]; lengths.forEach(length=>prefix.push(prefix.at(-1)!+length));
-  const lowerLength=prefix[3]+points[3].distanceTo(points[5]);
-  path.arrivals=[0,prefix[1]/total,prefix[2]/total,1,lowerLength/total];
-  let remaining = Math.max(0, Math.min(1, travel)) * total; let index = 0;
-  while (index < lengths.length - 1 && remaining > lengths[index]) { remaining -= lengths[index]; index += 1; }
-  const along = lengths[index] ? remaining / lengths[index] : 0;
-  path.traveller.position.copy(route[index]).lerp(route[index + 1], along);
-  path.traveller.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), route[index + 1].clone().sub(route[index]).normalize());
-  path.traveller.visible = active && travel > 0 && travel < 1;
-  const named: Array<[string, Vector3]> = [["BEAM_ENTRY", points[0]], ["BEAM_AFTER_PRISM", points[1]], ["SPECIMEN_FOCUS", points[2]], ["DETECTOR_SPLIT", points[3]], ["DETECTOR_TOP", points[4]], ["DETECTOR_BOTTOM", points[5]]];
-  return Object.fromEntries(named.map(([name, value]) => [name, value.toArray() as [number, number, number]]));
-}
 
 /** A neutral contact footprint; cast shadows provide the instrument contacts. */
 function PlinthContact() {
@@ -415,7 +295,9 @@ function makePractical(position: readonly number[], range: number, cone: { outer
   // the wall beside it. The lamps share the key's shadow/contact ownership
   // and do not add shadow-map passes.
   const lamp = makeLamp(position, "#ffc47c", range, cone);
-  const bulb = new Mesh(new SphereGeometry(.048, 12, 8), new MeshBasicMaterial({ color: "#ffe0ad", toneMapped: false }));
+  // The bulb is HDR (see bulbRadiance): tone mapping rolls it to a warm
+  // white and, in the full tier, it is bright enough to bloom.
+  const bulb = new Mesh(new SphereGeometry(.048, 12, 8), new MeshBasicMaterial({ color: "#ffe0ad" }));
   bulb.position.copy(lamp.position); bulb.name = "PRACTICAL_EMITTER";
   const glow = new Sprite(new SpriteMaterial({ map: glowMap, color: "#ffc98a", transparent: true, opacity: 0, blending: AdditiveBlending, toneMapped: false, depthWrite: false }));
   glow.position.copy(lamp.position); glow.scale.setScalar(.42); glow.name = "PRACTICAL_GLOW";
@@ -428,8 +310,14 @@ function makeLightRig() {
   // aluminum and prism reflections, while local spots give every modeled lamp
   // an economical nearby pool rather than an isolated emissive dot.
   const key = new DirectionalLight("#fff6e7", 4.4); key.position.set(-6.5, 10, 7.5); key.target.position.set(.35, 3.1, -.35); key.castShadow = true;
-  key.shadow.mapSize.set(1536, 1536); Object.assign(key.shadow.camera, { left: -7, right: 7, top: 7, bottom: -5, near: .5, far: 28 }); key.shadow.bias = -.00018; key.shadow.normalBias = .022; key.shadow.radius = 3.5;
-  const fill = new HemisphereLight("#c7e5eb", "#16323a", .42);
+  // 2048 texels over a frustum fitted to the room (fitKeyShadow). PCFShadowMap
+  // is three's soft Vogel-disk filter since r180 (PCFSoftShadowMap now only
+  // warns and falls back to it); radius sets the penumbra in texels.
+  key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -7, right: 7, top: 7, bottom: -5, near: .5, far: 28 }); key.shadow.bias = -.0001; key.shadow.normalBias = .016; key.shadow.radius = 4;
+  // Cool fill: sky/ground bounce plus a shadowless directional from the
+  // right, the side opposite the key.
+  const fill = new HemisphereLight("#cfe7ee", "#1b383f", .34);
+  const fillDirect = new DirectionalLight("#d4e8f0", .55); fillDirect.position.set(9, 6.5, 8); fillDirect.target.position.set(0, 2.8, -.5);
   // The area panels that shaped reflections now live in the studio
   // environment (studio.ts); the room's lamps are evaluated in lamps.ts.
   const glowMap = makeGlowTexture();
@@ -446,9 +334,17 @@ function makeLightRig() {
     makePractical(LAGOON_PRACTICALS.GALLERY_LIGHT_CENTER, 2.3, picture, glowMap),
     makePractical(LAGOON_PRACTICALS.GALLERY_LIGHT_RIGHT, 2.3, picture, glowMap),
   ];
-  group.add(key, key.target, fill);
-  for (const practical of [...task, ...gallery]) group.add(practical.bulb, practical.glow);
-  return { group, key, fill, task, gallery };
+  // Gallery soffit downlights, placed from SOFFIT_LIGHT_n anchors when the
+  // room or rig carries them; hidden and dark otherwise.
+  const soffitCone = { outer: .8, inner: .3, direction: [0, -1, 0] } as const;
+  const soffits = LAGOON_SOFFITS.map(() => {
+    const practical = makePractical([0, -50, 0], 3.4, soffitCone, glowMap);
+    practical.bulb.visible = practical.glow.visible = false;
+    return practical;
+  });
+  group.add(key, key.target, fill, fillDirect, fillDirect.target);
+  for (const practical of [...task, ...gallery, ...soffits]) group.add(practical.bulb, practical.glow);
+  return { group, key, fill, fillDirect, task, gallery, soffits };
 }
 
 export function LagoonScene({ stage, theme, capture, assetUrl, running, paused = false, reducedMotion = false, revision, lifecycleSignal, onReady, onFrame, onError }: Props) {
@@ -467,6 +363,9 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   const rigRoots = useRef<Partial<Record<RigRoot, Object3D>>>({});
   const attachments = useRef<Partial<Record<AttachmentName, Object3D>>>({});
   const practicalAnchors = useRef<Partial<Record<keyof typeof LAGOON_PRACTICALS, Object3D>>>({});
+  // Each modeled lamp's aim, exported from Blender with its anchor; a lamp the
+  // sidecar does not describe keeps its preset cone.
+  const practicalAims = useRef<Partial<Record<string, Vector3>>>({});
   const restTransforms = useRef(new Map<Object3D, RestTransform>());
   const nextActionTimer = useRef<number | null>(null);
   const renderEligibility = useRef({ running, paused, reducedMotion });
@@ -475,7 +374,7 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   const activeFrames = useRef(0); const restFrames = useRef(0); const endpoints = useRef<Record<string, [number, number, number]>>({});
   const lightRig = useMemo(makeLightRig, []);
   const path = useMemo(() => anchors ? makeOpticalPath(anchors) : null, [anchors]);
-  const lamps = useMemo(() => [...lightRig.task, ...lightRig.gallery].map(practical => practical.lamp).concat(path?.receivers ?? []), [lightRig, path]);
+  const lamps = useMemo(() => [...lightRig.task, ...lightRig.gallery, ...lightRig.soffits].map(practical => practical.lamp).concat(path?.receivers ?? []), [lightRig, path]);
   const queries = useMemo(() => import.meta.env.PUBLIC_INSTRUMENT_CAPTURE === "test" ? new URLSearchParams(location.search) : new URLSearchParams(), []);
   const occlusionFixture = useMemo(() => {
     if (!anchors || queries.get("lab-occluder") !== "1") return null;
@@ -492,14 +391,30 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   const cadence = useRef(new PulseCadence());
   const environmentReady = useRef(false);
   const materialBaseline = useRef(new Map<Material, MaterialBaseline>());
-  const warmMaterials = useRef<MeshStandardMaterial[]>([]);
+  const themeMaterials = useRef<ThemeBinding[]>([]);
+  const scrollingUntil = useRef(0);
+  const throttleTimer = useRef<number | null>(null);
+  /** Carriage and focus the key's shadow map was last drawn for (NaN: draw on the next frame). */
+  const shadowPose = useRef([NaN, NaN]);
+  const shadowDrawnLastFrame = useRef(false);
+  const shadowPending = useRef(false);
+  const soffitAnchors = useRef<Array<Object3D | undefined>>([]);
+  // Review switches: tone-mapping comparison and bloom tuning (dev and test
+  // capture only); `?lab-bloom=off` (any build) and LAGOON_BLOOM.enabled
+  // turn the bloom pass off.
+  const review = useMemo(() => import.meta.env.DEV || import.meta.env.PUBLIC_INSTRUMENT_CAPTURE === "test" ? new URLSearchParams(location.search) : new URLSearchParams(), []);
+  const bloomQuery = useMemo(() => new URLSearchParams(location.search).get("lab-bloom"), []);
+  const bloomActive = LAGOON_BLOOM.enabled && bloomQuery !== "off" && quality === "full" && (!capture || bloomQuery === "on");
+  const composer = useRef<LabComposer | null>(null);
+  const [composerVersion, setComposerVersion] = useState(0);
+  const pageColor = useMemo(() => new Color(), []);
   const reportedFailure = useRef(false); const onErrorRef = useRef(onError); onErrorRef.current = onError;
   const reportFailure = useCallback((error: unknown) => {
     if (reportedFailure.current) return;
     reportedFailure.current = true;
     onErrorRef.current?.(error);
   }, []);
-  useEffect(() => () => { if (path) disposeObject(path.object); }, [path]);
+  useEffect(() => () => { if (path) disposeOpticalPath(path); }, [path]);
   useEffect(() => () => { if (nextActionTimer.current !== null) window.clearTimeout(nextActionTimer.current); }, []);
   useEffect(() => () => { if (occlusionFixture) disposeObject(occlusionFixture); }, [occlusionFixture]);
   useEffect(() => () => { lightRig.key.shadow.dispose(); disposeObject(lightRig.group); }, [lightRig]);
@@ -563,7 +478,7 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
     lifecycleSignal.addEventListener("abort", abortRequests, { once: true });
     window.addEventListener("pagehide", abortOnPageExit, { capture: true });
     if (lifecycleSignal.aborted) { abortRequests(); return () => { lifecycleSignal.removeEventListener("abort", abortRequests); window.removeEventListener("pagehide", abortOnPageExit, { capture: true }); }; }
-    reportedFailure.current = false; ready.current = false; painted.current = false; compiled.current = false; pulsePending.current = false; cadence.current.reset(); warmMaterials.current = []; setQuality("full");
+    reportedFailure.current = false; ready.current = false; painted.current = false; compiled.current = false; pulsePending.current = false; cadence.current.reset(); themeMaterials.current = []; shadowPose.current.fill(NaN); shadowPending.current = false; soffitAnchors.current = []; practicalAims.current = {}; setQuality("full");
     setAsset(null); setAnchors(null); setBounds(null);
     const decoder = loadMeshoptDecoder(controller.signal);
     const bytes = fetch(assetUrl, { signal: controller.signal }).then(response => {
@@ -600,6 +515,18 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
             throw error;
           }
         }
+        // Development only: add another GLB (same-origin path) to the room,
+        // e.g. to compile-check the baked-AO patch against a COLOR_0 export.
+        const extra = import.meta.env.DEV ? new URLSearchParams(location.search).get("lab-extra") : null;
+        if (extra && /^\/[\w./-]+\.glb$/.test(extra)) {
+          const response = await fetch(extra, { signal: controller.signal });
+          if (!response.ok) throw new Error(`Laboratory extra returned ${response.status}`);
+          const piece = await loader.parseAsync(await response.arrayBuffer(), "/lagoon/");
+          piece.scene.name = "DEV_EXTRA_GLB";
+          const at = (new URLSearchParams(location.search).get("lab-extra-at") ?? "").split(",").map(Number);
+          if (at.length === 3 && at.every(Number.isFinite)) piece.scene.position.set(at[0], at[1], at[2]);
+          loaded.add(piece.scene);
+        }
         loaded.updateMatrixWorld(true);
         const manufacture=new Map<string,MeshStandardMaterial>();
         loaded.traverse(child=>{if(child instanceof Mesh)for(const material of Array.isArray(child.material)?child.material:[child.material])if(material instanceof MeshStandardMaterial&&material.roughnessMap)manufacture.set(material.name.split('.')[0],material);});
@@ -618,9 +545,15 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
           const object = loaded.getObjectByName(name);
           if (object) practicalAnchors.current[name] = object;
         }
+        soffitAnchors.current = [];
+        for (const name of LAGOON_SOFFITS) soffitAnchors.current.push(loaded.getObjectByName(name) ?? undefined);
         performance.mark("lagoon:model-decoded");
         signature.current = meshSignature(loaded, data.anchors);
-        loaded.traverse(child => { if (child instanceof Mesh) { child.castShadow = true; child.receiveShadow = true;
+        loaded.traverse(child => { if (child instanceof Mesh) {
+          const materialName = ((Array.isArray(child.material) ? child.material[0] : child.material)?.name ?? "").replace(/\.\d+/g, "");
+          let quiet = QUIET_CASTERS.test(materialName);
+          for (let parent: Object3D | null = child; parent && !quiet; parent = parent.parent) quiet = QUIET_RIG.test(parent.name);
+          child.castShadow = !quiet; child.receiveShadow = true;
           const bindReceiver = (material: Material) => {
             if (!/DETECTOR_RECEIVER/.test(material.name)) return material;
             let parent: Object3D | null = child;
@@ -633,8 +566,10 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
           if (/SPECIMEN/.test(child.name)) child.renderOrder = 5;
           else if (/PRISM/.test(child.name)) child.renderOrder = 4;
           for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
-            tuneRoomMaterial(material);
-            if (material instanceof MeshStandardMaterial && /APRICOT_Task_Light/.test(material.name) && !warmMaterials.current.includes(material)) warmMaterials.current.push(material);
+            // COLOR_0 on a room mesh is baked AO, not albedo.
+            if (material instanceof MeshStandardMaterial) enableBakedAo(material, child.geometry);
+            const binding = tuneRoomMaterial(material);
+            if (binding && !themeMaterials.current.some(entry => entry.material === binding.material)) themeMaterials.current.push(binding);
             if ("aoMapIntensity" in material) material.aoMapIntensity = .55;
             if (artPass === "A" && material instanceof MeshStandardMaterial) { material.color.set("#b5bab8"); material.metalness = 0; material.roughness = .6; material.emissiveIntensity = 0; if ("transmission" in material) material.transmission = 0; }
             if (variant && artPass === "B" && material instanceof MeshStandardMaterial && material.metalness > .5) material.roughness = .44;
@@ -645,6 +580,7 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
         // Hidden until its programs are linked. A demand frame drawn first
         // would compile every material synchronously and block on each link.
         loaded.visible = false;
+        practicalAims.current = Object.fromEntries(Object.entries(data.practicals).map(([name, practical]) => [name, new Vector3(...practical.direction).normalize()]));
         setAnchors(data.anchors); setBounds(data.bounds); setAsset(loaded); invalidate();
       })
       .catch(error => {
@@ -690,6 +626,32 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   }, [asset, quality]);
 
   useEffect(() => {
+    if (!asset) return;
+    fitKeyShadow(lightRig.key, asset);
+    gl.shadowMap.needsUpdate = true; invalidate();
+  }, [asset, gl, invalidate, lightRig]);
+
+  // Full-tier post-processing. Created before the compile effect below so
+  // programs compile against its target; disposed on unmount, on a tier or
+  // capture change, and while the lost context still owns its handles.
+  useEffect(() => {
+    if (!bloomActive) return;
+    let alive = true; let restoreFrame = 0;
+    const lab = makeLabComposer(gl, scene, camera); composer.current = lab;
+    const lost = () => { if (composer.current === lab) composer.current = null; lab.dispose(); };
+    const restored = () => { restoreFrame = requestAnimationFrame(() => { if (alive) setComposerVersion(version => version + 1); }); };
+    gl.domElement.addEventListener("webglcontextlost", lost);
+    gl.domElement.addEventListener("webglcontextrestored", restored);
+    invalidate();
+    return () => {
+      alive = false; cancelAnimationFrame(restoreFrame);
+      gl.domElement.removeEventListener("webglcontextlost", lost); gl.domElement.removeEventListener("webglcontextrestored", restored);
+      if (composer.current === lab) composer.current = null;
+      lab.dispose();
+    };
+  }, [bloomActive, camera, composerVersion, gl, invalidate, scene]);
+
+  useEffect(() => {
     let alive = true; let environment: ReturnType<PMREMGenerator["fromScene"]> | null = null; let restoreFrame = 0;
     const regenerate = () => {
       try {
@@ -728,7 +690,8 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   useEffect(() => {
     if (!running) { pulseUntil.current = 0; pulsePending.current = false; cadence.current.reset(); return; }
     let valid = true;
-    gl.toneMapping = ACESFilmicToneMapping;
+    const tone = review.get("lab-tone");
+    gl.toneMapping = TONE_MAPPINGS[tone === "neutral" || tone === "agx" || tone === "aces" ? tone : LAGOON_TONE_MAPPING];
     // Clear directly in the renderer's output colour space. A scene background
     // would pass through the scene exposure and expose a rectangular field.
     scene.background = null;
@@ -742,7 +705,14 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
     gl.setPixelRatio(dpr);
     ready.current = false; afterCompile.current = 0; compiled.current = false;
     if (asset && anchors && environmentReady.current) {
-      void gl.compileAsync(scene, camera).then(() => {
+      // Programs depend on the target: drawn into the composer's linear
+      // target they skip in-material tone mapping and sRGB encoding.
+      const lab = bloomActive ? composer.current : null;
+      const previousTarget = gl.getRenderTarget();
+      if (lab) { lab.sync(size.width, size.height, dpr); gl.setRenderTarget(lab.target); }
+      const compiling = gl.compileAsync(scene, camera);
+      gl.setRenderTarget(previousTarget);
+      void compiling.then(() => {
         if (!valid) return;
         asset.visible = true;
         compiled.current = true; compiledAt.current = performance.now();
@@ -755,7 +725,7 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
   // Theme and selection only change uniforms. Compiling again for those updates
   // blocks their finite relight on a software adapter and is unnecessary for
   // the already prepared programs. Latest-revision readiness resets separately.
-  }, [anchors, asset, camera, capture, environmentVersion, gl, invalidate, quality, reportFailure, running, scene, size.height, size.width]);
+  }, [anchors, asset, bloomActive, camera, capture, composerVersion, environmentVersion, gl, invalidate, quality, reportFailure, review, running, scene, size.height, size.width]);
 
   // Observe the completed main render, including shadow/transmission passes.
   // useFrame runs before Three renders and would report the preceding frame.
@@ -796,6 +766,13 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
     return () => { scene.onAfterRender = previous; };
   }, [anchors, asset, bounds, camera, capture, gl, invalidate, onFrame, onReady, quality, reportFailure, running, scene]);
 
+  useEffect(() => {
+    if (capture) return;
+    const scrolled = () => { scrollingUntil.current = performance.now() + 180; };
+    window.addEventListener("scroll", scrolled, { passive: true });
+    return () => { window.removeEventListener("scroll", scrolled); if (throttleTimer.current !== null) window.clearTimeout(throttleTimer.current); throttleTimer.current = null; };
+  }, [capture]);
+
   useFrame(() => {
     // Switch the shared page field with the HTML theme so its text keeps full
     // contrast. Set before the readiness guard: the canvas is opaque, so a
@@ -823,8 +800,11 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
     // Physical light, exposure and reflections relight together.
     scene.environmentIntensity = mix(day.environment, night.environment) * (variant && (artPass === "A" || artPass === "D") ? 1.8 : 1);
     gl.toneMappingExposure = mix(day.exposure, night.exposure);
-    lightRig.key.color.set("#fff1dc").lerp(new Color("#c6dbe5"), t); lightRig.key.intensity = mix(day.key, night.key);
-    lightRig.fill.color.set("#c7e5eb").lerp(new Color("#284653"), t); lightRig.fill.groundColor.set("#16323a").lerp(new Color("#071013"), t); lightRig.fill.intensity = mix(day.fill, night.fill);
+    lightRig.key.color.set(day.keyColor).lerp(new Color(night.keyColor), t); lightRig.key.intensity = mix(day.key, night.key);
+    lightRig.fill.color.set(day.fillSky).lerp(new Color(night.fillSky), t); lightRig.fill.groundColor.set(day.fillGround).lerp(new Color(night.fillGround), t); lightRig.fill.intensity = mix(day.fill, night.fill);
+    lightRig.fillDirect.color.set(day.fillDirectColor).lerp(new Color(night.fillDirectColor), t); lightRig.fillDirect.intensity = mix(day.fillDirect, night.fillDirect);
+    setLabAoDirect(mix(day.aoDirect, night.aoDirect));
+    const bulbRadiance = mix(day.bulbRadiance, night.bulbRadiance);
     // Exact exported lamp anchors take precedence over their documented world
     // rest positions. The target stays on the local bench/gallery surface,
     // giving modeled emitters a visible, bounded practical pool.
@@ -832,16 +812,27 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
       const anchor = practicalAnchors.current[name];
       practical.lamp.position.copy(anchor ? anchor.getWorldPosition(new Vector3()) : new Vector3(...LAGOON_PRACTICALS[name]));
       practical.bulb.position.copy(practical.lamp.position); practical.glow.position.copy(practical.lamp.position);
+      const aim = practicalAims.current[name]; if (aim) practical.lamp.direction.copy(aim);
     };
     anchorPractical("TASK_LIGHT_BENCH_LEFT", lightRig.task[0]); anchorPractical("TASK_LIGHT_BENCH_RIGHT", lightRig.task[1]);
     anchorPractical("TASK_LIGHT_UPPER_LEFT", lightRig.task[2]); anchorPractical("TASK_LIGHT_UPPER_RIGHT", lightRig.task[3]);
     anchorPractical("GALLERY_LIGHT_LEFT", lightRig.gallery[0]); anchorPractical("GALLERY_LIGHT_CENTER", lightRig.gallery[1]); anchorPractical("GALLERY_LIGHT_RIGHT", lightRig.gallery[2]);
-    lightRig.task.forEach(({ lamp, bulb, glow }) => { lamp.intensity = mix(day.task, night.task); (bulb.material as MeshBasicMaterial).color.set("#ffe0ad").lerp(new Color("#ffc46e"), t); glow.material.opacity = mix(day.bulbGlow, night.bulbGlow); });
-    lightRig.gallery.forEach(({ lamp, bulb, glow }) => { lamp.intensity = mix(day.gallery, night.gallery); (bulb.material as MeshBasicMaterial).color.set("#ffe0ad").lerp(new Color("#ffc46e"), t); glow.material.opacity = mix(day.bulbGlow, night.bulbGlow); });
-    warmMaterials.current.forEach(material => { material.emissiveIntensity = mix(1.1, 2.35); });
-    // The first rest frame also needs its architectural shadow. Never clear a
-    // pending shadow update before Three has rendered it.
-    if (quality === "full" && frame.moving) gl.shadowMap.needsUpdate = true;
+    lightRig.task.forEach(({ lamp, bulb, glow }) => { lamp.intensity = mix(day.task, night.task); (bulb.material as MeshBasicMaterial).color.set("#ffe0ad").lerp(new Color("#ffc46e"), t).multiplyScalar(bulbRadiance); glow.material.opacity = mix(day.bulbGlow, night.bulbGlow); });
+    lightRig.gallery.forEach(({ lamp, bulb, glow }) => { lamp.intensity = mix(day.gallery, night.gallery); (bulb.material as MeshBasicMaterial).color.set("#ffe0ad").lerp(new Color("#ffc46e"), t).multiplyScalar(bulbRadiance); glow.material.opacity = mix(day.bulbGlow, night.bulbGlow); });
+    lightRig.soffits.forEach(({ lamp, bulb, glow }, index) => {
+      const anchor = soffitAnchors.current[index];
+      bulb.visible = glow.visible = !!anchor;
+      if (!anchor) { lamp.intensity = 0; return; }
+      anchor.getWorldPosition(lamp.position); bulb.position.copy(lamp.position); glow.position.copy(lamp.position);
+      lamp.intensity = mix(day.soffit, night.soffit);
+      (bulb.material as MeshBasicMaterial).color.set("#ffe6c2").lerp(new Color("#ffcf8f"), t).multiplyScalar(bulbRadiance); glow.material.opacity = mix(day.bulbGlow, night.bulbGlow) * .8;
+    });
+    // Glowing families brighten at night; metals and glass keep reflecting
+    // the studio when the room goes dark, so the gantry and instruments read.
+    themeMaterials.current.forEach(({ material, emissive, env }) => {
+      if (emissive) material.emissiveIntensity = mix(emissive[0], emissive[1]);
+      if (env) material.envMapIntensity = mix(env[0], env[1]);
+    });
     const transform = (name: RigRoot, change: (object: Object3D, rest: RestTransform) => void) => {
       const object = rigRoots.current[name]; const rest = object && restTransforms.current.get(object);
       if (object && rest) change(object, rest);
@@ -853,38 +844,40 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
     transform("RECEIVER_TOP_ACTION", (object, rest) => { object.position.copy(rest.position); object.position.y += frame.receiverTop * .06; });
     transform("RECEIVER_BOTTOM_ACTION", (object, rest) => { object.position.copy(rest.position); object.position.y -= frame.receiverBottom * .06; });
     asset.updateMatrixWorld(true);
-    if (quality === "full" && frame.moving) gl.shadowMap.needsUpdate = true;
+    // The key's shadow map depends on the rig's pose alone (its frustum is fitted
+    // to the room, not the view), and only the carriage and focus cast shadows
+    // that move visibly, so parallax and the shutter, filter and receiver
+    // animations never redraw it. During continuous motion it follows at half
+    // rate and always lands on the final pose. Never clear a pending update
+    // before Three has rendered it.
+    if (quality === "full") {
+      const last = shadowPose.current;
+      const changed = frame.carriage !== last[0] || frame.focus !== last[1];
+      if (changed || shadowPending.current) {
+        if (capture || !changed || !shadowDrawnLastFrame.current) {
+          last[0] = frame.carriage; last[1] = frame.focus; gl.shadowMap.needsUpdate = true;
+          shadowDrawnLastFrame.current = true; shadowPending.current = false;
+        } else { shadowDrawnLastFrame.current = false; shadowPending.current = true; }
+      } else shadowDrawnLastFrame.current = false;
+    }
     if (path) {
-      endpoints.current = updateOpticalPath(path, anchors, attachments.current, frame.travel, frame.optical > .05 && !beamOff, camera, mix(day.beamWidth, night.beamWidth));
-      const strength = beamOff ? 0 : frame.shutter * frame.optical;
-      path.core.visible = path.halo.visible = strength > 0;
-      path.ribbons.forEach(ribbon => { ribbon.visible = strength > 0; });
-      path.ribbonMaterial.opacity = mix(day.beamGlow, night.beamGlow) * strength * (1 + .3 * frame.stagePulse);
-      path.traveller.visible = path.traveller.visible && strength > .05;
-      (path.traveller.material as MeshBasicMaterial).color.set("#fff7df").multiplyScalar(strength);
-      (path.core.material as MeshBasicMaterial).color.set("#fff0d0").multiplyScalar(strength);
-      (path.halo.material as MeshBasicMaterial).opacity = mix(.065, .16) * strength * (1 + .25 * frame.stagePulse) * (variant && artPass === "C" ? 2 : 1);
-      const station = stage === "reward" ? 0 : stage === "pressure" ? 1 : stage === "update" ? 2 : stage === "response" ? 3 : -1;
-      path.receivers.forEach((light, index) => {
-        const arrival = index < 3 ? Math.max(0, Math.min(1, (frame.travel-path.arrivals[index]+.025)/.08)) : index === 3 ? frame.receiverTop : frame.receiverBottom;
-        light.intensity = strength * mix(.65, 1.4) * arrival * (index === station ? 1.45 + frame.stagePulse : 1);
-      });
-      path.catches.forEach((catchLight, index) => { const passing=Math.max(0,1-Math.abs(frame.travel-path.arrivals[index])/.11); (catchLight.material as MeshBasicMaterial).opacity = strength * (.1+.85*passing); });
-      // A source-only finishing glow above an emission threshold. No wall or
-      // HTML pixels enter a bloom compositor, and the beam remains readable off.
-      const glowThreshold = Math.max(0, Math.min(1, (strength * mix(1.5, 3) - 1.2) / 1.8));
-      path.glows.forEach(glow => { glow.material.opacity = queries.get("lab-glow") === "off" || artPass === "A" || artPass === "B" ? 0 : glowThreshold * mix(.12, .28); });
-      asset.traverse(child => { if (child instanceof Mesh) for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
-        if (!(material instanceof MeshStandardMaterial)) continue;
-        if (/SOURCE_APERTURE/.test(material.name)) material.emissiveIntensity = strength * mix(1.5, 3);
-        if (/DETECTOR_RECEIVER/.test(material.name)) {
-          const arrival = /_TOP$/.test(material.name) ? frame.receiverTop : frame.receiverBottom;
-          material.emissiveIntensity = strength * mix(.9, 2.4) * (.12 + arrival) * (stage === "response" ? 1 + .35 * frame.stagePulse : 1);
-        }
-      } });
+      // The beam reads its per-frame inputs from a reused record (beam.ts).
+      const input = path.input;
+      input.beamOff = beamOff; input.stage = stage; input.camera = camera; input.height = size.height * gl.getPixelRatio(); input.now = now;
+      input.capture = capture ? sampledCapture ?? 0 : null; input.still = reducedMotion; input.tier = quality;
+      input.glow = queries.get("lab-glow") !== "off" && artPass !== "A" && artPass !== "B"; input.skirt = variant && artPass === "C" ? 2 : 1;
+      endpoints.current = updateOpticalPath(path, anchors, attachments.current, asset, frame);
     }
     updateLabLamps(lamps, camera);
-    if (frame.moving && !capture) invalidate();
+    if (path) updateLabLines(path.light.segments, path.light.starts, path.light.color, LAGOON_BEAM.lineRange, path.light.pulse, camera);
+    if ((frame.moving || shadowPending.current) && !capture) {
+      // While the page scrolls, the moving room draws at half rate so the
+      // browser's own scrolling keeps the GPU. The motion clock is absolute,
+      // so a skipped frame never makes anything jump.
+      if (now < scrollingUntil.current) {
+        if (throttleTimer.current === null) throttleTimer.current = window.setTimeout(() => { throttleTimer.current = null; if (renderEligibility.current.running) invalidate(); }, 28);
+      } else invalidate();
+    }
     else if (!capture && running && !paused && !reducedMotion && frame.nextWakeAt !== null && nextActionTimer.current === null) {
       nextActionTimer.current = window.setTimeout(() => {
         nextActionTimer.current = null;
@@ -893,6 +886,24 @@ export function LagoonScene({ stage, theme, capture, assetUrl, running, paused =
       }, Math.max(0, frame.nextWakeAt - performance.now()));
     }
   });
+
+  // Priority 1: R3F skips its own render while this subscriber exists, so
+  // every path draws here. The full tier composes scene, bloom and output;
+  // other tiers, capture and the frames before the room compiles render
+  // directly, exactly as before.
+  useFrame((state, delta) => {
+    const lab = composer.current;
+    if (lab && bloomActive && compiled.current && asset?.visible) {
+      const t = motionFrame.current.theme, day = LAGOON_BLOOM.light, night = LAGOON_BLOOM.dark;
+      const mix = (a: number, b: number) => a + (b - a) * t;
+      const threshold = Number(review.get("lab-bloom-threshold")), strength = Number(review.get("lab-bloom-strength"));
+      lab.bloom.threshold = Number.isFinite(threshold) && threshold > 0 ? threshold : mix(day.threshold, night.threshold);
+      lab.bloom.strength = Number.isFinite(strength) && strength > 0 ? strength : mix(day.strength, night.strength);
+      lab.bloom.radius = mix(day.radius, night.radius);
+      lab.sync(state.size.width, state.size.height, state.gl.getPixelRatio());
+      lab.render(pageColor.set(LAGOON_LIGHTS[theme].background), delta);
+    } else gl.render(scene, camera);
+  }, 1);
 
   return <>
     <primitive object={lightRig.group} />

@@ -1,48 +1,69 @@
-import { BackSide, BoxGeometry, Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, type Material } from "three";
+import { BackSide, BoxGeometry, Color, DataTexture, DoubleSide, LinearFilter, Mesh, MeshBasicMaterial, PlaneGeometry, RGBAFormat, Scene, type Material } from "three";
 
 /**
- * The reflection environment: a dim studio with a few soft panels.
+ * The reflection environment: a product-photography studio built from
+ * geometry and prefiltered once with PMREM.
  *
- * It replaces three RectAreaLights. Their job was to shape the aluminium and
- * glass reflections and lay a soft wash over the room; a prefiltered
- * environment does both from the same directions for the cost of the image
- * lookups every lit material already makes, with no light-specific code in
- * any program. The panels sit where the old lights sat relative to the room.
+ * A large overhead softbox lays the broad top highlight on the bench, the
+ * gallery and the plinth rim. Two tall strip boxes, left and right, draw the
+ * long vertical highlights that make brushed aluminium, chrome and brass read
+ * as shaped metal rather than grey. A warm card low in front lifts the
+ * cabinet fronts and gives brass its gold, and a thin cool rim strip high
+ * behind separates the gantry from the wall. Everything else is a dark-teal
+ * surround, so the highlights have edges to stand against and reflections
+ * carry the room's colour.
  *
- * Panel radiance is in linear units above 1, so it survives PMREM filtering
- * as a highlight rather than flattening into the walls.
+ * Panel radiance is in linear units well above 1, so it survives PMREM
+ * filtering as a highlight. Panels use a feathered mask so the highlights
+ * have the soft falloff of a diffused box, not the hard edge of a card.
  */
+function featheredMask(size = 64) {
+  const data = new Uint8Array(size * size * 4);
+  const smooth = (e0: number, e1: number, x: number) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const u = (x + .5) / size, v = (y + .5) / size;
+    const edge = smooth(0, .22, Math.min(u, 1 - u)) * smooth(0, .22, Math.min(v, 1 - v));
+    // A softbox is slightly hotter in its middle than at its diffuser's rim.
+    const r2 = (u - .5) ** 2 + (v - .5) ** 2;
+    const value = Math.round(255 * edge * (.8 + .2 * Math.max(0, 1 - r2 * 4)));
+    const i = (y * size + x) * 4; data[i] = data[i + 1] = data[i + 2] = value; data[i + 3] = 255;
+  }
+  const texture = new DataTexture(data, size, size, RGBAFormat);
+  texture.magFilter = texture.minFilter = LinearFilter; texture.needsUpdate = true;
+  return texture;
+}
+
 export function makeStudioScene(): Scene {
   const scene = new Scene();
   const owned: Array<{ geometry: BoxGeometry | PlaneGeometry; material: Material }> = [];
   const add = (mesh: Mesh) => { scene.add(mesh); owned.push({ geometry: mesh.geometry as BoxGeometry | PlaneGeometry, material: mesh.material as Material }); return mesh; };
+  const mask = featheredMask();
 
-  // The room: dark petrol walls and a slightly warmer floor, so reflections
-  // in the chrome carry the room's own colour rather than neutral grey.
-  const walls = new MeshBasicMaterial({ color: new Color("#87999a"), side: BackSide });
-  add(new Mesh(new BoxGeometry(30, 18, 30), walls)).position.set(0, 6, 0);
-  const floor = new MeshBasicMaterial({ color: new Color("#9a9a8f") });
-  const ground = add(new Mesh(new PlaneGeometry(30, 30), floor));
+  // Teal surround (mid value so brushed metal still reads as bright
+  // silver between highlights) and a warmer studio floor.
+  add(new Mesh(new BoxGeometry(34, 20, 34), new MeshBasicMaterial({ color: new Color("#6f8f90"), side: BackSide }))).position.set(0, 7, 0);
+  const ground = add(new Mesh(new PlaneGeometry(34, 34), new MeshBasicMaterial({ color: new Color("#7a837e") })));
   ground.rotation.x = -Math.PI / 2; ground.position.y = -2.9;
 
   const panel = (width: number, height: number, color: string, radiance: number, position: [number, number, number], target: [number, number, number]) => {
-    const material = new MeshBasicMaterial({ color: new Color(color).multiplyScalar(radiance), side: DoubleSide });
+    const material = new MeshBasicMaterial({ color: new Color(color).multiplyScalar(radiance), map: mask, side: DoubleSide });
     const mesh = add(new Mesh(new PlaneGeometry(width, height), material));
     // lookAt turns the plane's +Z face toward the room.
     mesh.position.set(...position); mesh.lookAt(...target);
     return mesh;
   };
-  // Overhead front softbox, the old "top" strip: the long highlight along the
-  // gantry and the bench edge.
-  panel(14, 3.2, "#f4fbfb", 14, [-1.5, 11.5, 7.5], [0.3, 3.2, -0.5]);
-  // Key-side tall strip, warm, from the same side as the directional key.
-  panel(3.2, 11, "#fff1dc", 10, [-12, 6, 6], [0, 3, 0]);
-  // Cool rim from back right, the old rim panel: separates the stair and the
-  // right of the gantry from the wall.
-  panel(2, 10, "#b9d9e2", 9, [13, 6, -7], [0.4, 3.1, 0.1]);
-  // Low front bounce, the old bench panel: lifts the cabinet fronts.
-  panel(16, 2.4, "#d9f1ed", 3.5, [0, 1.2, 13], [0.15, 2.8, 0.55]);
+  // Large overhead softbox, a little forward of the room so top surfaces
+  // facing the camera catch it.
+  panel(17, 10, "#f6fafa", 7, [0.5, 13.5, 3.5], [0.3, 2.5, -0.5]);
+  // Tall strip boxes: the long vertical highlights on the gantry legs and
+  // the turned instrument bodies. The left one is the key side, a shade warm.
+  panel(2.8, 14, "#fff3e2", 13, [-12.5, 6.5, 6], [0, 3, 0]);
+  panel(2.8, 14, "#eef6f8", 11, [13, 6.5, 4], [0, 3, 0]);
+  // Warm card low in front: lifts the cabinet fronts, golds the brass.
+  panel(18, 2.6, "#ffd9b0", 2.6, [0, 0.9, 13.5], [0.15, 2.4, 0.5]);
+  // Thin cool rim strip high behind the room.
+  panel(12, 1.4, "#cfe6ee", 5, [0, 11, -13], [0, 3.5, 0]);
 
-  scene.userData.dispose = () => owned.forEach(({ geometry, material }) => { geometry.dispose(); material.dispose(); });
+  scene.userData.dispose = () => { owned.forEach(({ geometry, material }) => { geometry.dispose(); material.dispose(); }); mask.dispose(); };
   return scene;
 }
